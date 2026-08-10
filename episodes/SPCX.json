@@ -1,0 +1,865 @@
+{
+  "symbol": "SPCX",
+  "company": "Space Exploration Technologies Corp.",
+  "episodeDate": "2026-08-07",
+  "_note": "SpaceX listed on 12 June 2026. There is no eight-quarter history, no year of tape, and the company gives NO financial guidance at all. The deck says so on screen rather than filling the gaps.",
+  "sources": {
+    "8k-q2-26": {
+      "label": "8-K EX-99.1 \u2014 Q2 2026 results, filed Aug 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026052515/"
+    },
+    "10q-q2-26": {
+      "label": "10-Q \u2014 quarter ended June 30 2026, filed Aug 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026052535/spcx-20260630.htm"
+    },
+    "424b4": {
+      "label": "424(b)(4) final IPO prospectus, filed June 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm"
+    }
+  },
+  "findings": [
+    {
+      "claim": "$13.3B of the debt is owed to a fund run by one of SpaceX's own directors \u2014 and it nearly tripled in six months.",
+      "where": "10-Q Note 17, Related Party Transactions, twelve pages past the financial statements",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "Starlink's revenue per customer fell 22% in a year. The release says ARPU was \u201cmaintained\u201d \u2014 true against last quarter, not against last year.",
+      "where": "8-K EX-99.1, the Connectivity operating table \u2014 the ARPU row, directly under the subscriber row they lead with",
+      "src": "8k-q2-26"
+    },
+    {
+      "claim": "The lockup tranche that needed a 30% share-price gain failed 0 days out of 10, and five more supply releases land before December.",
+      "where": "424(b)(4) Underwriting section, the staged early-release schedule",
+      "src": "424b4"
+    },
+    {
+      "claim": "They launched less. Mass to orbit fell 26% year over year while the release calls itself the leading launch provider for the world.",
+      "where": "8-K EX-99.1, the Space operating table \u2014 mass to orbit and total launches",
+      "src": "8k-q2-26"
+    }
+  ],
+  "filings": {
+    "results": {
+      "revenueQ2": {
+        "v": 7814,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueQ2prior": {
+        "v": 4071,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueQ1": {
+        "v": 4694,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueH1": {
+        "v": 12508,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueGrowthQ2": {
+        "v": 92,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "opLossQ2": {
+        "v": -143,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "opLossQ2prior": {
+        "v": -970,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "netLossQ2": {
+        "v": -541,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "netLossQ2prior": {
+        "v": -1008,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "netLossH1": {
+        "v": -4817,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "adjEbitdaQ2": {
+        "v": 3538,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "adjEbitdaQ2prior": {
+        "v": 1214,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "epsQ2": {
+        "v": -0.09,
+        "src": "8k-q2-26",
+        "unit": "USD"
+      },
+      "wtdAvgSharesQ2": {
+        "v": 5864,
+        "src": "8k-q2-26",
+        "unit": "millions"
+      },
+      "dnaQ2": {
+        "v": 2848,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "sbcQ2": {
+        "v": 831,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "interestExpenseQ2": {
+        "v": 629,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "interestIncomeQ2": {
+        "v": 340,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "rndQ2": {
+        "v": 3548,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "costOfRevenueQ2": {
+        "v": 3495,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "sgaQ2": {
+        "v": 912,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      }
+    },
+    "segments": {
+      "src": "8k-q2-26",
+      "_units": "USD millions",
+      "revQ2": {
+        "space": 962,
+        "connectivity": 4291,
+        "ai": 2561
+      },
+      "revQ2prior": {
+        "space": 746,
+        "connectivity": 2588,
+        "ai": 737
+      },
+      "opIncQ2": {
+        "space": -542,
+        "connectivity": 1656,
+        "ai": -1257
+      },
+      "opIncQ2prior": {
+        "space": -369,
+        "connectivity": 923,
+        "ai": -1524
+      },
+      "capexQ2": {
+        "space": 1174,
+        "connectivity": 1367,
+        "ai": 15828
+      },
+      "capexQ2prior": {
+        "space": 946,
+        "connectivity": 1130,
+        "ai": 749
+      },
+      "dnaQ2": {
+        "space": 158,
+        "connectivity": 805,
+        "ai": 1885
+      },
+      "sbcQ2": {
+        "space": 179,
+        "connectivity": 136,
+        "ai": 516
+      },
+      "adjEbitdaQ2": {
+        "space": -205,
+        "connectivity": 2597,
+        "ai": 1146
+      }
+    },
+    "space": {
+      "totalLaunchesQ2": {
+        "v": 38,
+        "src": "8k-q2-26",
+        "searchAs": "Total launches (#) 38"
+      },
+      "totalLaunchesQ2prior": {
+        "v": 46,
+        "src": "8k-q2-26",
+        "searchAs": "Total launches (#) 38 40 46"
+      },
+      "customerLaunchesQ2": {
+        "v": 10,
+        "src": "8k-q2-26",
+        "searchAs": "Customer launches (#) 10"
+      },
+      "customerLaunchesQ2prior": {
+        "v": 9,
+        "src": "8k-q2-26",
+        "searchAs": "Customer launches (#) 10 7 9"
+      },
+      "internalLaunchesQ2": {
+        "v": 28,
+        "src": "8k-q2-26",
+        "searchAs": "Internal launches (#) 28"
+      },
+      "internalLaunchesQ2prior": {
+        "v": 37,
+        "src": "8k-q2-26",
+        "searchAs": "Internal launches (#) 28 33 37"
+      },
+      "massToOrbitQ2": {
+        "v": 485,
+        "src": "8k-q2-26",
+        "unit": "metric tons"
+      },
+      "massToOrbitQ2prior": {
+        "v": 652,
+        "src": "8k-q2-26",
+        "unit": "metric tons"
+      },
+      "rndQ2": {
+        "v": 1076,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "rndQ2prior": {
+        "v": 693,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      }
+    },
+    "connectivity": {
+      "subsQ2": {
+        "v": 12.0,
+        "src": "8k-q2-26",
+        "unit": "millions"
+      },
+      "subsQ1": {
+        "v": 10.3,
+        "src": "8k-q2-26",
+        "unit": "millions"
+      },
+      "subsQ2prior": {
+        "v": 6.0,
+        "src": "8k-q2-26",
+        "unit": "millions"
+      },
+      "arpuQ2": {
+        "v": 66,
+        "src": "8k-q2-26",
+        "unit": "USD per month",
+        "searchAs": "Starlink ARPU ($ per month) $66"
+      },
+      "arpuQ1": {
+        "v": 66,
+        "src": "8k-q2-26",
+        "unit": "USD per month",
+        "searchAs": "Starlink ARPU ($ per month) $66 $66"
+      },
+      "arpuQ2prior": {
+        "v": 85,
+        "src": "8k-q2-26",
+        "unit": "USD per month",
+        "searchAs": "Starlink ARPU ($ per month) $66 $66 $85"
+      },
+      "consumerRevQ2": {
+        "v": 2485,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "entGovRevQ2": {
+        "v": 1806,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "entGovRevQ2prior": {
+        "v": 867,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "starshieldAwards": {
+        "v": 6,
+        "src": "8k-q2-26",
+        "unit": "USD billions",
+        "searchAs": "over $6 billion in multi-year U.S. government contracts"
+      }
+    },
+    "ai": {
+      "computeGwQ2": {
+        "v": 1.4,
+        "src": "8k-q2-26",
+        "unit": "GW"
+      },
+      "computeGwQ1": {
+        "v": 1.0,
+        "src": "8k-q2-26",
+        "unit": "GW"
+      },
+      "computeGwQ2prior": {
+        "v": 0.4,
+        "src": "8k-q2-26",
+        "unit": "GW"
+      },
+      "advertisingQ2": {
+        "v": 367,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "advertisingQ2prior": {
+        "v": 426,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "solutionsInfraQ2": {
+        "v": 2194,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "solutionsInfraQ2prior": {
+        "v": 311,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "cloudContractedSales": {
+        "v": 14.1,
+        "src": "8k-q2-26",
+        "unit": "USD billions"
+      },
+      "cloudRevenueInQuarter": {
+        "v": 1.6,
+        "src": "8k-q2-26",
+        "unit": "USD billions"
+      },
+      "cursorValue": {
+        "v": 60,
+        "src": "10q-q2-26",
+        "unit": "USD billions",
+        "searchAs": "implied equity value of Cursor of $ 60 billion"
+      }
+    },
+    "balanceSheet": {
+      "cash": {
+        "v": 93522,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "marketableSecurities": {
+        "v": 6487,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "totalAssets": {
+        "v": 192770,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "totalLiabilities": {
+        "v": 65546,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "equity": {
+        "v": 127224,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "accumulatedDeficit": {
+        "v": -41852,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "totalDebtAndLeases": {
+        "v": 39364,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "deferredRevenue": {
+        "v": 14286,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "ppeNet": {
+        "v": 65736,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "goodwill": {
+        "v": 11645,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "sharesOutstanding": {
+        "v": 13176000,
+        "src": "8k-q2-26",
+        "unit": "thousands",
+        "_derived": true,
+        "_derivedNote": "Class A + Class B, both printed on the balance sheet and validated individually. decks/SPCX.py re-adds them on every build and dies on a mismatch."
+      },
+      "sharesClassA": {
+        "v": 7607,
+        "src": "8k-q2-26",
+        "unit": "millions",
+        "note": "Class A shares outstanding at June 30 2026"
+      },
+      "sharesClassB": {
+        "v": 5569,
+        "src": "8k-q2-26",
+        "unit": "millions",
+        "note": "Class B shares outstanding at June 30 2026"
+      }
+    },
+    "ppe": {
+      "src": "10q-q2-26",
+      "_units": "USD millions, gross",
+      "servers": 34771,
+      "satellites": 13788,
+      "machinery": 9453,
+      "dataCentre": 3991,
+      "launchSites": 3118,
+      "landBuildings": 2958,
+      "flightVehicle": 1557,
+      "leasehold": 881,
+      "constructionInProgress": 12554
+    },
+    "cashFlow": {
+      "cfoH1": {
+        "v": 3466,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "cfoH1prior": {
+        "v": 351,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "investingH1": {
+        "v": -34487,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "financingH1": {
+        "v": 100291,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "capexH1": {
+        "v": 28476,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "capexQ2": {
+        "v": 18369,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      }
+    },
+    "relatedParty": {
+      "valorDebtCurrent": {
+        "v": 2039,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "valorDebtLongTerm": {
+        "v": 11290,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "valorDebtCurrentPrior": {
+        "v": 455,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "valorDebtLongTermPrior": {
+        "v": 4052,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "valorInterestQ2": {
+        "v": 327,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "valorInterestH1": {
+        "v": 513,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "teslaMegapackQ2": {
+        "v": 295,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "quote": {
+        "v": "The Valor Transaction was deemed to be a failed sale-leaseback transaction.",
+        "src": "10q-q2-26",
+        "note": "Note 17, Related Party Transactions"
+      },
+      "directorQuote": {
+        "v": "The founder, CEO and Chief Investment Officer of Valor, Antonio Gracias, serves as one of the directors of the Company.",
+        "src": "10q-q2-26",
+        "note": "Note 17, Related Party Transactions"
+      }
+    },
+    "backlog": {
+      "total": {
+        "v": 47461,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "asDeferredRevenue": {
+        "v": 14286,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "withinOneYearPct": {
+        "v": 56,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "oneToThreeYearsPct": {
+        "v": 34,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "thereafterPct": {
+        "v": 10,
+        "src": "10q-q2-26",
+        "unit": "%"
+      }
+    },
+    "concentration": {
+      "customerAQ2": {
+        "v": 18.3,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "customerBQ2": {
+        "v": 19.5,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "customerAQ2prior": {
+        "v": 16.7,
+        "src": "10q-q2-26",
+        "unit": "%"
+      }
+    },
+    "commitments": {
+      "total": {
+        "v": 27955,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "y2026rest": {
+        "v": 2728,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "y2027": {
+        "v": 22244,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "y2028": {
+        "v": 2172,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "y2029": {
+        "v": 809,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      }
+    },
+    "ipo": {
+      "priceUSD": {
+        "v": 135.0,
+        "src": "424b4",
+        "unit": "USD per share"
+      },
+      "sharesOffered": {
+        "v": 555555555,
+        "src": "424b4"
+      },
+      "sharesTotalWithGreenshoe": {
+        "v": 638888888,
+        "src": "8k-q2-26"
+      },
+      "netProceeds": {
+        "v": 85.7,
+        "src": "8k-q2-26",
+        "unit": "USD billions"
+      },
+      "notesPrincipal": {
+        "v": 25000,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "searchAs": "$25 billion inaugural bond issuance"
+      },
+      "notesWtdRate": {
+        "v": 5.855,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "muskVotingPct": {
+        "v": 82.4,
+        "src": "424b4",
+        "unit": "%"
+      },
+      "classBVotesPerShare": {
+        "v": 10,
+        "src": "424b4"
+      },
+      "lockedSharesBn": {
+        "v": 7.8,
+        "src": "424b4",
+        "unit": "billions"
+      },
+      "lockedPctPreIPO": {
+        "v": 63,
+        "src": "424b4",
+        "unit": "%"
+      },
+      "muskRestrictedShares": {
+        "v": 1302072285,
+        "src": "424b4"
+      },
+      "spaceDataCentreTW": {
+        "v": 100,
+        "src": "424b4",
+        "unit": "terawatts",
+        "searchAs": "100 terawatts"
+      }
+    },
+    "dilution": {
+      "unmetPerformanceAwards": {
+        "v": 1331,
+        "src": "10q-q2-26",
+        "unit": "millions of shares"
+      },
+      "unmetPerformanceAwardsPrior": {
+        "v": 13.5,
+        "src": "10q-q2-26",
+        "unit": "millions of shares"
+      }
+    },
+    "lockup": {
+      "src": "424b4",
+      "_note": "The 180-day bucket releases in stages. Percentages are of the shares in that bucket.",
+      "firstReleasePct": 20,
+      "priceTriggerPct": 10,
+      "priceTriggerPremiumPct": 30,
+      "staircasePct": 7,
+      "postQ3Pct": 28,
+      "quote": {
+        "v": "if the reported closing price of our Class A common stock on Nasdaq is at least 30% greater than the public offering price set forth on the cover page of this prospectus for at least five of the ten consecutive trading days ending on, and including, the First Earnings Release Date",
+        "src": "424b4",
+        "note": "Underwriting \u2014 early release provisions, clause b"
+      }
+    },
+    "earningsHistory": {
+      "releases": [
+        {
+          "date": "2026-08-04",
+          "q": "Q2'26",
+          "fy": "2026",
+          "guideLow": null,
+          "guideHigh": null,
+          "src": "8k-q2-26"
+        }
+      ]
+    },
+    "quarterly": {
+      "rows": [
+        {
+          "q": "Q2'25",
+          "end": "2025-06-30",
+          "eps": null,
+          "revenue": 4071,
+          "src": "8k-q2-26"
+        },
+        {
+          "q": "Q1'26",
+          "end": "2026-03-31",
+          "eps": null,
+          "revenue": 4694,
+          "src": "8k-q2-26"
+        },
+        {
+          "q": "Q2'26",
+          "end": "2026-06-30",
+          "eps": -0.09,
+          "revenue": 7814,
+          "src": "8k-q2-26"
+        }
+      ]
+    },
+    "peers": {
+      "tickers": [
+        "NOW",
+        "CRM",
+        "MDB",
+        "DDOG",
+        "SNOW"
+      ],
+      "names": {
+        "NOW": "ServiceNow",
+        "CRM": "Salesforce",
+        "MDB": "MongoDB",
+        "DDOG": "Datadog",
+        "SNOW": "Snowflake"
+      }
+    }
+  },
+  "fairValue": {
+    "_comment": "Five years out on REVENUE, because SpaceX does not earn a profit and gives no guidance. Margin is applied at the exit, not compounded through. The tax rate is set to zero for the horizon: there is a $41.9B accumulated deficit to work through first, and pretending otherwise would flatter the result.",
+    "horizonYears": 5,
+    "requiredReturn": 12.0,
+    "cases": {
+      "bear": {
+        "revGrowth": 25.0,
+        "opMargin": 12.0,
+        "exitPE": 20.0,
+        "shareChange": 4.0
+      },
+      "base": {
+        "revGrowth": 40.0,
+        "opMargin": 20.0,
+        "exitPE": 30.0,
+        "shareChange": 3.0
+      },
+      "bull": {
+        "revGrowth": 55.0,
+        "opMargin": 28.0,
+        "exitPE": 40.0,
+        "shareChange": 2.0
+      }
+    },
+    "constants": {
+      "netDebt": -60645,
+      "interestRate": 4.0,
+      "taxRate": 0.0,
+      "nciAnnualRunRate": 0,
+      "startRevenueTTM": 31256
+    }
+  },
+  "proseLiteralsOK": [
+    "Revenue grew 92% year over year",
+    "Revenue grew 92% in a year",
+    "fell from $85 to $66 in a year",
+    "56% of it expected inside a year",
+    "82.4% of the votes",
+    "$100B of cash",
+    "26% less mass to orbit"
+  ],
+  "verdict": {
+    "call": "NOT YET",
+    "callLine": "A genuinely extraordinary company, priced before anyone can see whether the AI bet works.",
+    "scored": [
+      {
+        "dim": "Revenue growth",
+        "score": 5,
+        "tone": "",
+        "fact": "92% revenue growth, accelerating in all three segments. Connectivity alone is a {segRev.connectivity|usd} quarterly business."
+      },
+      {
+        "dim": "Connectivity engine",
+        "score": 5,
+        "tone": "",
+        "fact": "Starlink earns {segOp.connectivity|usd} of operating profit a quarter at a {connMargin|%} margin. This part works."
+      },
+      {
+        "dim": "Balance sheet",
+        "score": 4,
+        "tone": "",
+        "fact": "{netCashPos|usd} of cash and securities against {totalDebt|usd} of debt and leases."
+      },
+      {
+        "dim": "Cash generation",
+        "score": 1,
+        "tone": "bad",
+        "fact": "{capexQ2|usd} of capital spending on {rev|usd} of revenue in one quarter. Half-year free cash flow was {fcfH1|usd}."
+      },
+      {
+        "dim": "Governance",
+        "score": 1,
+        "tone": "bad",
+        "fact": "82.4% of the votes sit with one person, {relPartyDebt|usd} of debt is owed to a director's fund, and Nasdaq governance rules are waived."
+      },
+      {
+        "dim": "Valuation",
+        "score": 1,
+        "tone": "bad",
+        "fact": "{psAnnualised|x0} annualised revenue, and there are no profits to value it on."
+      }
+    ],
+    "working": [
+      "Revenue grew 92% year over year, and every one of the three segments grew",
+      "Starlink reached {subs} million subscribers, double a year ago",
+      "Connectivity turns a real operating profit \u2014 {segOp.connectivity|usd} in the quarter",
+      "{netCashPos|usd} of cash and securities after the IPO and the bond",
+      "{backlogTotal|usd} of backlog, with 56% of it expected inside a year"
+    ],
+    "watch": [
+      "{capexQ2|usd} of capital spending against {rev|usd} of revenue \u2014 the AI build is not self-funding",
+      "Revenue per Starlink customer fell from $85 to $66 in a year",
+      "26% less mass to orbit than a year ago, on eight fewer launches",
+      "Two customers are {custConc|%} of all revenue, and one of them did not exist a year ago",
+      "{relPartyDebt|usd} owed to a fund run by one of the directors, up from {relPartyDebtPrior|usd} in six months"
+    ],
+    "why": [
+      "Let me be clear about the business first, because parts of it are extraordinary. Revenue grew 92% in a year. Starlink doubled its customers to {subs} million and now throws off {segOp.connectivity|usd} of operating profit every quarter. They have {netCashPos|usd} in the bank. Nobody else on earth can put things in orbit at this cost. None of that is in question.",
+      "The question is what you are paying, and what you are paying for. The market value is {mcap|usd} against {rev|usd} of quarterly revenue. Annualise the quarter and you are paying {psAnnualised|x0} what the company sells in a year, for a business that lost money in that quarter.",
+      "And the spending is on a different scale to the business. They spent {capexQ2|usd} on equipment in three months while selling {rev|usd}. Almost all of it went into AI computers. Over six months they took in {cfoH1|usd} of cash from operations and spent {capexH1|usd}, so the cash went backwards by roughly {fcfH1abs|usd}. That is being paid for out of the IPO and the bond, not out of the business.",
+      "Then there is who you are investing alongside. One person holds 82.4% of the votes. {relPartyDebt|usd} of the debt is owed to a fund run by a man who sits on the board. And the company has told the exchange it will skip several governance rules it would otherwise have to follow.",
+      "So: not yet. This is a company I want to own and a price I do not. Put it on the list, write down what you would pay, and note the calendar \u2014 there is a queue of newly sellable shares between now and December."
+    ]
+  },
+  "notes": {
+    "title": "Space Exploration Technologies \u2014 SpaceX \u2014 went public on the twelfth of June. It is now worth about one and three quarter trillion dollars, and today it moved almost sixteen percent. This is the first proper look inside the accounts, because this is the first quarter they have ever had to file. TARGET 20s.",
+    "tape": "Here is the whole life of this stock. All thirty-nine trading days of it. It opened at a hundred and fifty, ran to two hundred and eleven in three days, then fell almost half. That low was the fifth of August \u2014 the day after the first earnings report. And then it turned around hard. TARGET 22s.",
+    "findings": "Four things in here that I have not seen anyone else talk about. Every one of them comes out of documents filed in the last eight weeks. We will do each one properly. TARGET 26s.",
+    "business": "Three businesses under one roof. Space puts things in orbit. Connectivity is Starlink. AI is Grok and the data centres. Hold on to the fact that they are wildly different in size and in health. TARGET 22s.",
+    "segments": "Here is the shape of it. Connectivity makes all the money. Space loses money. AI loses more. The company as a whole lost a hundred and forty-three million in the quarter. TARGET 26s.",
+    "starlink": "This is the good news, and it is genuinely good. Twelve million subscribers, double a year ago. One point seven billion dollars of operating profit in a quarter. If this were a standalone company it would be one of the best businesses in the world. TARGET 24s.",
+    "arpu": "But look underneath it. Revenue per customer has gone from eighty-five dollars a month to sixty-six. That is a twenty-two percent fall. The release says ARPU was maintained \u2014 and against last quarter it was. Against last year it fell hard. Doubling your customers while cutting your price by a fifth is growth, but it is a different kind of growth than the headline suggests. TARGET 30s.",
+    "space": "And the rocket company launched less. Thirty-eight launches against forty-six. Mass to orbit down twenty-six percent. Revenue went up because the mix shifted to paying customers, but the machine did less work. TARGET 26s.",
+    "capex": "Now the number that matters most. Eighteen point four billion dollars of equipment bought in three months, against seven point eight billion of sales. Almost all of it is AI computers. TARGET 28s.",
+    "cash": "Over six months the business brought in three and a half billion of cash and spent twenty-eight and a half billion on equipment. That is twenty-five billion out the door, funded by the IPO and the bond, not by the business. TARGET 28s.",
+    "balance": "On the balance sheet, this is now more of a computer company than a rocket company. Thirty-five billion dollars of servers against fourteen billion of satellites. TARGET 22s.",
+    "ebitda": "Watch this one carefully, because it is the most common trick in AI accounting. The AI division reported positive adjusted earnings of one point one billion. It lost one point three billion. The difference is that they added back the depreciation on the computers they had just bought. TARGET 30s.",
+    "related": "This is the one nobody is talking about. Thirteen point three billion dollars of the debt is owed to Valor Equity Partners. The man who runs Valor sits on SpaceX's board. And the accountants ruled the deal a failed sale-leaseback, which is why it shows up as borrowing. Six months ago it was four and a half billion. TARGET 32s.",
+    "concentration": "Two customers are nearly thirty-eight percent of all revenue. One of them was not even a ten percent customer a year ago. TARGET 22s.",
+    "commitments": "They have signed up to spend twenty-eight billion dollars they cannot cancel, and twenty-two billion of that falls in a single year \u2014 twenty twenty-seven. TARGET 24s.",
+    "lockup": "Here is the calendar nobody put in a headline. The lockup does not end all at once. Twenty percent came free on the sixth of August. There was a bonus ten percent available if the stock had held thirty percent above the IPO price \u2014 it did not, zero days out of ten. Then seven percent more on each of five dates between now and October, twenty-eight percent after the next results, and everything on the eighth of December. TARGET 34s.",
+    "governance": "One person holds eighty-two point four percent of the votes, through shares that carry ten votes each. The company is officially a controlled company, which lets it skip several Nasdaq governance rules. TARGET 24s.",
+    "dilution": "And there are one point three billion shares promised to the founder that do not appear in the share count yet, because the targets have not been hit. One tranche of them only vests if SpaceX builds data centres in space. TARGET 26s.",
+    "valuation": "So what are you paying. Annualise this quarter and it is about fifty-six times sales, for a company that lost money. There is no guidance to check that against, because SpaceX gives none. TARGET 26s.",
+    "peers": "Against the most expensive software companies on the market, SpaceX is in a category of its own \u2014 and those companies make profits. TARGET 24s.",
+    "street": "Nine to ten analysts cover it and they cannot agree at all. For twenty twenty-seven the estimates run from a loss to three dollars forty-six a share. TARGET 22s.",
+    "verdict": "Six dimensions. The business scores brilliantly. The price and the governance do not. TARGET 24s.",
+    "twolists": "What is working, and what I would watch. TARGET 20s.",
+    "fairvalue": "Here is my own arithmetic, and I want you to see how generous it has to be. TARGET 24s.",
+    "call": "Not yet. Not because it is a bad company \u2014 because it is a wonderful company at a price that already assumes the hard part works. Let's go to the chart. TARGET 30s."
+  }
+}

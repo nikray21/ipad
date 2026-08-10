@@ -1,0 +1,946 @@
+{
+  "symbol": "DVA",
+  "company": "DaVita Inc.",
+  "episodeDate": "2026-08-06",
+  "_comment": "Every value in `filings` was read out of the document named in its `src`. Nothing here is recalled or estimated unless the key says `derived`. build_deck.py refuses to build if any fact is missing a `src`.",
+  "sources": {
+    "8k-q2-26": {
+      "label": "8-K EX-99.1 \u2014 Q2 2026 results, filed Aug 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706626000105/dva63026ex991.htm"
+    },
+    "8k-q1-26": {
+      "label": "8-K EX-99.1 \u2014 Q1 2026 results, filed May 5 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706626000060/dva33126ex991.htm"
+    },
+    "10q-q2-26": {
+      "label": "10-Q for the quarter ended June 30 2026, filed Aug 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706626000108/dva-20260630.htm"
+    },
+    "10k-2025": {
+      "label": "10-K for FY2025, filed Feb 11 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706626000012/dva-20251231.htm"
+    },
+    "8k-jun-26": {
+      "label": "8-K \u2014 Ninth Amendment to Credit Agreement, filed Jun 8 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000120677426000316/dva4647631-8k.htm"
+    },
+    "8k-q4-25": {
+      "label": "8-K EX-99.1 \u2014 Q4/FY2025 results, filed Feb 2 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706626000004/"
+    },
+    "8k-q3-25": {
+      "label": "8-K EX-99.1 \u2014 Q3 2025 results, filed Oct 29 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706625000163/"
+    },
+    "8k-q2-25": {
+      "label": "8-K EX-99.1 \u2014 Q2 2025 results, filed Aug 5 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706625000122/"
+    },
+    "8k-q1-25": {
+      "label": "8-K EX-99.1 \u2014 Q1 2025 results, filed May 12 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706625000085/"
+    },
+    "8k-q4-24": {
+      "label": "8-K EX-99.1 \u2014 Q4/FY2024 results, filed Feb 13 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706625000009/"
+    },
+    "8k-q3-24": {
+      "label": "8-K EX-99.1 \u2014 Q3 2024 results, filed Oct 29 2024",
+      "url": "https://www.sec.gov/Archives/edgar/data/927066/000092706624000177/"
+    }
+  },
+  "filings": {
+    "operations": {
+      "centersTotal": {
+        "v": 3266,
+        "src": "8k-q2-26",
+        "note": "at Jun 30 2026"
+      },
+      "centersUS": {
+        "v": 2671,
+        "src": "8k-q2-26"
+      },
+      "centersIntl": {
+        "v": 595,
+        "src": "8k-q2-26"
+      },
+      "patients": {
+        "v": 298500,
+        "src": "8k-q2-26",
+        "note": "approximately"
+      },
+      "treatmentsQ2": {
+        "v": 7226600,
+        "src": "8k-q2-26"
+      },
+      "treatmentsPerDay": {
+        "v": 92649,
+        "src": "8k-q2-26"
+      },
+      "treatmentsPerDayQ1": {
+        "v": 91650,
+        "src": "10q-q2-26"
+      },
+      "normNonAcqGrowthQ2": {
+        "v": 0.3,
+        "src": "8k-q2-26",
+        "unit": "%",
+        "note": "YoY, normalized, excludes acquisitions"
+      },
+      "normNonAcqGrowthQ1": {
+        "v": 0.1,
+        "src": "10q-q2-26",
+        "unit": "%"
+      }
+    },
+    "unitEconomics": {
+      "revPerTreatmentQ2": {
+        "v": 415.87,
+        "src": "8k-q2-26"
+      },
+      "revPerTreatmentQ1": {
+        "v": 417.59,
+        "src": "8k-q2-26"
+      },
+      "revPerTreatmentH1_26": {
+        "v": 416.71,
+        "src": "8k-q2-26"
+      },
+      "revPerTreatmentH1_25": {
+        "v": 402.38,
+        "src": "8k-q2-26"
+      },
+      "costPerTreatmentQ2": {
+        "v": 277.4,
+        "src": "8k-q2-26"
+      },
+      "costPerTreatmentQ1": {
+        "v": 280.11,
+        "src": "8k-q2-26"
+      },
+      "costPerTreatmentH1_26": {
+        "v": 278.74,
+        "src": "8k-q2-26"
+      },
+      "costPerTreatmentH1_25": {
+        "v": 270.05,
+        "src": "8k-q2-26"
+      }
+    },
+    "payorMixQ2": {
+      "_units": "USD thousands, U.S. dialysis segment patient service revenues",
+      "src": "10q-q2-26",
+      "y2026": {
+        "medicare": 1749289,
+        "medicaid": 226944,
+        "otherGov": 88848,
+        "commercial": 940228
+      },
+      "y2025": {
+        "medicare": 1659607,
+        "medicaid": 217699,
+        "otherGov": 83104,
+        "commercial": 947015
+      }
+    },
+    "payorStructure": {
+      "commercialPctOfPatients": {
+        "v": 11,
+        "src": "10k-2025",
+        "unit": "%",
+        "note": "non-hospital commercial, FY2025"
+      },
+      "commercialPctOfRevenue": {
+        "v": 26,
+        "src": "10k-2025",
+        "unit": "%",
+        "note": "of U.S. dialysis patient service revenues, FY2025"
+      },
+      "govPctOfPatients": {
+        "v": 89,
+        "src": "10k-2025",
+        "unit": "%"
+      },
+      "govPctOfRevenue": {
+        "v": 68,
+        "src": "10k-2025",
+        "unit": "%"
+      },
+      "medicarePctOfPatients": {
+        "v": 73,
+        "src": "10k-2025",
+        "unit": "%"
+      },
+      "medicarePctOfRevenue": {
+        "v": 57,
+        "src": "10k-2025",
+        "unit": "%"
+      },
+      "quote": {
+        "v": "The payments we receive from commercial payors generate nearly all of our profits and all of our non-hospital dialysis profits come from commercial payors.",
+        "src": "10k-2025",
+        "note": "DaVita's own words, Item 1 Business"
+      }
+    },
+    "segments": {
+      "_units": "USD millions, operating income",
+      "src": "10q-q2-26",
+      "q2_26": {
+        "usDialysis": 538,
+        "ancillary": 57,
+        "corporate": -16,
+        "total": 579
+      },
+      "q1_26": {
+        "usDialysis": 506,
+        "ancillary": 6,
+        "corporate": -30,
+        "total": 482
+      },
+      "h1_26": {
+        "usDialysis": 1044,
+        "ancillary": 63,
+        "corporate": -46,
+        "total": 1061
+      },
+      "h1_25": {
+        "usDialysis": 999,
+        "ancillary": 54,
+        "corporate": -76,
+        "total": 977
+      },
+      "revQ2_26": {
+        "usDialysis": 3012,
+        "ancillary": 557
+      },
+      "revQ1_26": {
+        "usDialysis": 2942,
+        "ancillary": 498
+      }
+    },
+    "earningsQuality": {
+      "ikcPriorYearRevH1_26": {
+        "v": 98491,
+        "src": "10q-q2-26",
+        "unit": "USD thousands",
+        "note": "IKC revenue recognised in H1 2026 for performance obligations satisfied in PREVIOUS years"
+      },
+      "ikcPriorYearRevH1_25": {
+        "v": 95911,
+        "src": "10q-q2-26",
+        "unit": "USD thousands"
+      },
+      "contractAssetsJun26": {
+        "v": 399165,
+        "src": "10q-q2-26",
+        "unit": "USD thousands"
+      },
+      "contractAssetsDec25": {
+        "v": 310541,
+        "src": "10q-q2-26",
+        "unit": "USD thousands"
+      }
+    },
+    "incomeStatementQ2": {
+      "_units": "USD thousands",
+      "src": "10q-q2-26",
+      "revenue": 3554084,
+      "operatingIncome": 579001,
+      "debtExpense": 150256,
+      "pretax": 435010,
+      "tax": 91787,
+      "netIncome": 343223,
+      "nci": 77826,
+      "netToDaVita": 265397,
+      "epsDiluted": 4.02,
+      "dilutedShares": 66092,
+      "basicShares": 64781
+    },
+    "results": {
+      "revenueQ2": {
+        "v": 3554,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "opIncomeQ2": {
+        "v": 579,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "opMarginQ2": {
+        "v": 16.3,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "opMarginQ1": {
+        "v": 14.1,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "opMarginH1_26": {
+        "v": 15.2,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "opMarginH1_25": {
+        "v": 14.8,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "epsQ2": {
+        "v": 4.02,
+        "src": "8k-q2-26"
+      },
+      "epsQ1": {
+        "v": 2.87,
+        "src": "8k-q2-26"
+      },
+      "epsH1_26": {
+        "v": 6.86,
+        "src": "8k-q2-26"
+      },
+      "epsH1_25": {
+        "v": 4.57,
+        "src": "8k-q2-26"
+      },
+      "cfoQ2": {
+        "v": 490,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "cfoTTM": {
+        "v": 2193,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "cfoTTMprior": {
+        "v": 1862,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "fcfQ2": {
+        "v": 256,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "note": "company-defined FCF. NOT CFO minus capex."
+      },
+      "fcfQ1": {
+        "v": 140,
+        "src": "8k-q1-26",
+        "unit": "USD millions"
+      },
+      "fcfTTM": {
+        "v": 1308,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "fcfTTMprior": {
+        "v": 947,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "taxRateAttrib": {
+        "v": 25.6,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "cfoQ2prior": {
+        "v": 324,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "note": "Q2 2025 operating cash flow, the year-ago comparison"
+      }
+    },
+    "guidance": {
+      "_units": "USD millions except per-share",
+      "current": {
+        "src": "8k-q2-26",
+        "asOf": "2026-08-04",
+        "adjOpIncomeLow": 2150,
+        "adjOpIncomeHigh": 2250,
+        "adjEpsLow": 14.1,
+        "adjEpsHigh": 15.2,
+        "fcfLow": 1000,
+        "fcfHigh": 1250
+      },
+      "prior": {
+        "src": "8k-q1-26",
+        "asOf": "2026-05-05",
+        "adjOpIncomeLow": 2150,
+        "adjOpIncomeHigh": 2250,
+        "adjEpsLow": 14.1,
+        "adjEpsHigh": 15.2,
+        "fcfLow": 1000,
+        "fcfHigh": 1250
+      },
+      "priorPrior": {
+        "src": "8k-q1-26",
+        "asOf": "2026-02-11",
+        "note": "the guide the Q1 release RAISED from",
+        "adjOpIncomeLow": 2085,
+        "adjOpIncomeHigh": 2235,
+        "adjEpsLow": 13.6,
+        "adjEpsHigh": 15.0
+      }
+    },
+    "balanceSheet": {
+      "totalDebtQ2": {
+        "v": 10848,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "netDebtQ2": {
+        "v": 10179,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "netDebtQ1": {
+        "v": 10050,
+        "src": "8k-q1-26",
+        "unit": "USD millions"
+      },
+      "leverageQ2": {
+        "v": 3.37,
+        "src": "8k-q2-26",
+        "unit": "x",
+        "note": "net debt / credit-agreement Consolidated EBITDA"
+      },
+      "leverageQ1": {
+        "v": 3.34,
+        "src": "8k-q1-26",
+        "unit": "x"
+      },
+      "leverageQ4_25": {
+        "v": 3.26,
+        "src": "8k-q1-26",
+        "unit": "x"
+      },
+      "leverageQ1_25": {
+        "v": 3.27,
+        "src": "8k-q1-26",
+        "unit": "x"
+      },
+      "interestRate": {
+        "v": 5.43,
+        "src": "8k-q2-26",
+        "unit": "%",
+        "note": "weighted average effective, end of quarter"
+      },
+      "equityDeficit": {
+        "v": -765.096,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "Total DaVita Inc. shareholders' equity deficit"
+      },
+      "totalAssets": {
+        "v": 17709.489,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "sharesOutstanding": {
+        "v": 63955,
+        "src": "10q-q2-26",
+        "unit": "thousands",
+        "note": "at Jun 30 2026"
+      },
+      "newTermLoanB2": {
+        "v": 500,
+        "src": "8k-jun-26",
+        "unit": "USD millions",
+        "note": "Ninth Amendment, incremental Tranche B-2, Jun 8 2026"
+      }
+    },
+    "buybacks": {
+      "_units": "amount USD millions, shares thousands",
+      "history": [
+        {
+          "period": "FY2024",
+          "amount": 1389,
+          "shares": 9833,
+          "avgPrice": 140.06,
+          "src": "10k-2025"
+        },
+        {
+          "period": "FY2025",
+          "amount": 1788,
+          "shares": 12679,
+          "avgPrice": 140.09,
+          "src": "10k-2025"
+        },
+        {
+          "period": "Jan 1\u2013Feb 6 26",
+          "amount": 217,
+          "shares": 1773,
+          "avgPrice": 122.08,
+          "src": "10k-2025"
+        },
+        {
+          "period": "Q1 2026",
+          "amount": 403,
+          "shares": 3005,
+          "avgPrice": 133.7,
+          "src": "8k-q1-26"
+        },
+        {
+          "period": "Apr 1\u2013May 5 26",
+          "amount": 302,
+          "shares": 2000,
+          "avgPrice": 149.81,
+          "src": "8k-q1-26"
+        },
+        {
+          "period": "Q2 2026",
+          "amount": 348,
+          "shares": 2238,
+          "avgPrice": 154.95,
+          "src": "8k-q2-26"
+        },
+        {
+          "period": "Jul 1\u2013Aug 4 26",
+          "amount": 37,
+          "shares": 200,
+          "avgPrice": 199.55,
+          "src": "8k-q2-26",
+          "searchAs": {
+            "shares": "0.2 million shares",
+            "amount": "$37 million"
+          }
+        }
+      ],
+      "h1_2026Amount": {
+        "v": 751,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "h1_2026Shares": {
+        "v": 5243,
+        "src": "8k-q2-26",
+        "unit": "thousands"
+      },
+      "authRemaining": {
+        "v": 1372.96,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "at Jul 31 2026, excludes excise tax"
+      },
+      "berkshireSettle": {
+        "v": 36.513,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "Jul 31 2026 \u2014 settled the Berkshire repurchase obligation, 183k shares at $199.55. This is what the $199.55 average price was."
+      },
+      "berkshire2025": {
+        "v": 485,
+        "src": "10k-2025",
+        "unit": "USD millions",
+        "note": "3,387k shares from Berkshire at $143.11 during FY2025"
+      }
+    },
+    "regulatory": {
+      "cms2026Final": {
+        "v": 2.2,
+        "src": "10k-2025",
+        "unit": "%",
+        "note": "CMS final rule, CY2026 ESRD PPS freestanding facility average reimbursement"
+      },
+      "cms2027Proposed": {
+        "v": 1.1,
+        "src": "10q-q2-26",
+        "unit": "%",
+        "note": "CMS proposed rule issued Jun 2026 for CY2027; includes an increase for incorporating phosphate binders into the base rate"
+      },
+      "costInflationH1": {
+        "v": 3.2,
+        "src": "10q-q2-26",
+        "unit": "%",
+        "note": "patient care cost per treatment, H1'26 vs H1'25 \u2014 the percentage is printed in the 10-Q's year-to-date table, not in the 8-K"
+      }
+    },
+    "other": {
+      "elaraCaring": {
+        "v": 200,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "cash paid Jul 20 2026 for a noncontrolling minority interest in Elara Caring (home health)"
+      },
+      "rateCaps": {
+        "v": 750,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "forward interest rate cap agreements entered Jul 7 2026, notional"
+      },
+      "largestCompetitor": {
+        "v": "Fresenius Medical Care",
+        "src": "10k-2025"
+      }
+    },
+    "earningsHistory": {
+      "_comment": "guideLow/High = full-year adjusted diluted EPS guidance issued THAT day. The reaction move is derived from /api/history, not from a filing.",
+      "releases": [
+        {
+          "date": "2024-10-29",
+          "q": "Q3'24",
+          "fy": "2024",
+          "guideLow": 9.25,
+          "guideHigh": 10.05,
+          "src": "8k-q3-24"
+        },
+        {
+          "date": "2025-02-13",
+          "q": "Q4'24",
+          "fy": "2025",
+          "guideLow": 10.2,
+          "guideHigh": 11.3,
+          "src": "8k-q4-24"
+        },
+        {
+          "date": "2025-05-12",
+          "q": "Q1'25",
+          "fy": "2025",
+          "guideLow": 10.2,
+          "guideHigh": 11.3,
+          "src": "8k-q1-25"
+        },
+        {
+          "date": "2025-08-05",
+          "q": "Q2'25",
+          "fy": "2025",
+          "guideLow": 10.2,
+          "guideHigh": 11.3,
+          "src": "8k-q2-25"
+        },
+        {
+          "date": "2025-10-29",
+          "q": "Q3'25",
+          "fy": "2025",
+          "guideLow": 10.35,
+          "guideHigh": 11.15,
+          "src": "8k-q3-25"
+        },
+        {
+          "date": "2026-02-02",
+          "q": "Q4'25",
+          "fy": "2026",
+          "guideLow": 13.6,
+          "guideHigh": 15.0,
+          "src": "8k-q4-25"
+        },
+        {
+          "date": "2026-05-05",
+          "q": "Q1'26",
+          "fy": "2026",
+          "guideLow": 14.1,
+          "guideHigh": 15.2,
+          "src": "8k-q1-26"
+        },
+        {
+          "date": "2026-08-04",
+          "q": "Q2'26",
+          "fy": "2026",
+          "guideLow": 14.1,
+          "guideHigh": 15.2,
+          "src": "8k-q2-26"
+        }
+      ]
+    },
+    "catalysts": {
+      "expandedHD": {
+        "v": "We will work to expand patient access to these therapies... We expect to begin offering expanded HD broadly across our network in the coming quarters.",
+        "src": "10q-q2-26",
+        "note": "Expanded hemodialysis / hemodiafiltration clear middle molecules and may reduce mortality vs standard dialysis. Lower mortality = larger census = the volume growth this company does not currently have. The real bull case."
+      },
+      "censusDrivers": {
+        "v": "better than expected patient census... primarily driven by lower than expected mortality partially offset by lower than expected incoming patient transfers and higher than expected missed treatments",
+        "src": "10q-q2-26",
+        "note": "Volume beat came from fewer deaths, not more new patients. Incoming transfers came in BELOW expectation."
+      },
+      "elaraCaring": {
+        "v": 200,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "cash paid Jul 20 2026 for a minority stake in Elara Caring, a home-health provider \u2014 $200M of discretionary spend at 3.37x leverage"
+      },
+      "rateCaps": {
+        "v": 750,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "forward SOFR caps entered Jul 7 2026 \u2014 management hedging its floating-rate exposure"
+      },
+      "gaGrowth": {
+        "v": 9.4,
+        "src": "10q-q2-26",
+        "unit": "%",
+        "note": "G&A up 9.4% YTD, driven by IT costs \u2014 running well ahead of the 3.8% revenue growth"
+      }
+    },
+    "quarterly": {
+      "_units": "eps USD/share \u00b7 debt USD millions \u00b7 leverage x",
+      "_comment": "Q4'25 onward DaVita reports 'from continuing operations'. Amounts stay comparable for an index, and this is the ONLY source of a reported Q4'25 EPS \u2014 the SEC XBRL pull has it null, which is why the deck otherwise avoids trailing EPS.",
+      "rows": [
+        {
+          "q": "Q3'24",
+          "end": "2024-09-30",
+          "eps": 2.5,
+          "debt": 9624,
+          "netDebt": 8553,
+          "lev": 3.17,
+          "src": "8k-q3-24"
+        },
+        {
+          "q": "Q4'24",
+          "end": "2024-12-31",
+          "eps": 3.09,
+          "debt": 9511,
+          "netDebt": 8716,
+          "lev": 3.03,
+          "src": "8k-q4-24"
+        },
+        {
+          "q": "Q1'25",
+          "end": "2025-03-31",
+          "eps": 2.0,
+          "debt": 9799,
+          "netDebt": 9361,
+          "lev": 3.27,
+          "src": "8k-q1-25"
+        },
+        {
+          "q": "Q2'25",
+          "end": "2025-06-30",
+          "eps": 2.58,
+          "debt": 10330,
+          "netDebt": 9622,
+          "lev": 3.34,
+          "src": "8k-q2-25"
+        },
+        {
+          "q": "Q3'25",
+          "end": "2025-09-30",
+          "eps": 2.04,
+          "debt": 10310,
+          "netDebt": 9604,
+          "lev": 3.37,
+          "src": "8k-q3-25"
+        },
+        {
+          "q": "Q4'25",
+          "end": "2025-12-31",
+          "eps": 2.94,
+          "debt": 10345,
+          "netDebt": 9668,
+          "lev": 3.26,
+          "src": "8k-q4-25"
+        },
+        {
+          "q": "Q1'26",
+          "end": "2026-03-31",
+          "eps": 2.87,
+          "debt": 10694,
+          "netDebt": 10050,
+          "lev": 3.34,
+          "src": "8k-q1-26"
+        },
+        {
+          "q": "Q2'26",
+          "end": "2026-06-30",
+          "eps": 4.02,
+          "debt": 10848,
+          "netDebt": 10179,
+          "lev": 3.37,
+          "src": "8k-q2-26"
+        }
+      ]
+    }
+  },
+  "fairValue": {
+    "_comment": "Seed assumptions for the on-screen calculator. These are Nikil's to change \u2014 the deck lets him step each one live with the arrow keys on slide 18.",
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": {
+        "revGrowth": 2.0,
+        "opMargin": 14.5,
+        "exitPE": 9.0,
+        "shareChange": -4.0
+      },
+      "base": {
+        "revGrowth": 4.0,
+        "opMargin": 15.5,
+        "exitPE": 11.0,
+        "shareChange": -6.0
+      },
+      "bull": {
+        "revGrowth": 5.5,
+        "opMargin": 16.5,
+        "exitPE": 13.0,
+        "shareChange": -7.0
+      }
+    },
+    "constants": {
+      "_comment": "Held flat across cases. Interest is net debt x rate; NCI and tax are run-rated off Q2 actuals.",
+      "netDebt": 10179,
+      "interestRate": 5.43,
+      "taxRate": 21.1,
+      "nciAnnualRunRate": 311,
+      "startRevenueTTM": 14010
+    }
+  },
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "Cheap for a reason \u2014 and the reason is on the balance sheet, not the income statement.",
+    "tiles": [
+      {
+        "dim": "Revenue quality",
+        "rating": "weak",
+        "fact": "Volume +0.3%. Commercial revenue actually fell 0.7% YoY."
+      },
+      {
+        "dim": "Margins",
+        "rating": "strong",
+        "fact": "16.3% op margin, highest since Q4'24 \u2014 but half the jump was ancillary."
+      },
+      {
+        "dim": "Balance sheet",
+        "rating": "risk",
+        "fact": "Net debt $10.2B, leverage 3.37x \u2014 top of its two-year range \u2014 and equity is negative $765M."
+      },
+      {
+        "dim": "Cash conversion",
+        "rating": "mixed",
+        "fact": "TTM FCF $1.31B, but H1 was only $396M against a $1.0\u20131.25B year."
+      },
+      {
+        "dim": "Capital allocation",
+        "rating": "mixed",
+        "fact": "Diluted shares 85.8M to 66.1M, \u221223%. Also bought at $199.55 three days before $181."
+      },
+      {
+        "dim": "Valuation",
+        "rating": "strong",
+        "fact": "12.3x 2026E, 9.8x 2027E. EV/EBIT ~9.9x on the guide."
+      }
+    ],
+    "why": [
+      "The business is not broken. It is a near-duopoly in a service people cannot skip, it converts profit to cash, and at {fwd.0.pe|x1} forward earnings you are not paying for growth you have to believe in.",
+      "But the earnings engine is financial, not operational. Revenue grew 5%; EPS grew 56%. The difference is a 23% smaller share count bought with borrowed money at 3.37x leverage and a 5.43% coupon.",
+      "And this stock has told you exactly what it cares about. Over eight quarters it has risen on one thing only \u2014 a higher guidance midpoint. It got two of those, worth +21% and +23%. Every other quarter it fell.",
+      "The genuine bull case is expanded HD: better middle-molecule clearance may cut mortality, and a larger surviving census is the volume growth this company does not have. That is quarters away, not priced, and worth watching.",
+      "I want a lower price or one clean quarter of commercial mix stabilising before this is a position, not a watch."
+    ],
+    "working": [
+      "A service nobody can skip \u2014 92,649 treatments a day, 89% government-funded",
+      "Operating margin 16.3%, the best since Q4'24, on falling cost per treatment",
+      "Cash is real \u2014 $2.19B of operating cash flow over the last year",
+      "A quarter of the company retired in two years, and $1.37B still authorised",
+      "{fwd.0.pe|x1} next year's earnings and an {fcfYield|%} free cash flow yield"
+    ],
+    "watch": [
+      "Volume growth is 0.3% \u2014 the business does not add patients",
+      "Commercial revenue, which carries nearly all the profit, fell 0.7%",
+      "Net debt $10.2B, leverage 3.37x, shareholders' equity negative $765M",
+      "Medicare's 2027 raise is 1.1% against costs running 3.2%",
+      "Half of last quarter's profit jump came from a lumpy value-based-care segment"
+    ],
+    "scored": [
+      {
+        "dim": "Revenue quality",
+        "score": 2,
+        "tone": "warn",
+        "fact": "Volume +0.3%. Commercial revenue actually fell 0.7% YoY."
+      },
+      {
+        "dim": "Margins",
+        "score": 4,
+        "tone": "",
+        "fact": "16.3% op margin, highest since Q4'24 \u2014 but half the jump was ancillary."
+      },
+      {
+        "dim": "Balance sheet",
+        "score": 1,
+        "tone": "bad",
+        "fact": "Net debt $10.2B, leverage 3.37x \u2014 top of its two-year range \u2014 and equity is negative $765M."
+      },
+      {
+        "dim": "Cash conversion",
+        "score": 3,
+        "tone": "warn",
+        "fact": "TTM FCF $1.31B, but H1 was only $396M against a $1.0\u20131.25B year."
+      },
+      {
+        "dim": "Capital allocation",
+        "score": 3,
+        "tone": "warn",
+        "fact": "Diluted shares 85.8M to 66.1M, \u221223%. Also bought at $199.55 three days before $181."
+      },
+      {
+        "dim": "Valuation",
+        "score": 5,
+        "tone": "",
+        "fact": "12.3x 2026E, 9.8x 2027E. EV/EBIT ~9.9x on the guide."
+      }
+    ]
+  },
+  "notes": {
+    "title": "Open on the number, not the company. DaVita went up 145% in seven months and gave back a quarter of it in three days \u2014 and it did that on its strongest quarter in six, with revenue, margin and EPS all up. That contradiction is the whole video. Tell them we're going to find out exactly why, using the filings, not the headlines.",
+    "tape": "Walk the tape left to right. January low of 101. Then two guidance increases took it to 247 by August 3rd. Earnings came out after the close on the 4th. On the 5th it opened at 205 and closed at 188 \u2014 down 17 percent in one day on nearly four million shares, five times normal volume. Point out that the market did not misread this. Something in the release genuinely changed the story.",
+    "business": "Keep this short and physical. DaVita runs dialysis clinics. If your kidneys fail you go three times a week, for the rest of your life or until a transplant. 3,266 clinics, 298,500 patients, 92,649 treatments every single day. Say the important part out loud: this is the most recurring revenue in healthcare. Nobody skips dialysis in a recession. That's why the market is willing to lever it up. TARGET 25s.",
+    "payor": "This is the slide that explains everything else \u2014 slow down here. 11 percent of DaVita's patients have commercial insurance. Those 11 percent generate 26 percent of the revenue. And read DaVita's own sentence off the screen: 'the payments we receive from commercial payors generate nearly all of our profits.' Their words, in the 10-K. So when you analyse DaVita you are not really analysing 298,500 patients. You are analysing about 33,000 of them. Everything else roughly washes. TARGET 30s.",
+    "twoprices": "Now make it concrete with the arithmetic. Blended, they collect $415.87 per treatment and spend $277.40 delivering it. But that blend hides two completely different businesses. Back out the 11/26 split and a government treatment brings in roughly $346 against a $277 cost \u2014 call it seventy dollars. A commercial treatment brings in roughly $980 \u2014 about seven hundred dollars of margin. Flag clearly that this is MY derivation from their disclosure, not a number they print. Then the punchline: a 1 percent shift from commercial to government does more damage than a 1 percent move in anything else on the income statement. TARGET 30s.",
+    "commercial": "So here is what actually happened this quarter. Government revenue grew 5.4 percent. Commercial revenue \u2014 the profitable 11 percent \u2014 went DOWN 0.7 percent. In dollars, government added 105 million and commercial lost 7 million. Commercial's share of the mix dropped from 32.6 to 31.3 percent. That's 128 basis points off the only line that carries profit. This is the single most important number in the release and it is buried in a footnote on page 7. TARGET 30s.",
+    "rpt": "The mix shift shows up immediately in the headline metric. Revenue per treatment went DOWN sequentially, 417.59 to 415.87. And read the company's own explanation: the decline was 'driven by changes in payor mix.' For a company whose volume grows 0.3 percent, price per treatment IS the growth. It just went backwards. TARGET 20s.",
+    "volume": "And there is no volume to fall back on. Normalized non-acquired treatment growth \u2014 that's their own metric, stripping out acquisitions and calendar effects \u2014 was 0.3 percent. Not 3. Zero point three. This company does not grow by treating more people. It grows by price, by buying clinics, and by buying its own stock. Remember that for the verdict. TARGET 20s.",
+    "headline": "Now the part everyone else's video stops at. On the surface this was a strong quarter. Revenue 3.55 billion. Operating income 579 million, a 16.3 percent margin, the best since December 2024. EPS 4.02 against 2.87 last quarter. If you only read the press release headline you'd expect this stock UP. So why was it down 17?",
+    "bridge": "Here's why. Operating income went up 97 million quarter over quarter. Break it into three pieces. The core US dialysis business \u2014 85 percent of revenue \u2014 contributed 32 million. Corporate costs swung 14 million. And the ancillary segment went from 6 million to 57 million \u2014 a 51 million dollar swing. That one small segment is 53 percent of the entire increase. The business everybody thinks they're buying produced a third of it.",
+    "quality": "And that 51 million is the softest kind of profit there is. Ancillary is mostly integrated kidney care \u2014 value-based contracts where you get paid later, after the health plan settles up. Two numbers from the 10-Q. One: in the first half they booked 98.5 million of revenue for work performed in PREVIOUS years. Two: contract assets \u2014 revenue earned but not yet billed \u2014 went from 310 million to 399 million in six months. So the segment that carried the quarter is recognising old work and building unbilled receivables. That is not the same thing as cash.",
+    "guidance": "And management told you so, without saying it. Their best quarter in six, and they left full-year guidance completely untouched \u2014 14.10 to 15.20, character for character the same as May 5th. Now do the arithmetic they hoped you wouldn't. First half was 6.86. That leaves 7.24 to 8.34 for the second half. Q2 alone annualises to 8.04 \u2014 at the TOP of that range. And that's with the share count still shrinking, which mechanically adds EPS. Strip that out and the midpoint says second-half earnings power goes DOWN from here.",
+    "cash": "Cash says the same thing. Trailing twelve month free cash flow is 1.31 billion and that looks great. But first-half free cash flow was only 396 million \u2014 140 in Q1, 256 in Q2. Full-year guidance is 1.0 to 1.25 billion. So the second half has to produce roughly 600 to 850 million, more than double the first half. Every dollar of that is already spoken for by buybacks and interest. TARGET 25s.",
+    "engine": "So where did 56 percent EPS growth come from on 5 percent revenue growth? Here. Share count went from 85.8 million to 64.0 million \u2014 they have retired roughly a quarter of the company in two years. 751 million of buybacks in the first half alone. That is the entire earnings story. And it is funded with debt: 10.2 billion net, leverage climbing 3.27 to 3.37 times, at 5.43 percent, and they added another 500 million term loan in June. Shareholders' equity is NEGATIVE 765 million \u2014 say clearly this is a buyback artefact, not insolvency, but it does mean there is no cushion. TARGET 35s.",
+    "buyprice": "One more thing nobody will show you. Look at what they've been PAYING. 122 dollars in January. 134 in Q1. 155 in Q2. And then between July 1st and August 4th they paid 199.55 \u2014 that was settling the Berkshire obligation on July 31st. Three trading days later the stock was 181. I am not saying management should time the market. I am saying a buyback is only value creation if you buy below intrinsic value, and this one has been chasing the price up. TARGET 25s.",
+    "medicare": "Now the 2027 problem, and this is in the 10-Q from June. Medicare is 57 percent of dialysis revenue. CMS gave them a 2.2 percent raise for 2026. The proposed rule for 2027 is 1.1 percent \u2014 half. Meanwhile their own cost per treatment is running 3.2 percent higher year over year. That is negative jaws on 57 percent of the business, starting in eighteen months. Nothing about that is priced into a 12 times multiple being 'cheap.' TARGET 25s.",
+    "valuation": "Alright, so what's it worth. At 181.50 you're paying 12.3 times this year's expected earnings and 9.8 times next year's. Trailing free cash flow yield is over 11 percent. That is objectively cheap. But \u2014 and this is the bit beginners miss \u2014 market cap is only 11.6 billion. Add 10.2 billion of net debt and you are actually buying a 21.8 billion dollar enterprise. On that basis it's about 9.9 times operating profit. Cheap-ish. Not a giveaway. The Street has a 240 target and still rates it a Hold, which tells you they agree the number is cheap and don't trust it either. TARGET 30s.",
+    "verdict": "Bring it home. Six things, scored. Margins and valuation are genuinely strong. Balance sheet is the risk. Revenue quality is weak because the only profitable payor went backwards. Cash and capital allocation are mixed. Then my call: WATCH, not buy. Say why in one line \u2014 the business is fine, the price is fine, the financing is what makes it fragile. Then walk the calculator: 4 percent growth, 15.5 percent margins, 11 times exit, 6 percent annual share shrink, and show what falls out. Remind them these are MY assumptions and they should change them and see what happens. TARGET 40s.",
+    "handoff": "That's the business. Fundamentals tell you what to own \u2014 they never tell you when. Let's go to the chart. TARGET 8s.",
+    "history": "This is the slide that proves it, and nobody else will have made this. I pulled the guidance table out of the last eight earnings releases and lined it up against what the stock did the very next session. Look at the pattern. Five times management revised the year inside the year. Four times they left the midpoint alone or just narrowed the range \u2014 the stock fell every single one, down as much as seventeen. One time they raised it, this May \u2014 plus twenty-three percent in a day. The grey bars are the January guides for a brand new year, which aren't a fair comparison so I'm excluding them. The takeaway: this stock does not trade on earnings, it trades on the guidance midpoint. On August 4th the midpoint didn't move. If you knew this pattern, the 17 percent drop was not a surprise at all.",
+    "indexed": "Here is the question that decides whether 12 times earnings is actually cheap. Both lines start at 100 a year ago. The blue steps up each time they reported \u2014 that's trailing earnings, and it only moves on the day the market found out. The orange is the share price. Earnings went up 17 percent over the year. The price went up 41 percent even after the crash. So the stock did not rise because the business got better by that much \u2014 it rose because the market agreed to pay a higher multiple. That is exactly the kind of gain that comes back out when guidance disappoints, and last week it did.",
+    "street": "Quick one. The average analyst target is 240 against 181 today \u2014 a 33 percent gap. And the same panel rates it a Hold. Two strong buys, three holds, one sell. That combination is unusual and it tells you something: everyone can see the number is low, nobody wants to be the person holding the leverage when Medicare resets. Note it's only six analysts covering this \u2014 thin coverage.",
+    "twolists": "Let me put both sides up honestly, because I don't want you buying or avoiding this on my word. Left side, what's genuinely working: a service nobody can skip, best margin since 2024, two billion of operating cash flow, a quarter of the company retired, twelve times earnings. Right side, what worries me: no volume growth, the profitable payor shrinking, ten billion of net debt with negative equity, Medicare's raise getting halved, and half of last quarter's profit jump coming from a lumpy segment. Every one of those ten lines traces to a filing. Read both columns and see which side you land on.",
+    "findings": "Before the numbers, here is what you are getting here that you will not get from a headline recap. Four things, all of them out of DaVita's filings. One: the only payor that carries profit went backwards. Two: half the quarter's profit jump came from a segment booking old work. Three: eight quarters of guidance tables explain the whole stock in one pattern. Four: they bought their own shares at 199 dollars three days before the stock was 181. Read them, promise to walk each, move on."
+  },
+  "findings": [
+    {
+      "claim": "Commercial revenue \u2014 <b>11% of patients but nearly all the profit</b> \u2014 fell 0.7% while government revenue grew 5.4%. The only line that carries margin went backwards.",
+      "where": "10-Q Note 2, page 7, in a payor table with no commentary",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "<b>53% of the quarter's profit jump</b> came from a lumpy value-based-care segment that booked $98M of revenue for work performed in <i>previous years</i>.",
+      "where": "10-Q segment note, cross-referenced against the revenue-recognition note",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "Eight quarters of guidance tables show this stock rises on <b>one thing only</b> \u2014 a higher guidance midpoint. On August 4 the midpoint did not move.",
+      "where": "eight separate 8-K guidance tables, lined up against the tape",
+      "src": "8k-q2-26"
+    },
+    {
+      "claim": "They bought stock at <b>$199.55</b> between July 1 and August 4 \u2014 settling the Berkshire obligation \u2014 three trading days before the stock traded at $181.",
+      "where": "10-Q equity note, matched to the buyback table in the release",
+      "src": "10q-q2-26"
+    }
+  ],
+  "proseLiteralsOK": [
+    "Revenue grew 5%; EPS grew 56%",
+    "a 23% smaller share count",
+    "3.37x leverage and a 5.43% coupon",
+    "worth +21% and +23%",
+    "92,649 treatments a day, 89% government-funded",
+    "Operating margin 16.3%, the best since Q4'24",
+    "$2.19B of operating cash flow",
+    "$1.37B still authorised",
+    "Volume growth is 0.3%",
+    "fell 0.7%",
+    "Net debt $10.2B, leverage 3.37x, shareholders' equity negative $765M",
+    "2027 raise is 1.1% against costs running 3.2%"
+  ],
+  "_proseLiteralsNote": "Figures quoted verbatim from the quarter's filings. They are fixed for the quarter and cannot drift between builds. Anything that moves with the share price must be a {path|fmt} token instead."
+}

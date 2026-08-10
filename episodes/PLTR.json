@@ -1,0 +1,864 @@
+{
+  "symbol": "PLTR",
+  "company": "Palantir Technologies Inc.",
+  "episodeDate": "2026-08-07",
+  "_comment": "Q2 2026 released after the close on Aug 3 2026; the stock rose 29.45% on Aug 4 and is still climbing. Every value in `filings` was read out of the document named in its `src`. The Terminal's epsYears/ttmSeries happen to agree with the filings for PLTR (minimal noncontrolling interests) but the deck still builds trailing EPS from the reported quarterly figures, per the standing rule.",
+  "sources": {
+    "8k-q2-26": {
+      "label": "8-K EX-99.1 \u2014 Q2 2026 results, filed Aug 3 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000039/a2026q2ex991pressrelease.htm"
+    },
+    "8k-q1-26": {
+      "label": "8-K EX-99.1 \u2014 Q1 2026 results, filed May 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000026/a2026q1ex991pressrelease.htm"
+    },
+    "8k-q4-25": {
+      "label": "8-K EX-99.1 \u2014 Q4/FY2025 results, filed Feb 2 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000004/a2025q4ex991earningsrelease.htm"
+    },
+    "8k-q3-25": {
+      "label": "8-K EX-99.1 \u2014 Q3 2025 results, filed Nov 3 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000130/a2025q3ex991earningsrelease.htm"
+    },
+    "8k-q2-25": {
+      "label": "8-K EX-99.1 \u2014 Q2 2025 results, filed Aug 4 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000105/a2025q2ex991pressrelease.htm"
+    },
+    "8k-q1-25": {
+      "label": "8-K EX-99.1 \u2014 Q1 2025 results, filed May 5 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000063/a2025q1ex991pressrelease.htm"
+    },
+    "8k-q4-24": {
+      "label": "8-K EX-99.1 \u2014 Q4/FY2024 results, filed Feb 3 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000007/a2024q4ex991earningsrelease.htm"
+    },
+    "8k-q3-24": {
+      "label": "8-K EX-99.1 \u2014 Q3 2024 results, filed Nov 4 2024",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
+    },
+    "10q-q2-26": {
+      "label": "10-Q for the quarter ended June 30 2026, filed Aug 4 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000041/pltr-20260630.htm"
+    },
+    "form4": {
+      "label": "SEC Form 4 insider transaction filings, Aug 2025 \u2013 Aug 2026 (60 filings)",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001321655&type=4&dateb=&owner=include&count=100"
+    }
+  },
+  "filings": {
+    "results": {
+      "revenueQ2": {
+        "v": 1935.464,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueQ2prior": {
+        "v": 1003.697,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "revenueGrowthQ2": {
+        "v": 93,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "grossProfitQ2": {
+        "v": 1638.594,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "costOfRevenueQ2": {
+        "v": 296.87,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "opIncomeQ2": {
+        "v": 912.004,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "note": "GAAP"
+      },
+      "opMarginQ2": {
+        "v": 47,
+        "src": "8k-q2-26",
+        "unit": "%",
+        "note": "GAAP"
+      },
+      "adjOpIncomeQ2": {
+        "v": 1194.472,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "adjOpMarginQ2": {
+        "v": 62,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "netIncomeQ2": {
+        "v": 1061.89,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "note": "attributable to common stockholders"
+      },
+      "epsQ2": {
+        "v": 0.41,
+        "src": "8k-q2-26",
+        "note": "GAAP diluted"
+      },
+      "cfoQ2": {
+        "v": 1216.167,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "adjFcfQ2": {
+        "v": 1220.359,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "ruleOf40Q2": {
+        "v": 155,
+        "src": "8k-q2-26",
+        "note": "revenue growth % + adjusted operating margin %"
+      },
+      "cashAndTreasuries": {
+        "v": 9.2,
+        "src": "8k-q2-26",
+        "unit": "USD billions",
+        "note": "company's own definition in the release"
+      }
+    },
+    "mix": {
+      "usRevenueQ2": {
+        "v": 1573.047,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "usRevenueQ2prior": {
+        "v": 732.592,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "rowRevenueQ2": {
+        "v": 362.417,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "rowRevenueQ2prior": {
+        "v": 271.105,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "usSharePctQ2": {
+        "v": 81,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "usSharePctQ2prior": {
+        "v": 73,
+        "src": "10q-q2-26",
+        "unit": "%"
+      },
+      "usCommercialQ2": {
+        "v": 764,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "usCommercialGrowth": {
+        "v": 149,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "usGovernmentQ2": {
+        "v": 809,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "usGovernmentGrowth": {
+        "v": 90,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "usGrowthQ2": {
+        "v": 115,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "govPctH1": {
+        "v": 52,
+        "src": "10q-q2-26",
+        "unit": "%",
+        "note": "of H1 2026 revenue"
+      },
+      "commercialPctH1": {
+        "v": 48,
+        "src": "10q-q2-26",
+        "unit": "%"
+      }
+    },
+    "earningsQuality": {
+      "_comment": "The three things that make GAAP net income look better than the operating business.",
+      "pretaxQ2": {
+        "v": 1081.345,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "taxProvisionQ2": {
+        "v": 15.383,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "taxProvisionH1": {
+        "v": 27.582,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "pretaxH1": {
+        "v": 1969.946,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "interestIncomeQ2": {
+        "v": 77.505,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "otherIncomeQ2": {
+        "v": 91.836,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "largely marketable-securities gains \u2014 $62.2M of realised and unrealised gains in H1"
+      },
+      "sbcQ2": {
+        "v": 265.209,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "sbcQ2prior": {
+        "v": 159.971,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "rpo": {
+        "v": 4.9,
+        "src": "10q-q2-26",
+        "unit": "USD billions",
+        "note": "GAAP remaining performance obligations \u2014 NON-cancelable contracted revenue only, and only from contracts whose original term exceeded 12 months. The termination-for-convenience right is why this figure is small: cancelable value is excluded from it, not included in it."
+      },
+      "rpoNext12Pct": {
+        "v": 43,
+        "src": "10q-q2-26",
+        "unit": "%",
+        "note": "of RPO expected as revenue in the next 12 months"
+      },
+      "usCommercialRDV": {
+        "v": 6.238,
+        "src": "8k-q2-26",
+        "unit": "USD billions",
+        "note": "Palantir's own operating metric: remaining value on signed U.S. commercial contracts. Applies neither of RPO's exclusions, and covers only U.S. commercial \u2014 so it is not comparable to RPO line-for-line."
+      },
+      "cancelableQuote": {
+        "v": "The Company allows many of its customers to terminate contracts for convenience prior to the end of the stated term with less than twelve months' notice.",
+        "src": "10q-q2-26",
+        "note": "Note 3, Remaining Performance Obligations"
+      },
+      "shortContractExpedient": {
+        "v": "The Company has elected the practical expedient allowing the Company to not disclose remaining performance obligations for contracts with original terms of twelve months or less.",
+        "src": "10q-q2-26",
+        "note": "The second reason RPO understates the book \u2014 nothing to do with cancelability."
+      }
+    },
+    "balanceSheet": {
+      "cash": {
+        "v": 2030.047,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "marketableSecurities": {
+        "v": 7379.052,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "totalAssets": {
+        "v": 11678.564,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "totalLiabilities": {
+        "v": 1793.68,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "equity": {
+        "v": 9774.194,
+        "src": "10q-q2-26",
+        "unit": "USD millions"
+      },
+      "accumulatedDeficit": {
+        "v": 1629.973,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "still a deficit, down from $3,562M at Dec 31 2025"
+      },
+      "revolverSize": {
+        "v": 500,
+        "src": "10q-q2-26",
+        "unit": "USD millions",
+        "note": "undrawn \u2014 no outstanding debt at Jun 30 2026"
+      },
+      "sharesOutstanding": {
+        "v": 2568694,
+        "src": "10q-q2-26",
+        "unit": "thousands",
+        "note": "DILUTED weighted-average for Q2'26, as printed in the 10-Q. Used as the single share basis throughout so market cap, EPS and the fair-value model never mix bases. Shares actually issued and outstanding are the sum of the class components below \u2014 the ~167M gap is unvested equity, and the deck discloses both."
+      },
+      "sharesClassA": {
+        "v": 2300517,
+        "src": "10q-q2-26",
+        "unit": "thousands",
+        "note": "issued and outstanding at Jun 30 2026"
+      },
+      "sharesClassB": {
+        "v": 101375,
+        "src": "10q-q2-26",
+        "unit": "thousands"
+      },
+      "sharesClassF": {
+        "v": 1005,
+        "src": "10q-q2-26",
+        "unit": "shares",
+        "note": "1,005 actual shares \u2014 rounds to 1 thousand"
+      }
+    },
+    "quarterly": {
+      "_units": "eps USD/share \u00b7 revenue USD millions \u00b7 growth and rule-of-40 in points",
+      "_comment": "Every row read from the release that first published that quarter. This is the source for the trailing-EPS series \u2014 the deck never uses the Terminal's epsYears/ttmSeries.",
+      "rows": [
+        {
+          "q": "Q3'24",
+          "end": "2024-09-30",
+          "eps": 0.06,
+          "revenue": 725.516,
+          "growth": 30,
+          "r40": 68,
+          "src": "8k-q3-24"
+        },
+        {
+          "q": "Q4'24",
+          "end": "2024-12-31",
+          "eps": 0.03,
+          "revenue": 827.519,
+          "growth": 36,
+          "r40": 81,
+          "src": "8k-q4-24"
+        },
+        {
+          "q": "Q1'25",
+          "end": "2025-03-31",
+          "eps": 0.08,
+          "revenue": 883.855,
+          "growth": 39,
+          "r40": 83,
+          "src": "8k-q1-25"
+        },
+        {
+          "q": "Q2'25",
+          "end": "2025-06-30",
+          "eps": 0.13,
+          "revenue": 1003.697,
+          "growth": 48,
+          "r40": 94,
+          "src": "8k-q2-25"
+        },
+        {
+          "q": "Q3'25",
+          "end": "2025-09-30",
+          "eps": 0.18,
+          "revenue": 1181.092,
+          "growth": 63,
+          "r40": 114,
+          "src": "8k-q3-25"
+        },
+        {
+          "q": "Q4'25",
+          "end": "2025-12-31",
+          "eps": 0.24,
+          "revenue": 1406.802,
+          "growth": 70,
+          "r40": 127,
+          "src": "8k-q4-25"
+        },
+        {
+          "q": "Q1'26",
+          "end": "2026-03-31",
+          "eps": 0.34,
+          "revenue": 1632.583,
+          "growth": 85,
+          "r40": 145,
+          "src": "8k-q1-26"
+        },
+        {
+          "q": "Q2'26",
+          "end": "2026-06-30",
+          "eps": 0.41,
+          "revenue": 1935.464,
+          "growth": 93,
+          "r40": 155,
+          "src": "8k-q2-26"
+        }
+      ],
+      "_pct": [
+        "growth",
+        "r40"
+      ]
+    },
+    "earningsHistory": {
+      "_comment": "guideLow/High = full-year REVENUE guidance in $B issued that day. Palantir raises at almost every report, so `kind` is nearly always 'up' \u2014 the interesting part is that the stock still fell three times.",
+      "releases": [
+        {
+          "date": "2024-11-04",
+          "q": "Q3'24",
+          "fy": "2024",
+          "guideLow": 2.805,
+          "guideHigh": 2.809,
+          "src": "8k-q3-24"
+        },
+        {
+          "date": "2025-02-03",
+          "q": "Q4'24",
+          "fy": "2025",
+          "guideLow": 3.741,
+          "guideHigh": 3.757,
+          "src": "8k-q4-24"
+        },
+        {
+          "date": "2025-05-05",
+          "q": "Q1'25",
+          "fy": "2025",
+          "guideLow": 3.89,
+          "guideHigh": 3.902,
+          "src": "8k-q1-25"
+        },
+        {
+          "date": "2025-08-04",
+          "q": "Q2'25",
+          "fy": "2025",
+          "guideLow": 4.142,
+          "guideHigh": 4.15,
+          "src": "8k-q2-25"
+        },
+        {
+          "date": "2025-11-03",
+          "q": "Q3'25",
+          "fy": "2025",
+          "guideLow": 4.396,
+          "guideHigh": 4.4,
+          "src": "8k-q3-25"
+        },
+        {
+          "date": "2026-02-02",
+          "q": "Q4'25",
+          "fy": "2026",
+          "guideLow": 7.182,
+          "guideHigh": 7.198,
+          "src": "8k-q4-25"
+        },
+        {
+          "date": "2026-05-04",
+          "q": "Q1'26",
+          "fy": "2026",
+          "guideLow": 7.65,
+          "guideHigh": 7.662,
+          "src": "8k-q1-26"
+        },
+        {
+          "date": "2026-08-03",
+          "q": "Q2'26",
+          "fy": "2026",
+          "guideLow": 8.15,
+          "guideHigh": 8.158,
+          "src": "8k-q2-26"
+        }
+      ]
+    },
+    "guidance": {
+      "_units": "USD billions",
+      "current": {
+        "src": "8k-q2-26",
+        "asOf": "2026-08-03",
+        "revLow": 8.15,
+        "revHigh": 8.158,
+        "adjOpLow": 4.889,
+        "adjOpHigh": 4.897,
+        "adjFcfLow": 4.5,
+        "adjFcfHigh": 4.7,
+        "usCommercialMin": 3.424,
+        "usCommercialGrowthMin": 134,
+        "q3RevLow": 2.16,
+        "q3RevHigh": 2.164,
+        "q3AdjOpLow": 1.292,
+        "q3AdjOpHigh": 1.296
+      },
+      "prior": {
+        "src": "8k-q1-26",
+        "asOf": "2026-05-04",
+        "revLow": 7.65,
+        "revHigh": 7.662,
+        "adjOpLow": 4.44,
+        "adjOpHigh": 4.452,
+        "adjFcfLow": 4.2,
+        "adjFcfHigh": 4.4
+      },
+      "initial": {
+        "src": "8k-q4-25",
+        "asOf": "2026-02-02",
+        "revLow": 7.182,
+        "revHigh": 7.198,
+        "adjOpLow": 4.126,
+        "adjOpHigh": 4.142,
+        "adjFcfLow": 3.925,
+        "adjFcfHigh": 4.125
+      }
+    },
+    "deals": {
+      "tcvQ2": {
+        "v": 3.373,
+        "src": "8k-q2-26",
+        "unit": "USD billions",
+        "note": "total contract value closed, +49% YoY"
+      },
+      "usCommercialTcvQ2": {
+        "v": 2.132,
+        "src": "8k-q2-26",
+        "unit": "USD billions",
+        "note": "record, +153% YoY"
+      },
+      "deals1m": {
+        "v": 220,
+        "src": "8k-q2-26",
+        "note": "deals closed of at least $1 million",
+        "searchAs": "220 deals of at least $1 million"
+      },
+      "deals10m": {
+        "v": 73,
+        "src": "8k-q2-26",
+        "note": "deals closed of at least $10 million",
+        "searchAs": "73 deals of at least $10 million"
+      },
+      "usCommercialTcvGrowthQ2": {
+        "v": 153,
+        "src": "8k-q2-26",
+        "unit": "%",
+        "note": "YoY growth in U.S. commercial total contract value"
+      }
+    },
+    "cashBridge": {
+      "_units": "USD thousands \u00b7 six months ended June 30 2026",
+      "src": "10q-q2-26",
+      "_comment": "The endpoint is deliberately labelled 'cash from operations less capital spending', NOT free cash flow \u2014 Palantir defines adjusted free cash flow itself and that term is reserved for their figure.",
+      "netIncome": 1942364,
+      "dna": 14985,
+      "sbc": 466801,
+      "securitiesGain": -62242,
+      "otherOperating": -85582,
+      "receivables": -433801,
+      "prepaid": -53906,
+      "payables": 88097,
+      "contractLiabilities": 256528,
+      "otherLiabilities": -17912,
+      "cfo": 2115332,
+      "capex": 21955
+    },
+    "balanceBlocks": {
+      "_units": "USD thousands at June 30 2026",
+      "src": "10q-q2-26",
+      "marketableSecurities": 7379052,
+      "cash": 2030047,
+      "receivables": 1485249,
+      "otherCurrentAssets": 205165,
+      "rouAssets": 230268,
+      "otherAssets": 287380,
+      "ppe": 61403,
+      "equityParent": 9774194,
+      "nci": 110690,
+      "deferredRevenueCurrent": 579437,
+      "deferredRevenueNoncurrent": 33722,
+      "customerDepositsCurrent": 452075,
+      "customerDepositsNoncurrent": 537,
+      "payablesAccrued": 504070,
+      "leaseLiabilities": 211400,
+      "otherNoncurrent": 12439
+    },
+    "insider": {
+      "_comment": "Open-market transactions ONLY: code S (sale) and code P (purchase). Option exercises (M), conversions (C), grants (A), tax withholding (F) and gifts (G) are excluded, because they are not decisions to buy or sell at the market price. 45 of the 57 filings carrying transactions reference a Rule 10b5-1 plan \u2014 these are mostly scheduled, not opportunistic, and the deck says so.",
+      "src": "form4",
+      "windowEnd": "2026-08-08",
+      "buckets": [
+        {
+          "label": "0\u20133 months",
+          "people": 8,
+          "sold": 1160270,
+          "value": 156.7,
+          "bought": 0
+        },
+        {
+          "label": "3\u20136 months",
+          "people": 8,
+          "sold": 3061479,
+          "value": 432.1,
+          "bought": 0
+        },
+        {
+          "label": "6\u20139 months",
+          "people": 8,
+          "sold": 1083844,
+          "value": 177.2,
+          "bought": 0
+        },
+        {
+          "label": "9\u201312 months",
+          "people": 8,
+          "sold": 1587750,
+          "value": 245.4,
+          "bought": 0
+        }
+      ],
+      "totalSoldShares": 6893343,
+      "totalSoldValue": 1011.3,
+      "totalBought": 0,
+      "distinctSellers": 9,
+      "plan10b5Filings": 45,
+      "totalFilings": 57,
+      "topSellers": [
+        {
+          "name": "Peter Thiel",
+          "role": "Director",
+          "shares": 2000000,
+          "value": 289.7
+        },
+        {
+          "name": "Alex Karp",
+          "role": "CEO & Director",
+          "shares": 1704730,
+          "value": 248.8
+        },
+        {
+          "name": "Stephen Cohen",
+          "role": "Co-Founder, Director",
+          "shares": 1346677,
+          "value": 198.0
+        },
+        {
+          "name": "Shyam Sankar",
+          "role": "CTO",
+          "shares": 1263255,
+          "value": 184.3
+        }
+      ],
+      "_derived": true,
+      "_derivedNote": "Aggregated from the raw Form 4 XML in scripts/.cache_form4/<SYM>/. audit_deck.py re-parses those filings and recomputes every figure here; validate_facts.py skips them because no single filing states them."
+    },
+    "peers": {
+      "_comment": "P/S = market cap / trailing-twelve-month revenue, and TTM revenue growth, both computed at BUILD TIME from live /api/profile and /api/fundamentals for each ticker. Nothing here is typed in; build_deck refuses if a peer cannot be fetched.",
+      "tickers": [
+        "CRM",
+        "SNOW",
+        "DDOG",
+        "MDB",
+        "NOW"
+      ],
+      "names": {
+        "CRM": "Salesforce",
+        "SNOW": "Snowflake",
+        "DDOG": "Datadog",
+        "MDB": "MongoDB",
+        "NOW": "ServiceNow"
+      }
+    }
+  },
+  "fairValue": {
+    "_comment": "Five years out. The tax rate is deliberately NORMALISED to 21% \u2014 Palantir paid 1.4% this half on loss carryforwards, and capitalising a 1.4% tax rate for five years would be wishful. Margins are GAAP operating, not adjusted, so the output is comparable to GAAP EPS. Interest is income here, not expense: net cash is negative net debt.",
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": {
+        "revGrowth": 25.0,
+        "opMargin": 42.0,
+        "exitPE": 25.0,
+        "shareChange": 1.0
+      },
+      "base": {
+        "revGrowth": 35.0,
+        "opMargin": 50.0,
+        "exitPE": 40.0,
+        "shareChange": 0.5
+      },
+      "bull": {
+        "revGrowth": 45.0,
+        "opMargin": 55.0,
+        "exitPE": 50.0,
+        "shareChange": 0.0
+      }
+    },
+    "constants": {
+      "netDebt": -9409.099,
+      "interestRate": 3.3,
+      "taxRate": 21.0,
+      "nciAnnualRunRate": 20,
+      "startRevenueTTM": 6155.941
+    }
+  },
+  "verdict": {
+    "call": "NOT AT THIS PRICE",
+    "callLine": "One of the best businesses in software, and the multiple has already paid for it.",
+    "tiles": [
+      {
+        "dim": "Revenue quality",
+        "rating": "strong",
+        "fact": "93% growth, accelerating eight quarters straight. 85% gross margin."
+      },
+      {
+        "dim": "Margins",
+        "rating": "strong",
+        "fact": "47% GAAP operating margin, up from 27%. Rule of 40 score of 155."
+      },
+      {
+        "dim": "Balance sheet",
+        "rating": "strong",
+        "fact": "$9.4B of cash and securities, zero drawn debt, $1.8B total liabilities."
+      },
+      {
+        "dim": "Cash conversion",
+        "rating": "strong",
+        "fact": "$1.216B operating cash flow on $1.935B revenue \u2014 a 63% margin."
+      },
+      {
+        "dim": "Earnings quality",
+        "rating": "weak",
+        "fact": "1.4% tax rate, 16% of pretax from interest and investment gains, SBC 13.7% of revenue."
+      },
+      {
+        "dim": "Valuation",
+        "rating": "risk",
+        "fact": "{val.evRevOnGuide|x0} this year's guided revenue. {val.peTrailing|x0} trailing earnings."
+      }
+    ],
+    "scored": [
+      {
+        "dim": "Revenue quality",
+        "score": 5,
+        "tone": "",
+        "fact": "93% growth, accelerating eight quarters straight. 85% gross margin."
+      },
+      {
+        "dim": "Margins",
+        "score": 5,
+        "tone": "",
+        "fact": "47% GAAP operating margin, up from 27%. Rule of 40 score of 155."
+      },
+      {
+        "dim": "Balance sheet",
+        "score": 5,
+        "tone": "",
+        "fact": "$9.4B of cash and securities, zero drawn debt, $1.8B total liabilities."
+      },
+      {
+        "dim": "Cash conversion",
+        "score": 5,
+        "tone": "",
+        "fact": "$1.216B operating cash flow on $1.935B revenue \u2014 a 63% margin."
+      },
+      {
+        "dim": "Earnings quality",
+        "score": 2,
+        "tone": "warn",
+        "fact": "1.4% tax rate, 16% of pretax from interest and investment gains, SBC 13.7% of revenue."
+      },
+      {
+        "dim": "Valuation",
+        "score": 1,
+        "tone": "bad",
+        "fact": "{val.evRevOnGuide|x0} this year's guided revenue. {val.peTrailing|x0} trailing earnings."
+      }
+    ],
+    "working": [
+      "Revenue growth accelerated eight quarters straight \u2014 {series.0.growth|%0} to {series.7.growth|%0}",
+      "U.S. commercial revenue grew 149%; closed a record {deals.usCommercialTcvQ2|usdB} of U.S. commercial contracts",
+      "GAAP operating margin 47%, and they earn a GAAP profit every quarter",
+      "{netCash|usd} of cash and securities against zero drawn debt",
+      "Guidance raised at nearly every report \u2014 this year's revenue guide is up {guide.raisedPct|%0} in six months"
+    ],
+    "watch": [
+      "{val.evRevOnGuide|x0} guided revenue means the good outcome is already the price",
+      "A 1.4% tax rate flatters earnings; it has to normalise eventually",
+      "Only {backlog.rpoNext12|usdB} of locked backlog lands within 12 months, against {backlog.h2Guided|usdB} guided for the next six",
+      "The guide itself implies growth rolls over: {series.7.growth|%0} to {guide.q3GrowthImplied|%0} to {guide.q4GrowthImplied|%0}",
+      "International revenue grew {mixd.rowGrowth|%0} while the U.S. grew {mixd.usGrowth|%0} \u2014 the story is American"
+    ],
+    "why": [
+      "Let me be clear about the business, because it is genuinely exceptional. Revenue growth has accelerated for eight consecutive quarters, which almost never happens at this scale. Operating margin went from 27% to 47%. They have {netCash|usd} of cash and no debt. On the quality of the business alone this is a five out of five.",
+      "The problem is arithmetic, not opinion. At {price|$} you are paying about {val.evRevOnGuide|x0} the revenue the company itself guided to for this year, and roughly {val.peTrailing|x0} what it earned over the last twelve months. Those numbers do not leave room for disappointment.",
+      "And the earnings are flattered in three ways at once. Palantir paid a 1.4% tax rate this half because of losses carried forward from a decade of them. Sixteen percent of pretax income came from interest and investment gains, not from selling software. And stock compensation is running at 13.7% of revenue.",
+      "Here is what the market already showed us. Over the last eight reports the business improved every single time, and the stock still fell on three of them. Great numbers and a good entry price are two different things.",
+      "So: not at this price. Put it on the list, know what you would pay, and wait for the market to hand you one of the drawdowns it has already handed out \u2014 it fell {peakToTrough.pct|%abs} from {peakToTrough.peak|$} to {peakToTrough.trough|$} inside the last year."
+    ]
+  },
+  "notes": {
+    "title": "Open on the number. Last Monday night Palantir reported, and on Tuesday the stock went up 29 percent in a single session on 175 million shares \u2014 four times normal volume. That one day added roughly 90 billion dollars of market value. And it is up another 8 percent as I record this. So the question for this video is not whether the quarter was good. It was extraordinary. The question is whether it was worth 90 billion dollars.",
+    "tape": "Walk the tape. Palantir topped out around 207 dollars last November. By late June it was 116 \u2014 that is a 44 percent drawdown, and nothing had gone wrong with the business. Then earnings came out after the close on August 3rd. August 4th it opened at 145 and closed at 162. From the July 31st close to right now it is up 37 percent in five sessions. Point out the volume bar: 175 million shares against a normal 44 million.",
+    "business": "Keep this simple and concrete. Palantir sells software that sits on top of an organisation's messy data and lets people actually make decisions with it. Two customer types. Governments \u2014 defence, intelligence, health agencies \u2014 that is 52 percent of revenue. And commercial businesses, 48 percent. The newer product, AIP, is the one wrapping large language models into that same decision layer. The reason the growth is so violent is that commercial customers started buying it very fast.",
+    "accel": "Now here is the number that should make you sit up, and almost nobody frames it this way. Look at year-over-year revenue growth across eight quarters: 30, 36, 39, 48, 63, 70, 85, 93 percent. It has gone UP every single quarter for two years. Companies this size do not accelerate. Growth decays \u2014 that is the norm. Eight consecutive quarters of acceleration at a six billion dollar revenue run rate is close to unprecedented.",
+    "rule40": "Let me teach you the one metric software investors actually use, because it makes the next few slides make sense. Rule of 40: take your revenue growth rate, add your operating margin, and if the total beats 40 you have a healthy software company. Most good ones sit in the 40s and 50s. Palantir's score this quarter was 155. Ninety-three percent growth plus a 62 percent adjusted margin. That is not a good software company, that is an outlier \u2014 and it is why the stock trades where it does.",
+    "margins": "And this is real operating leverage, not an accounting trick. Gross margin is 85 percent \u2014 software economics. But look at the operating line: 47 percent GAAP operating margin, up from 27 percent a year ago. They nearly doubled the margin while doubling revenue. Costs grew far slower than sales. That is the whole bull case in one slide.",
+    "intl": "Where is the growth coming from? Almost entirely America. U.S. revenue grew 115 percent \u2014 inside that, U.S. commercial grew 149 and U.S. government grew 90. Now look at the other bar. The rest of the world grew 34 percent. Not 115. Thirty-four. And international fell from 27 percent of revenue down to 19. The pitch in the CEO letter is a global AI sovereignty wave; the results are an American commercial boom. If part of your thesis is the international opportunity, it is not in the numbers yet.",
+    "raise": "They also raised guidance again, and hard. Back in February they guided this year's revenue to 7.19 billion. In May they raised it to 7.66. Last Monday they raised it again to 8.15. That is a 13 percent increase to a full-year forecast in six months \u2014 and remember, this is the number the whole valuation hangs off.",
+    "decel": "But do the arithmetic they did not put on the slide. First half revenue was 3.568 billion. The full-year guide is 8.154. That leaves 4.586 for the back half. They have guided Q3 to 2.162 billion, which is 83 percent growth \u2014 down from 93. Which leaves about 2.424 billion for Q4, or 72 percent growth. So the company's own guidance says the growth rate rolls over from 93 to 83 to 72. Still spectacular numbers. But the acceleration story ends here, by their own forecast.",
+    "history": "And this is the slide I most want you to remember, because it is the opposite of what people assume. Here are the last eight reports. Revenue growth, and what the stock did the next day. Growth went up every single quarter \u2014 and the stock FELL on three of these: down 12 percent, down 8, down 7. It also rose 24, 24 and 29 on the others. I looked for a pattern in how much the stock had run beforehand and I could not find a clean one, so I am not going to pretend there is one. The honest takeaway is simpler and more useful: the quality of the print does not tell you what the stock will do. What you paid to own it does. Which is why we spend the rest of this video on price.",
+    "backlog": "Here is a distinction that trips up almost everyone, and it is worth getting right. Palantir's release leads with 6.2 billion dollars of U.S. commercial remaining deal value, up 124 percent. That is their own metric: everything left on signed contracts. Now the 10-Q gives you the accounting number \u2014 remaining performance obligations, 4.9 billion, for the entire company. Why smaller? Two reasons. One: it counts only revenue the customer canNOT walk away from, and many Palantir customers can terminate for convenience on under a year's notice \u2014 so that value gets stripped out. Two: it also ignores any contract that was originally twelve months or shorter, which is just an accounting shortcut. So neither number is backlog you can bank on. The one that matters is this: of that 4.9 billion, only 43 percent \u2014 about 2.1 billion \u2014 lands in the next twelve months. And they have guided 4.6 billion for the next six months alone. That is not a scandal, it is how consumption software works. But it means the guidance is a forecast built on renewals and expansion, not a readout of contracts already locked. Which matters when you are paying 49 times revenue for it.",
+    "quality": "Now the part I have not seen anybody cover. Palantir's earnings look better than the operating business, in three ways at once. One: they paid fifteen million dollars of tax on 1.08 billion of pretax income. That is a 1.4 percent tax rate \u2014 legal, because they have a decade of losses carried forward, but at a normal 21 percent rate this quarter's profit would have been about a fifth lower. Two: 169 million of the pretax income was interest and investment gains, not software \u2014 that is 16 percent. Three: stock compensation was 265 million, which is 13.7 percent of revenue, and it is a real cost to you as a shareholder even though it never leaves the bank account.",
+    "balance": "Credit where it is due, though \u2014 the balance sheet is immaculate, and it is the mirror image of the last company I covered. Two billion of cash, 7.4 billion of marketable securities, so 9.4 billion total. Zero drawn debt against a 500 million dollar credit line they have not touched. Total liabilities of only 1.8 billion, and most of that is customers paying in advance. There is no financial risk here at all.",
+    "valuation": "So what does it cost. Market cap is about 434 billion on diluted shares \u2014 and note I am using diluted, which is 28 billion more than the headline figure, because there are 167 million shares of unvested equity out there. Strip the net cash and you have an enterprise value near 425 billion. Against the company's own guidance for this year: that is 52 times revenue and 87 times adjusted operating income. Trailing earnings put it at 145 times. For context, a great software business normally trades at 10 to 15 times revenue.",
+    "stale": "Quick but important note on the estimates. The analyst consensus for this year is 1.24 a share. But the company already earned 75 cents in the first half and has guided Q3 to numbers implying about 40 cents. So consensus is sitting below what management has already told us \u2014 the estimates have not caught up to last Monday's release. I am not going to build a valuation on a number that stale, which is why every multiple I just showed you comes from the company's own guidance instead.",
+    "street": "The Street is all over the place on this one, and that itself is informative. Sixteen strong buys, four holds, two sells. Average target 197. But look at the range: the low target is 80 dollars and the high is 255. The most bearish analyst thinks it is worth less than half of what the most bullish one does. When professionals disagree by three times on the same company, it is because they are arguing about the multiple, not the business.",
+    "verdict": "Six things scored. Four of them are as good as it gets \u2014 revenue quality, margins, balance sheet, cash conversion. Earnings quality is a two, because of the tax rate and the investment income. And valuation is a one. Notice the shape of that radar: this is a superb company with one problem, and the problem is what you have to pay.",
+    "twolists": "Both sides honestly. Left column, what is genuinely working: eight quarters of accelerating growth, 149 percent U.S. commercial, 47 percent operating margins, 9.4 billion of net cash, guidance up 13 percent in six months. Right column, what to watch: 49 times guided revenue, a 1.4 percent tax rate that has to normalise, only 4.9 billion of non-cancelable backlog, the company's own guide implying deceleration, and international growing 34 percent against America's 115. Read both. This is not a company with problems \u2014 it is a company with a price.",
+    "handoff": "Bring it home. My call is not at this price, and I want to be precise about what that means. It is not a short, it is not a bad company, and if you own it from lower I am not telling you to sell. Walk the calculator: even at 35 percent compound growth for five years, 50 percent operating margins and a 40 times exit multiple, you roughly break even from here. That is what 49 times revenue does \u2014 it prices the good outcome in advance. Change my assumptions on screen and see for yourself. Then let's go look at the chart.",
+    "indexed": "Now let me give you the strongest argument AGAINST what I am about to conclude, because I found it in my own data and I am not going to hide it. Both lines start at 100 a year ago. The blue steps up each time they report \u2014 that is trailing earnings. Earnings are up 290 percent over the year. The share price is up about 6. Read that the right way round. The multiple has already compressed enormously, because the earnings caught up to a price that was set a year ago. Palantir was far more expensive last August than it is today, and if earnings keep compounding like this the same thing happens again. That is the bull case, and it is a real one.",
+    "findings": "Before we go anywhere, here is what you are getting in this video that you will not get anywhere else. Four things, all of them out of the filings Palantir submitted last Monday rather than the press release. One: they paid a one-point-four percent tax rate. Two: the six-billion-dollar deal value everyone is quoting is not contracted revenue, and the real contracted number is smaller than the company. Three: their own raised guidance says growth rolls over. Four: sixteen percent of the profit did not come from software. Read them out, tell people you will walk each one, and move on \u2014 do not explain them yet.",
+    "peers": "So is it expensive? Expensive compared to what \u2014 that is the question people skip. Here is Palantir against five enterprise software peers on price to trailing revenue, and next to each one, how fast that company is actually growing. Palantir is the fastest grower on the board by a mile. It is also the most expensive by a wider margin than its growth advantage. Say that carefully: you are paying about five times the peer multiple for roughly three times the peer growth. More per unit of growth, not less. That is the honest version of the bull argument and the bear argument in one chart.",
+    "donut": "I want you to see what a 400 billion dollar price tag actually contains. The outer ring is the market cap. The inner rings, drawn to the same scale, are the revenue and the profit the company made over the last twelve months. That sliver is the business. Everything else in that ring is what the market expects Palantir to become. That is not an argument that it is wrong \u2014 it is a picture of how much has to go right.",
+    "insider": "Now here is something I pulled straight from SEC Form 4 filings, and I have not seen anybody cover it. Over the last twelve months, nine Palantir insiders sold about one billion dollars of stock. Peter Thiel roughly 290 million. Alex Karp, the CEO, 249 million. Stephen Cohen 198. Shyam Sankar 184. And the right-hand column \u2014 shares bought on the open market \u2014 is zero. Every bucket. Now be fair, because this matters: 45 of the 57 filings reference a pre-set 10b5-1 plan, so most of this was scheduled months in advance, not someone reacting to the price. Founders diversify, that is normal. But look at the other side of it. This stock fell 44 percent between November and June, and not one insider bought a single share on the open market. Make of that what you will.",
+    "fairvalue": "So where does that leave us. Green is undervalued, amber is about right, red is overvalued, and those are my bands, not somebody else's. My base case assumes 35 percent revenue growth compounded for five years, 50 percent operating margins, a 40 times exit multiple and a normalised tax rate. Those are not bearish assumptions \u2014 they are genuinely good outcomes. And the price still lands where it lands. On the next slide I will move those assumptions live so you can see how sensitive it is.",
+    "cash": "Profit and cash are not the same thing, and this shows you the gap. Start at net income for the first half, 1.94 billion. Now watch what gets added back to get to cash. The biggest single item is 467 million dollars of stock-based compensation. Palantir pays a big chunk of its people in shares, and because no cash leaves the building, accounting adds it back. That is correct accounting. But understand what it means for you: that cost was paid out of your ownership instead of the bank account. Then working capital takes about 309 million back out, mostly receivables growing with the business, capital spending is a rounding error because software, and you land at 2.09 billion of free cash flow. Genuinely excellent cash conversion. Just know what is inside it."
+  },
+  "findings": [
+    {
+      "claim": "Palantir paid a <b>1.4% tax rate</b> \u2014 $15M of tax on $1,081M of pretax profit. At a normal 21% rate this quarter earned about a fifth less.",
+      "where": "10-Q statement of operations \u2014 the tax line, one row above net income",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "Two backlog numbers measure two different things. The release leads with <b>$6.2B of US commercial deal value</b>; GAAP remaining performance obligations for the <i>whole company</i> are $4.9B \u2014 and only $2.1B of that lands within twelve months, against $4.6B guided for the next six.",
+      "where": "10-Q Note 3, against the highlights on page 1 of the release",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "Their own raised guidance implies growth <b>rolls over from 93% to 83% to 72%</b>. The eight-quarter acceleration story ends with this quarter.",
+      "where": "arithmetic on the FY guide they published as a raise",
+      "src": "8k-q2-26"
+    },
+    {
+      "claim": "<b>16% of pretax income</b> came from interest and investment gains, not from selling software \u2014 and stock compensation runs at 13.7% of revenue.",
+      "where": "10-Q statement of operations + the segment note",
+      "src": "10q-q2-26"
+    }
+  ],
+  "proseLiteralsOK": [
+    "Operating margin went from 27% to 47%",
+    "paid a 1.4% tax rate this half",
+    "stock compensation is running at 13.7% of revenue",
+    "A 1.4% tax rate flatters earnings",
+    "U.S. commercial revenue grew 149%",
+    "GAAP operating margin 47%"
+  ],
+  "_proseLiteralsNote": "Figures quoted verbatim from the quarter's filings. They are fixed for the quarter and cannot drift between builds. Anything that moves with the share price must be a {path|fmt} token instead."
+}
