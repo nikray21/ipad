@@ -30,10 +30,19 @@ def _candidates(sym, date):
         yield from sorted(glob.glob(os.path.join(root, "*", name)))
 
 
+# Where episodes are filed by default. $DECK_OUT still wins, but the default is
+# the folder that actually holds them rather than a bare Desktop drop.
+DEFAULT_OUT = "~/Desktop/Stock Analys"
+
+
 def write_dir(sym, date):
-    """Where a fresh build writes. Honours $DECK_OUT, else the flat Desktop path."""
+    """Where a fresh build writes. Honours $DECK_OUT, else DEFAULT_OUT if it exists."""
     env = os.environ.get("DECK_OUT")
-    root = os.path.expanduser(env) if env else os.path.expanduser("~/Desktop")
+    if env:
+        root = os.path.expanduser(env)
+    else:
+        preferred = os.path.expanduser(DEFAULT_OUT)
+        root = preferred if os.path.isdir(preferred) else os.path.expanduser("~/Desktop")
     return os.path.join(root, FOLDER.format(sym=sym, date=date))
 
 
