@@ -546,7 +546,7 @@ def slides(snap, ep, fact, fund_quarters=None):
                   "price": ix["price"], "earn": ix["earn"],
                   "priceLabel": f"price {pc(ix['priceGain'], 0)}",
                   "earnLabel": f"earnings {pc(ix['earnGain'], 0)}",
-                  "ticks": [{"t": e["t"], "lab": e["q"]} for e in ix["earn"]]},
+                  "ticks": [{"t": e["t"], "lab": e["_q"]} for e in ix["earn"]]},
         "legend": [{"c": "var(--s1)", "t": "share price, indexed to 100"},
                    {"c": "var(--s2)", "t": "trailing 12-month EPS — steps on the report date"}],
         "why": (f"Trailing earnings went from {d2(ix['baseEps'])} to {d2(ix['endEps'])}, "

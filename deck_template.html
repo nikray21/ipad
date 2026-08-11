@@ -174,6 +174,11 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 .fv-fair{fill:var(--warn);opacity:.70}
 .fv-over{fill:var(--crit);opacity:.30}
 .fv-t-under{fill:var(--good)} .fv-t-fair{fill:var(--warn)} .fv-t-over{fill:var(--crit)}
+/* A band that is mechanical rather than a verdict — a merger collar — must not
+   be painted green/red: "below the floor" is the WORST outcome for a holder, so
+   green there says the opposite of the truth. Neutral zones, labels carry it. */
+.fv-n-out{fill:var(--muted);opacity:.22} .fv-n-mid{fill:var(--s2);opacity:.40}
+.fv-tn-out{fill:var(--muted)} .fv-tn-mid{fill:var(--s2)}
 .legend{display:flex;gap:32px;font-size:18px;color:var(--ink-2);margin-top:8px}
 .legend i{display:inline-block;width:16px;height:16px;border-radius:3px;margin-right:9px;vertical-align:-2px}
 
@@ -1143,7 +1148,10 @@ function chartDumbbell(spec){
       style: `animation-delay:${240 + i * 110}ms;font-size:26px`}, r.toLab));
     if (r.delta) s.appendChild(el("text", {x: W - 20, y: cy + 9, "text-anchor": "end",
       class: "vlab fade", style: `animation-delay:${280 + i * 110}ms;font-size:30px;` +
-      `fill:${r.deltaGood === false ? "var(--muted)" : "var(--s1)"}`}, r.delta));
+      // Colour carries meaning: good is green, not the accent. `--s1` is a
+      // series colour and `--accent` is chrome, so neither may stand for "good".
+      `fill:${r.deltaGood === false ? "var(--muted)"
+              : r.deltaGood ? "var(--good)" : "var(--s1)"}`}, r.delta));
   });
   return s;
 }
@@ -1380,9 +1388,10 @@ function chartFvBand(spec){
   const X = v => PL + ((v - scLo) / (scHi - scLo)) * (W - PL - PR);
   const zone = (a, b, cls) => el("rect", {x: X(a), y, width: Math.max(2, X(b) - X(a)),
     height: bh, class: cls});
-  s.appendChild(zone(scLo, lo, "fv-under"));
-  s.appendChild(zone(lo, hi, "fv-fair"));
-  s.appendChild(zone(hi, scHi, "fv-over"));
+  const neutral = spec.zoneTone === "neutral";
+  s.appendChild(zone(scLo, lo, neutral ? "fv-n-out" : "fv-under"));
+  s.appendChild(zone(lo, hi, neutral ? "fv-n-mid" : "fv-fair"));
+  s.appendChild(zone(hi, scHi, neutral ? "fv-n-out" : "fv-over"));
   // A single point estimate reads as false precision. The bracket is the range
   // the same model produces across the bear and bull assumption sets.
   if (spec.rangeLo != null && spec.rangeHi != null) {
@@ -1394,18 +1403,53 @@ function chartFvBand(spec){
       .forEach(([v, lab, anch]) => {
         g.appendChild(el("line", {x1:X(v), y1:by - 11, x2:X(v), y2:by + 11,
           stroke:"var(--ink)", "stroke-width":2.5}));
-        g.appendChild(el("text", {x:X(v) + (anch === "end" ? -14 : 14), y:by + 6,
-          "text-anchor":anch, class:"ax", style:"font-size:18px"}, lab));
+        // Flip the label inboard when the tick sits at the very end of the rail,
+        // or it is drawn off the canvas: bear $3.06 landed at x = -37.
+        const room = 14 + lab.length * 9.5;
+        const flip = (anch === "end" && X(v) - room < 4) ||
+                     (anch === "start" && X(v) + room > W - 4);
+        const a = flip ? (anch === "end" ? "start" : "end") : anch;
+        // A flipped label sits over the bracket rail itself, which struck
+        // "bear $3.06" clean through. Drop it below the rail instead.
+        g.appendChild(el("text", {x:X(v) + (a === "end" ? -14 : 14),
+          y: by + (flip ? 28 : 6), "text-anchor":a, class:"ax",
+          style:"font-size:18px"}, lab));
       });
     s.appendChild(g);
   }
 
-  [[(scLo + lo) / 2, `more than ${(spec.band * 100).toFixed(0)}% below`, "fv-t-under"],
-   [fv, `within ${(spec.band * 100).toFixed(0)}% — about right`, "fv-t-fair"],
-   [(hi + scHi) / 2, `more than ${(spec.band * 100).toFixed(0)}% above`, "fv-t-over"]]
-   .forEach(([v, lab, cls]) =>
-     s.appendChild(el("text", {x: X(v), y: y + bh + 34, "text-anchor":"middle",
-       class: "ax " + cls, style:"font-size:17px;font-weight:700"}, lab)));
+  // Zone labels sit centred in their own zone — but when the price is far outside
+  // the band, the "below" and "fair" zones squeeze into a sliver at the left and
+  // their two labels print on top of each other (RKLB: price 648% over base).
+  // Detect that and fall back to an evenly spaced swatch legend, which cannot
+  // collide and keeps all three meanings on screen.
+  const pct = (spec.band * 100).toFixed(0);
+  const zLab = spec.zoneLabs || [`more than ${pct}% below`,
+                                 `within ${pct}% — about right`,
+                                 `more than ${pct}% above`];
+  const zc = spec.zoneTone === "neutral"
+    ? [["fv-tn-out", "fv-n-out"], ["fv-tn-mid", "fv-n-mid"], ["fv-tn-out", "fv-n-out"]]
+    : [["fv-t-under", "fv-under"], ["fv-t-fair", "fv-fair"], ["fv-t-over", "fv-over"]];
+  const zl = [[(scLo + lo) / 2, zLab[0], zc[0][0], zc[0][1]],
+              [fv, zLab[1], zc[1][0], zc[1][1]],
+              [(hi + scHi) / 2, zLab[2], zc[2][0], zc[2][1]]];
+  const halfW = lab => lab.length * 4.6;
+  const fits = zl.every(([v, lab], k) =>
+    k === 0 || X(v) - halfW(lab) > X(zl[k-1][0]) + halfW(zl[k-1][1]) + 10);
+  if (fits) {
+    zl.forEach(([v, lab, cls]) =>
+      s.appendChild(el("text", {x: X(v), y: y + bh + 34, "text-anchor":"middle",
+        class: "ax " + cls, style:"font-size:17px;font-weight:700"}, lab)));
+  } else {
+    const ly = y + bh + 30, gap = (W - PL - PR) / 3;
+    zl.forEach(([, lab, cls, fill], k) => {
+      const lx = PL + gap * k + 26;
+      s.appendChild(el("rect", {x: lx - 26, y: ly - 13, width: 17, height: 17, rx: 3,
+        class: fill}));
+      s.appendChild(el("text", {x: lx, y: ly, "text-anchor":"start",
+        class: "ax " + cls, style:"font-size:17px;font-weight:700"}, lab));
+    });
+  }
 
   [[spec.price, spec.priceLab, "Current price", -1], [fv, spec.fairLab, spec.fairName, 1]]
     .forEach(([v, lab, name, dir], k) => {
@@ -1548,8 +1592,17 @@ function chartTrack(spec){
   const s = svgRoot(W, H);
   const PL = 130, PR = 130, y = 150;
   const lo = spec.lo, hi = spec.hi;
-  const X = v => PL + ((v - lo) / (hi - lo)) * (W - PL - PR);
-  s.appendChild(el("rect", {x:PL, y:y-4, width:W-PL-PR, height:8, rx:4, fill:"var(--grid)"}));
+  // The scale spanned the analyst range ALONE, so a price below the lowest
+  // target drew off the canvas: DVA's rail bled 730px past the left edge and
+  // the "now" marker — the single most important mark — vanished entirely.
+  // Span everything actually drawn, and let the rail show the range.
+  const all = [lo, hi, spec.now, spec.mean].filter(v => v != null && !isNaN(v));
+  const rawLo = Math.min(...all), rawHi = Math.max(...all);
+  const pad = (rawHi - rawLo) * 0.06 || 1;
+  const scLo = rawLo - pad, scHi = rawHi + pad;
+  const X = v => PL + ((v - scLo) / (scHi - scLo)) * (W - PL - PR);
+  s.appendChild(el("rect", {x:X(lo), y:y-4, width:Math.max(2, X(hi)-X(lo)), height:8, rx:4,
+    fill:"var(--grid)"}));
   s.appendChild(el("rect", {x:X(spec.now), y:y-4, width:Math.max(2, X(spec.mean)-X(spec.now)),
     height:8, rx:4, fill:"var(--s1)", opacity:".5", class:"fade"}));
   [{v:lo, lab:spec.loLab, cls:"ax", side:1},
@@ -1802,6 +1855,18 @@ function deckAudit(){
     const host = sl.querySelector("[data-chart]");
     if (host && !host.querySelector("svg")) issues.push(`${nm}: DEAD CHART`);
 
+    // A key the renderer does not read prints the literal word "undefined" on
+    // camera. Cheap to check, and it caught it on the very first slide.
+    {
+      const junk = /\b(undefined|NaN|\[object Object\])\b/;
+      for (const n of sl.querySelectorAll("*")) {
+        if (n.children.length) continue;
+        const s = (n.textContent || "").trim();
+        if (s && junk.test(s))
+          issues.push(`${nm}: renders the literal text "${s.slice(0, 30)}"`);
+      }
+    }
+
     const svg = sl.querySelector("[data-chart] svg");
     if (svg) {
       const vb = (svg.getAttribute("viewBox") || "").split(/\s+/).map(Number);
@@ -1811,16 +1876,56 @@ function deckAudit(){
         // Measure the CONTENT against the viewBox. Measuring the <svg> element
         // box is useless — it is in bounds by definition, which is how a bridge
         // drawing to 2587 inside a 500-high box passed unnoticed.
+        // All FOUR edges. This checked only bottom and right, so a bracket label
+        // that ran to x = -37 — clipped clean off the left of the rail — passed.
         if (bb.y + bb.height > vb[3] + 40)
           issues.push(`${nm}: chart draws ${(bb.y + bb.height - vb[3]).toFixed(0)}px below its box`);
         if (bb.x + bb.width > vb[2] + 60)
           issues.push(`${nm}: chart draws ${(bb.x + bb.width - vb[2]).toFixed(0)}px past its right edge`);
+        if (bb.y < vb[1] - 40)
+          issues.push(`${nm}: chart draws ${(vb[1] - bb.y).toFixed(0)}px above its box`);
+        if (bb.x < vb[0] - 8)
+          issues.push(`${nm}: chart draws ${(vb[0] - bb.x).toFixed(0)}px past its left edge`);
         const why = sl.querySelector(".why");
         if (why) {
           const hb = svg.getBoundingClientRect(), wb = why.getBoundingClientRect();
           const sc = hb.width / vb[2], contentBottom = hb.top + (bb.y + bb.height) * sc;
           if (contentBottom > wb.top + 2)
             issues.push(`${nm}: chart overlaps the why band by ${(contentBottom - wb.top).toFixed(0)}px`);
+        }
+      }
+      // Text drawn ACROSS a stroked line. Text-vs-text could not see this: a
+      // bracket label flipped inboard printed on top of its own rail, so the
+      // value read as struck through. Only near-horizontal lines matter — a
+      // vertical tick passing beside a centred label is by design.
+      {
+        const inkOf = n => {
+          const fs = parseFloat(getComputedStyle(n).fontSize) || 16;
+          const yb = parseFloat(n.getAttribute("y"));
+          return isNaN(yb) ? null : {top: yb - fs * 0.75, bot: yb + fs * 0.22, fs};
+        };
+        const lines = [...svg.querySelectorAll("line")].map(n => {
+          const g = k => parseFloat(n.getAttribute(k));
+          return {y1:g("y1"), y2:g("y2"), x1:Math.min(g("x1"),g("x2")),
+                  x2:Math.max(g("x1"),g("x2")), cls: n.getAttribute("class"),
+                  w: parseFloat(n.getAttribute("stroke-width")) ||
+                     parseFloat(getComputedStyle(n).strokeWidth) || 1};
+        }).filter(L => !isNaN(L.y1) && Math.abs(L.y1 - L.y2) <= 2 && L.x2 - L.x1 > 30
+                       // A recessive 1px gridline is DESIGNED to pass behind a
+                       // label — it grazed a "$" descender and read as a fault.
+                       // Only a prominent rule can strike text through.
+                       && L.w >= 2 && !/grid|zero/.test(L.cls || ""));
+        for (const n of svg.querySelectorAll("text")) {
+          const ink = inkOf(n); if (!ink) continue;
+          const bb = n.getBBox(); if (!bb.width) continue;
+          for (const L of lines) {
+            const half = Math.max(1.5, L.w / 2);
+            if (L.y1 + half > ink.top && L.y1 - half < ink.bot &&
+                bb.x < L.x2 - 4 && bb.x + bb.width > L.x1 + 4) {
+              issues.push(`${nm}: "${n.textContent.slice(0,22)}" is struck through by a line`);
+              break;
+            }
+          }
         }
       }
       // Text running into text. Glyph boxes are the wrong yardstick: a 44px value

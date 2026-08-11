@@ -265,9 +265,9 @@ def slides(snap, ep, fact, fund_quarters=None):
         "price": s["price"], "changePct": s["changePct"],
         "hook": (f"Public for {s['tapeDays']} trading days. Worth {b_(s['marketCap'])}. "
                  f"This is the first quarter it has ever had to show anyone."),
-        "chips": [{"k": "424(b)(4)", "v": "Jun 12 2026"},
-                  {"k": "10-Q", "v": "Aug 4 2026"},
-                  {"k": "8-K", "v": "Aug 4 2026"}],
+        "chips": [{"form": "424(b)(4)", "when": "Jun 12 2026"},
+                  {"form": "10-Q", "when": "Aug 4 2026"},
+                  {"form": "8-K", "when": "Aug 4 2026"}],
         "notes": N["title"], "target": 20,
     })
 

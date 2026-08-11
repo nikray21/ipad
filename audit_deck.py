@@ -261,17 +261,17 @@ def audit_no_trailing_multiple(snap, ep, html):
     ok("no-trailing-pe")
 
     if not snap.get("indexed"):
-        SKIPS.append("trailing-eps-sourced: no trailing series — the company has not been "
-                     "public for four quarters")
+        SKIPS.append("trailing-eps-sourced: no trailing earnings series — the company has "
+                     "either not been public four quarters or has never reported a profit")
         SKIPS.append("indexed-series: no trailing series to index against")
         return
 
     rows = ep["filings"]["quarterly"]["rows"]
     for step in snap["indexed"]["earn"]:
-        k = next(i for i, r in enumerate(rows) if r["q"] == step["q"])
+        k = next(i for i, r in enumerate(rows) if r["q"] == step["_q"])
         window = rows[k - 3:k + 1]
         if len(window) != 4:
-            bad("trailing-eps-sourced", f"{step['q']} trailing window is not four quarters")
+            bad("trailing-eps-sourced", f"{step['_q']} trailing window is not four quarters")
             return
         for w in window:
             if w.get("eps") is None or not w.get("src"):
@@ -279,9 +279,9 @@ def audit_no_trailing_multiple(snap, ep, html):
                     f"{step['q']} window includes {w['q']} with no reported, sourced EPS")
                 return
         want = round(sum(w["eps"] for w in window), 2)
-        if not close(step["eps"], want, 0.0001):
+        if not close(step["_eps"], want, 0.0001):
             bad("trailing-eps-sourced",
-                f"{step['q']} trailing EPS {step['eps']} != sum of four reported quarters {want}")
+                f"{step['q']} trailing EPS {step['_eps']} != sum of four reported quarters {want}")
             return
     ok(f"trailing-eps-sourced ({len(snap['indexed']['earn'])} steps, all from reported quarters)")
 
@@ -429,6 +429,14 @@ def audit_earnings_history(snap, ep, sym, html):
     days = [_dt.datetime.fromtimestamp(p["t"] / 1000, _dt.timezone.utc).strftime("%Y-%m-%d")
             for p in hist["points"]]
     for r in snap["releases"]:
+        if r.get("kind") == "pending":
+            # Built the same evening the release landed. There is no session to
+            # verify yet; assert the engine left the move empty rather than
+            # inventing one from the after-hours print.
+            if r.get("move") is not None or r.get("reactDate") is not None:
+                bad("earnings-reaction", f"{r['q']} is marked pending but carries a move")
+                return
+            continue
         nxt = [i for i, d in enumerate(days) if d > r["date"]]
         i = nxt[0]
         if days[i] != r["reactDate"]:
@@ -454,6 +462,8 @@ def audit_earnings_history(snap, ep, sym, html):
         if not close(r["mid"], (f["guideLow"] + f["guideHigh"]) / 2, 0.0001):
             bad("guidance-midpoint", f"{r['q']} midpoint disagrees with the filing table")
             return
+        if r.get("kind") == "pending":
+            continue                      # no session yet; nothing to classify
         if k and rels[k - 1]["fy"] == f["fy"]:
             pm = (rels[k - 1]["guideLow"] + rels[k - 1]["guideHigh"]) / 2
             want = "up" if r["mid"] > pm + 1e-9 else "down" if r["mid"] < pm - 1e-9 else "flat"
@@ -466,9 +476,12 @@ def audit_earnings_history(snap, ep, sym, html):
     ok("guidance-action")
 
     es = snap["earningsStats"]
-    ups = [r for r in snap["releases"] if r["move"] > 0]
-    downs = [r for r in snap["releases"] if r["move"] < 0]
-    rev = [r for r in snap["releases"] if r["kind"] != "new"]
+    # A release whose session has not happened yet has move=None and is excluded
+    # from every count — it cannot be up, down, or a verified revision.
+    settled = [r for r in snap["releases"] if r.get("move") is not None]
+    ups = [r for r in settled if r["move"] > 0]
+    downs = [r for r in settled if r["move"] < 0]
+    rev = [r for r in settled if r["kind"] not in ("new", "pending")]
     raised = [r for r in rev if r["kind"] == "up"]
 
     # Re-derive the counts rather than trust the snapshot's own arithmetic.
@@ -533,8 +546,17 @@ def audit_no_slide_crossrefs(payload):
     slide", "both of the next two") breaks silently in the shortened cut. Two
     such references had already drifted onto the wrong slides.
     """
-    pat = re.compile(r"\b(next|previous|last|following)\s+(slide|two slides|chart)\b"
-                     r"|\bslide\s+\d+\b|\bon the next\b", re.I)
+    # "the next number", "the slide before" and "coming up" are the same bug as
+    # "the next slide" — a pointer at a neighbour that survives being cut.
+    # The loose nouns ("number", "one") only count FORWARD. "that last one"
+    # points at the third figure inside the same band — ordinary prose, and
+    # flagging it was a false positive. A forward pointer is the actual bug,
+    # because the thing pointed at is what gets cut.
+    pat = re.compile(
+        r"\b(next|previous|last|following)\s+(slide|two slides|chart|page|section)\b"
+        r"|\b(next|following)\s+(number|one|figure|chart)\b"
+        r"|\bslide\s+\d+\b|\bon the next\b|\bcoming up\b"
+        r"|\b(slide|chart)\s+(before|after)\s+(this|that|it)\b", re.I)
     hits = []
     for i, sl in enumerate(payload["slides"], 1):
         for field in ("head", "sub", "why", "callLine"):
@@ -648,7 +670,7 @@ def audit_chart_shape(payload):
     """
     tpl = open(os.path.join(HERE, "deck_template.html")).read()
     fns = re.split(r"\nfunction (chart\w+)\(", tpl)
-    required, known_keys = {}, {}
+    required, known_keys, item_keys = {}, {}, {}
     for i in range(1, len(fns), 2):
         body = fns[i + 1].split("\nfunction ")[0]
         kind = fns[i].replace("chart", "").lower()
@@ -656,6 +678,15 @@ def audit_chart_shape(payload):
         known_keys[kind] = keys
         required[kind] = {k for k in keys
                           if re.search(rf"spec\.{k}\.(map|forEach|length|flatMap)", body)}
+        # And what the chart reads off each ITEM of those collections. Checking
+        # only top-level keys is how a rename of every `"v":` to `"when":` in a
+        # deck module passed clean: the charts had no value to plot and nothing
+        # looked inside the rows.
+        for k in required[kind]:
+            m = re.search(rf"spec\.{k}\.(?:map|forEach|flatMap)\(\s*\(?(\w+)", body)
+            if m:
+                pv = m.group(1)
+                item_keys[(kind, k)] = set(re.findall(rf"\b{pv}\.(\w+)\b", body))
     problems = []
     for i, sl in enumerate(payload["slides"], 1):
         c = sl.get("chart")
@@ -672,6 +703,27 @@ def audit_chart_shape(payload):
         ignored = sorted(set(c) - known_keys[kind] - {"kind", "height", "fmt2", "fmtKind"})
         for k in ignored:
             problems.append(f"slide {i} ({kind}) passes `{k}`, which {kind} never reads")
+        # Row level, both directions, in the only two forms that cannot be a
+        # matter of taste: a key no row supplies that the chart needs to plot
+        # anything, and a key every row supplies that the chart never reads.
+        for coll in sorted(required[kind] & set(c)):
+            reads = item_keys.get((kind, coll))
+            items = [r for r in (c.get(coll) or []) if isinstance(r, dict)]
+            if not reads or not items:
+                continue
+            supplied = set().union(*(set(r) for r in items))
+            if not (reads & supplied):
+                problems.append(f"slide {i} ({kind}) `{coll}` rows supply none of "
+                                f"{sorted(reads)[:6]} — the chart has nothing to plot")
+            for k in sorted(supplied - reads):
+                # A leading underscore declares "carried on purpose, not for
+                # render" — the same convention `_derived` already uses. Without
+                # it there is no way to keep provenance beside the drawn values.
+                if k.startswith("_"):
+                    continue
+                if all(k in r for r in items):
+                    problems.append(f"slide {i} ({kind}) every `{coll}` row carries "
+                                    f"`{k}`, which {kind} never reads")
     if problems:
         bad("chart-shape", f"{len(problems)} spec mismatch(es): {problems[:6]}")
         return

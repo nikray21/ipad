@@ -276,6 +276,20 @@ def build_snapshot(sym, ep):
     for rel in F["earningsHistory"]["releases"]:
         nxt = [i for i, d in enumerate(bar_days) if d > rel["date"]]
         if not nxt or nxt[0] == 0:
+            # A deck built the same evening a release lands has no reaction yet. That
+            # is a normal thing to do on this channel, so record the release with the
+            # move left as None and let the slide say the verdict is pending. It must
+            # never be filled in with the after-hours print dressed up as a session.
+            if rel["date"] >= bar_days[-1]:
+                releases.append({
+                    "date": rel["date"], "q": rel["q"], "fy": rel["fy"],
+                    "guideLow": rel.get("guideLow"), "guideHigh": rel.get("guideHigh"),
+                    "mid": ((rel["guideLow"] + rel["guideHigh"]) / 2
+                            if rel.get("guideLow") is not None else None),
+                    "action": "reaction pending", "kind": "pending",
+                    "reactDate": None, "move": None, "volX": None,
+                })
+                continue
             die(f"no trading session after the {rel['date']} release in the history window")
         i = nxt[0]
         # Not every company guides. SpaceX gives none at all, so there is no
@@ -318,7 +332,7 @@ def build_snapshot(sym, ep):
     # Only WITHIN-YEAR revisions are comparable. A January guide for a new
     # fiscal year is judged against a consensus we do not hold, so it is shown
     # but explicitly excluded from the claim.
-    revisions = [r for r in releases if r["kind"] not in ("new", "none")]
+    revisions = [r for r in releases if r["kind"] not in ("new", "none", "pending")]
     raised = [r for r in revisions if r["kind"] == "up"]
     held = [r for r in revisions if r["kind"] != "up"]
     earnings_stats = {
@@ -350,9 +364,19 @@ def build_snapshot(sym, ep):
     # and a price history that covers them. A company that listed this quarter has
     # neither, so the chart is omitted rather than faked.
     indexed = None
+    _eps_present = sum(1 for r in qrows if r.get("eps") is not None)
     if len(ttm) < 4 or newly_listed:
-        if not newly_listed:
-            die(f"only {len(ttm)} trailing-EPS points — not enough for the indexed chart")
+        if newly_listed:
+            pass
+        elif _eps_present <= 1:
+            # A company that has never earned a profit has no earnings series to
+            # index against. Omit it — rule 4, a metric with a missing input is
+            # omitted, not estimated — and say so rather than dying.
+            print(f"  ! only {_eps_present} reported EPS figure(s) — this company has no earnings "
+                  f"series, so the price-vs-earnings chart is omitted, not estimated")
+        else:
+            die(f"only {len(ttm)} trailing-EPS points from {_eps_present} reported quarters — "
+                f"not enough for the indexed chart, and this company does report EPS")
     else:
         base_ms = int(datetime.strptime(ttm[0]["date"], "%Y-%m-%d")
                       .replace(tzinfo=timezone.utc).timestamp() * 1000)
@@ -365,7 +389,9 @@ def build_snapshot(sym, ep):
             "price": [{"t": b["t"], "v": round(b["c"] / p0 * 100, 2)} for b in px[::stepv]],
             "earn": [{"t": int(datetime.strptime(x["date"], "%Y-%m-%d")
                               .replace(tzinfo=timezone.utc).timestamp() * 1000),
-                      "v": round(x["v"] / e0 * 100, 2), "q": x["q"], "eps": x["v"]} for x in ttm],
+                      # `_`-prefixed: carried for the deck module and provenance,
+                      # never drawn by the chart itself.
+                      "v": round(x["v"] / e0 * 100, 2), "_q": x["q"], "_eps": x["v"]} for x in ttm],
             "baseDate": ttm[0]["date"], "basePrice": p0, "baseEps": e0,
             "endPrice": px[-1]["c"], "endEps": ttm[-1]["v"],
             "priceGain": (px[-1]["c"] / p0 - 1) * 100,
