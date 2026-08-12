@@ -288,6 +288,12 @@
         "src": "8k-q2-26",
         "unit": "USD thousands"
       },
+      "longTermBorrowings": {
+        "v": 1716,
+        "src": "8k-q2-26",
+        "unit": "thousands",
+        "note": "The balance sheet's own 'Long-term borrowings, net' line, separate from the convertible notes. Excluding it made a tile that says 'borrowings' quote only the notes."
+      },
       "goodwill": {
         "v": 299072,
         "src": "10q-q2-26",

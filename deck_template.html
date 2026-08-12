@@ -44,7 +44,12 @@ body{
 
 /* ---------- Stage: a fixed 1920x1080 canvas scaled to the window ---------- */
 #stage{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none}
-body.camzone{display:block;align-items:initial;justify-content:initial}
+/* Camera mode reserves a real column by PADDING the slide, so the stage still
+   scales 1:1 into a 1920x1080 recording and no type shrinks. The earlier version
+   scaled the whole 16:9 stage into 70% of the width — 0.70x on every font, and
+   324px of dead vertical space. */
+body.camzone .slide{padding-left:var(--cam-l,96px);padding-right:var(--cam-r,96px);
+                    padding-bottom:var(--cam-b,92px)}
 
 .slide{
   position:absolute; inset:0; padding:74px 96px 92px;
@@ -52,6 +57,19 @@ body.camzone{display:block;align-items:initial;justify-content:initial}
 }
 .slide.on{display:flex}
 
+/* ---------- Camera alignment guide (never on during a take) ---------- */
+#camguide{position:absolute;inset:0;pointer-events:none;z-index:60}
+#camguide .cg-col{position:absolute;top:0;bottom:0;background:rgba(194,96,63,.07);
+  border-right:2px dashed var(--accent);opacity:.85}
+/* The frame the camera fills. Designed to be ON CAMERA: a soft filled slot with
+   a hairline border, so it reads as part of the slide before the feed lands on
+   it and still frames the feed cleanly if alignment is a pixel or two out. */
+#camguide .cg-box{position:absolute;border-radius:28px;background:var(--surface-2);
+  border:2px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#camguide .cg-lab{position:absolute;text-align:center;font-size:19px;font-weight:700;
+  color:var(--accent);letter-spacing:.02em}
+#camguide .cg-lab span{display:block;font-size:16px;font-weight:600;color:var(--muted);
+  margin-top:4px;letter-spacing:.04em}
 /* ---------- Chrome ---------- */
 .kicker{
   display:flex; align-items:center; gap:14px;
@@ -68,7 +86,9 @@ h1.head.sm{font-size:52px}
 .sub{font-size:25px;color:var(--ink-2);line-height:1.4;max-width:1500px;font-weight:400}
 
 .footer{
-  position:absolute; left:96px; right:96px; bottom:34px;
+  /* absolutely positioned, so it ignores the slide's padding — it printed
+     straight across the reserved camera column until it read the same vars. */
+  position:absolute; left:var(--cam-l,96px); right:var(--cam-r,96px); bottom:34px;
   display:flex; align-items:center; gap:16px;
   font-size:13px; color:var(--muted); letter-spacing:.05em;
   border-top:1px solid var(--border); padding-top:13px;
@@ -288,7 +308,9 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 
 /* ---------- Snapshot: radar beside scored rows ---------- */
 .snap{display:grid;grid-template-columns:0.82fr 1.18fr;gap:34px;align-items:center}
-.snap-radar{width:100%;height:460px}
+/* wider-than-tall viewBox (labels need horizontal room), so the box gets
+   extra height rather than letterboxing the ring down to nothing */
+.snap-radar{width:100%;height:520px;display:flex;align-items:center}
 .rows{display:flex;flex-direction:column}
 .row{display:grid;grid-template-columns:210px 200px 1fr;gap:20px;align-items:center;
   padding:15px 0;border-bottom:1px solid var(--border)}
@@ -427,6 +449,64 @@ function el(tag, attrs, txt){
   if (txt != null) n.textContent = txt;
   return n;
 }
+/*
+   Camera-safe framing. Measured across all 24 slides, 82% of the 1920x1080
+   canvas carries ink on some slide and the only always-empty region is a strip
+   at the very bottom — so a webcam bubble laid over a full-bleed deck WILL
+   cover content. `?cam=left|right|bottom` reserves a real column that no slide
+   can reach into, by padding the slide rather than shrinking the whole stage.
+
+     ?cam=left           deck right, 30% of the width free on the left
+     ?cam=left&camw=26   the same, with the reserved column set to 26%
+
+   DECLARED HERE, at the top, deliberately: charts render during load, well
+   before the bottom of this script runs, so reading CAM from a `const` further
+   down threw "Cannot access 'CAM' before initialization" and every chart on
+   the deck came back a DEAD CHART.
+*/
+const CAM = new URLSearchParams(location.search).get("cam");
+const CAMW = Math.min(60, Math.max(15,
+  parseFloat(new URLSearchParams(location.search).get("camw") || "30"))) / 100;
+let camGuideOn = false;
+
+/*
+   Charts were 1660 wide always. In camera mode the reserved column is real
+   space, so a 1660 viewBox inside a narrower box gets scaled DOWN by
+   preserveAspectRatio and every label with it — a 17px axis label rendering at
+   11px. Building the chart at the width it actually has keeps text at its true
+   size. `spec.width` still wins if a chart ever needs to override.
+*/
+function chartW(){
+  return 1660 - camPx();
+}
+
+/* The reserved column, in stage pixels. 0 unless ?cam=left|right. */
+function camPx(){
+  return (CAM === "left" || CAM === "right") ? Math.round(1920 * CAMW) : 0;
+}
+
+/*
+   Wrap a label to a pixel budget. Lifted out of chartTreemap, because camera
+   mode narrows every chart and the first thing to break is a two-word sub-label
+   that only ever fitted at 1660 wide: DVA's guidance chart printed "narrowed,
+   midpoint" straight through "first FY2026 guide".
+*/
+function wrapLabel(text, px, boxPx, maxLines){
+  const budget = Math.max(3, Math.floor(boxPx / (px * 0.53)));
+  const lines = [];
+  String(text).split(" ").forEach(word => {
+    const last = lines[lines.length - 1];
+    if (last && (last + " " + word).length <= budget) lines[lines.length - 1] += " " + word;
+    else lines.push(word);
+  });
+  if (maxLines && lines.length > maxLines) {
+    const keep = lines.slice(0, maxLines);
+    keep[maxLines - 1] = keep[maxLines - 1].slice(0, Math.max(1, budget - 1)) + "…";
+    return keep;
+  }
+  return lines;
+}
+
 function svgRoot(w, h){
   const s = el("svg", {viewBox:`0 0 ${w} ${h}`, preserveAspectRatio:"xMidYMid meet"});
   return s;
@@ -434,7 +514,7 @@ function svgRoot(w, h){
 
 /* Vertical bars with a value label above each. */
 function chartBars(spec){
-  const W = 1660, H = spec.height || 470, PT = 54, PL = 20, PR = 20;
+  const W = chartW(), H = spec.height || 470, PT = 54, PL = 20, PR = 20;
   const s = svgRoot(W, H);
   const vals = spec.series.map(d => d.v);
   // Diverging charts need a deeper bottom gutter: a negative bar's value label
@@ -477,15 +557,17 @@ function chartBars(spec){
     const ly = d.v < 0 ? top + 32 : top - 15;
     const lab = el("text", {x:cx, y: ly, "text-anchor":"middle", class:"vlab fade", style:`animation-delay:${260+i*55}ms`}, d.lab);
     s.appendChild(lab);
-    s.appendChild(el("text", {x:cx, y:axY, "text-anchor":"middle", class:"axb"}, d.x));
-    if (d.x2) s.appendChild(el("text", {x:cx, y:subY, "text-anchor":"middle", class:"ax"}, d.x2));
+    wrapLabel(d.x, 17, slot - 12, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:axY + li * 21, "text-anchor":"middle", class:"axb"}, ln)));
+    if (d.x2) wrapLabel(d.x2, 15, slot - 12, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:subY + li * 19, "text-anchor":"middle", class:"ax"}, ln)));
   });
   return s;
 }
 
 /* Two grouped series per category — used for the payor comparison. */
 function chartGrouped(spec){
-  const W = 1660, H = spec.height || 460, PB = 74, PT = 54, PL = 20, PR = 20;
+  const W = chartW(), H = spec.height || 460, PB = 74, PT = 54, PL = 20, PR = 20;
   const s = svgRoot(W, H);
   const all = spec.cats.flatMap(c => c.vals);
   const max = Math.max(...all) * 1.20;
@@ -520,7 +602,7 @@ function chartGrouped(spec){
 
 /* Price line with annotated markers. */
 function chartLine(spec){
-  const W = 1660, H = spec.height || 470, PB = 52, PT = 62, PL = 24, PR = 96;
+  const W = chartW(), H = spec.height || 470, PB = 52, PT = 62, PL = 24, PR = 96;
   const s = svgRoot(W, H);
   const pts = spec.points;
   const lo = Math.min(...pts.map(p=>p.v)), hi = Math.max(...pts.map(p=>p.v));
@@ -579,7 +661,7 @@ function chartLine(spec){
 
 /* Waterfall bridge — start, contributions, end. */
 function chartBridge(spec){
-  const W = 1660, H = spec.height || 450, PB = 78, PT = 62, PL = 20, PR = 20;
+  const W = chartW(), H = spec.height || 450, PB = 78, PT = 62, PL = 20, PR = 20;
   const s = svgRoot(W, H);
   let run = 0; const tops = [];
   spec.steps.forEach(st => {
@@ -634,7 +716,7 @@ function chartBridge(spec){
 
 /* Horizontal comparison bars — used for the two-price-tags slide. */
 function chartHBars(spec){
-  const W = 1660, H = spec.height || 420;
+  const W = chartW(), H = spec.height || 420;
   const s = svgRoot(W, H);
   // PR must clear the longest value label. A two-part label (rate then margin)
   // at 27px overran the viewBox at the old 210 and was clipped off the slide.
@@ -665,7 +747,7 @@ function chartHBars(spec){
    thing you actually see.
 */
 function chartStackedH(spec){
-  const W = 1660, H = spec.height || 420;
+  const W = chartW(), H = spec.height || 420;
   const s = svgRoot(W, H);
   const LBL = 300, PR = spec.labelRoom || 300;
   const max = Math.max(...spec.rows.map(r => r.segs.reduce((a, x) => a + x.v, 0)));
@@ -705,7 +787,7 @@ function chartStackedH(spec){
 
 /* Guidance range bar with the implied-second-half marker. */
 function chartRange(spec){
-  const W = 1660, H = spec.height || 300;
+  const W = chartW(), H = spec.height || 300;
   const s = svgRoot(W, H);
   const PL = 90, PR = 130, trackY = 148;
   const lo = spec.scaleLo, hi = spec.scaleHi;
@@ -747,7 +829,7 @@ function chartRange(spec){
    knew it, rather than smearing a quarter across three months.
 */
 function chartIndexed(spec){
-  const W = 1660, H = spec.height || 520, PB = 56, PT = 62, PL = 24, PR = 108;
+  const W = chartW(), H = spec.height || 520, PB = 56, PT = 62, PL = 24, PR = 108;
   const s = svgRoot(W, H);
   const all = spec.price.concat(spec.earn).map(p => p.v);
   const lo = Math.min(...all), hi = Math.max(...all);
@@ -808,7 +890,7 @@ function chartIndexed(spec){
    hang under the axis rather than be clipped to it — that crossing is the story.
 */
 function chartFunded(spec){
-  const W = 1660, H = spec.height || 520, PB = 74, PT = 58, PL = 24, PR = 96;
+  const W = chartW(), H = spec.height || 520, PB = 74, PT = 58, PL = 24, PR = 96;
   const s = svgRoot(W, H);
   const tops = spec.series.map(d => d.a + Math.max(0, d.b));
   const bots = spec.series.map(d => Math.min(0, d.b));
@@ -857,7 +939,7 @@ function chartFunded(spec){
    panels keep both legible without ever implying a second y-axis on one plot.
 */
 function chartSmallMult(spec){
-  const W = 1660, H = spec.height || 540, PL = 24, PR = 116, GAP = 42, PB = 76;
+  const W = chartW(), H = spec.height || 540, PL = 24, PR = 116, GAP = 42, PB = 76;
   const s = svgRoot(W, H);
   const n = spec.panels.length;
   const panelH = (H - PB - GAP * (n - 1)) / n;
@@ -916,7 +998,7 @@ function chartSmallMult(spec){
      {in:    "label", v: <amount joining>}     income merging upward
 */
 function chartSankey(spec){
-  const W = 1660, H = spec.height || 520, PT = 66, PB = 96, PL = 8, PR = 8;
+  const W = chartW(), H = spec.height || 520, PT = 66, PB = 96, PL = 8, PR = 8;
   const s = svgRoot(W, H);
   const steps = spec.steps;
   const max = spec.max || Math.max(...steps.filter(x => x.node).map(x => x.v));
@@ -996,7 +1078,7 @@ function chartSankey(spec){
                                               projection style and shades behind
 */
 function chartForecast(spec){
-  const W = 1660, H = spec.height || 520, PT = 74, PB = 96, PL = 30, PR = 120;
+  const W = chartW(), H = spec.height || 520, PT = 74, PB = 96, PL = 30, PR = 120;
   const s = svgRoot(W, H);
   const P = spec.points, n = P.length;
   const max = Math.max(...P.map(p => p.v)) * 1.20;
@@ -1061,7 +1143,7 @@ function chartForecast(spec){
 
 /* GAUGE — one number against the threshold that makes it mean something. */
 function chartGauge(spec){
-  const W = 1660, H = spec.height || 440;
+  const W = chartW(), H = spec.height || 440;
   const s = svgRoot(W, H);
   const cx = W / 2, cy = H * 0.78, R = Math.min(H * 0.66, 330), TH = 46;
   const lo = spec.min ?? 0, hi = spec.max;
@@ -1115,7 +1197,7 @@ function chartGauge(spec){
 
 /* DUMBBELL — then vs now for a handful of series, change as the connector. */
 function chartDumbbell(spec){
-  const W = 1660, H = spec.height || 430;
+  const W = chartW(), H = spec.height || 430;
   const s = svgRoot(W, H);
   const LBL = 300, PR = spec.labelRoom || 330;
   const all = spec.rows.flatMap(r => [r.from, r.to]);
@@ -1158,7 +1240,7 @@ function chartDumbbell(spec){
 
 /* SLOPE — the same measure re-forecast over time; the angle IS the message. */
 function chartSlope(spec){
-  const W = 1660, H = spec.height || 460, PT = 70, PB = 92, PL = 240, PR = 300;
+  const W = chartW(), H = spec.height || 460, PT = 70, PB = 92, PL = 240, PR = 300;
   const s = svgRoot(W, H);
   const vals = spec.points.map(p => p.v);
   const min = Math.min(...vals) * 0.94, max = Math.max(...vals) * 1.04;
@@ -1196,7 +1278,7 @@ function chartSlope(spec){
    honest way to say "expensive": show where everyone else trades and point.
 */
 function chartDistribution(spec){
-  const W = 1660, H = spec.height || 460, PB = 96, PT = 76, PL = 40, PR = 40;
+  const W = chartW(), H = spec.height || 460, PB = 96, PT = 76, PL = 40, PR = 40;
   const s = svgRoot(W, H);
   const max = Math.max(...spec.buckets.map(b => b.n)) * 1.18;
   const plotH = H - PB - PT, plotW = W - PL - PR;
@@ -1232,7 +1314,7 @@ function chartDistribution(spec){
    you show them how little revenue fits inside the price.
 */
 function chartDonut(spec){
-  const W = 1660, H = spec.height || 470;
+  const W = chartW(), H = spec.height || 470;
   const s = svgRoot(W, H);
   const cx = W * 0.235, cy = H / 2 + 6, R = Math.min(H * 0.40, 178), TH = 44;
 
@@ -1270,8 +1352,19 @@ function chartDonut(spec){
   s.appendChild(el("text", {x:cx, y:cy + 34, "text-anchor":"middle", class:"vlab pop",
     style:"font-size:44px;animation-delay:180ms"}, spec.totalValue));
 
-  // The legend carries the share of the price, which is the whole argument.
-  const LX = cx + R + 130;
+  // Three columns share the width: ring, legend, stats. At 1660 they all fitted
+  // with room to spare; at the narrower camera width the legend text ran into
+  // the stats panel. Lay the columns out from measured widths instead of fixed
+  // offsets, and stack the stats vertically when a row of them will not fit.
+  const est = (s2, fs) => String(s2).length * fs * 0.55;
+  const legendW = Math.max(...spec.parts.map(p =>
+    28 + Math.max(est(p.name, 20), est(p.lab, 36),
+                  est(`${(p.v / spec.total * 100).toFixed(1)}% of the market cap`, 18))));
+  const LX = Math.max(cx + R + TH / 2 + 30, cx + R + 130 - Math.max(0, 1660 - W) * 0.5);
+  const statsN = (spec.stats || []).length;
+  const statsRoom = W - (LX + legendW + 40);
+  const statsRow = statsN === 0 || statsRoom >= statsN * 210;
+
   spec.parts.forEach((p, i) => {
     const y = cy - 74 + i * 104;
     const g = el("g", {class:"fade", style:`animation-delay:${700 + i * 220}ms`});
@@ -1287,16 +1380,21 @@ function chartDonut(spec){
   // The two multiples, in their own panel so they read as a conclusion.
   const stats = spec.stats || [];
   if (stats.length) {
-    const PX = W - 452;
-    s.appendChild(el("line", {x1: PX - 40, y1: cy - 118, x2: PX - 40, y2: cy + 118,
+    const divX = statsRow ? W - 452 - 40 : LX + legendW + 26;
+    s.appendChild(el("line", {x1: divX, y1: cy - 118, x2: divX, y2: cy + 118,
       stroke:"var(--border)", "stroke-width":2}));
     stats.forEach((st, i) => {
-      const x = PX + 104 + i * 224;
+      // A row when there is room; otherwise one above the other, which reads the
+      // same and needs a third of the width.
+      const x = statsRow ? W - 452 + 104 + i * 224
+                         : divX + 30 + (W - divX - 30) / 2;
+      const yv = statsRow ? cy - 14 : cy - 74 + i * 118;
+      const fs = statsRow ? 62 : 52;
       const g = el("g", {class:"pop", style:`animation-delay:${900 + i * 160}ms`});
-      g.appendChild(el("text", {x, y: cy - 14, "text-anchor":"middle", class:"vlab",
-        style:"font-size:62px;fill:var(--s1)"}, st.v));
-      g.appendChild(el("text", {x, y: cy + 26, "text-anchor":"middle", class:"axb",
-        style:"font-size:19px"}, st.l));
+      g.appendChild(el("text", {x, y: yv, "text-anchor":"middle", class:"vlab",
+        style:`font-size:${fs}px;fill:var(--s1)`}, st.v));
+      g.appendChild(el("text", {x, y: yv + (statsRow ? 40 : 30), "text-anchor":"middle",
+        class:"axb", style:"font-size:19px"}, st.l));
       s.appendChild(g);
     });
   }
@@ -1309,7 +1407,7 @@ function chartDonut(spec){
    one thing to worry about is the only thing that is not.
 */
 function chartTreemap(spec){
-  const W = 1660, H = spec.height || 500, GAP = 46, PT = 40;
+  const W = chartW(), H = spec.height || 500, GAP = 46, PT = 40;
   const s = svgRoot(W, H);
   const panelW = (W - GAP) / 2, panelH = H - PT;
 
@@ -1375,7 +1473,7 @@ function chartTreemap(spec){
 
 /* FAIR-VALUE BAND — where the price sits on an under/fair/over ruler. */
 function chartFvBand(spec){
-  const W = 1660, H = spec.height || 430;
+  const W = chartW(), H = spec.height || 430;
   const s = svgRoot(W, H);
   // Five stacked lanes, each with its own room: verdict, bear/bull bracket,
   // current price, the band itself, then the base case underneath.
@@ -1472,7 +1570,7 @@ function chartFvBand(spec){
 
 /* INSIDER — shares sold against shares bought, by recency bucket. */
 function chartInsider(spec){
-  const W = 1660, H = spec.height || 470, MID = W * 0.52, PT = 54;
+  const W = chartW(), H = spec.height || 470, MID = W * 0.52, PT = 54;
   const s = svgRoot(W, H);
   const max = Math.max(...spec.rows.map(r => Math.max(r.sold, r.bought))) * 1.05;
   const rowH = (H - PT - 20) / spec.rows.length;
@@ -1508,7 +1606,7 @@ function chartInsider(spec){
 
 /* PEERS — ranked multiples with an average line and a growth column beside. */
 function chartPeers(spec){
-  const W = 1660, H = spec.height || 500, LBL = 250, PR = 300, PT = 62;
+  const W = chartW(), H = spec.height || 500, LBL = 250, PR = 300, PT = 62;
   const s = svgRoot(W, H);
   const max = Math.max(...spec.rows.map(r => r.v)) * 1.12;
   const plotW = W - LBL - PR;
@@ -1544,12 +1642,22 @@ function chartPeers(spec){
 
 /* Radar over N scored dimensions — the whole company as one shape. */
 function chartRadar(spec){
-  const S = 460, C = S / 2, R = S * 0.36, max = spec.max || 5;
-  const s = svgRoot(S, S);
+  /*
+     The plot is square, but the axis LABELS sit outside the ring and read
+     outward, so a square viewBox leaves them nowhere to go: at R + 40 the left
+     label began 24px from the edge and "The launch business" ran to x = -133,
+     painting outside the box entirely (svg{overflow:visible} hides that) and,
+     in camera mode, straight across the reserved column. The box is wider than
+     the plot so labels have real room, and they wrap rather than run.
+  */
+  // CX and CY are separate: one shared C shifted the plot DOWN by LP as well as
+  // across, which put the bottom label 156px below the box.
+  const S = 460, LP = 170, CX = S / 2 + LP, CY = S / 2, R = S * 0.40, max = spec.max || 5;
+  const s = svgRoot(S + LP * 2, S);
   const n = spec.axes.length;
   const pt = (i, r) => {
     const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
-    return [C + Math.cos(a) * r, C + Math.sin(a) * r];
+    return [CX + Math.cos(a) * r, CY + Math.sin(a) * r];
   };
   for (let ring = 1; ring <= max; ring++) {
     const d = spec.axes.map((_, i) => pt(i, R * ring / max)).map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ") + " Z";
@@ -1557,7 +1665,7 @@ function chartRadar(spec){
   }
   spec.axes.forEach((_, i) => {
     const p = pt(i, R);
-    s.appendChild(el("line", {x1:C, y1:C, x2:p[0], y2:p[1], stroke:"var(--grid)", "stroke-width":"1"}));
+    s.appendChild(el("line", {x1:CX, y1:CY, x2:p[0], y2:p[1], stroke:"var(--grid)", "stroke-width":"1"}));
   });
   const P = spec.axes.map((a, i) => pt(i, R * a.v / max));
   // closed smooth curve through the points — midpoint bezier, wraps around
@@ -1570,7 +1678,7 @@ function chartRadar(spec){
         + `Q ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}, ${m1[0].toFixed(1)} ${m1[1].toFixed(1)} `;
   }
   dd += "Z";
-  const blob = el("g", {class:"bloom", style:`transform-origin:${C}px ${C}px;animation-delay:120ms`});
+  const blob = el("g", {class:"bloom", style:`transform-origin:${CX}px ${CY}px;animation-delay:120ms`});
   blob.appendChild(el("path", {d:dd, fill:"var(--s1)", "fill-opacity":".22",
     stroke:"var(--s1)", "stroke-width":"2.6"}));
   s.appendChild(blob);
@@ -1579,16 +1687,21 @@ function chartRadar(spec){
     s.appendChild(el("circle", {cx:p[0], cy:p[1], r:5, fill:"var(--s1)",
       stroke:"var(--bg)", "stroke-width":"2", class:"fade", style:`animation-delay:${240+i*70}ms`}));
     const l = pt(i, R + 40);
-    const anchor = Math.abs(l[0] - C) < 12 ? "middle" : (l[0] > C ? "start" : "end");
-    s.appendChild(el("text", {x:l[0], y:l[1]+6, "text-anchor":anchor, class:"axb",
-      style:"font-size:19px;font-weight:700;fill:var(--ink)"}, a.name));
+    const anchor = Math.abs(l[0] - CX) < 12 ? "middle" : (l[0] > CX ? "start" : "end");
+    // room between this label's anchor and the edge of the box it must stay in
+    const room = anchor === "middle" ? S : (anchor === "start" ? S + LP * 2 - l[0] : l[0]);
+    const lines = wrapLabel(a.name, 19, Math.max(60, room - 8), 2);
+    lines.forEach((ln, li) =>
+      s.appendChild(el("text", {x:l[0], y:l[1] + 6 + (li - (lines.length - 1) / 2) * 23,
+        "text-anchor":anchor, class:"axb",
+        style:"font-size:19px;font-weight:700;fill:var(--ink)"}, ln)));
   });
   return s;
 }
 
 /* Where price sits on the analyst target rail. */
 function chartTrack(spec){
-  const W = 1660, H = spec.height || 260;
+  const W = chartW(), H = spec.height || 260;
   const s = svgRoot(W, H);
   const PL = 130, PR = 130, y = 150;
   const lo = spec.lo, hi = spec.hi;
@@ -1610,15 +1723,22 @@ function chartTrack(spec){
     s.appendChild(el("line", {x1:X(m.v), x2:X(m.v), y1:y-13, y2:y+13, stroke:"var(--muted)", "stroke-width":"2"}));
     s.appendChild(el("text", {x:X(m.v), y:y+46, "text-anchor":"middle", class:"ax"}, m.lab));
   });
-  [{v:spec.now, lab:spec.nowLab, sub:"now", c:"var(--s1)"},
-   {v:spec.mean, lab:spec.meanLab, sub:"mean target", c:"var(--ink)"}].forEach((m, k) => {
+  // When the price and the mean target are close together their 30px value
+  // labels touch — and a narrower chart in camera mode brings them together at
+  // gaps that were fine at 1660. Stack the second one above the first instead.
+  const marks = [{v:spec.now, lab:spec.nowLab, sub:"now", c:"var(--s1)"},
+                 {v:spec.mean, lab:spec.meanLab, sub:"mean target", c:"var(--ink)"}];
+  const need = (String(spec.nowLab).length + String(spec.meanLab).length) * 8.5;
+  const tight = Math.abs(X(spec.now) - X(spec.mean)) < need;
+  marks.forEach((m, k) => {
+    const lift = tight && k === 1 ? 62 : 0;
     s.appendChild(el("line", {x1:X(m.v), x2:X(m.v), y1:y-30, y2:y+30, stroke:m.c, "stroke-width":"3.4",
       class:"fade", style:`animation-delay:${200+k*130}ms`}));
     s.appendChild(el("circle", {cx:X(m.v), cy:y, r:9, fill:m.c, stroke:"var(--bg)", "stroke-width":"2.5",
       class:"fade", style:`animation-delay:${200+k*130}ms`}));
-    s.appendChild(el("text", {x:X(m.v), y:y-46, "text-anchor":"middle", class:"vlab fade",
+    s.appendChild(el("text", {x:X(m.v), y:y-46-lift, "text-anchor":"middle", class:"vlab fade",
       style:`animation-delay:${260+k*130}ms;fill:${m.c};font-size:30px`}, m.lab));
-    s.appendChild(el("text", {x:X(m.v), y:y-74, "text-anchor":"middle", class:"ax fade",
+    s.appendChild(el("text", {x:X(m.v), y:y-74-lift, "text-anchor":"middle", class:"ax fade",
       style:`animation-delay:${260+k*130}ms`}, m.sub));
   });
 
@@ -1867,8 +1987,33 @@ function deckAudit(){
       }
     }
 
-    const svg = sl.querySelector("[data-chart] svg");
-    if (svg) {
+    // Nothing may enter the reserved camera column. This is the whole promise of
+    // ?cam= — and it was already being broken: the footer is absolutely
+    // positioned at left:96px, so the slug printed straight across the column
+    // while the audit reported CLEAN.
+    if (camPx()) {
+      const colL = CAM === "left" ? 0 : 1920 - camPx();
+      const colR = CAM === "left" ? camPx() : 1920;
+      const sr = document.getElementById("stage").getBoundingClientRect();
+      const sc = sr.width / 1920 || 1;
+      const toStage = r => ({l: (r.left - sr.left) / sc, r: (r.right - sr.left) / sc});
+      for (const el of sl.querySelectorAll("*")) {
+        if (el.children.length && el.tagName !== "svg") continue;
+        const hasInk = el.tagName === "svg" || (el.textContent || "").trim();
+        if (!hasInk) continue;
+        const b = toStage(el.getBoundingClientRect());
+        if (b.r < colL + 1 || b.l > colR - 1) continue;          // clear of it
+        const over = Math.min(b.r, colR) - Math.max(b.l, colL);
+        if (over > 1.5)
+          issues.push(`${nm}: "${(el.textContent || el.tagName).trim().slice(0, 24)}" `
+                      + `runs ${over.toFixed(0)}px into the reserved camera column`);
+      }
+    }
+
+    // EVERY svg on the slide, not just the one in a [data-chart] host. The
+    // snapshot slide renders its radar into .snap-radar, so it escaped the
+    // geometry checks completely — and it was drawing 133px outside its own box.
+    for (const svg of sl.querySelectorAll("svg")) {
       const vb = (svg.getAttribute("viewBox") || "").split(/\s+/).map(Number);
       let bb = null;
       try { bb = svg.getBBox(); } catch (e) { /* detached or empty */ }
@@ -2020,19 +2165,6 @@ window.deckAudit = deckAudit;
 
 let cur = 0, notesOn = false, hudOn = false, t0 = null, tick = null;
 
-/*
-   Camera-safe framing. Measured across all 24 slides, 82% of the 1920x1080
-   canvas carries ink on some slide and the only always-empty region is a strip
-   at the very bottom — so a webcam bubble laid over a full-bleed deck WILL
-   cover content. `?cam=left|right|bottom` shrinks and re-anchors the deck
-   instead, reserving a real zone that no slide can ever reach into.
-
-     ?cam=left        deck right, 30% of the width free on the left
-     ?cam=left&camw=34   the same, with the reserved column widened to 34%
-*/
-const CAM = new URLSearchParams(location.search).get("cam");
-const CAMW = Math.min(60, Math.max(15,
-  parseFloat(new URLSearchParams(location.search).get("camw") || "30"))) / 100;
 
 function fit(){
   const W = window.innerWidth, H = window.innerHeight;
@@ -2047,22 +2179,64 @@ function fit(){
     return;
   }
 
-  // Camera mode only: opt out of the flex centring and position by hand, so the
-  // reserved column is genuinely empty.
+  // Camera mode: the stage still fills the frame and still scales from its
+  // centre — the column is reserved INSIDE the canvas with padding. That keeps
+  // the deck 1:1 in a 1080p recording and leaves no translate to double-apply.
   document.body.classList.add("camzone");
-  let availW = W, availH = H, offX = 0;
-  if (CAM === "left" || CAM === "right") {
-    availW = W * (1 - CAMW);
-    if (CAM === "left") offX = W * CAMW;
-  } else if (CAM === "bottom") {
-    availH = H * (1 - CAMW);
-  }
-  const s = Math.min(availW / 1920, availH / 1080);
-  stage.style.transformOrigin = "0 0";
-  stage.style.transform =
-    `translate(${offX + (availW - 1920 * s) / 2}px, ${(availH - 1080 * s) / 2}px) scale(${s})`;
+  const px = camPx();
+  stage.style.setProperty("--cam-l", (CAM === "left"  ? 96 + px : 96) + "px");
+  stage.style.setProperty("--cam-r", (CAM === "right" ? 96 + px : 96) + "px");
+  stage.style.setProperty("--cam-b",
+    (CAM === "bottom" ? 92 + Math.round(1080 * CAMW) : 92) + "px");
+  stage.style.transformOrigin = "center center";
+  stage.style.transform = `scale(${Math.min(W / 1920, H / 1080)})`;
+  drawCamGuide();
 }
 window.addEventListener("resize", fit); fit();
+
+/*
+   The alignment guide. Press C in camera mode: it draws the reserved column and
+   a 3:4 portrait bubble centred in it, and prints both boxes in RECORDING
+   pixels — so the camera source can be positioned by typing numbers into OBS
+   rather than dragging it and hoping. Off by default; it must never be up while
+   recording, so it is also forced off when the deck goes fullscreen-clean.
+*/
+function camBubbleBox(){
+  const px = camPx();
+  if (!px) return null;
+  const M = 44;                                   // breathing room inside the column
+  const w = px - M * 2;
+  const h = Math.min(1080 - M * 2, Math.round(w * 4 / 3));   // 3:4 portrait
+  return {x: (CAM === "right" ? 1920 - px : 0) + M, y: Math.round((1080 - h) / 2),
+          w, h, colX: CAM === "right" ? 1920 - px : 0, colW: px};
+}
+
+function drawCamGuide(){
+  let g = document.getElementById("camguide");
+  const box = camBubbleBox();
+  if (!box) { if (g) g.remove(); return; }
+  if (!g) {
+    g = document.createElement("div");
+    g.id = "camguide";
+    document.getElementById("stage").appendChild(g);
+  }
+  // The FRAME is part of the slide and stays up: the camera sits inside it, so
+  // it has to look designed, carry no text, and be there in the recording.
+  // The MEASUREMENTS are a setup aid and must never be on camera — C toggles
+  // those alone.
+  g.innerHTML =
+    `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;` +
+    `width:${box.w}px;height:${box.h}px"></div>` +
+    (camGuideOn
+      ? `<div class="cg-col" style="left:${box.colX}px;width:${box.colW}px"></div>` +
+        `<div class="cg-lab" style="left:${box.x}px;top:${box.y + box.h + 16}px;` +
+        `width:${box.w}px">` +
+          `<b>put the camera here</b> ${box.w} &times; ${box.h} at ${box.x}, ${box.y}` +
+          `<span>reserved column ${box.colW}px &middot; ` +
+          `${(CAMW * 100).toFixed(0)}% &middot; C hides these numbers</span>` +
+        `</div>`
+      : "");
+}
 
 function show(i){
   cur = Math.max(0, Math.min(slides.length - 1, i));
@@ -2126,6 +2300,10 @@ addEventListener("keydown", e => {
     if (hudOn && !t0) startClock();
   }
   else if (k === "r" || k === "R") startClock();
+  else if (k === "c" || k === "C") {
+    if (!camPx()) return;              // nothing reserved, nothing to align to
+    camGuideOn = !camGuideOn; drawCamGuide();
+  }
   else if (k === "g" || k === "G") { document.getElementById("grid").classList.toggle("on"); buildGrid(); }
   else if (k === "f" || k === "F") {
     if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();

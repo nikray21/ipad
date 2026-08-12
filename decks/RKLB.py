@@ -212,7 +212,10 @@ def derive(snap, ep, fund, qrows, die, fact):
         "evTtm": (snap["marketCap"] - net_cash) / ttm_rev,
     }
 
-    total_debt = fv("balanceSheet", "convertibleNotes") / K
+    # Both borrowing lines on the balance sheet, not just the notes — a tile that
+    # says "borrowings" was quoting the convertible notes alone.
+    total_debt = (fv("balanceSheet", "convertibleNotes")
+                  + fv("balanceSheet", "longTermBorrowings")) / K
 
     peers = [_peer(x, die) for x in F["peers"]["tickers"]]
     self_ps = val["psTtm"]
