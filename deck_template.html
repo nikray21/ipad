@@ -393,6 +393,12 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
   #stage{transform:none!important;width:1920px;height:auto}
   .slide{display:flex!important;position:relative;page-break-after:always;height:1080px}
   #notes,#grid,#hud{display:none!important}
+  /* A PDF is a handout, not a recording: drop the reserved camera column and its
+     frame so the page is full-bleed. Camera mode is the default now, so without
+     this every exported PDF carried an empty slot down the left. */
+  body.camzone .slide{padding-left:96px!important;padding-right:96px!important;
+                      padding-bottom:92px!important}
+  #camguide{display:none!important}
 }
 </style>
 </head>
@@ -473,7 +479,17 @@ function el(tag, attrs, txt){
 */
 const _q = new URLSearchParams(location.search);
 function _stored(k, d){ try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } }
-let CAM = _q.get("cam") || _stored("nr_deck_cam", null) || null;
+/*
+   CAMERA MODE IS THE DEFAULT. Every episode is recorded with the camera beside
+   the deck, so that is the layout a deck should open in — not one you have to
+   remember to switch on.
+
+   The stored value is TRI-STATE ("left" / "right" / "off"), never absent-means-off:
+   with a default of "left", removing the key on toggle-off meant the next open
+   silently went back to camera mode, so turning it off could not stick.
+*/
+const _camStored = _stored("nr_deck_cam", null);
+let CAM = _q.get("cam") || (_camStored === "off" ? null : (_camStored || "left"));
 let CAMW = Math.min(60, Math.max(15,
   parseFloat(_q.get("camw") || _stored("nr_deck_camw", "26")))) / 100;
 let camGuideOn = false;
@@ -484,8 +500,7 @@ function setCam(mode, w){
   CAM = mode;
   if (w != null) CAMW = Math.min(0.60, Math.max(0.15, w));
   try {
-    if (mode) localStorage.setItem("nr_deck_cam", mode);
-    else localStorage.removeItem("nr_deck_cam");
+    localStorage.setItem("nr_deck_cam", mode || "off");   // "off", not absent
     localStorage.setItem("nr_deck_camw", String(Math.round(CAMW * 100)));
   } catch (e) {}
   if (!mode) camGuideOn = false;
