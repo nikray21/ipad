@@ -488,7 +488,12 @@ def write_script(path, snap, slides):
          f"- **Full cut:** {len(slides)} slides, {fmt(total)}",
          f"- **Core cut:** {fmt(core)} — drop the {len(opt)} slides marked `CUT FOR TIME`. "
          "They are support, not argument; the case still stands without them.", "",
-         "Keys: → next · ← back · T theme · N notes · H presenter HUD + timer · G grid · F fullscreen",
+         "Keys: → next · ← back · T theme · N notes · H presenter HUD + timer · G grid · "
+         "F fullscreen",
+         "",
+         "**C = camera layout** — reserves a column on the left with a frame to sit your "
+         "camera in, and remembers the choice. `[` and `]` resize the column; `⇧C` shows the "
+         "exact pixel box to type into OBS, and hides it again before you record.",
          "", "---", ""]
     for i, sl in enumerate(slides, 1):
         head = strip_html(sl.get("head") or sl.get("company") or "")
