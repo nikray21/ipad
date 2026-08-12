@@ -847,6 +847,108 @@ def audit_original_findings(ep, payload):
     ok(f"original-findings ({len(f)} declared, sourced to a named location, and on screen)")
 
 
+def audit_entity_count(ep):
+    """
+    A count of named entities in a filing is an aggregate no filing states, so it
+    is recomputed here rather than text-matched (the same rule the Form 4 totals
+    follow). The 13G's Valor list is the live case, and it is a trap: four of the
+    thirty names carry an internal comma ("Valor IV Space Holdings, LLC"), so a
+    naive comma split returns 34.
+    """
+    node = None
+    for blk in (ep.get("filings") or {}).values():
+        if isinstance(blk, dict) and "valorEntityCount" in blk:
+            node = blk["valorEntityCount"]; break
+    if not node:
+        SKIPS.append("entity-count: this episode declares no counted entity list")
+        return
+    url = ep["sources"][node["src"]]["url"]
+    try:
+        # validate_facts owns the filing cache; no second fetcher.
+        import validate_facts
+        txt = validate_facts.doc_text(url)
+    except Exception as exc:                                          # noqa: BLE001
+        bad("entity-count", f"cannot fetch {url}: {exc}")
+        return
+    m = re.search(r'held of record by the following entities[^:]*:(.*?)\. By virtue', txt, re.S)
+    if not m:
+        bad("entity-count", "cannot find the entity list in the filing")
+        return
+    parts = [x.strip() for x in m.group(1).split(",")]
+    names, i = [], 0
+    while i < len(parts):
+        n = re.sub(r"^and\s+", "", parts[i])
+        while i + 1 < len(parts) and re.fullmatch(
+                r"(and\s+)?(LLC|L\.P\.|L\.L\.C\.|Inc\.?)", parts[i + 1].strip()):
+            i += 1
+            n += ", " + re.sub(r"^and\s+", "", parts[i].strip())
+        names.append(n); i += 1
+    if len(set(names)) != len(names):
+        bad("entity-count", f"the filing lists {len(names)} names but only "
+                            f"{len(set(names))} are distinct")
+        return
+    if len(names) != node["v"]:
+        bad("entity-count", f"episode says {node['v']} entities, the filing lists {len(names)}")
+        return
+
+    # And the stake percentage, recomputed from the two inputs that ARE
+    # text-verifiable, against the figure the filer put on the cover page.
+    blk = next(b for b in ep["filings"].values()
+               if isinstance(b, dict) and "valorEntityCount" in b)
+    sh, base, stated = (blk.get("valorClassAShares"), blk.get("valorPctBase"),
+                        blk.get("valorClassAPct"))
+    if sh and base and stated:
+        calc = sh["v"] / base["v"] * 100
+        if abs(round(calc, 1) - stated["v"]) > 0.05:
+            bad("entity-count", f"{sh['v']:,} / {base['v']:,} = {calc:.2f}%, which does not "
+                                f"round to the filed {stated['v']}%")
+            return
+        ok(f"entity-count ({len(names)} entities recounted; {calc:.2f}% recomputed "
+           f"against the filed {stated['v']}%)")
+        return
+    ok(f"entity-count ({len(names)} entities recounted from the filing itself)")
+
+
+def audit_bridge_closes(payload):
+    """
+    A bridge asserts arithmetic on screen: start, plus each step, equals the total.
+    If it does not close, a viewer who adds the labels catches the deck out.
+
+    SPCX's AI bridge drew -1,257 + 1,885 + 516 under a total of 1,146 — the steps
+    summed to 1,144, because the filing's reconciliation has a FOURTH line
+    (restructuring, $2M) that the slide left out. Small enough to be invisible in
+    the bars and still wrong. Tolerance is half a unit, for genuine rounding.
+    """
+    problems = []
+    for i, sl in enumerate(payload["slides"], 1):
+        c = sl.get("chart") or {}
+        if c.get("kind") != "bridge":
+            continue
+        run = None
+        for st in c.get("steps") or []:
+            v, ty = st.get("v"), st.get("type")
+            if v is None:
+                continue
+            if ty == "start":
+                run = v
+            elif ty == "step":
+                run = v if run is None else run + v
+            elif ty == "total":
+                if run is not None and abs(run - v) > 0.5:
+                    problems.append(f"slide {i}: steps sum to {run:,.1f} but the total "
+                                    f"drawn is {v:,.1f} (off by {v - run:,.1f})")
+                run = v
+    if problems:
+        bad("bridge-closes", f"{len(problems)} bridge(s) do not reconcile: {problems[:4]}")
+        return
+    n = sum(1 for sl in payload["slides"] if (sl.get("chart") or {}).get("kind") == "bridge")
+    if not n:
+        SKIPS.append("bridge-closes: this deck draws no bridge")
+        return
+    ok(f"bridge-closes ({n} bridge{'s' if n > 1 else ''} "
+       f"{'sum' if n > 1 else 'sums'} to the total drawn)")
+
+
 def audit_insider_aggregates(ep, sym):
     """
     The insider figures are aggregates across dozens of Form 4 filings, so no
@@ -1125,6 +1227,8 @@ def main():
     audit_min_font_size(payload)
     audit_chart_entities(payload)
     audit_insider_aggregates(ep, sym)
+    audit_entity_count(ep)
+    audit_bridge_closes(payload)
     audit_derived_arithmetic(snap, ep)
     audit_provenance(snap)
     audit_slide_integrity(payload, snap)

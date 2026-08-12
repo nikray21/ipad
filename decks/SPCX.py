@@ -28,6 +28,9 @@ from . import fmt
 LITERALS_OK = (
     "$135.00",                    # the IPO price, fixed forever
     "10 votes",                   # the charter's Class B ratio
+    "5%",                         # the Section 13(d) disclosure threshold — a
+                                  # statutory constant, not a figure about SpaceX.
+                                  # The 13G states it in the filer's own words too.
 )
 
 
@@ -167,6 +170,18 @@ def derive(snap, ep, fund, qrows, die, fact):
     rpy["growth"] = (rpy["debt"] / rpy["debtPrior"] - 1) * 100
     rpy["shareOfDebt"] = rpy["debt"] / total_debt * 100
     rpy["shareOfInterest"] = rpy["interestQ2"] / fv("results", "interestExpenseQ2") * 100
+    # The 13G filed Aug 11: the same director is also a 6.5% holder, and it took
+    # thirty vehicles to keep any single one under the 5% disclosure line.
+    rpy["equityShares"] = fv("relatedParty", "valorClassAShares")
+    rpy["equityPct"] = fv("relatedParty", "valorClassAPct")
+    rpy["equityBase"] = fv("relatedParty", "valorPctBase")
+    rpy["entities"] = int(fv("relatedParty", "valorEntityCount"))
+    _recalc = rpy["equityShares"] / rpy["equityBase"] * 100
+    if abs(round(_recalc, 1) - rpy["equityPct"]) > 0.05:
+        die(f"13G stake does not reconcile: {rpy['equityShares']:,.0f} / "
+            f"{rpy['equityBase']:,.0f} = {_recalc:.2f}%, filed as {rpy['equityPct']}%")
+    if rpy["entities"] < 2:
+        die("the 13G entity count did not parse")
 
     # Balance sheet by asset class — more computer than spacecraft.
     ppe = {k: v for k, v in F["ppe"].items() if not k.startswith("_") and k != "src"}
@@ -506,6 +521,10 @@ def slides(snap, ep, fact, fund_quarters=None):
         "src": "8-K EX-99.1, AI segment reconciliation",
         "head": f"A {b_(abs(ai['opLoss']))} loss, reported as {b_(ai['adjEbitda'])} of earnings",
         "sub": "How the AI segment's operating loss is turned into positive adjusted earnings.",
+        # Every line of the filed reconciliation, in the filing's own order. The
+        # restructuring line is only $2M, but leaving it out meant the drawn steps
+        # summed to $1,144M under a drawn total of $1,146M — a bridge that does
+        # not close is a bridge the viewer can catch out.
         "chart": {"kind": "bridge", "height": 500, "fmtKind": "usdM", "steps": [
             {"type": "start", "v": ai["opLoss"], "lab": m(ai["opLoss"]),
              "x": "Operating loss", "x2": "what it actually lost", "cls": "bad"},
@@ -513,12 +532,16 @@ def slides(snap, ep, fact, fund_quarters=None):
              "x": "Add back wear on kit", "x2": "depreciation", "cls": "warn"},
             {"type": "step", "v": ai["sbc"], "lab": f"+{m(ai['sbc'])[1:]}",
              "x": "Add back share pay", "x2": "paid in your ownership", "cls": "warn"},
+        ] + ([{"type": "step", "v": ai["restructuring"],
+               "lab": ("+" if ai["restructuring"] > 0 else "−") + m(abs(ai["restructuring"]))[1:],
+               "x": "Restructuring", "x2": "the filing's own fourth line", "cls": "warn"}]
+             if round(ai["restructuring"], 1) else []) + [
             {"type": "total", "v": ai["adjEbitda"], "lab": m(ai["adjEbitda"]),
              "x": "Adjusted earnings", "x2": "the number in the headline"},
         ]},
         "why": (f"The release leads with positive adjusted earnings of {m(ai['adjEbitda'])} for AI. "
-                f"The division lost {m(abs(ai['opLoss']))}. The whole difference is adding back "
-                f"{m(ai['dna'])} of wear on equipment and {m(ai['sbc'])} of pay handed out in "
+                f"The division lost {m(abs(ai['opLoss']))}. Almost the whole difference is adding "
+                f"back {m(ai['dna'])} of wear on equipment and {m(ai['sbc'])} of pay handed out in "
                 f"shares. The equipment is the {m(ai['capex'])} of computers they bought this same "
                 f"quarter — so the cost being added back is the cost of the thing the story is "
                 f"about."),
@@ -547,10 +570,42 @@ def slides(snap, ep, fact, fund_quarters=None):
                 f"{b_(rpy['debt'])} of AI equipment, and more than half the interest the company "
                 f"paid this quarter went to him. The accountants call it a failed sale-leaseback, "
                 f"which is a technical way of saying: the kit never really left, so treat the money "
-                f"as a loan. None of this is hidden and none of it is illegal — it is on page "
-                f"twenty-nine. It is just not in the press release, and it grew "
+                f"as a loan. None of it is hidden or illegal — it is on page twenty-nine. It is "
+                f"just not in the press release, and it grew "
                 f"{x(rpy['debt'] / rpy['debtPrior'], 1)} in six months."),
         "notes": N["related"], "target": 32,
+    })
+
+    # 13b ----------------------------------------------------------------
+    # Filed the morning of this build: the equity half of the same relationship.
+    S.append({
+        "type": "tiles", "kicker": "And this landed this morning", "cols": 2,
+        "src": "Schedule 13G filed Aug 11 2026, Item 4",
+        "head": f"The same director owns {rpy['equityPct']:.1f}% of the stock",
+        # Self-contained: "the debt above" pointed at the previous slide, which
+        # dangles the moment that slide is cut for time.
+        "sub": (f"Filed today, four business days after the 10-Q that carries the "
+                f"{b_(rpy['debt'])} of related-party debt. Dated to June 30 &mdash; the first "
+                f"day it was reportable."),
+        "tiles": [
+            {"v": b_(rpy["debt"]), "l": "Lent to the company by his fund",
+             "n": f"{rpy['shareOfDebt']:.0f}% of every dollar SpaceX owes", "tone": "bad"},
+            {"v": f"{rpy['equityPct']:.1f}%", "l": "Of the Class A stock he controls",
+             "n": (f"{rpy['equityShares']/1e6:.1f} million shares of the "
+                   f"{rpy['equityBase']/1e9:.2f} billion outstanding"), "tone": "warn"},
+            {"v": f"{rpy['entities']}", "l": "Separate entities hold it",
+             "n": "named one by one in the filing, from CV Consortio A to VX Holdings",
+             "tone": "warn"},
+            {"v": "0", "l": "Of those had to be disclosed on their own",
+             "n": "the filing states no single one reaches 5%", "tone": "bad"},
+        ],
+        "why": (f"The same person is on both sides of this company. His fund is its biggest "
+                f"lender, owed {b_(rpy['debt'])}. He also controls {rpy['equityPct']:.1f}% of the "
+                f"shares. That stake sits in {rpy['entities']} separate companies, and the filing "
+                f"says not one of them reaches 5% on its own. 5% is the level where you have to "
+                f"tell the public. So no rule is broken here &mdash; you simply could not have "
+                f"seen this half of it until this morning."),
+        "notes": N["related13g"], "target": 34,
     })
 
     # 14 -----------------------------------------------------------------
@@ -623,12 +678,12 @@ def slides(snap, ep, fact, fund_quarters=None):
             {"v": f"{fv('dilution','unmetPerformanceAwards'):,.0f}M", "l": "Shares promised but not counted",
              "n": "targets not yet hit, so they sit outside the share count", "tone": "warn"},
         ],
-        "why": (f"You are buying a minority stake in a company where one person decides everything: "
-                f"{fv('ipo','muskVotingPct')}% of the votes. SpaceX is formally a controlled "
-                f"company, which lets it skip several of the governance rules Nasdaq would "
-                f"otherwise apply. And there are {fv('dilution','unmetPerformanceAwards'):,.0f} "
-                f"million shares promised to the founder that do not show up in the share count "
-                f"yet — one tranche of which only pays out if SpaceX builds data centres in space."),
+        "why": (f"One person holds {fv('ipo','muskVotingPct')}% of the votes. Every decision is "
+                f"his, and your shares do not change any of them. Because he controls it, SpaceX "
+                f"is allowed to skip several of the rules Nasdaq sets for how a board must be run. "
+                f"There are also {fv('dilution','unmetPerformanceAwards'):,.0f} million shares "
+                f"already promised to him that are not in the share count yet. One batch of those "
+                f"only pays out if SpaceX builds data centres in space."),
         "notes": N["governance"], "target": 26,
     })
 

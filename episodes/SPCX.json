@@ -1,7 +1,7 @@
 {
   "symbol": "SPCX",
   "company": "Space Exploration Technologies Corp.",
-  "episodeDate": "2026-08-07",
+  "episodeDate": "2026-08-11",
   "_note": "SpaceX listed on 12 June 2026. There is no eight-quarter history, no year of tape, and the company gives NO financial guidance at all. The deck says so on screen rather than filling the gaps.",
   "sources": {
     "8k-q2-26": {
@@ -15,6 +15,11 @@
     "424b4": {
       "label": "424(b)(4) final IPO prospectus, filed June 12 2026",
       "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm"
+    },
+    "13g-gracias": {
+      "label": "Schedule 13G \u2014 Antonio J. Gracias / the Valor entities, filed Aug 11 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1181412/000121390026087780/primary_doc.xml",
+      "note": "Rule 13d-1(d) exempt-investor filing. Event date June 30 2026, filed Aug 11 \u2014 four business days after the 10-Q that carries the $13.3B of Valor debt."
     }
   },
   "findings": [
@@ -37,6 +42,11 @@
       "claim": "They launched less. Mass to orbit fell 26% year over year while the release calls itself the leading launch provider for the world.",
       "where": "8-K EX-99.1, the Space operating table \u2014 mass to orbit and total launches",
       "src": "8k-q2-26"
+    },
+    {
+      "claim": "The director whose fund is owed $13.3B also controls 6.5% of the stock \u2014 and it took 30 separate entities to keep that invisible until today.",
+      "where": "Schedule 13G filed Aug 11 2026, Item 4 \u2014 the entity list, cross-read against 10-Q Note 17 which names Gracias as a director",
+      "src": "13g-gracias"
     }
   ],
   "filings": {
@@ -518,6 +528,37 @@
         "v": "The founder, CEO and Chief Investment Officer of Valor, Antonio Gracias, serves as one of the directors of the Company.",
         "src": "10q-q2-26",
         "note": "Note 17, Related Party Transactions"
+      },
+      "valorClassAShares": {
+        "v": 503414530,
+        "src": "13g-gracias",
+        "unit": "shares",
+        "note": "Shared voting and shared dispositive power; sole power is zero on both."
+      },
+      "valorClassAPct": {
+        "v": 6.5,
+        "src": "13g-gracias",
+        "unit": "%",
+        "_derived": true,
+        "_derivedNote": "The filer states 6.5 on the cover page, but the flattened filing text cannot be searched for a bare '6.5' on a number boundary. Verified the stronger way instead: audit_deck.py divides the two text-verified inputs (503,414,530 / 7,696,293,669 = 6.54%) and dies unless that rounds to the figure filed."
+      },
+      "valorPctBase": {
+        "v": 7696293669,
+        "src": "13g-gracias",
+        "unit": "shares",
+        "note": "Class A outstanding at July 28 2026, per the 10-Q cover, as cited in the 13G."
+      },
+      "valorEntityCount": {
+        "v": 30,
+        "src": "13g-gracias",
+        "unit": "count",
+        "_derived": true,
+        "_derivedNote": "No filing states 30. Counted from the named list in Item 4 of the 13G; audit_deck.py re-parses that list and dies on a mismatch. Four of the names contain an internal comma, so a naive comma split gives 34."
+      },
+      "noSingleEntityQuote": {
+        "v": "No individual Valor Entity beneficially owns 5% or more of the outstanding Class A common stock",
+        "src": "13g-gracias",
+        "note": "Item 4, the filer's own explanation of the structure."
       }
     },
     "backlog": {
@@ -849,6 +890,7 @@
     "balance": "On the balance sheet, this is now more of a computer company than a rocket company. Thirty-five billion dollars of servers against fourteen billion of satellites. TARGET 22s.",
     "ebitda": "Watch this one carefully, because it is the most common trick in AI accounting. The AI division reported positive adjusted earnings of one point one billion. It lost one point three billion. The difference is that they added back the depreciation on the computers they had just bought. TARGET 30s.",
     "related": "This is the one nobody is talking about. Thirteen point three billion dollars of the debt is owed to Valor Equity Partners. The man who runs Valor sits on SpaceX's board. And the accountants ruled the deal a failed sale-leaseback, which is why it shows up as borrowing. Six months ago it was four and a half billion. TARGET 32s.",
+    "related13g": "And then this landed this morning. A Schedule thirteen-G, filed today, dated back to June thirtieth. Antonio Gracias \u2014 the same director whose fund is owed the thirteen point three billion \u2014 beneficially owns five hundred and three million shares. Six and a half percent of the Class A stock. Here is the part I want you to sit with: it is held across thirty separate entities, and the filing says in writing that not one of them reaches five percent on its own. Five percent is the line where you have to tell the public. So he is the biggest lender and a six and a half percent owner at the same time, and until this morning there was no way to see the second half. Nothing here is illegal. But you are buying into a company where the same man gets paid interest as the lender and gains as an owner. TARGET 34s.",
     "concentration": "Two customers are nearly thirty-eight percent of all revenue. One of them was not even a ten percent customer a year ago. TARGET 22s.",
     "commitments": "They have signed up to spend twenty-eight billion dollars they cannot cancel, and twenty-two billion of that falls in a single year \u2014 twenty twenty-seven. TARGET 24s.",
     "lockup": "Here is the calendar nobody put in a headline. The lockup does not end all at once. Twenty percent came free on the sixth of August. There was a bonus ten percent available if the stock had held thirty percent above the IPO price \u2014 it did not, zero days out of ten. Then seven percent more on each of five dates between now and October, twenty-eight percent after the next results, and everything on the eighth of December. TARGET 34s.",
