@@ -203,15 +203,19 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 .legend i{display:inline-block;width:16px;height:16px;border-radius:3px;margin-right:9px;vertical-align:-2px}
 
 /* entry animation — bars grow, lines draw */
-.slide.on .grow{animation:grow .52s cubic-bezier(.2,.7,.3,1) both}
-.slide.on .growX{animation:growX .58s cubic-bezier(.2,.7,.3,1) both}
-.slide.on .sweep{animation:draw 1.05s cubic-bezier(.35,.65,.25,1) both}
-.slide.on .pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.25) both}
-.slide.on .bloom{animation:bloom .72s cubic-bezier(.34,1.3,.5,1) both}
-.slide.on .snap .row{animation:rowin .46s cubic-bezier(.2,.7,.3,1) both}
-.slide.on .snap .pip.on{animation:pipin .34s cubic-bezier(.2,.9,.3,1.5) both}
-.slide.on .draw{animation:draw .9s cubic-bezier(.3,.6,.3,1) both}
-.slide.on .fade{animation:fade .5s ease both}
+/* Entry animations run 1-2s longer than they used to. A slide that has finished
+   animating before the presenter has finished the first sentence reads as a
+   static image; this keeps it unfolding under the voice. Every one is still
+   `both`, so a slide revisited mid-animation lands in its final state. */
+.slide.on .grow{animation:grow 1.9s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .growX{animation:growX 2.0s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .sweep{animation:draw 3.0s cubic-bezier(.35,.65,.25,1) both}
+.slide.on .pop{animation:pop 1.5s cubic-bezier(.2,.9,.3,1.25) both}
+.slide.on .bloom{animation:bloom 2.1s cubic-bezier(.34,1.3,.5,1) both}
+.slide.on .snap .row{animation:rowin 1.25s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .snap .pip.on{animation:pipin .8s cubic-bezier(.2,.9,.3,1.5) both}
+.slide.on .draw{animation:draw 2.8s cubic-bezier(.3,.6,.3,1) both}
+.slide.on .fade{animation:fade 1.45s ease both}
 @keyframes grow{from{transform:scaleY(.001)}to{transform:scaleY(1)}}
 @keyframes growX{from{transform:scaleX(.001)}to{transform:scaleX(1)}}
 @keyframes pop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
@@ -226,7 +230,7 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 .slide.on .finds>.find,.slide.on .tiles>.tile,.slide.on .ww .wcol li,
 .slide.on .whylist>p,.slide.on .mega>*,.slide.on .quote>*,
 .slide.on .callrow>*,.slide.on.title>.tk,.slide.on.title>h1,
-.slide.on.title>.ident,.slide.on.title>.pxrow,.slide.on.title>.hook{animation:rowin .5s cubic-bezier(.2,.7,.3,1) both}
+.slide.on.title>.ident,.slide.on.title>.pxrow,.slide.on.title>.hook{animation:rowin 1.0s cubic-bezier(.2,.7,.3,1) both}
 .slide.on .finds>.find:nth-child(1),.slide.on .tiles>.tile:nth-child(1),
 .slide.on .whylist>p:nth-child(1),.slide.on .mega>*:nth-child(1),
 .slide.on .quote>*:nth-child(1),.slide.on.title>.tk{animation-delay:60ms}
@@ -516,6 +520,15 @@ function setCam(mode, w){
    11px. Building the chart at the width it actually has keeps text at its true
    size. `spec.width` still wins if a chart ever needs to override.
 */
+/*
+   One knob for the pace of the build. Every chart's per-element stagger goes
+   through this, so the sequence can be slowed without touching 46 separate
+   constants. Raised so a slide keeps unfolding for a beat or two after the flip
+   rather than being finished before the first sentence is out.
+*/
+const AD_SCALE = 2.0;
+function AD(ms){ return Math.round((ms || 0) * AD_SCALE); }
+
 function chartW(){
   return 1660 - camPx();
 }
@@ -586,7 +599,7 @@ function chartBars(spec){
   spec.series.forEach((d, i) => {
     const cx = PL + slot * i + slot / 2;
     const top = y(d.v), base = y(Math.max(min, 0));
-    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${base}px;animation-delay:${i*55}ms`});
+    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${base}px;animation-delay:${AD(i*55)}ms`});
     g.appendChild(el("rect", {
       x: cx - bw/2, y: Math.min(top, base), width: bw, height: Math.max(2, Math.abs(base - top)),
       rx: 4, class: "bar" + (d.cls ? " " + d.cls : "")
@@ -595,7 +608,7 @@ function chartBars(spec){
     // A negative bar hangs below zero, so its label goes under it — placing it
     // "above the top" would print it inside the bar.
     const ly = d.v < 0 ? top + 32 : top - 15;
-    const lab = el("text", {x:cx, y: ly, "text-anchor":"middle", class:"vlab fade", style:`animation-delay:${260+i*55}ms`}, d.lab);
+    const lab = el("text", {x:cx, y: ly, "text-anchor":"middle", class:"vlab fade", style:`animation-delay:${AD(260+i*55)}ms`}, d.lab);
     s.appendChild(lab);
     wrapLabel(d.x, 17, slot - 12, 2).forEach((ln, li) =>
       s.appendChild(el("text", {x:cx, y:axY + li * 21, "text-anchor":"middle", class:"axb"}, ln)));
@@ -626,12 +639,12 @@ function chartGrouped(spec){
     c.vals.forEach((v, j) => {
       const x = cx - bw - gap/2 + j * (bw + gap);
       const top = y(v), base = y(0);
-      const g = el("g", {class:"grow", style:`transform-origin:${x+bw/2}px ${base}px;animation-delay:${i*70+j*35}ms`});
+      const g = el("g", {class:"grow", style:`transform-origin:${x+bw/2}px ${base}px;animation-delay:${AD(i*70+j*35)}ms`});
       g.appendChild(el("rect", {x, y:top, width:bw, height:Math.max(2, base-top), rx:4,
         class:"bar" + (j === 0 ? " mut" : (c.cls ? " " + c.cls : ""))}));
       s.appendChild(g);
       s.appendChild(el("text", {x:x+bw/2, y:top-13, "text-anchor":"middle", class:"vlab sm fade",
-        style:`animation-delay:${280+i*70+j*35}ms`}, c.labs[j]));
+        style:`animation-delay:${AD(280+i*70+j*35)}ms`}, c.labs[j]));
     });
     s.appendChild(el("text", {x:cx, y:H-PB+30, "text-anchor":"middle", class:"axb"}, c.x));
     if (c.delta) s.appendChild(el("text", {x:cx, y:H-PB+56, "text-anchor":"middle",
@@ -685,12 +698,12 @@ function chartLine(spec){
     const up = m.side !== "below";
     s.appendChild(el("line", {x1:px, x2:px, y1:py, y2: up ? PT-14 : PT+plotH+16,
       stroke:"var(--ink-2)", "stroke-width":"1.4", "stroke-dasharray":"4 4", opacity:".55", class:"fade",
-      style:`animation-delay:${700+k*90}ms`}));
+      style:`animation-delay:${AD(700+k*90)}ms`}));
     s.appendChild(el("circle", {cx:px, cy:py, r:7, fill:"var(--bg)", stroke:m.crit?"var(--crit)":"var(--accent)",
-      "stroke-width":"3.4", class:"fade", style:`animation-delay:${700+k*90}ms`}));
+      "stroke-width":"3.4", class:"fade", style:`animation-delay:${AD(700+k*90)}ms`}));
     const ty = up ? PT-24 : PT+plotH+40;
     const anchor = i > pts.length*0.78 ? "end" : (i < pts.length*0.10 ? "start" : "middle");
-    const g = el("g", {class:"fade", style:`animation-delay:${760+k*90}ms`});
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(760+k*90)}ms`});
     g.appendChild(el("text", {x:px, y:ty, "text-anchor":anchor, class:"vlab",
       style:m.crit?"fill:var(--crit)":""}, m.lab));
     if (m.sub) g.appendChild(el("text", {x:px, y:ty + (up?-24:24), "text-anchor":anchor, class:"ax"}, m.sub));
@@ -733,14 +746,14 @@ function chartBridge(spec){
     const cx = PL + slot*i + slot/2;
     const t = tops[i], top = y(Math.max(t.from, t.to)), bot = y(Math.min(t.from, t.to));
     const cls = st.type === "start" || st.type === "total" ? "mut" : (st.cls || "");
-    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${bot}px;animation-delay:${i*80}ms`});
+    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${bot}px;animation-delay:${AD(i*80)}ms`});
     g.appendChild(el("rect", {x:cx-bw/2, y:top, width:bw, height:Math.max(3, bot-top), rx:4, class:"bar "+cls}));
     s.appendChild(g);
     // A bar sitting below the zero line wears its label underneath, or the label
     // lands inside the bar above it.
     const endsBelow = Math.min(t.from, t.to) < 0 && Math.max(t.from, t.to) <= 0.0001;
     s.appendChild(el("text", {x:cx, y: endsBelow ? bot + 30 : top - 14, "text-anchor":"middle",
-      class:"vlab fade", style:`animation-delay:${300+i*80}ms`}, st.lab));
+      class:"vlab fade", style:`animation-delay:${AD(300+i*80)}ms`}, st.lab));
     s.appendChild(el("text", {x:cx, y:H-PB+30, "text-anchor":"middle", class:"axb"}, st.x));
     if (st.x2) s.appendChild(el("text", {x:cx, y:H-PB+54, "text-anchor":"middle", class:"ax"}, st.x2));
     // No connector into a total — its `from` is 0, which drew a stray rule
@@ -769,12 +782,12 @@ function chartHBars(spec){
     s.appendChild(el("text", {x:LBL-22, y:cy+3, "text-anchor":"end", class:"axb",
       style:"font-size:22px"}, r.name));
     if (r.sub) s.appendChild(el("text", {x:LBL-22, y:cy+27, "text-anchor":"end", class:"ax"}, r.sub));
-    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${i*90}ms`});
+    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${AD(i*90)}ms`});
     g.appendChild(el("rect", {x:LBL, y:cy-27, width:Math.max(3,bw), height:54, rx:5,
       class:"bar "+(r.cls||"")}));
     s.appendChild(g);
     s.appendChild(el("text", {x:LBL+bw+18, y:cy+9, class:"vlab fade",
-      style:`animation-delay:${300+i*90}ms;font-size:27px`}, r.lab));
+      style:`animation-delay:${AD(300+i*90)}ms;font-size:27px`}, r.lab));
   });
   return s;
 }
@@ -803,24 +816,24 @@ function chartStackedH(spec){
     let x = LBL, total = 0;
     r.segs.forEach((seg, j) => {
       const w = (plotW * seg.v) / max;
-      const g = el("g", {class:"growX", style:`transform-origin:${x}px ${cy}px;animation-delay:${i*110+j*80}ms`});
+      const g = el("g", {class:"growX", style:`transform-origin:${x}px ${cy}px;animation-delay:${AD(i*110+j*80)}ms`});
       g.appendChild(el("rect", {x, y:cy-30, width:Math.max(2,w), height:60,
         rx:4, class:"bar " + (seg.cls || "")}));
       s.appendChild(g);
       if (seg.lab && w > 130) {
         s.appendChild(el("text", {x:x+w/2, y:cy+8, "text-anchor":"middle", class:"vlab fade",
-          style:`animation-delay:${340+i*110+j*80}ms;fill:${seg.ink || "var(--bg)"};font-size:23px`},
+          style:`animation-delay:${AD(340+i*110+j*80)}ms;fill:${seg.ink || "var(--bg)"};font-size:23px`},
           seg.lab));
       } else if (seg.lab) {
         // Too narrow to hold its own label — float it above the segment rather
         // than drop it. The small number is often the whole point of the slide.
         s.appendChild(el("text", {x:x+w/2, y:cy-42, "text-anchor":"middle", class:"vlab fade",
-          style:`animation-delay:${340+i*110+j*80}ms;font-size:21px`}, seg.lab));
+          style:`animation-delay:${AD(340+i*110+j*80)}ms;font-size:21px`}, seg.lab));
       }
       x += w; total += seg.v;
     });
     s.appendChild(el("text", {x:x+20, y:cy+9, class:"vlab fade",
-      style:`animation-delay:${420+i*110}ms;font-size:26px`}, r.totalLab));
+      style:`animation-delay:${AD(420+i*110)}ms;font-size:26px`}, r.totalLab));
   });
   return s;
 }
@@ -850,10 +863,10 @@ function chartRange(spec){
     const mx = x(m.v);
     s.appendChild(el("line", {x1:mx, x2:mx, y1:trackY-64, y2:trackY+20,
       stroke: m.crit ? "var(--crit)" : "var(--ink)", "stroke-width":"3.2", class:"fade",
-      style:`animation-delay:${300+k*120}ms`}));
+      style:`animation-delay:${AD(300+k*120)}ms`}));
     s.appendChild(el("circle", {cx:mx, cy:trackY, r:9, fill: m.crit ? "var(--crit)" : "var(--ink)",
-      class:"fade", style:`animation-delay:${300+k*120}ms`}));
-    const g = el("g", {class:"fade", style:`animation-delay:${360+k*120}ms`});
+      class:"fade", style:`animation-delay:${AD(300+k*120)}ms`}));
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(360+k*120)}ms`});
     g.appendChild(el("text", {x:mx, y:trackY-76, "text-anchor":"middle", class:"vlab",
       style:m.crit?"fill:var(--crit)":""}, m.lab));
     g.appendChild(el("text", {x:mx, y:trackY-102, "text-anchor":"middle", class:"ax"}, m.sub || ""));
@@ -915,9 +928,9 @@ function chartIndexed(spec){
   [[spec.earn[spec.earn.length-1].v, spec.earnLabel, "var(--s2)"],
    [spec.price[spec.price.length-1].v, spec.priceLabel, "var(--s1)"]].forEach(([v, lab, c], k) => {
     s.appendChild(el("circle", {cx:X(t1), cy:Y(v), r:6, fill:c, stroke:"var(--bg)", "stroke-width":"2.5",
-      class:"fade", style:`animation-delay:${900+k*110}ms`}));
+      class:"fade", style:`animation-delay:${AD(900+k*110)}ms`}));
     s.appendChild(el("text", {x:X(t1)-20, y:Y(v)-20, "text-anchor":"end", class:"vlab fade",
-      style:`animation-delay:${960+k*110}ms;fill:${c}`}, lab));
+      style:`animation-delay:${AD(960+k*110)}ms;fill:${c}`}, lab));
   });
   (spec.ticks || []).forEach(tk =>
     s.appendChild(el("text", {x:X(tk.t), y:H-PB+32, "text-anchor":"middle", class:"ax"}, tk.lab)));
@@ -952,18 +965,18 @@ function chartFunded(spec){
     const cx = PL + slot * i + slot / 2;
     // debt sits on the zero line; equity stacks above it, or hangs below when negative
     const dTop = Y(d.a), z = Y(0);
-    let g = el("g", {class:"grow", style:`transform-origin:${cx}px ${z}px;animation-delay:${i*60}ms`});
+    let g = el("g", {class:"grow", style:`transform-origin:${cx}px ${z}px;animation-delay:${AD(i*60)}ms`});
     g.appendChild(el("rect", {x:cx-bw/2, y:dTop, width:bw, height:Math.max(2, z-dTop),
       rx:4, class:"bar s1"}));
     s.appendChild(g);
     const eTop = d.b >= 0 ? Y(d.a + d.b) : z + 2, eH = Math.abs(Y(d.b) - z);
     const ey = d.b >= 0 ? eTop : z + 2;
-    g = el("g", {class:"grow", style:`transform-origin:${cx}px ${d.b >= 0 ? Y(d.a) : z}px;animation-delay:${i*60+40}ms`});
+    g = el("g", {class:"grow", style:`transform-origin:${cx}px ${d.b >= 0 ? Y(d.a) : z}px;animation-delay:${AD(i*60+40)}ms`});
     g.appendChild(el("rect", {x:cx-bw/2, y:ey, width:bw, height:Math.max(2, eH),
       rx:4, class:"bar " + (d.b < 0 ? "bad" : "s2")}));
     s.appendChild(g);
     if (d.lab) s.appendChild(el("text", {x:cx, y:dTop-16, "text-anchor":"middle", class:"vlab sm fade",
-      style:`animation-delay:${300+i*60}ms`}, d.lab));
+      style:`animation-delay:${AD(300+i*60)}ms`}, d.lab));
     s.appendChild(el("text", {x:cx, y:H-PB+34, "text-anchor":"middle", class:"axb"}, d.x));
     if (d.x2) s.appendChild(el("text", {x:cx, y:H-PB+56, "text-anchor":"middle",
       class:"ax", style:d.x2crit ? "fill:var(--crit);font-weight:700" : ""}, d.x2));
@@ -1006,13 +1019,13 @@ function chartSmallMult(spec){
     pan.series.forEach((d, i) => {
       const cx = PL + slot * i + slot / 2;
       const y0 = Y(d.v), h = Math.abs(zero - y0);
-      const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${zero}px;animation-delay:${pi*90+i*55}ms`});
+      const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${zero}px;animation-delay:${AD(pi*90+i*55)}ms`});
       g.appendChild(el("rect", {x:cx-bw/2, y:Math.min(y0, zero), width:bw, height:Math.max(2, h),
         rx:4, class:"bar " + (d.cls || "")}));
       s.appendChild(g);
       if (d.lab) s.appendChild(el("text", {x:cx, y:d.v < 0 ? Math.max(y0, zero) + 28 : Math.min(y0, zero) - 12,
         "text-anchor":"middle", class:"vlab sm fade",
-        style:`animation-delay:${300+pi*90+i*55}ms`}, d.lab));
+        style:`animation-delay:${AD(300+pi*90+i*55)}ms`}, d.lab));
     });
   });
 
@@ -1070,7 +1083,7 @@ function chartSankey(spec){
   // trunk segments
   for (let i = 0; i < trunk.length - 1; i++) {
     const a = trunk[i], b = trunk[i + 1];
-    const g = el("g", {class: "fade", style: `animation-delay:${i * 70}ms`});
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(i * 70)}ms`});
     g.appendChild(ribbon(a.x, a.v, b.x, b.v, mid, mid, "trunk"));
     s.appendChild(g);
   }
@@ -1082,22 +1095,22 @@ function chartSankey(spec){
     const prev = trunk[i - 1];
     const down = !!st.out;
     const yEnd = down ? mid + plotH * 0.40 : mid - plotH * 0.40;
-    const g = el("g", {class: "fade", style: `animation-delay:${140 + i * 70}ms`});
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(140 + i * 70)}ms`});
     g.appendChild(ribbon(prev.x, st.v, t.x, st.v, mid, yEnd, st.cls || (down ? "cost" : "gain"), .82));
     s.appendChild(g);
     const lab = el("text", {x: t.x, y: yEnd + (down ? 34 : -22), "text-anchor": "middle",
-      class: "vlab sm fade", style: `animation-delay:${240 + i * 70}ms`},
+      class: "vlab sm fade", style: `animation-delay:${AD(240 + i * 70)}ms`},
       (down ? "−" : "+") + spec.fmt2(st.v));
     s.appendChild(lab);
     s.appendChild(el("text", {x: t.x, y: yEnd + (down ? 56 : -44), "text-anchor": "middle",
-      class: "ax fade", style: `animation-delay:${240 + i * 70}ms`}, st.out || st.in));
+      class: "ax fade", style: `animation-delay:${AD(240 + i * 70)}ms`}, st.out || st.in));
   });
 
   // node labels on the trunk
   trunk.forEach((t, i) => {
     if (!t.st.node) return;
     const anchor = i === 0 ? "start" : (i === trunk.length - 1 ? "end" : "middle");
-    const g = el("g", {class: "fade", style: `animation-delay:${300 + i * 70}ms`});
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(300 + i * 70)}ms`});
     g.appendChild(el("text", {x: t.x, y: mid - hOf(t.v) / 2 - 34, "text-anchor": anchor,
       class: "vlab", style: "font-size:23px"}, spec.fmt2(t.v)));
     g.appendChild(el("text", {x: t.x, y: mid - hOf(t.v) / 2 - 12, "text-anchor": anchor,
@@ -1165,7 +1178,7 @@ function chartForecast(spec){
 
   P.forEach((p, i) => {
     if (p.lab) s.appendChild(el("text", {x: X(i), y: Y(p.v) - 20, "text-anchor": "middle",
-      class: "vlab sm fade", style: `animation-delay:${400 + i * 55}ms`}, p.lab));
+      class: "vlab sm fade", style: `animation-delay:${AD(400 + i * 55)}ms`}, p.lab));
     if (p.growth) s.appendChild(el("text", {x: X(i), y: H - PB + 58, "text-anchor": "middle",
       class: "ax", style: `font-weight:700;font-size:18px;fill:${p.guided ? "var(--s1)" : "var(--muted)"}`},
       p.growth));
@@ -1254,7 +1267,7 @@ function chartDumbbell(spec){
     s.appendChild(el("text", {x: LBL - 26, y: cy + 2, "text-anchor": "end", class: "axb",
       style: "font-size:23px"}, r.name));
     if (r.sub) s.appendChild(el("text", {x: LBL - 26, y: cy + 27, "text-anchor": "end", class: "ax"}, r.sub));
-    const g = el("g", {class: "fade", style: `animation-delay:${i * 110}ms`});
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(i * 110)}ms`});
     g.appendChild(el("line", {x1: X(r.from), y1: cy, x2: X(r.to), y2: cy,
       stroke: r.cls === "mut" ? "var(--muted)" : "var(--s1)", "stroke-width": 9,
       "stroke-linecap": "round", opacity: .5}));
@@ -1265,11 +1278,11 @@ function chartDumbbell(spec){
       stroke: "var(--bg)", "stroke-width": 3}));
     s.appendChild(g);
     s.appendChild(el("text", {x: X(r.from), y: cy - 28, "text-anchor": "middle", class: "ax fade",
-      style: `animation-delay:${200 + i * 110}ms`}, r.fromLab));
+      style: `animation-delay:${AD(200 + i * 110)}ms`}, r.fromLab));
     s.appendChild(el("text", {x: X(r.to) + 26, y: cy + 9, class: "vlab fade",
-      style: `animation-delay:${240 + i * 110}ms;font-size:26px`}, r.toLab));
+      style: `animation-delay:${AD(240 + i * 110)}ms;font-size:26px`}, r.toLab));
     if (r.delta) s.appendChild(el("text", {x: W - 20, y: cy + 9, "text-anchor": "end",
-      class: "vlab fade", style: `animation-delay:${280 + i * 110}ms;font-size:30px;` +
+      class: "vlab fade", style: `animation-delay:${AD(280 + i * 110)}ms;font-size:30px;` +
       // Colour carries meaning: good is green, not the accent. `--s1` is a
       // series colour and `--accent` is chrome, so neither may stand for "good".
       `fill:${r.deltaGood === false ? "var(--muted)"
@@ -1295,7 +1308,7 @@ function chartSlope(spec){
     path.style.setProperty("--len", L); path.style.strokeDasharray = L; } catch(e){} });
 
   spec.points.forEach((p, i) => {
-    const g = el("g", {class: "fade", style: `animation-delay:${400 + i * 150}ms`});
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(400 + i * 150)}ms`});
     g.appendChild(el("circle", {cx: X(i), cy: Y(p.v), r: 11, fill: "var(--s1)",
       stroke: "var(--bg)", "stroke-width": 4}));
     g.appendChild(el("text", {x: X(i), y: Y(p.v) - 30, "text-anchor": "middle", class: "vlab",
@@ -1327,7 +1340,7 @@ function chartDistribution(spec){
 
   spec.buckets.forEach((b, i) => {
     const cx = PL + slot * i + slot / 2;
-    const g = el("g", {class: "grow", style: `transform-origin:${cx}px ${PT + plotH}px;animation-delay:${i * 45}ms`});
+    const g = el("g", {class: "grow", style: `transform-origin:${cx}px ${PT + plotH}px;animation-delay:${AD(i * 45)}ms`});
     g.appendChild(el("rect", {x: cx - bw / 2, y: Y(b.n), width: bw,
       height: Math.max(2, PT + plotH - Y(b.n)), rx: 4,
       class: "bar " + (b.here ? "" : "mut")}));
@@ -1368,7 +1381,7 @@ function chartDonut(spec){
     const c = 2 * Math.PI * r;
     return el("circle", {cx, cy, r, fill:"none", "stroke-width":w, class:cls + " sweep",
       "stroke-dasharray": `${c * frac} ${c}`,
-      style: `--len:${c * frac}px;animation-delay:${delay}ms`,
+      style: `--len:${c * frac}px;animation-delay:${AD(delay)}ms`,
       transform: `rotate(-90 ${cx} ${cy})`});
   };
   s.appendChild(ring(R, TH, "dn-total", 1, 0));
@@ -1407,7 +1420,7 @@ function chartDonut(spec){
 
   spec.parts.forEach((p, i) => {
     const y = cy - 74 + i * 104;
-    const g = el("g", {class:"fade", style:`animation-delay:${700 + i * 220}ms`});
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(700 + i * 220)}ms`});
     g.appendChild(el("rect", {x: LX, y: y - 26, width: 15, height: 15, rx: 3,
       class: i ? "dn-b-fill" : "dn-a-fill"}));
     g.appendChild(el("text", {x: LX + 28, y: y - 13, class:"axb", style:"font-size:20px"}, p.name));
@@ -1430,7 +1443,7 @@ function chartDonut(spec){
                          : divX + 30 + (W - divX - 30) / 2;
       const yv = statsRow ? cy - 14 : cy - 74 + i * 118;
       const fs = statsRow ? 62 : 52;
-      const g = el("g", {class:"pop", style:`animation-delay:${900 + i * 160}ms`});
+      const g = el("g", {class:"pop", style:`animation-delay:${AD(900 + i * 160)}ms`});
       g.appendChild(el("text", {x, y: yv, "text-anchor":"middle", class:"vlab",
         style:`font-size:${fs}px;fill:var(--s1)`}, st.v));
       g.appendChild(el("text", {x, y: yv + (statsRow ? 40 : 30), "text-anchor":"middle",
@@ -1475,7 +1488,7 @@ function chartTreemap(spec){
     const out = [];
     layout(items, px, PT, panelW, panelH, out);
     out.forEach((r, k) => {
-      const g = el("g", {class:"fade", style:`animation-delay:${pi * 120 + k * 45}ms`});
+      const g = el("g", {class:"fade", style:`animation-delay:${AD(pi * 120 + k * 45)}ms`});
       g.appendChild(el("rect", {x: r.x + 2, y: r.y + 2, width: Math.max(1, r.w - 4),
         height: Math.max(1, r.h - 4), rx: 5, class: "tm " + (r.cls || "ok")}));
       // A block too small for both lines still gets its value — a blank block is
@@ -1593,9 +1606,9 @@ function chartFvBand(spec){
     .forEach(([v, lab, name, dir], k) => {
       const x = X(v);
       s.appendChild(el("line", {x1:x, y1:y - 14, x2:x, y2:y + bh + 14,
-        stroke:"var(--ink)", "stroke-width":4, class:"fade", style:`animation-delay:${200 + k*150}ms`}));
+        stroke:"var(--ink)", "stroke-width":4, class:"fade", style:`animation-delay:${AD(200 + k*150)}ms`}));
       const ty = dir < 0 ? y - 30 : y + bh + 76;
-      const g = el("g", {class:"fade", style:`animation-delay:${260 + k*150}ms`});
+      const g = el("g", {class:"fade", style:`animation-delay:${AD(260 + k*150)}ms`});
       g.appendChild(el("text", {x, y: ty, "text-anchor":"middle", class:"vlab",
         style:"font-size:34px"}, lab));
       // A 34px value needs more than 26px of clearance or its box eats the name.
@@ -1629,14 +1642,14 @@ function chartInsider(spec){
     const cy = PT + rowH * i + rowH / 2;
     s.appendChild(el("text", {x: 20, y: cy + 4, class:"axb", style:"font-size:23px"}, r.label));
     const wS = (r.sold / max) * halfW;
-    const g = el("g", {class:"growX", style:`transform-origin:${MID}px ${cy}px;animation-delay:${i*90}ms`});
+    const g = el("g", {class:"growX", style:`transform-origin:${MID}px ${cy}px;animation-delay:${AD(i*90)}ms`});
     g.appendChild(el("rect", {x: MID - wS, y: cy - 26, width: Math.max(2, wS), height: 52,
       rx: 4, class:"bar bad"}));
     s.appendChild(g);
     s.appendChild(el("text", {x: VALX, y: cy + 2, "text-anchor":"end", class:"vlab fade",
-      style:`animation-delay:${260+i*90}ms;font-size:21px`}, r.soldLab));
+      style:`animation-delay:${AD(260+i*90)}ms;font-size:21px`}, r.soldLab));
     s.appendChild(el("text", {x: VALX, y: cy + 26, "text-anchor":"end", class:"ax fade",
-      style:`animation-delay:${260+i*90}ms`}, r.sub));
+      style:`animation-delay:${AD(260+i*90)}ms`}, r.sub));
     // the empty side is the finding
     s.appendChild(el("text", {x: MID + 26, y: cy + 6, class:"vlab",
       style:"font-size:23px;fill:var(--muted)"}, r.boughtLab));
@@ -1666,14 +1679,14 @@ function chartPeers(spec){
 
   spec.rows.forEach((r, i) => {
     const cy = PT + rowH * i + rowH / 2;
-    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${i*80}ms`});
+    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${AD(i*80)}ms`});
     g.appendChild(el("rect", {x: LBL, y: cy - 26, width: Math.max(3, X(r.v) - LBL), height: 52,
       rx: 4, class: "bar " + (r.here ? "" : "mut")}));
     s.appendChild(g);
     s.appendChild(el("text", {x: LBL - 22, y: cy + 3, "text-anchor":"end",
       class: r.here ? "vlab" : "axb", style:`font-size:${r.here ? 22 : 20}px`}, r.name));
     s.appendChild(el("text", {x: X(r.v) + 18, y: cy + 6, class:"vlab fade",
-      style:`animation-delay:${260+i*80}ms;font-size:25px${r.here ? ";fill:var(--s1)" : ""}`}, r.lab));
+      style:`animation-delay:${AD(260+i*80)}ms;font-size:25px${r.here ? ";fill:var(--s1)" : ""}`}, r.lab));
     s.appendChild(el("text", {x: W - PR + 40, y: cy + 6, class: r.here ? "vlab" : "axb",
       style:"font-size:22px"}, r.right));
   });
@@ -1725,7 +1738,7 @@ function chartRadar(spec){
   spec.axes.forEach((a, i) => {
     const p = pt(i, R * a.v / max);
     s.appendChild(el("circle", {cx:p[0], cy:p[1], r:5, fill:"var(--s1)",
-      stroke:"var(--bg)", "stroke-width":"2", class:"fade", style:`animation-delay:${240+i*70}ms`}));
+      stroke:"var(--bg)", "stroke-width":"2", class:"fade", style:`animation-delay:${AD(240+i*70)}ms`}));
     const l = pt(i, R + 40);
     const anchor = Math.abs(l[0] - CX) < 12 ? "middle" : (l[0] > CX ? "start" : "end");
     // room between this label's anchor and the edge of the box it must stay in
@@ -1773,13 +1786,13 @@ function chartTrack(spec){
   marks.forEach((m, k) => {
     const lift = tight && k === 1 ? 62 : 0;
     s.appendChild(el("line", {x1:X(m.v), x2:X(m.v), y1:y-30, y2:y+30, stroke:m.c, "stroke-width":"3.4",
-      class:"fade", style:`animation-delay:${200+k*130}ms`}));
+      class:"fade", style:`animation-delay:${AD(200+k*130)}ms`}));
     s.appendChild(el("circle", {cx:X(m.v), cy:y, r:9, fill:m.c, stroke:"var(--bg)", "stroke-width":"2.5",
-      class:"fade", style:`animation-delay:${200+k*130}ms`}));
+      class:"fade", style:`animation-delay:${AD(200+k*130)}ms`}));
     s.appendChild(el("text", {x:X(m.v), y:y-46-lift, "text-anchor":"middle", class:"vlab fade",
-      style:`animation-delay:${260+k*130}ms;fill:${m.c};font-size:30px`}, m.lab));
+      style:`animation-delay:${AD(260+k*130)}ms;fill:${m.c};font-size:30px`}, m.lab));
     s.appendChild(el("text", {x:X(m.v), y:y-74-lift, "text-anchor":"middle", class:"ax fade",
-      style:`animation-delay:${260+k*130}ms`}, m.sub));
+      style:`animation-delay:${AD(260+k*130)}ms`}, m.sub));
   });
 
   // How much the analysts actually agree. A mean with a 3x spread around it is
@@ -1909,11 +1922,11 @@ function render(sl, idx, total){
     inner += `<div class="body"><div class="snap">
       <div class="snap-radar" data-radar="${idx}"></div>
       <div class="rows">` + sl.rows.map((r, ri) => `<div class="row"
-        style="animation-delay:${260 + ri * 90}ms">
+        style="animation-delay:${AD(260 + ri * 90)}ms">
         <div class="rn">${esc(r.name)}</div>
         <div class="pips">${[1,2,3,4,5].map(i =>
           `<span class="pip${i <= r.score ? " on" + (r.tone ? " " + r.tone : "") : ""}"
-           style="animation-delay:${380 + ri * 90 + i * 70}ms"></span>`).join("")}</div>
+           style="animation-delay:${AD(380 + ri * 90 + i * 70)}ms"></span>`).join("")}</div>
         <div class="rf">${r.fact}</div></div>`).join("") + `</div></div></div>`;
   }
   else if (sl.type === "findings") {

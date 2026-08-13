@@ -214,6 +214,24 @@ def derive(snap, ep, fund, qrows, die, fact):
     lock["shortBy"] = trigger - lock["bestClose"]
     lock["fired"] = lock["qualifyingDays"] >= lock["needed"]
 
+    # The schedule as a RUNNING TOTAL. Per-date bars answered "how much on this
+    # day", which is not the point — the point is how much of that group can sell
+    # by the time you are watching. The missed price bonus is deliberately absent:
+    # it is a thing that did NOT happen, and a bar of zero cannot say so.
+    _steps = [("Aug 6", "after the first results", lk["firstReleasePct"])]
+    for _d in ("Aug 20", "Sep 9", "Sep 24", "Oct 9", "Oct 24"):
+        _steps.append((_d, f"+{lk['staircasePct']}%", lk["staircasePct"]))
+    _steps.append(("After Q3", "next results", lk["postQ3Pct"]))
+    _run, _cum = 0, []
+    for _i, (_d, _note, _pct) in enumerate(_steps):
+        _run += _pct
+        _cum.append((_d, _note, _run, f"{_run:.0f}%",
+                     "bad" if _i == len(_steps) - 1 else "warn"))
+    lock["cumulative"] = _cum
+    lock["cumEnd"] = _run
+    if abs(_run - (lk["firstReleasePct"] + 5 * lk["staircasePct"] + lk["postQ3Pct"])) > 0.01:
+        die("the lockup running total does not equal the sum of its stages")
+
     # Peers — fetched live, one request per ticker, never typed in.
     peers = [_peer(x, die) for x in F["peers"]["tickers"]]
     self_ps = val["psAnnualised"]
@@ -272,153 +290,94 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     S = []
 
-    # 01 -----------------------------------------------------------------
-    S.append({
-        "type": "title", "kicker": "Fundamental analysis · episode deck",
-        "company": s["company"], "ticker": s["symbol"],
-        "exchange": s["exchange"], "sector": s["sector"],
-        "price": s["price"], "changePct": s["changePct"],
-        "hook": (f"Public for {s['tapeDays']} trading days. Worth {b_(s['marketCap'])}. "
-                 f"This is the first quarter it has ever had to show anyone."),
-        "chips": [{"form": "424(b)(4)", "when": "Jun 12 2026"},
-                  {"form": "10-Q", "when": "Aug 4 2026"},
-                  {"form": "8-K", "when": "Aug 4 2026"}],
-        "notes": N["title"], "target": 20,
-    })
+    # The deck opens ON the hook. There is no title slide and no price chart:
+    # the intro is delivered to camera full-frame, and the technical read comes
+    # after the deck, so a tape slide here only delays the reason to keep watching.
 
-    # 02 -----------------------------------------------------------------
+    # 01 — the hook -------------------------------------------------------
     S.append({
-        "type": "chart", "kicker": "Where we are", "src": "Daily closes · every session since listing",
-        "head": f"The entire life of this stock is {s['tapeDays']} days long",
-        "sub": (f"Listed at {d2(fv('ipo','priceUSD'))} on June 12. Ran to {d2(ptt['peak'])}, "
-                f"fell {abs(ptt['pct']):.0f}% to {d2(ptt['trough'])}, and is {d2(s['price'])} now."),
-        "chart": {"kind": "line", "points": s["tape"], "height": 500, "markers": [
-            {"i": s["high"]["i"], "lab": d2(s["high"]["v"]), "sub": s["high"]["when"]},
-            {"i": s["low"]["i"], "lab": d2(s["low"]["v"]), "sub": s["low"]["when"]},
-        ]},
-        "why": (f"Most stocks you look at have years of history to argue with. This one has "
-                f"{s['tapeDays']} days. There is no long-run track record to lean on, no pattern "
-                f"of how it behaves around results, and everyone who owns it bought it in the last "
-                f"eight weeks. That alone should change how much you trust any chart of it."),
-        "notes": N["tape"], "target": 22,
-    })
-
-    # 03 -----------------------------------------------------------------
-    S.append({
-        "type": "findings", "kicker": "Before the numbers",
-        "src": "All four from filings made in the last eight weeks",
+        "type": "findings", "kicker": "Nobody is reading these filings",
+        "src": "Every one from a document filed in the last eight weeks",
         "head": "What nobody else is going to show you",
         "items": ep["findings"],
-        "why": ("Every one of these comes out of a document SpaceX filed with the SEC since it "
-                "listed. None of them are in the headline of the press release. We will walk each "
-                "one properly."),
-        "notes": N["findings"], "target": 26,
+        "why": ("Every one of these is in a document SpaceX filed with the SEC, and not one is in "
+                "the headline of the press release. Nobody reads past the highlights, which is "
+                "exactly why these are worth your time. We take each in turn."),
+        "notes": N["findings"], "target": 30,
     })
 
-    # 04 -----------------------------------------------------------------
+    # 02 — what it is, and who earns -------------------------------------
+    # Was two slides: three revenue tiles, then the profit bars. The tiles said
+    # nothing the bars' own sub-labels do not, and three large unlabelled numbers
+    # invited being read as profit.
     S.append({
-        "type": "tiles", "kicker": "What you are actually buying",
-        "src": "10-Q Note 18, segments", "cols": 3,
-        "head": "Three very different businesses under one roof",
-        "tiles": [
-            {"v": b_(seg["rev"]["space"]), "l": "Space",
-             "n": f"rockets · lost {b_(abs(seg['op']['space']))} this quarter", "tone": "bad"},
-            {"v": b_(seg["rev"]["connectivity"]), "l": "Connectivity",
-             "n": f"Starlink · earned {b_(seg['op']['connectivity'])}", "tone": "good"},
-            {"v": b_(seg["rev"]["ai"]), "l": "AI",
-             "n": f"Grok and data centres · lost {b_(abs(seg['op']['ai']))}", "tone": "bad"},
-        ],
-        "why": ("One of these three makes money. The other two spend it. That is the whole company "
-                "in a sentence, and almost every argument about the share price is really an "
-                "argument about whether the two that lose money eventually look like the one that "
-                "does not."),
-        "notes": N["business"], "target": 22,
-    })
-
-    # 05 -----------------------------------------------------------------
-    S.append({
-        "type": "chart", "kicker": "So where does the money come from?",
-        "src": "8-K EX-99.1, segment tables",
-        "head": "Only one of the three earns anything",
-        "sub": ("Operating profit by segment, quarter ended June 30 2026. Sales for each "
-                   "are underneath."),
-        # Plot the PROFIT, not the revenue — the headline is about who earns, and a
-        # revenue bar cannot show that. Revenue rides along as the sub-label.
-        "chart": {"kind": "bars", "height": 470, "fmtKind": "usdM", "zeroLine": True,
+        "type": "chart", "kicker": "What you are actually buying",
+        "src": "8-K EX-99.1 and 10-Q Note 18, segment tables",
+        "head": "Three businesses. Only one of them earns anything.",
+        "sub": (f"Operating profit by segment for the quarter ended June 30 2026, with each "
+                f"segment's sales underneath. {b_(rev)} of revenue in total."),
+        "chart": {"kind": "bars", "height": 460, "fmtKind": "usdM", "zeroLine": True,
                   "series": [
-                      {"x": "Connectivity", "x2": f"on {m(seg['rev']['connectivity'])} of sales",
+                      {"x": "Connectivity", "x2": f"Starlink · {m(seg['rev']['connectivity'])} of sales",
                        "v": seg["op"]["connectivity"], "lab": m(seg["op"]["connectivity"]),
                        "cls": "good"},
-                      {"x": "Space", "x2": f"on {m(seg['rev']['space'])} of sales",
+                      {"x": "Space", "x2": f"rockets · {m(seg['rev']['space'])} of sales",
                        "v": seg["op"]["space"], "lab": m(seg["op"]["space"]), "cls": "bad"},
-                      {"x": "AI", "x2": f"on {m(seg['rev']['ai'])} of sales",
+                      {"x": "AI", "x2": f"Grok and data centres · {m(seg['rev']['ai'])} of sales",
                        "v": seg["op"]["ai"], "lab": m(seg["op"]["ai"]), "cls": "bad"},
                   ]},
         "why": (f"Starlink turned {b_(seg['rev']['connectivity'])} of sales into "
                 f"{b_(seg['op']['connectivity'])} of profit — it keeps {conn['margin']:.0f} cents "
-                f"in the dollar. Rockets and AI together lost {b_(abs(seg['op']['space'] + seg['op']['ai']))}. "
-                f"The whole company lost {b_(abs(fv('results','opLossQ2')))} on the quarter."),
-        "notes": N["segments"], "target": 26,
+                f"in the dollar. Rockets and AI together lost "
+                f"{b_(abs(seg['op']['space'] + seg['op']['ai']))}, so the whole company lost "
+                f"{b_(abs(fv('results','opLossQ2')))} on the quarter. Almost every argument about "
+                f"this share price is really an argument about whether the two that lose money end "
+                f"up looking like the one that does not."),
+        "notes": N["segments"], "target": 30,
     })
 
-    # 06 -----------------------------------------------------------------
+    # 03 — the good business, and the catch underneath --------------------
+    # Was two slides: the 12M-subscriber hero, then the ARPU pair. One slide
+    # carries both because the catch only means anything against the good news.
     S.append({
-        "type": "mega", "kicker": "The part that genuinely works",
-        "src": "8-K EX-99.1, Connectivity table",
-        "head": "Starlink doubled its customers in a year",
-        "value": f"{conn['subs']:.1f}M", "tone": "good",
-        "caption": (f"Up from {conn['subsPrior']:.1f} million a year ago, and "
-                    f"{conn['subsPrior'] and ''}{fv('connectivity','subsQ1'):.1f} million last "
-                    f"quarter. Connectivity earned {b_(seg['op']['connectivity'])} of operating "
-                    f"profit in the three months."),
-        "extra": ('<div class="tiles" style="grid-template-columns:repeat(2,1fr);margin-top:22px">'
-                  f'<div class="tile good"><div class="tv num">{pc(conn["revGrowth"], 0)}</div>'
-                  '<div class="tl">Connectivity revenue growth</div>'
-                  f'<div class="tn">to {b_(seg["rev"]["connectivity"])} in the quarter</div></div>'
-                  f'<div class="tile good"><div class="tv num">{conn["margin"]:.0f}%</div>'
-                  '<div class="tl">Operating margin</div>'
-                  '<div class="tn">a genuinely excellent business on its own</div></div></div>'),
-        "why": (f"If this were a company by itself it would be one of the best in the world. "
-                f"{conn['subs']:.0f} million people paying every month for something almost nobody "
-                f"else can supply, at a {conn['margin']:.0f}% profit margin. That is the strongest "
-                f"thing in these accounts by a distance, and it is why the shares exist at all."),
-        "notes": N["starlink"], "target": 24,
-    })
-
-    # 07 -----------------------------------------------------------------
-    S.append({
-        "type": "chart", "kicker": "And the same business, from underneath",
-        "src": "8-K EX-99.1 — the row directly under the subscriber count",
-        "head": f"Each customer is worth {abs(conn['arpuChange']):.0f}% less than a year ago",
-        "sub": "Starlink subscribers against monthly revenue per subscriber.",
-        "chart": {"kind": "smallmult", "height": 520, "panels": [
+        "type": "chart", "kicker": "The part that genuinely works",
+        "src": "8-K EX-99.1 — the subscriber row, and the row directly under it",
+        "head": f"Twice the customers, each worth {abs(conn['arpuChange']):.0f}% less",
+        "sub": (f"{conn['subs']:.0f} million Starlink subscribers, up from "
+                f"{conn['subsPrior']:.0f} million a year ago, against what each one pays a month. "
+                f"Connectivity earned {b_(seg['op']['connectivity'])} at a "
+                f"{conn['margin']:.0f}% margin."),
+        "chart": {"kind": "smallmult", "height": 500, "panels": [
             {"label": "Customers, in millions — doubling", "fmtKind": "plain1", "series": [
                 {"x": "Q2 2025", "v": conn["subsPrior"], "lab": f"{conn['subsPrior']:.1f}", "cls": "mut"},
                 {"x": "Q1 2026", "v": fv("connectivity", "subsQ1"),
                  "lab": f"{fv('connectivity','subsQ1'):.1f}", "cls": "mut"},
-                {"x": "Q2 2026", "v": conn["subs"], "lab": f"{conn['subs']:.1f}"}]},
+                {"x": "Q2 2026", "v": conn["subs"], "lab": f"{conn['subs']:.1f}", "cls": "good"}]},
             {"label": "What each one pays a month — falling", "fmtKind": "usd0", "series": [
                 {"x": "Q2 2025", "v": conn["arpuPrior"], "lab": dm(conn["arpuPrior"]), "cls": "mut"},
                 {"x": "Q1 2026", "v": fv("connectivity", "arpuQ1"),
                  "lab": dm(fv("connectivity", "arpuQ1")), "cls": "bad"},
                 {"x": "Q2 2026", "v": conn["arpu"], "lab": dm(conn["arpu"]), "cls": "bad"}]},
         ]},
-        "why": (f"The release says revenue per customer was maintained, and against last quarter it "
+        "why": (f"This is the best thing in the accounts: {conn['subs']:.0f} million people paying "
+                f"every month for something almost nobody else can supply, at "
+                f"{conn['margin']:.0f} cents of profit in the dollar. But look underneath. The "
+                f"release says revenue per customer was maintained, and against last quarter it "
                 f"was — {dm(conn['arpu'])} both times. Against last year it fell from "
-                f"{dm(conn['arpuPrior'])} to {dm(conn['arpu'])}. So they doubled the customers and "
-                f"cut the price by about a fifth. That is still growth, but it is a cheaper kind of "
-                f"growth than doubling alone suggests, and it is the number to watch each quarter."),
-        "notes": N["arpu"], "target": 30,
+                f"{dm(conn['arpuPrior'])} to {dm(conn['arpu'])}. They doubled the customers and cut "
+                f"the price by about a fifth. Still growth, just a cheaper kind than doubling "
+                f"alone suggests."),
+        "notes": N["arpu"], "target": 34,
     })
 
-    # 08 -----------------------------------------------------------------
+    # 04 — the rocket company did less work ------------------------------
     S.append({
-        "type": "chart", "kicker": "Meanwhile the rocket company launched less",
+        "type": "chart", "kicker": "Meanwhile the rockets flew less",
         "src": "8-K EX-99.1, Space operating table",
         "head": f"{abs(sp['massChange']):.0f}% less mass to orbit than a year ago",
-        "sub": ("Change against the same quarter a year ago. Counts are underneath each "
-                   "bar; the scale is the change, so four different units compare honestly."),
-        "chart": {"kind": "bars", "height": 440, "fmtKind": "pct0", "zeroLine": True,
+        "sub": ("Change against the same quarter a year ago. The counts are underneath each bar, "
+                "and the scale is the change itself, so four different units compare honestly."),
+        "chart": {"kind": "bars", "height": 430, "fmtKind": "pct0", "zeroLine": True,
                   "series": [
                       {"x": "Customer launches", "x2": f"{sp['customerPrior']} → {sp['customer']}",
                        "v": (sp["customer"] / sp["customerPrior"] - 1) * 100,
@@ -435,67 +394,51 @@ def slides(snap, ep, fact, fund_quarters=None):
                       {"x": "Mass to orbit", "x2": f"{sp['massPrior']:,}t → {sp['mass']:,}t",
                        "v": sp["massChange"], "lab": pc(sp["massChange"], 0), "cls": "bad"},
                   ]},
-        "why": (f"Space revenue still rose {pc(sp['revGrowth'], 0)}, because more of the launches "
-                f"were for paying customers rather than for themselves. But the machine did less "
-                f"work: eight fewer flights and {abs(sp['massChange']):.0f}% less weight delivered. "
-                f"The release calls this being the leading launch provider for the world. Both "
-                f"things are true at once, and only one of them is in the headline."),
+        "why": (f"Space revenue still rose {pc(sp['revGrowth'], 0)}, because more of the flights "
+                f"were for paying customers instead of for themselves. But the machine did less "
+                f"work: {sp['launchesPrior'] - sp['launches']} fewer flights and "
+                f"{abs(sp['massChange']):.0f}% less weight delivered. The release calls this being "
+                f"the leading launch provider for the world. Both are true, and only one of them "
+                f"is in the headline."),
         "notes": N["space"], "target": 26,
     })
 
-    # 09 -----------------------------------------------------------------
+    # 05 — the cash, and what it was spent on ----------------------------
+    # Was two slides: the capex hero, then the cash bridge. The bridge already
+    # carries the shape; the capex split belongs in the words beside it.
     S.append({
-        "type": "mega", "kicker": "Now the number that dwarfs everything",
-        "src": "8-K EX-99.1, segment capital expenditure",
-        "head": "They spent more on equipment than they sold",
-        "value": b_(cf["capexQ2"]), "tone": "bad",
-        "caption": (f"Capital spending in the three months, against {b_(rev)} of revenue. That is "
-                    f"{x(cf['capexToRevenue'], 1)} the entire quarter's sales, spent on equipment, "
-                    f"in the same quarter."),
-        "extra": ('<div class="tiles" style="grid-template-columns:repeat(3,1fr);margin-top:22px">'
-                  f'<div class="tile warn"><div class="tv num">{b_(seg["capex"]["ai"])}</div>'
-                  '<div class="tl">AI</div><div class="tn">computers and data centres</div></div>'
-                  f'<div class="tile"><div class="tv num">{b_(seg["capex"]["connectivity"])}</div>'
-                  '<div class="tl">Connectivity</div><div class="tn">satellites</div></div>'
-                  f'<div class="tile"><div class="tv num">{b_(seg["capex"]["space"])}</div>'
-                  '<div class="tl">Space</div><div class="tn">rockets and pads</div></div></div>'),
-        "why": (f"Look at where it went. {b_(seg['capex']['ai'])} of the "
-                f"{b_(cf['capexQ2'])} went into AI — that is "
-                f"{x(ai['capexToRevenue'], 1)} everything the AI division sold in the same three "
-                f"months. Whatever else SpaceX is now, it is a company spending like a data-centre "
-                f"builder and selling like a satellite operator."),
-        "notes": N["capex"], "target": 28,
-    })
-
-    # 10 -----------------------------------------------------------------
-    S.append({
-        "type": "chart", "kicker": "Which means the cash goes backwards",
-        "src": "8-K EX-99.1, selected cash flow · six months to June 30",
-        "head": f"The business made {b_(cf['cfoH1'])}. It spent {b_(cf['capexH1'])}.",
-        "sub": "Cash generated by operations against cash spent on equipment, first half of 2026.",
-        "chart": {"kind": "bridge", "height": 500, "fmtKind": "usdM", "steps": [
+        "type": "chart", "kicker": "Which is why the cash goes backwards",
+        "src": "8-K EX-99.1, selected cash flow and segment capital expenditure",
+        "head": f"They made {b_(cf['cfoH1'])} of cash. They spent {b_(cf['capexH1'])}.",
+        "sub": (f"Cash from trading against cash spent on equipment, first half of 2026. "
+                f"{b_(seg['capex']['ai'])} of the quarter's {b_(cf['capexQ2'])} went into AI "
+                f"alone."),
+        "chart": {"kind": "bridge", "height": 480, "fmtKind": "usdM", "steps": [
             {"type": "start", "v": cf["cfoH1"], "lab": m(cf["cfoH1"]),
-             "x": "From operations", "x2": "six months"},
+             "x": "From trading", "x2": "six months"},
             {"type": "step", "v": -cf["capexH1"], "lab": f"{MINUS}{m(cf['capexH1'])[1:]}",
              "x": "Equipment", "x2": "capital spending", "cls": "bad"},
             {"type": "total", "v": cf["fcfH1"], "lab": m(cf["fcfH1"]),
              "x": "Left over", "x2": "before any financing", "cls": "bad"},
         ]},
         "why": (f"Six months of trading produced {m(cf['cfoH1'])} of cash. They spent "
-                f"{m(cf['capexH1'])} on equipment. So the company went backwards by about "
-                f"{b_(abs(cf['fcfH1']))} of cash, and the gap was filled by the flotation and the "
-                f"bond — {b_(cf['financingH1'])} of financing. That is fine while the money is "
-                f"there. It is the reason the money had to be raised."),
-        "notes": N["cash"], "target": 28,
+                f"{m(cf['capexH1'])} on equipment, so the company went backwards by about "
+                f"{b_(abs(cf['fcfH1']))}. The gap was filled by the flotation and the bond — "
+                f"{b_(cf['financingH1'])} raised. In the quarter alone they spent "
+                f"{x(cf['capexToRevenue'], 1)} their entire sales on equipment, and "
+                f"{b_(seg['capex']['ai'])} of it went into AI — "
+                f"{x(ai['capexToRevenue'], 1)} everything that division sold. This is fine while "
+                f"the money is there. It is also the reason the money had to be raised."),
+        "notes": N["cash"], "target": 32,
     })
 
-    # 11 -----------------------------------------------------------------
+    # 06 — what the money actually bought --------------------------------
     S.append({
-        "type": "chart", "kicker": "And it has changed what the company owns",
+        "type": "chart", "kicker": "So look at what they now own",
         "src": "10-Q Note 5, property plant and equipment",
         "head": "More computer than spacecraft",
         "sub": "Gross property, plant and equipment by type, at June 30 2026.",
-        "chart": {"kind": "hbars", "height": 480, "fmtKind": "usdM", "rows": [
+        "chart": {"kind": "hbars", "height": 470, "fmtKind": "usdM", "rows": [
             {"name": "Servers and networking", "v": s["ppe"]["servers"],
              "lab": m(s["ppe"]["servers"]), "cls": "warn"},
             {"name": "Satellites", "v": s["ppe"]["satellites"], "lab": m(s["ppe"]["satellites"])},
@@ -511,21 +454,17 @@ def slides(snap, ep, fact, fund_quarters=None):
         "why": (f"The single biggest thing this company owns is computers — "
                 f"{m(s['ppe']['servers'])} of servers against {m(s['ppe']['satellites'])} of "
                 f"satellites. People still buy this stock for the rockets. The balance sheet has "
-                f"already become something else."),
-        "notes": N["balance"], "target": 22, "optional": True,
+                f"already become something else entirely."),
+        "notes": N["balance"], "target": 24,
     })
 
-    # 12 -----------------------------------------------------------------
+    # 07 — the loss that becomes a profit --------------------------------
     S.append({
         "type": "chart", "kicker": "Watch how the AI loss becomes a profit",
         "src": "8-K EX-99.1, AI segment reconciliation",
         "head": f"A {b_(abs(ai['opLoss']))} loss, reported as {b_(ai['adjEbitda'])} of earnings",
-        "sub": "How the AI segment's operating loss is turned into positive adjusted earnings.",
-        # Every line of the filed reconciliation, in the filing's own order. The
-        # restructuring line is only $2M, but leaving it out meant the drawn steps
-        # summed to $1,144M under a drawn total of $1,146M — a bridge that does
-        # not close is a bridge the viewer can catch out.
-        "chart": {"kind": "bridge", "height": 500, "fmtKind": "usdM", "steps": [
+        "sub": "Every line of the filing's own reconciliation, in its order.",
+        "chart": {"kind": "bridge", "height": 480, "fmtKind": "usdM", "steps": [
             {"type": "start", "v": ai["opLoss"], "lab": m(ai["opLoss"]),
              "x": "Operating loss", "x2": "what it actually lost", "cls": "bad"},
             {"type": "step", "v": ai["dna"], "lab": f"+{m(ai['dna'])[1:]}",
@@ -533,8 +472,8 @@ def slides(snap, ep, fact, fund_quarters=None):
             {"type": "step", "v": ai["sbc"], "lab": f"+{m(ai['sbc'])[1:]}",
              "x": "Add back share pay", "x2": "paid in your ownership", "cls": "warn"},
         ] + ([{"type": "step", "v": ai["restructuring"],
-               "lab": ("+" if ai["restructuring"] > 0 else "−") + m(abs(ai["restructuring"]))[1:],
-               "x": "Restructuring", "x2": "the filing's own fourth line", "cls": "warn"}]
+               "lab": ("+" if ai["restructuring"] > 0 else MINUS) + m(abs(ai["restructuring"]))[1:],
+               "x": "Restructuring", "x2": "the filing's fourth line", "cls": "warn"}]
              if round(ai["restructuring"], 1) else []) + [
             {"type": "total", "v": ai["adjEbitda"], "lab": m(ai["adjEbitda"]),
              "x": "Adjusted earnings", "x2": "the number in the headline"},
@@ -542,269 +481,85 @@ def slides(snap, ep, fact, fund_quarters=None):
         "why": (f"The release leads with positive adjusted earnings of {m(ai['adjEbitda'])} for AI. "
                 f"The division lost {m(abs(ai['opLoss']))}. Almost the whole difference is adding "
                 f"back {m(ai['dna'])} of wear on equipment and {m(ai['sbc'])} of pay handed out in "
-                f"shares. The equipment is the {m(ai['capex'])} of computers they bought this same "
-                f"quarter — so the cost being added back is the cost of the thing the story is "
-                f"about."),
-        "notes": N["ebitda"], "target": 30,
+                f"shares. And the equipment being written off is the {b_(seg['capex']['ai'])} of "
+                f"computers they bought in this same quarter — so the cost added back is the cost "
+                f"of the very thing the story is about."),
+        "notes": N["ebitda"], "target": 32,
     })
 
-    # 13 -----------------------------------------------------------------
+    # 08 — the man on both sides -----------------------------------------
+    # Was two slides: the Note 17 quote, then the 13G. One slide, and it names
+    # him: a slide about a conflict that will not say who is asking for trust.
     S.append({
-        "type": "quote", "kicker": "The one nobody is talking about",
-        "src": "10-Q Note 17, Related Party Transactions",
-        "head": f"{b_(rpy['debt'])} is owed to a director's fund",
-        "quote": fv("relatedParty", "directorQuote"),
-        "attr": "Space Exploration Technologies Corp., Q2 2026 Form 10-Q, Note 17",
-        "extra": ('<div class="tiles" style="grid-template-columns:repeat(3,1fr);margin-top:20px">'
-                  f'<div class="tile warn"><div class="tv num">{b_(rpy["debt"])}</div>'
-                  '<div class="tl">Owed to Valor Equity Partners</div>'
-                  f'<div class="tn">{rpy["shareOfDebt"]:.0f}% of all the company\'s debt</div></div>'
-                  f'<div class="tile warn"><div class="tv num">{pc(rpy["growth"], 0)}</div>'
-                  '<div class="tl">Growth in six months</div>'
-                  f'<div class="tn">from {b_(rpy["debtPrior"])} at the end of December</div></div>'
-                  f'<div class="tile warn"><div class="tv num">{rpy["shareOfInterest"]:.0f}%</div>'
-                  '<div class="tl">Of the quarter\'s interest bill</div>'
-                  f'<div class="tn">{m(rpy["interestQ2"])} of {m(fv("results","interestExpenseQ2"))} '
-                  'paid to this one lender</div></div></div>'),
-        "why": (f"Read that plainly. A fund run by a man on SpaceX's own board has financed "
-                f"{b_(rpy['debt'])} of AI equipment, and more than half the interest the company "
-                f"paid this quarter went to him. The accountants call it a failed sale-leaseback, "
-                f"which is a technical way of saying: the kit never really left, so treat the money "
-                f"as a loan. None of it is hidden or illegal — it is on page twenty-nine. It is "
-                f"just not in the press release, and it grew "
-                f"{x(rpy['debt'] / rpy['debtPrior'], 1)} in six months."),
-        "notes": N["related"], "target": 32,
-    })
-
-    # 13b ----------------------------------------------------------------
-    # Filed the morning of this build: the equity half of the same relationship.
-    S.append({
-        "type": "tiles", "kicker": "And this landed this morning", "cols": 2,
-        "src": "Schedule 13G filed Aug 11 2026, Item 4",
-        "head": f"The same director owns {rpy['equityPct']:.1f}% of the stock",
-        # Self-contained: "the debt above" pointed at the previous slide, which
-        # dangles the moment that slide is cut for time.
-        "sub": (f"Filed today, four business days after the 10-Q that carries the "
-                f"{b_(rpy['debt'])} of related-party debt. Dated to June 30 &mdash; the first "
-                f"day it was reportable."),
+        "type": "tiles", "kicker": "The same name, on both sides of the balance sheet", "cols": 2,
+        "src": "10-Q Note 17 · Schedule 13G filed Aug 11 2026",
+        "head": (f"{fv('relatedParty','directorName')} is their biggest lender "
+                 f"and a {rpy['equityPct']:.1f}% owner"),
+        "sub": (f"He founded and runs Valor, and sits on SpaceX's board. Valor is owed "
+                f"{b_(rpy['debt'])}; the 13G filed on {fv('relatedParty','filedDate')} showed the "
+                f"equity for the first time."),
         "tiles": [
-            {"v": b_(rpy["debt"]), "l": "Lent to the company by his fund",
-             "n": f"{rpy['shareOfDebt']:.0f}% of every dollar SpaceX owes", "tone": "bad"},
+            {"v": b_(rpy["debt"]), "l": "Lent to SpaceX by his fund",
+             "n": (f"{rpy['shareOfDebt']:.0f}% of every dollar SpaceX owes, up "
+                   f"{pc(rpy['growth'], 0)} in six months"), "tone": "bad"},
+            {"v": f"{rpy['shareOfInterest']:.0f}%", "l": "Of the quarter's interest bill",
+             "n": (f"{m(rpy['interestQ2'])} of {m(fv('results','interestExpenseQ2'))} paid to this "
+                   f"one lender"), "tone": "bad"},
             {"v": f"{rpy['equityPct']:.1f}%", "l": "Of the Class A stock he controls",
              "n": (f"{rpy['equityShares']/1e6:.1f} million shares of the "
                    f"{rpy['equityBase']/1e9:.2f} billion outstanding"), "tone": "warn"},
-            {"v": f"{rpy['entities']}", "l": "Separate entities hold it",
-             "n": "named one by one in the filing, from CV Consortio A to VX Holdings",
-             "tone": "warn"},
-            {"v": "0", "l": "Of those had to be disclosed on their own",
-             "n": "the filing states no single one reaches 5%", "tone": "bad"},
+            {"v": f"{rpy['entities']}", "l": "Separate entities hold that stake",
+             "n": "and the filing states not one of them reaches 5% on its own", "tone": "warn"},
         ],
         "why": (f"The same person is on both sides of this company. His fund is its biggest "
-                f"lender, owed {b_(rpy['debt'])}. He also controls {rpy['equityPct']:.1f}% of the "
-                f"shares. That stake sits in {rpy['entities']} separate companies, and the filing "
-                f"says not one of them reaches 5% on its own. 5% is the level where you have to "
-                f"tell the public. So no rule is broken here &mdash; you simply could not have "
-                f"seen this half of it until this morning."),
-        "notes": N["related13g"], "target": 34,
+                f"lender, owed {b_(rpy['debt'])}, and more than half the interest SpaceX paid this "
+                f"quarter went to him. He also controls {rpy['equityPct']:.1f}% of the shares, held "
+                f"across {rpy['entities']} separate companies — and 5% is the level at which you "
+                f"must tell the public. The accountants call the lending a failed sale-leaseback, "
+                f"which means the equipment never really changed hands, so treat the money as a "
+                f"loan. None of it breaks a rule. All of it is on page twenty-nine."),
+        "notes": N["related13g"], "target": 36,
     })
 
-    # 14 -----------------------------------------------------------------
+    # 09 — the supply of sellers already scheduled -----------------------
     S.append({
-        "type": "tiles", "kicker": "Two more things buried in the notes",
-        "src": "10-Q Notes 3 and 16", "cols": 2,
-        "head": "Who pays them, and what they have already promised to spend",
-        "tiles": [
-            {"v": f"{s['custConc']:.0f}%", "l": "Revenue from just two customers",
-             "n": (f"{fv('concentration','customerBQ2')}% from one alone — and that customer was "
-                   "too small to name a year ago"), "tone": "bad"},
-            {"v": m(fv("commitments", "y2027")), "l": "Committed spending in 2027 alone",
-             "n": f"of {m(fv('commitments','total'))} they cannot cancel", "tone": "bad"},
-        ],
-        "why": (f"Nearly {s['custConc']:.0f} cents of every revenue dollar comes from two "
-                f"customers, and one of them appeared in the last twelve months. At the same time "
-                f"they have signed contracts they cannot get out of worth "
-                f"{m(fv('commitments','total'))}, most of it falling in a single year. Both facts "
-                f"sit in the notes; neither is in the release."),
-        "notes": N["concentration"], "target": 24, "optional": True,
-    })
-
-    # 15 -----------------------------------------------------------------
-    S.append({
-        "type": "chart", "kicker": "Now the calendar nobody headlined",
+        "type": "chart", "kicker": "And a calendar nobody headlined",
         "src": "424(b)(4) prospectus — the staged early-release schedule",
         "head": "The lockup does not end. It leaks.",
-        "sub": (f"Shares became sellable in stages after the {d2(lock['ipoPrice'])} listing. "
-                f"Percentages are of the shares in the 180-day group."),
-        "chart": {"kind": "bars", "height": 450, "fmtKind": "pct0",
-                  "series": [
-                      {"x": "Aug 6", "x2": "after first results", "v": lock["firstReleasePct"],
-                       "lab": f"{lock['firstReleasePct']}%", "cls": "warn"},
-                      {"x": "Aug 6", "x2": "price bonus — MISSED",
-                       "v": lock["priceTriggerPct"] if lock["fired"] else 0,
-                       "lab": f"{lock['priceTriggerPct'] if lock['fired'] else 0}%", "cls": "mut"},
-                      {"x": "Aug 20", "x2": "", "v": lock["staircasePct"],
-                       "lab": f"{lock['staircasePct']}%", "cls": "warn"},
-                      {"x": "Sep 9", "x2": "", "v": lock["staircasePct"],
-                       "lab": f"{lock['staircasePct']}%", "cls": "warn"},
-                      {"x": "Sep 24", "x2": "", "v": lock["staircasePct"],
-                       "lab": f"{lock['staircasePct']}%", "cls": "warn"},
-                      {"x": "Oct 9", "x2": "", "v": lock["staircasePct"],
-                       "lab": f"{lock['staircasePct']}%", "cls": "warn"},
-                      {"x": "Oct 24", "x2": "", "v": lock["staircasePct"],
-                       "lab": f"{lock['staircasePct']}%", "cls": "warn"},
-                      {"x": "After Q3", "x2": "next results", "v": lock["postQ3Pct"],
-                       "lab": f"{lock['postQ3Pct']}%", "cls": "bad"},
-                  ]},
-        "why": (f"Twenty percent came free on August 6, two days after the first results. There was "
-                f"a bonus ten percent on offer if the shares had closed {lock['trigger']:.0f} "
-                f"dollars or better on five of the ten days up to that report — the best close was "
-                f"{d2(lock['bestClose'])}, so it missed on all {lock['windowDays']} of them and "
-                f"those shares stayed locked. Then more comes free on five dates before the end of "
-                f"October. A steady supply of new sellers is scheduled into this stock, and it is "
-                f"written down in advance."),
-        "notes": N["lockup"], "target": 34,
+        "sub": (f"Share of the 180-day locked group free to sell, running total, after the "
+                f"{d2(lock['ipoPrice'])} listing."),
+        # Cumulative, not per-date. Per-date bars also carried a ZERO bar for the
+        # price bonus that was missed — and a bar of nothing cannot show that
+        # nothing happened, so the miss belongs in the words.
+        "chart": {"kind": "bars", "height": 440, "fmtKind": "pct0",
+                  "series": [dict(zip(("x", "x2", "v", "lab", "cls"), row))
+                             for row in lock["cumulative"]]},
+        "why": (f"Twenty percent came free on August 6, two days after the first results. A bonus "
+                f"{lock['priceTriggerPct']}% was on offer if the shares had closed at "
+                f"{d2(lock['trigger'])} or better on five of the ten days up to that report — the "
+                f"best close was {d2(lock['bestClose'])}, so it missed every one of the "
+                f"{lock['windowDays']} days and those shares stayed locked. Then more comes free "
+                f"on five dates before the end of October. By the next set of results "
+                f"{lock['cumEnd']:.0f}% of that group can sell. A steady supply of new sellers is "
+                f"scheduled into this stock, in writing, in advance."),
+        "notes": N["lockup"], "target": 32,
     })
 
-    # 16 -----------------------------------------------------------------
-    S.append({
-        "type": "tiles", "kicker": "Who you are investing alongside",
-        "src": "424(b)(4) prospectus, cover and Underwriting", "cols": 3,
-        "head": "One person controls the outcome of every vote",
-        "tiles": [
-            {"v": f"{fv('ipo','muskVotingPct')}%", "l": "Of the votes held by the founder",
-             "n": "through shares carrying 10 votes each", "tone": "bad"},
-            {"v": f"{fv('ipo','lockedPctPreIPO')}%", "l": "Of pre-listing shares still locked",
-             "n": f"about {fv('ipo','lockedSharesBn')} billion shares", "tone": "warn"},
-            {"v": f"{fv('dilution','unmetPerformanceAwards'):,.0f}M", "l": "Shares promised but not counted",
-             "n": "targets not yet hit, so they sit outside the share count", "tone": "warn"},
-        ],
-        "why": (f"One person holds {fv('ipo','muskVotingPct')}% of the votes. Every decision is "
-                f"his, and your shares do not change any of them. Because he controls it, SpaceX "
-                f"is allowed to skip several of the rules Nasdaq sets for how a board must be run. "
-                f"There are also {fv('dilution','unmetPerformanceAwards'):,.0f} million shares "
-                f"already promised to him that are not in the share count yet. One batch of those "
-                f"only pays out if SpaceX builds data centres in space."),
-        "notes": N["governance"], "target": 26,
-    })
-
-    # 17 -----------------------------------------------------------------
-    S.append({
-        "type": "chart", "kicker": "So what does it cost?",
-        "src": "Live market cap ÷ this quarter's revenue, annualised",
-        "head": f"{xt(val['psAnnualised'], 0)} what it sells in a year",
-        "sub": ("Price to sales, against the most expensive software companies on the market. "
-                "Every one of those makes a profit. SpaceX does not."),
-        "chart": {"kind": "peers", "height": 480, "avg": pb["avgPs"],
-                  "avgLab": f"peer avg {xt(pb['avgPs'], 1)}",
-                  "rightHead": "revenue growth",
-                  "rows": [{"name": F["peers"]["names"].get(r["sym"], r["sym"]),
-                            "v": r["ps"], "lab": xt(r["ps"], 1),
-                            "right": pc(r["growth"], 0),
-                            "here": r["sym"] == s["symbol"]} for r in pb["rows"]]},
-        "why": (f"There is no guidance to check this against, because SpaceX does not give any. So "
-                f"take the quarter it just reported, multiply by four, and compare. It comes to "
-                f"{xt(val['psAnnualised'], 0)} sales — about {x(pb['psPremium'], 1)} what these "
-                f"peers cost. It grows much faster than they do. It also loses money, and they do "
-                f"not."),
-        "notes": N["valuation"], "target": 26,
-    })
-
-    # 18 -----------------------------------------------------------------
-    fwd = [f for f in s["fwd"] if f.get("low") is not None]
-    S.append({
-        "type": "chart", "kicker": "And the professionals cannot agree",
-        "src": f"Nasdaq analyst estimates · {s['fwd'][0].get('analysts') or 0} analysts",
-        "head": "Forecasts that run from a loss to a fortune",
-        "sub": "Earnings per share estimates by year — the range, not just the average.",
-        "chart": {"kind": "dumbbell", "height": 470, "fmtKind": "usd2", "labelRoom": 470, "rows": [
-            {"name": f["period"], "sub": f"{f.get('analysts') or 0} analysts",
-             "from": f["low"], "to": f["high"],
-             "fromLab": d2(f["low"]), "toLab": d2(f["high"]),
-             "delta": f"average {d2(f['eps'])}", "deltaGood": f["eps"] > 0}
-            for f in fwd]},
-        "why": (f"For {fwd[1]['period'] if len(fwd) > 1 else fwd[0]['period']} the forecasts run "
-                f"from {d2(fwd[1]['low'] if len(fwd) > 1 else fwd[0]['low'])} to "
-                f"{d2(fwd[1]['high'] if len(fwd) > 1 else fwd[0]['high'])} a share. One side thinks "
-                f"it loses money; the other thinks it earns three dollars. When the people who do "
-                f"this full time are that far apart, it is not because some of them are lazy — it "
-                f"is because nobody yet knows what the AI spending turns into."),
-        "notes": N["street"], "target": 22, "optional": True,
-    })
-
-    # 19 -----------------------------------------------------------------
+    # 10 — the scorecard, then straight to the chart ----------------------
     _sc = [r["score"] for r in ep["verdict"]["scored"]]
     _strong = sum(1 for v in _sc if v >= 4)
     _weak = sum(1 for v in _sc if v <= 2)
     S.append({
-        "type": "snapshot", "kicker": "The verdict", "src": "My call · not financial advice",
+        "type": "snapshot", "kicker": "Where that leaves it", "src": "My read · not financial advice",
         "head": "Six dimensions, scored from the filings",
         "rows": [{"name": r["dim"], "score": r["score"], "fact": r["fact"], "tone": r["tone"]}
                  for r in ep["verdict"]["scored"]],
         "why": (f"{_word(_strong, True)} of the six score four or better, and they are all about "
-                f"the business. The {_word(_weak)} that score badly are about the cash going out, "
-                f"who controls the company, and what you are being asked to pay."),
+                f"the business itself — it sells more every quarter and one division is genuinely "
+                f"excellent. The {_word(_weak)} that score badly are about the cash going out, who "
+                f"controls the company, and what you are being asked to pay for it. That is the "
+                f"fundamental picture. Now let's see what the chart says about timing."),
         "notes": N["verdict"], "target": 24,
-    })
-
-    # 20 -----------------------------------------------------------------
-    S.append({
-        "type": "twocol", "kicker": "Both sides, plainly",
-        "src": "Everything on this slide traces to a filing",
-        "head": "What's working, and what to watch",
-        "leftHead": "What's working", "rightHead": "What to watch",
-        "left": ep["verdict"]["working"], "right": ep["verdict"]["watch"],
-        "notes": N["twolists"], "target": 20, "optional": True,
-    })
-
-    # 21 -----------------------------------------------------------------
-    fvc = ep["fairValue"]; K = fvc["constants"]; c = fvc["cases"]["base"]; Hh = fvc["horizonYears"]
-
-    def _fair(case):
-        """Revenue-based, because there are no profits and no guidance to work from."""
-        g = (1 + case["revGrowth"] / 100) ** Hh
-        revenue = K["startRevenueTTM"] * g
-        ebit = revenue * case["opMargin"] / 100
-        pre = ebit - K["netDebt"] * K["interestRate"] / 100
-        net = pre * (1 - K["taxRate"] / 100)
-        sh = s["sharesNow"] * (1 + case["shareChange"] / 100) ** Hh
-        return (net / sh) * case["exitPE"] / (1 + fvc["requiredReturn"] / 100) ** Hh
-
-    fair_base, fair_bear, fair_bull = (_fair(c), _fair(fvc["cases"]["bear"]),
-                                       _fair(fvc["cases"]["bull"]))
-    S.append({
-        "type": "chart", "kicker": "So what is it worth?",
-        "src": "My model · not financial advice",
-        "head": "Where the price sits against my own fair value",
-        "sub": (f"My base case: {c['revGrowth']:.0f}% revenue growth every year for {Hh} years, "
-                f"finishing on a {c['opMargin']:.0f}% profit margin, no tax at all because of the "
-                f"losses carried forward, and buyers still paying a rich price at the end. The "
-                f"bracket is my worst and best cases."),
-        "chart": {"kind": "fvband", "height": 440, "band": 0.20,
-                  "price": s["price"], "priceLab": d2(s["price"]),
-                  "fairValue": fair_base, "fairLab": d2(fair_base), "fairName": "my base case",
-                  "rangeLo": fair_bear, "rangeHi": fair_bull,
-                  "rangeLoLab": f"bear {d2(fair_bear)}", "rangeHiLab": f"bull {d2(fair_bull)}",
-                  "verdict": f"{abs((s['price'] / fair_base - 1) * 100):.0f}% "
-                             + ("over" if s["price"] > fair_base else "under") + " my base case"},
-        "why": (f"Even the base case here is generous: it assumes revenue grows "
-                f"{c['revGrowth']:.0f}% a year for {Hh} years running, that a company losing money "
-                f"today ends up keeping {c['opMargin']:.0f}p in the pound, and that it pays no tax "
-                f"the whole way. That lands at {d2(fair_base)}. My best case gets to "
-                f"{d2(fair_bull)}. Today's price is {d2(s['price'])}. You are being asked to pay "
-                f"now for a version of this company that does not exist yet."),
-        "notes": N["fairvalue"], "target": 24,
-    })
-
-    # 22 -----------------------------------------------------------------
-    S.append({
-        "type": "verdict", "kicker": "So what am I doing?",
-        "src": "My call · not financial advice",
-        "head": f"My call: {ep['verdict']['call']}",
-        "call": ep["verdict"]["call"], "callLine": ep["verdict"]["callLine"],
-        "reasons": ep["verdict"]["why"],
-        "why": ("Fundamentals tell you <b>what</b> to own. They never tell you <b>when</b>. "
-                "Let's go to the chart."),
-        "notes": N["call"], "target": 30,
     })
 
     return S

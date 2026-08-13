@@ -529,6 +529,17 @@
         "src": "10q-q2-26",
         "note": "Note 17, Related Party Transactions"
       },
+      "directorName": {
+        "v": "Antonio Gracias",
+        "src": "10q-q2-26",
+        "note": "Named in Note 17 and again as the reporting person on the 13G. A slide about a conflict that will not name the person is asking for trust."
+      },
+      "filedDate": {
+        "v": "August 11",
+        "src": "13g-gracias",
+        "searchAs": "08/11/2026",
+        "note": "The 13G's own signature date. Stated absolutely because a deck that says 'yesterday' is wrong the moment it is recorded on a different day."
+      },
       "valorClassAShares": {
         "v": 503414530,
         "src": "13g-gracias",

@@ -909,6 +909,59 @@ def audit_entity_count(ep):
     ok(f"entity-count ({len(names)} entities recounted from the filing itself)")
 
 
+def audit_relative_dates(payload):
+    """
+    "Filed yesterday" is true on the day the deck is built and wrong on the day it
+    is recorded. Slide copy states dates absolutely; only the footer's own
+    as-of stamp is allowed to be relative to the build.
+
+    A deck deliberately built and recorded the same evening can opt out per slide
+    with `"sameDay": True` — RKLB's whole framing is "this landed after the close
+    tonight", and that is a decision, not an oversight.
+    """
+    pat = re.compile(r"\b(yesterday|this morning|last night|tomorrow morning)\b", re.I)
+    hits = []
+    for i, sl in enumerate(payload["slides"], 1):
+        if sl.get("sameDay"):
+            continue
+        for field in ("head", "sub", "why", "caption", "callLine", "hook"):
+            v = sl.get(field)
+            if v and pat.search(str(v)):
+                hits.append(f"slide {i} .{field}: {pat.search(str(v)).group(0)!r}")
+    if hits:
+        bad("relative-dates", f"{len(hits)} date(s) relative to the build, not stated: {hits[:5]}")
+        return
+    ok("relative-dates (every date on screen is stated, not relative to the build)")
+
+
+def audit_us_idiom(payload):
+    """
+    The deck is about US filings in dollars and the audience is American. A fair
+    value band shipped the words "ends up keeping 20p in the pound" — British
+    currency, in a deck quoting SEC filings — because the phrase reads naturally
+    when you are writing quickly. Cheap to catch, impossible to miss on camera.
+    """
+    bad_words = [
+        (r"\bp in the pound\b", "British currency"),
+        (r"\bpence\b", "British currency"),
+        (r"£", "British currency"),
+        (r"\bquid\b", "British slang"),
+        (r"\bturnover\b", "British for revenue"),
+        (r"\bmaths\b", "British spelling"),
+        (r"\bwhilst\b", "not how the audience speaks"),
+    ]
+    hits = []
+    for i, sl in enumerate(payload["slides"], 1):
+        blob = json.dumps(sl)
+        for pat, why in bad_words:
+            if re.search(pat, blob, re.I):
+                hits.append(f"slide {i}: {pat} ({why})")
+    if hits:
+        bad("us-idiom", f"{len(hits)} non-US phrasing(s): {hits[:5]}")
+        return
+    ok("us-idiom (no British currency, spelling or slang on any slide)")
+
+
 def audit_bridge_closes(payload):
     """
     A bridge asserts arithmetic on screen: start, plus each step, equals the total.
@@ -1229,6 +1282,8 @@ def main():
     audit_insider_aggregates(ep, sym)
     audit_entity_count(ep)
     audit_bridge_closes(payload)
+    audit_us_idiom(payload)
+    audit_relative_dates(payload)
     audit_derived_arithmetic(snap, ep)
     audit_provenance(snap)
     audit_slide_integrity(payload, snap)
