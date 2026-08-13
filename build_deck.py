@@ -501,11 +501,50 @@ def write_script(path, snap, slides):
         L += [f"## {i:02d} — {head}   `{sl.get('target','?')}s`{tag}", ""]
         if sl.get("sub"):
             L += ["> " + strip_html(sl["sub"]), ""]
+        if sl.get("punch"):
+            L += ["**On screen:** " + strip_html(sl["punch"]), ""]
         L += [strip_html(sl.get("notes", "")), ""]
         if sl.get("why"):
-            L += ["**On-screen callout:** " + strip_html(sl["why"]), ""]
+            # `why` is no longer rendered — it is the second half of what he says.
+            L += [strip_html(sl["why"]), ""]
         L += ["---", ""]
     open(path, "w").write("\n".join(L))
+
+
+def write_script_txt(path, snap, slides):
+    """
+    A plain-text script, one block per slide, for reading off a phone or a second
+    screen while presenting. No markdown syntax to trip over mid-sentence.
+    """
+    fmt = lambda x: f"{x//60}:{x%60:02d}"                                 # noqa: E731
+    total = sum(sl.get("target", 0) for sl in slides)
+    W = 78
+    L = [f"{snap['company']} ({snap['symbol']}) — SPOKEN SCRIPT",
+         f"{len(slides)} slides · {fmt(total)} · price {snap['price']:.2f} as of {snap['asOf']}",
+         "=" * W, ""]
+    for i, sl in enumerate(slides, 1):
+        head = strip_html(sl.get("head") or sl.get("company") or "")
+        L += ["-" * W,
+              f"SLIDE {i:02d}  ({sl.get('target','?')}s)"
+              + ("   [CUT FOR TIME]" if sl.get("optional") else ""),
+              f"HEADLINE: {head}"]
+        if sl.get("punch"):
+            L.append(f"ON SCREEN: {strip_html(sl['punch'])}")
+        L += ["-" * W, ""]
+        for para in (strip_html(sl.get("notes", "")), strip_html(sl.get("why", ""))):
+            if not para:
+                continue
+            line, out = "", []
+            for word in para.split():
+                if len(line) + len(word) + 1 > W:
+                    out.append(line); line = word
+                else:
+                    line = (line + " " + word).strip()
+            if line:
+                out.append(line)
+            L += out + [""]
+    L += ["=" * W, "END — cut to the chart."]
+    open(path, "w").write("\n".join(L) + "\n")
 
 
 def write_sources(path, snap, ep):
@@ -600,10 +639,11 @@ def main():
     json.dump({"snapshot": snap, "payload": payload, "episode": ep},
               open(os.path.join(outdir, "data", f"{sym}-{ep['episodeDate']}.json"), "w"), indent=1)
     write_script(os.path.join(outdir, "SCRIPT.md"), snap, slides)
+    write_script_txt(os.path.join(outdir, "SCRIPT.txt"), snap, slides)
     write_sources(os.path.join(outdir, "SOURCES.md"), snap, ep)
 
     print(f"\n✓ {deck_path}")
-    print(f"  {outdir}/SCRIPT.md · SOURCES.md · data/{sym}-{ep['episodeDate']}.json")
+    print(f"  {outdir}/SCRIPT.md · SCRIPT.txt · SOURCES.md · data/{sym}-{ep['episodeDate']}.json")
     print(f"\n  open '{deck_path}'")
 
 

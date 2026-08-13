@@ -934,6 +934,71 @@ def audit_relative_dates(payload):
     ok("relative-dates (every date on screen is stated, not relative to the build)")
 
 
+def audit_findings_count(payload, ep):
+    """
+    The findings slide states how many there are, in words, in both the punch line
+    and the spoken note. A fifth finding was added and neither was updated — the
+    slide promised five and the script said four. Spelled-out numbers slip past
+    every figure check, so count them explicitly.
+    """
+    WORDS = {w: i for i, w in enumerate(
+        "zero one two three four five six seven eight nine ten".split())}
+    slide = next((sl for sl in payload["slides"] if sl.get("type") == "findings"), None)
+    if not slide:
+        SKIPS.append("findings-count: this deck has no findings slide")
+        return
+    n = len(slide.get("items") or [])
+    problems = []
+    blobs = [("punch", slide.get("punch") or ""), ("notes", slide.get("notes") or "")]
+    for field, blob in blobs:
+        txt = re.sub(r"<[^>]+>", " ", str(blob)).lower()
+        for word, val in WORDS.items():
+            # only a count directly qualifying "thing(s)" or "finding(s)"
+            if re.search(rf"\b{word}\s+(things?|findings?)\b", txt) and val != n:
+                problems.append(f"{field} says {word} ({val}), the slide renders {n}")
+        for mm in re.finditer(r"\b(\d+)\s+(things?|findings?)\b", txt):
+            if int(mm.group(1)) != n:
+                problems.append(f"{field} says {mm.group(1)}, the slide renders {n}")
+    if problems:
+        bad("findings-count", f"{problems}")
+        return
+    ok(f"findings-count ({n} findings, and the copy says so)")
+
+
+def audit_word_budget(payload):
+    """
+    Executive style, enforced. The deck used to carry a 90-word "why it matters"
+    paragraph on every slide — 945 words across ten slides, which the viewer reads
+    instead of listening to. That text is now `why`: never rendered, carried into
+    SCRIPT.txt as the second half of what he says. What is left on screen is a
+    headline and one punch line.
+
+    Budgets are per slide, in words: head 9, punch 14, sub 12, and 30 all in.
+    """
+    LIMITS = {"head": 9, "punch": 14, "sub": 12}
+    TOTAL = 30
+    problems = []
+    for i, sl in enumerate(payload["slides"], 1):
+        if sl.get("type") == "title":
+            continue                       # the title slide is its own thing
+        n = 0
+        for field, cap in LIMITS.items():
+            words = len(re.findall(r"[A-Za-z0-9$%×—-]+",
+                                   re.sub(r"<[^>]+>", " ", str(sl.get(field) or ""))))
+            n += words
+            if words > cap:
+                problems.append(f"slide {i} .{field}: {words} words (max {cap})")
+        if n > TOTAL:
+            problems.append(f"slide {i}: {n} words on screen (max {TOTAL})")
+        # The long form must not sneak back onto the slide under another name.
+        if sl.get("whyOnScreen") or sl.get("body"):
+            problems.append(f"slide {i} renders long-form prose")
+    if problems:
+        bad("word-budget", f"{len(problems)} slide(s) over the executive budget: {problems[:6]}")
+        return
+    ok(f"word-budget (every slide inside {TOTAL} words on screen)")
+
+
 def audit_us_idiom(payload):
     """
     The deck is about US filings in dollars and the audience is American. A fair
@@ -1282,6 +1347,8 @@ def main():
     audit_insider_aggregates(ep, sym)
     audit_entity_count(ep)
     audit_bridge_closes(payload)
+    audit_findings_count(payload, ep)
+    audit_word_budget(payload)
     audit_us_idiom(payload)
     audit_relative_dates(payload)
     audit_derived_arithmetic(snap, ep)

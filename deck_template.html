@@ -99,16 +99,19 @@ h1.head.sm{font-size:52px}
 .footer .stamp{color:var(--muted)}
 
 /* The "why this matters" band — the beginner payoff on every slide */
-.why{
-  margin-top:auto; display:flex; gap:16px; align-items:flex-start;
-  background:var(--accent-wash); border-left:3px solid var(--accent);
-  border-radius:0 10px 10px 0; padding:18px 24px;
+/* ---------- The punch line ----------
+   This used to be a 90-word "why it matters" paragraph in a tinted box. On a
+   1920x1080 frame that is a wall of text the viewer reads instead of listening,
+   and it was saying what the presenter says out loud. The explanation now lives
+   in the presenter notes; the screen carries ONE line, set large enough to be
+   read from the sofa in the second it takes to land. */
+.punch{
+  margin-top:auto; display:flex; gap:20px; align-items:center;
+  border-left:5px solid var(--accent); padding:6px 0 6px 26px;
 }
-.why .lbl{
-  flex:none; font-size:15px; font-weight:800; letter-spacing:.11em;
-  color:var(--accent); text-transform:uppercase; padding-top:4px; width:132px;
-}
-.why p{font-size:22px;line-height:1.45;color:var(--ink)}
+.punch p{font-size:40px;line-height:1.22;font-weight:680;letter-spacing:-.012em;
+  color:var(--ink);max-width:1180px}
+.punch p b,.punch p strong{font-weight:800;color:var(--accent)}
 
 .body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;min-height:0;padding:14px 0}
 .body.top{justify-content:flex-start}
@@ -1962,7 +1965,7 @@ function render(sl, idx, total){
       sl.reasons.map(r => `<p>${r}</p>`).join("") + `</div></div>`;
   }
 
-  if (sl.why) inner += `<div class="why"><div class="lbl">Why it matters</div><p>${sl.why}</p></div>`;
+  if (sl.punch) inner += `<div class="punch"><p>${sl.punch}</p></div>`;
   inner += `<div class="footer"><span class="mark">NIKRAYANI <span>TERMINAL</span></span>
     <span class="stamp">${esc(DECK.stamp)}</span>
     <span class="pg num">${idx} / ${total}</span></div>`;
@@ -2096,12 +2099,12 @@ function deckAudit(){
           issues.push(`${nm}: chart draws ${(vb[1] - bb.y).toFixed(0)}px above its box`);
         if (bb.x < vb[0] - 8)
           issues.push(`${nm}: chart draws ${(vb[0] - bb.x).toFixed(0)}px past its left edge`);
-        const why = sl.querySelector(".why");
-        if (why) {
-          const hb = svg.getBoundingClientRect(), wb = why.getBoundingClientRect();
+        const punch = sl.querySelector(".punch");
+        if (punch) {
+          const hb = svg.getBoundingClientRect(), wb = punch.getBoundingClientRect();
           const sc = hb.width / vb[2], contentBottom = hb.top + (bb.y + bb.height) * sc;
           if (contentBottom > wb.top + 2)
-            issues.push(`${nm}: chart overlaps the why band by ${(contentBottom - wb.top).toFixed(0)}px`);
+            issues.push(`${nm}: chart overlaps the punch line by ${(contentBottom - wb.top).toFixed(0)}px`);
         }
       }
       // Text drawn ACROSS a stroked line. Text-vs-text could not see this: a
