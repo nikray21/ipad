@@ -399,16 +399,25 @@ def slides(snap, ep, fact, fund_quarters=None):
     S.append({
         "type": "chart", "kicker": "Where the money comes from",
         "src": "8-K EX-99.1, segment tables",
-        "head": "One of three earns anything",
-        "chart": {"kind": "bars", "height": 520, "fmtKind": "usdM", "zeroLine": True,
-                  "series": [
-                      {"x": "Connectivity", "x2": f"Starlink · {m(seg['rev']['connectivity'])} of sales",
-                       "v": seg["op"]["connectivity"], "lab": m(seg["op"]["connectivity"]),
-                       "cls": "good"},
-                      {"x": "Space", "x2": f"rockets · {m(seg['rev']['space'])} of sales",
-                       "v": seg["op"]["space"], "lab": m(seg["op"]["space"]), "cls": "bad"},
-                      {"x": "AI", "x2": f"Grok and data centres · {m(seg['rev']['ai'])} of sales",
-                       "v": seg["op"]["ai"], "lab": m(seg["op"]["ai"]), "cls": "bad"},
+        "head": "What came in, and what survived",
+        # Each row runs from what the segment SOLD to what it kept. The drop is the
+        # subject, so the chart draws the drop — a profit bar cannot show it, and
+        # both ends are dollars so they share an axis honestly.
+        "chart": {"kind": "dumbbell", "height": 470, "fmtKind": "usdM", "labelRoom": 440,
+                  "rows": [
+                      {"name": "Connectivity", "sub": "Starlink",
+                       "from": seg["rev"]["connectivity"], "to": seg["op"]["connectivity"],
+                       "fromLab": m(seg["rev"]["connectivity"]),
+                       "toLab": m(seg["op"]["connectivity"]),
+                       "delta": f"kept {conn['margin']:.0f}c in the dollar", "deltaGood": True},
+                      {"name": "Space", "sub": "rockets",
+                       "from": seg["rev"]["space"], "to": seg["op"]["space"],
+                       "fromLab": m(seg["rev"]["space"]), "toLab": m(seg["op"]["space"]),
+                       "delta": "lost money", "deltaGood": False},
+                      {"name": "AI", "sub": "Grok and data centres",
+                       "from": seg["rev"]["ai"], "to": seg["op"]["ai"],
+                       "fromLab": m(seg["rev"]["ai"]), "toLab": m(seg["op"]["ai"]),
+                       "delta": "lost money", "deltaGood": False},
                   ]},
         "punch": "<b>Starlink pays</b> for the rockets and the robots.",
         "why": (f"Starlink turned {b_(seg['rev']['connectivity'])} of sales into "
@@ -425,18 +434,20 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "chart", "kicker": "The good business, from underneath",
         "src": "8-K EX-99.1 — the subscriber row, and the row directly under it",
         "head": f"Twice the customers, {abs(conn['arpuChange']):.0f}% less each",
-        "chart": {"kind": "smallmult", "height": 520, "panels": [
-            {"label": "Customers, in millions", "fmtKind": "plain1", "series": [
-                {"x": "Q2 2025", "v": conn["subsPrior"], "lab": f"{conn['subsPrior']:.1f}", "cls": "mut"},
-                {"x": "Q1 2026", "v": fv("connectivity", "subsQ1"),
-                 "lab": f"{fv('connectivity','subsQ1'):.1f}", "cls": "mut"},
-                {"x": "Q2 2026", "v": conn["subs"], "lab": f"{conn['subs']:.1f}", "cls": "good"}]},
-            {"label": "Paid per customer, per month", "fmtKind": "usd0", "series": [
-                {"x": "Q2 2025", "v": conn["arpuPrior"], "lab": dm(conn["arpuPrior"]), "cls": "mut"},
-                {"x": "Q1 2026", "v": fv("connectivity", "arpuQ1"),
-                 "lab": dm(fv("connectivity", "arpuQ1")), "cls": "mut"},
-                {"x": "Q2 2026", "v": conn["arpu"], "lab": dm(conn["arpu"]), "cls": "bad"}]},
-        ]},
+        # One trajectory instead of two panels of bars: the path walks RIGHT as
+        # customers double and DOWN as each one pays less. That is the whole
+        # headline in a single shape.
+        "chart": {"kind": "scatter", "height": 500, "fmtKind": "usd0",
+                  "xTitle": "Customers, millions →",
+                  "yTitle": "Paid per customer, per month",
+                  "points": [
+                      {"x": conn["subsPrior"], "y": conn["arpuPrior"], "lab": "Q2 2025",
+                       "sub": dm(conn["arpuPrior"])},
+                      {"x": fv("connectivity", "subsQ1"), "y": fv("connectivity", "arpuQ1"),
+                       "lab": "Q1 2026", "sub": dm(fv("connectivity", "arpuQ1"))},
+                      {"x": conn["subs"], "y": conn["arpu"], "lab": "Q2 2026",
+                       "sub": dm(conn["arpu"])},
+                  ]},
         "punch": "The release says ARPU held. <b>Against last year it fell.</b>",
         "why": (f"The release says revenue per customer was maintained, and against last quarter it "
                 f"was — {dm(conn['arpu'])} both times. Against last year it fell from "
@@ -479,19 +490,23 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "chart", "kicker": f"{b_(cf['capexQ2'])} of equipment in three months",
         "src": "10-Q Note 5, property plant and equipment · segment capital expenditure",
         "head": "More computer than spacecraft",
-        "chart": {"kind": "hbars", "height": 520, "fmtKind": "usdM", "rows": [
-            {"name": "Servers and networking", "v": s["ppe"]["servers"],
-             "lab": m(s["ppe"]["servers"]), "cls": "warn"},
-            {"name": "Satellites", "v": s["ppe"]["satellites"], "lab": m(s["ppe"]["satellites"])},
-            {"name": "Being built right now", "v": s["ppe"]["constructionInProgress"],
-             "lab": m(s["ppe"]["constructionInProgress"]), "cls": "mut"},
-            {"name": "Machinery and equipment", "v": s["ppe"]["machinery"],
-             "lab": m(s["ppe"]["machinery"]), "cls": "mut"},
-            {"name": "Data centre infrastructure", "v": s["ppe"]["dataCentre"],
-             "lab": m(s["ppe"]["dataCentre"]), "cls": "mut"},
-            {"name": "Launch sites", "v": s["ppe"]["launchSites"],
-             "lab": m(s["ppe"]["launchSites"]), "cls": "mut"},
-        ]},
+        # Composition of a total is an AREA job, not a length job: the servers
+        # block simply dwarfing everything else is the argument.
+        "chart": {"kind": "treemap", "height": 500, "fmtKind": "usdM", "panels": [
+            {"label": "What SpaceX owns, at cost", "items": [
+                {"name": "Servers and networking", "v": s["ppe"]["servers"],
+                 "lab": m(s["ppe"]["servers"]), "cls": "warn"},
+                {"name": "Satellites", "v": s["ppe"]["satellites"],
+                 "lab": m(s["ppe"]["satellites"]), "cls": "ok"},
+                {"name": "Being built now", "v": s["ppe"]["constructionInProgress"],
+                 "lab": m(s["ppe"]["constructionInProgress"]), "cls": "mut"},
+                {"name": "Machinery", "v": s["ppe"]["machinery"],
+                 "lab": m(s["ppe"]["machinery"]), "cls": "mut"},
+                {"name": "Data centres", "v": s["ppe"]["dataCentre"],
+                 "lab": m(s["ppe"]["dataCentre"]), "cls": "mut"},
+                {"name": "Launch sites", "v": s["ppe"]["launchSites"],
+                 "lab": m(s["ppe"]["launchSites"]), "cls": "mut"},
+            ]}]},
         "punch": (f"{b_(s['ppe']['servers'])} of servers. "
                   f"<b>{b_(s['ppe']['satellites'])} of satellites.</b>"),
         "why": (f"They spent {b_(cf['capexQ2'])} on equipment in the quarter — "
