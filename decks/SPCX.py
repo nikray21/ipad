@@ -451,20 +451,19 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "chart", "kicker": "Meanwhile the rockets flew less",
         "src": "8-K EX-99.1, Space operating table",
         "head": f"{abs(sp['massChange']):.0f}% less mass to orbit",
-        "chart": {"kind": "bars", "height": 490, "fmtKind": "pct0", "zeroLine": True,
-                  "series": [
-                      {"x": "Customer launches", "x2": f"{sp['customerPrior']} → {sp['customer']}",
-                       "v": (sp["customer"] / sp["customerPrior"] - 1) * 100,
-                       "lab": pc((sp["customer"] / sp["customerPrior"] - 1) * 100, 0), "cls": "mut"},
-                      {"x": "Total launches", "x2": f"{sp['launchesPrior']} → {sp['launches']}",
-                       "v": (sp["launches"] / sp["launchesPrior"] - 1) * 100,
-                       "lab": pc((sp["launches"] / sp["launchesPrior"] - 1) * 100, 0), "cls": "mut"},
-                      {"x": "Internal launches", "x2": f"{sp['internalPrior']} → {sp['internal']}",
-                       "v": (sp["internal"] / sp["internalPrior"] - 1) * 100,
-                       "lab": pc((sp["internal"] / sp["internalPrior"] - 1) * 100, 0), "cls": "mut"},
-                      {"x": "Mass to orbit", "x2": f"{sp['massPrior']:,}t → {sp['mass']:,}t",
-                       "v": sp["massChange"], "lab": pc(sp["massChange"], 0), "cls": "bad"},
-                  ]},
+        "chart": {"kind": "lollipop", "height": 470, "fmtKind": "pct0", "rows": [
+            {"name": "Customer launches", "sub": f"{sp['customerPrior']} → {sp['customer']}",
+             "v": (sp["customer"] / sp["customerPrior"] - 1) * 100,
+             "lab": pc((sp["customer"] / sp["customerPrior"] - 1) * 100, 0), "cls": "mut"},
+            {"name": "Total launches", "sub": f"{sp['launchesPrior']} → {sp['launches']}",
+             "v": (sp["launches"] / sp["launchesPrior"] - 1) * 100,
+             "lab": pc((sp["launches"] / sp["launchesPrior"] - 1) * 100, 0), "cls": "mut"},
+            {"name": "Internal launches", "sub": f"{sp['internalPrior']} → {sp['internal']}",
+             "v": (sp["internal"] / sp["internalPrior"] - 1) * 100,
+             "lab": pc((sp["internal"] / sp["internalPrior"] - 1) * 100, 0), "cls": "mut"},
+            {"name": "Mass to orbit", "sub": f"{sp['massPrior']:,}t → {sp['mass']:,}t",
+             "v": sp["massChange"], "lab": pc(sp["massChange"], 0), "cls": "bad"},
+        ]},
         "punch": 'They call it "the leading launch provider". <b>It flew eight fewer times.</b>',
         "why": (f"Space revenue still rose {pc(sp['revGrowth'], 0)}, because more of the flights "
                 f"were for paying customers instead of for themselves. But the machine did less "
@@ -639,9 +638,9 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "chart", "kicker": "And a calendar nobody headlined",
         "src": "424(b)(4) prospectus — the staged early-release schedule",
         "head": "The lockup does not end. It leaks.",
-        "chart": {"kind": "bars", "height": 480, "fmtKind": "pct0",
-                  "series": [dict(zip(("x", "x2", "v", "lab", "cls"), row))
-                             for row in lock["cumulative"]]},
+        "chart": {"kind": "steparea", "height": 470, "fmtKind": "pct0",
+                  "points": [{"x": r[0], "x2": r[1], "v": r[2], "lab": r[3]}
+                             for r in lock["cumulative"]]},
         "punch": (f"<b>{lock['cumEnd']:.0f}% can sell</b> by the next set of results."),
         "why": (f"Twenty percent came free on August 6, two days after the first results. A bonus "
                 f"{lock['priceTriggerPct']}% was on offer if the shares had closed at "

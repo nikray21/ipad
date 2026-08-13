@@ -607,7 +607,9 @@ def audit_share_basis(snap, payload, ep):
 # Kinds whose geometry spans [min, max] and can therefore draw a negative value.
 # Everything else measures magnitude from zero, so a negative is either invisible
 # or drawn upside down. `bars` needs zeroLine to get the deeper bottom gutter.
-NEGATIVE_SAFE = {"bars", "bridge", "dumbbell", "line", "indexed", "smallmult",
+# lollipop spans [min, max] and draws a zero line, so a negative is drawn honestly.
+# steparea is a running total from zero and must NOT be handed negatives.
+NEGATIVE_SAFE = {"lollipop", "bars", "bridge", "dumbbell", "line", "indexed", "smallmult",
                  "slope", "forecast", "distribution"}
 
 
@@ -1299,11 +1301,19 @@ def main():
         snap["shareReductionWA"] = -31.0
         if snap.get("indexed"):
             snap["indexed"]["earnGain"] += 9
-        payload["slides"][1]["why"] = "See the next slide for the rest."
-        payload["slides"][1]["chart"]["fmt"] = None
-        payload["slides"][1]["chart"]["_lab"] = "9.9&times;"
-        payload["slides"][1]["chart"]["_style"] = "font-size:11px"
-        payload["slides"][1]["chart"]["fmtKind"] = "notAFormatter"
+        # Find a slide that actually HAS a chart rather than assuming index 1 —
+        # that assumption broke the moment the deck was restructured and slide 2
+        # became a tiles slide, and it took the whole --prove suite down with it.
+        _ci = next((i for i, _s in enumerate(payload["slides"]) if _s.get("chart")), None)
+        if _ci is None:
+            print("  ! --prove: this deck has no chart slide to perturb")
+        else:
+            payload["slides"][_ci]["sub"] = ("See the next slide for the rest of this, "
+                                            "because there is far too much to fit here.")
+            payload["slides"][_ci]["chart"]["fmt"] = None
+            payload["slides"][_ci]["chart"]["_lab"] = "9.9&times;"
+            payload["slides"][_ci]["chart"]["_style"] = "font-size:11px"
+            payload["slides"][_ci]["chart"]["fmtKind"] = "notAFormatter"
         # hand a magnitude chart a negative, and a chart a key it never reads
         for _s in payload["slides"]:
             _c = _s.get("chart") or {}

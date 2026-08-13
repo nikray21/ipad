@@ -99,6 +99,10 @@ h1.head.sm{font-size:52px}
 .footer .stamp{color:var(--muted)}
 
 /* The "why this matters" band — the beginner payoff on every slide */
+.stem{stroke:var(--s1)} .stem.bad{stroke:var(--crit)} .stem.good{stroke:var(--good)}
+.stem.warn{stroke:var(--warn)} .stem.mut{stroke:var(--muted);opacity:.55}
+.dot{fill:var(--s1)} .dot.bad{fill:var(--crit)} .dot.good{fill:var(--good)}
+.dot.warn{fill:var(--warn)} .dot.mut{fill:var(--muted);opacity:.62}
 /* ---------- The punch line ----------
    This used to be a 90-word "why it matters" paragraph in a tinted box. On a
    1920x1080 frame that is a wall of text the viewer reads instead of listening,
@@ -532,6 +536,29 @@ function setCam(mode, w){
 const AD_SCALE = 2.0;
 function AD(ms){ return Math.round((ms || 0) * AD_SCALE); }
 
+/*
+   A bar rounded at its DATA END ONLY. `rx` on a rect rounds all four corners,
+   including the end sitting on the baseline, which is the giveaway of a default
+   chart — the baseline end should be square so the mark reads as anchored.
+   dir: "up" | "down" | "right" | "left" names where the value end is.
+*/
+function barPath(x, y, w, h, r, dir){
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  if (dir === "up")
+    return `M${x} ${y+h} L${x} ${y+r} Q${x} ${y} ${x+r} ${y} L${x+w-r} ${y} `
+         + `Q${x+w} ${y} ${x+w} ${y+r} L${x+w} ${y+h} Z`;
+  if (dir === "down")
+    return `M${x} ${y} L${x} ${y+h-r} Q${x} ${y+h} ${x+r} ${y+h} L${x+w-r} ${y+h} `
+         + `Q${x+w} ${y+h} ${x+w} ${y+h-r} L${x+w} ${y} Z`;
+  if (dir === "mid")            // an interior stacked segment: square both ends
+    return `M${x} ${y} L${x+w} ${y} L${x+w} ${y+h} L${x} ${y+h} Z`;
+  if (dir === "left")
+    return `M${x+w} ${y} L${x+r} ${y} Q${x} ${y} ${x} ${y+r} L${x} ${y+h-r} `
+         + `Q${x} ${y+h} ${x+r} ${y+h} L${x+w} ${y+h} Z`;
+  return `M${x} ${y} L${x+w-r} ${y} Q${x+w} ${y} ${x+w} ${y+r} L${x+w} ${y+h-r} `
+       + `Q${x+w} ${y+h} ${x+w-r} ${y+h} L${x} ${y+h} Z`;
+}
+
 function chartW(){
   return 1660 - camPx();
 }
@@ -598,14 +625,15 @@ function chartBars(spec){
   }
 
   const n = spec.series.length;
-  const slot = plotW / n, bw = Math.min(spec.barWidth || 120, slot * 0.62);
+  const slot = plotW / n, bw = Math.min(spec.barWidth || 64, slot * 0.62);
   spec.series.forEach((d, i) => {
     const cx = PL + slot * i + slot / 2;
     const top = y(d.v), base = y(Math.max(min, 0));
     const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${base}px;animation-delay:${AD(i*55)}ms`});
-    g.appendChild(el("rect", {
-      x: cx - bw/2, y: Math.min(top, base), width: bw, height: Math.max(2, Math.abs(base - top)),
-      rx: 4, class: "bar" + (d.cls ? " " + d.cls : "")
+    g.appendChild(el("path", {
+      d: barPath(cx - bw/2, Math.min(top, base), bw, Math.max(2, Math.abs(base - top)),
+                 5, top <= base ? "up" : "down"),
+      class: "bar" + (d.cls ? " " + d.cls : "")
     }));
     s.appendChild(g);
     // A negative bar hangs below zero, so its label goes under it — placing it
@@ -638,7 +666,7 @@ function chartGrouped(spec){
   const n = spec.cats.length, slot = plotW / n;
   spec.cats.forEach((c, i) => {
     const cx = PL + slot * i + slot / 2;
-    const bw = Math.min(96, slot * 0.30), gap = 12;
+    const bw = Math.min(58, slot * 0.26), gap = 12;
     c.vals.forEach((v, j) => {
       const x = cx - bw - gap/2 + j * (bw + gap);
       const top = y(v), base = y(0);
@@ -738,7 +766,7 @@ function chartBridge(spec){
   const plotH = H - PB - PT, plotW = W - PL - PR;
   const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
   const zeroY = y(0);
-  const n = spec.steps.length, slot = plotW / n, bw = Math.min(160, slot * 0.60);
+  const n = spec.steps.length, slot = plotW / n, bw = Math.min(84, slot * 0.40);
 
   if (lo < 0) {
     s.appendChild(el("line", {x1:PL, x2:W-PR, y1:zeroY, y2:zeroY,
@@ -786,7 +814,7 @@ function chartHBars(spec){
       style:"font-size:22px"}, r.name));
     if (r.sub) s.appendChild(el("text", {x:LBL-22, y:cy+27, "text-anchor":"end", class:"ax"}, r.sub));
     const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${AD(i*90)}ms`});
-    g.appendChild(el("rect", {x:LBL, y:cy-27, width:Math.max(3,bw), height:54, rx:5,
+    g.appendChild(el("path", {d: barPath(LBL, cy - 19, Math.max(3, bw), 38, 5, "right"),
       class:"bar "+(r.cls||"")}));
     s.appendChild(g);
     s.appendChild(el("text", {x:LBL+bw+18, y:cy+9, class:"vlab fade",
@@ -820,8 +848,14 @@ function chartStackedH(spec){
     r.segs.forEach((seg, j) => {
       const w = (plotW * seg.v) / max;
       const g = el("g", {class:"growX", style:`transform-origin:${x}px ${cy}px;animation-delay:${AD(i*110+j*80)}ms`});
-      g.appendChild(el("rect", {x, y:cy-30, width:Math.max(2,w), height:60,
-        rx:4, class:"bar " + (seg.cls || "")}));
+      // 2px of surface between fills — abutting segments otherwise read as one
+      // mark — and rounding only on the two outer ends of the whole stack.
+      const first = j === 0, last = j === r.segs.length - 1;
+      const gap = last ? 0 : 2;
+      g.appendChild(el("path", {
+        d: barPath(x, cy - 24, Math.max(2, w - gap), 48, 5,
+                   first ? "left" : (last ? "right" : "mid")),
+        class:"bar " + (seg.cls || "")}));
       s.appendChild(g);
       if (seg.lab && w > 130) {
         s.appendChild(el("text", {x:x+w/2, y:cy+8, "text-anchor":"middle", class:"vlab fade",
@@ -963,7 +997,7 @@ function chartFunded(spec){
   s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(0), y2:Y(0),
     stroke:"var(--ink-2)", "stroke-width":"2", opacity:".7"}));
 
-  const n = spec.series.length, slot = plotW / n, bw = Math.min(112, slot * 0.60);
+  const n = spec.series.length, slot = plotW / n, bw = Math.min(66, slot * 0.42);
   spec.series.forEach((d, i) => {
     const cx = PL + slot * i + slot / 2;
     // debt sits on the zero line; equity stacks above it, or hangs below when negative
@@ -1001,7 +1035,7 @@ function chartSmallMult(spec){
   const panelH = (H - PB - GAP * (n - 1)) / n;
   const plotW = W - PL - PR;
   const cols = spec.panels[0].series.length;
-  const slot = plotW / cols, bw = Math.min(104, slot * 0.56);
+  const slot = plotW / cols, bw = Math.min(62, slot * 0.40);
 
   spec.panels.forEach((pan, pi) => {
     const top = pi * (panelH + GAP), bot = top + panelH;
@@ -1814,6 +1848,100 @@ function chartTrack(spec){
   return s;
 }
 
+/*
+   LOLLIPOP — ranked change, one value per category. The correct form when the job
+   is comparing a handful of changes: the position of the dot carries the value and
+   the thin stem only leads the eye to it, so four rows of it read in a glance
+   where four fat bars read as a wall. Thin marks, one dot per row, direct labels.
+*/
+function chartLollipop(spec){
+  const W = chartW(), H = spec.height || 440, PT = 40, PB = 96, PL = 30, PR = 30;
+  const s = svgRoot(W, H);
+  const vals = spec.rows.map(r => r.v);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const pad = (hi - lo) * 0.16 || 1;
+  const min = lo - (lo < 0 ? pad : 0), max = hi + pad;
+  const plotH = H - PT - PB, plotW = W - PL - PR;
+  const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+  const n = spec.rows.length, slot = plotW / n;
+  const y0 = y(0);
+
+  s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y0, y2:y0,
+    stroke:"var(--ink)", "stroke-width":1.5, opacity:".5"}));
+
+  spec.rows.forEach((r, i) => {
+    const cx = PL + slot * i + slot / 2, yv = y(r.v);
+    const cls = r.cls ? " " + r.cls : "";
+    const g = el("g", {class:"grow",
+      style:`transform-origin:${cx}px ${y0}px;animation-delay:${AD(i * 70)}ms`});
+    // 3px stem, 11px head — the spec's thin mark with a marker above 8px
+    g.appendChild(el("line", {x1:cx, x2:cx, y1:y0, y2:yv,
+      class:"stem" + cls, "stroke-width":3}));
+    g.appendChild(el("circle", {cx, cy:yv, r:11, class:"dot" + cls,
+      stroke:"var(--bg)", "stroke-width":3}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x:cx, y: r.v < 0 ? yv + 40 : yv - 26, "text-anchor":"middle",
+      class:"vlab fade", style:`animation-delay:${AD(300 + i * 70)}ms;font-size:30px`}, r.lab));
+    wrapLabel(r.name, 18, slot - 16, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:H - PB + 42 + li * 23, "text-anchor":"middle",
+        class:"axb", style:"font-size:18px"}, ln)));
+    if (r.sub) s.appendChild(el("text", {x:cx, y:H - PB + (wrapLabel(r.name, 18, slot - 16, 2).length > 1 ? 88 : 66),
+      "text-anchor":"middle", class:"ax"}, r.sub));
+  });
+  return s;
+}
+
+/*
+   STEP AREA — a running total over dated steps. Change-over-time is a line's job,
+   not a bar's: the staircase shows the shape of the accumulation and the filled
+   area under it carries the "how much so far". Labels are SELECTIVE — first, last
+   and any step flagged `mark` — because a number on every point is noise.
+*/
+function chartStepArea(spec){
+  const W = chartW(), H = spec.height || 440, PT = 56, PB = 92, PL = 70, PR = 70;
+  const s = svgRoot(W, H);
+  const pts = spec.points;
+  const max = Math.max(...pts.map(p => p.v)) * 1.18;
+  const plotH = H - PT - PB, plotW = W - PL - PR;
+  const X = i => PL + (i / (pts.length - 1)) * plotW;
+  const Y = v => PT + plotH - (v / max) * plotH;
+
+  for (let g = 0; g <= 4; g++) {
+    const gv = max * g / 4;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(gv), y2:Y(gv), class:"gridline"}));
+  }
+
+  // the staircase itself, and the area beneath it
+  let d = `M${X(0)} ${Y(0)}`;
+  pts.forEach((p, i) => { d += ` L${X(i)} ${Y(p.v)}`;
+    if (i < pts.length - 1) d += ` L${X(i+1)} ${Y(p.v)}`; });
+  const area = d + ` L${X(pts.length-1)} ${Y(0)} Z`;
+  s.appendChild(el("path", {d: area, fill:"var(--s1)", "fill-opacity":".14",
+    class:"fade", style:`animation-delay:${AD(200)}ms`}));
+  const line = el("path", {d, fill:"none", stroke:"var(--s1)", "stroke-width":3.5,
+    "stroke-linejoin":"round", class:"draw"});
+  s.appendChild(line);
+  requestAnimationFrame(() => { try { const L = line.getTotalLength();
+    line.style.setProperty("--len", L); line.style.strokeDasharray = L; } catch(e){} });
+
+  pts.forEach((p, i) => {
+    const last = i === pts.length - 1;
+    const show = i === 0 || last || p.mark;
+    s.appendChild(el("circle", {cx:X(i), cy:Y(p.v), r: last ? 12 : 8,
+      fill: last ? "var(--crit)" : "var(--s1)", stroke:"var(--bg)", "stroke-width":3,
+      class:"fade", style:`animation-delay:${AD(340 + i * 90)}ms`}));
+    if (show)
+      s.appendChild(el("text", {x:X(i), y:Y(p.v) - 26, "text-anchor":"middle",
+        class:"vlab fade", style:`animation-delay:${AD(420 + i * 90)}ms;font-size:${last ? 40 : 27}px`
+        + (last ? ";fill:var(--crit)" : "")}, p.lab));
+    s.appendChild(el("text", {x:X(i), y:H - PB + 40, "text-anchor":"middle", class:"axb",
+      style:"font-size:18px"}, p.x));
+    if (p.x2) s.appendChild(el("text", {x:X(i), y:H - PB + 64, "text-anchor":"middle",
+      class:"ax", style:"font-size:15px"}, p.x2));
+  });
+  return s;
+}
+
 const CHARTS = {bars:chartBars, grouped:chartGrouped, line:chartLine,
                 bridge:chartBridge, hbars:chartHBars, range:chartRange,
                 stackedh:chartStackedH, indexed:chartIndexed,
@@ -1821,7 +1949,8 @@ const CHARTS = {bars:chartBars, grouped:chartGrouped, line:chartLine,
                 smallmult:chartSmallMult, sankey:chartSankey, gauge:chartGauge,
                 dumbbell:chartDumbbell, slope:chartSlope, distribution:chartDistribution,
                 forecast:chartForecast, donut:chartDonut, treemap:chartTreemap,
-                fvband:chartFvBand, insider:chartInsider, peers:chartPeers};
+                fvband:chartFvBand, insider:chartInsider, peers:chartPeers,
+                lollipop:chartLollipop, steparea:chartStepArea};
 
 /* ============================================================
    Fair-value model — runs live so the assumptions are his, on camera
