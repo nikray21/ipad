@@ -1008,6 +1008,11 @@ def audit_us_idiom(payload):
     currency, in a deck quoting SEC filings — because the phrase reads naturally
     when you are writing quickly. Cheap to catch, impossible to miss on camera.
     """
+    # Two classes here. British spellings and slang, which read as odd to a US
+    # retail audience. And words that mean something ELSE to that audience: on a
+    # stock channel "trading" is buying and selling securities, not running a
+    # business, and a cash-flow line labelled "From trading" was read exactly
+    # that way. "Flotation" is the IPO. Both shipped.
     bad_words = [
         (r"\bp in the pound\b", "British currency"),
         (r"\bpence\b", "British currency"),
@@ -1016,6 +1021,14 @@ def audit_us_idiom(payload):
         (r"\bturnover\b", "British for revenue"),
         (r"\bmaths\b", "British spelling"),
         (r"\bwhilst\b", "not how the audience speaks"),
+        (r"\bcentres?\b", "British spelling — center"),
+        (r"\bflotation\b", "British for the IPO"),
+        (r"\bdefence\b", "British spelling — defense"),
+        (r"\blicence\b", "British spelling — license"),
+        (r"\bprogramme\b", "British spelling — program"),
+        (r"\bfrom trading\b", "on a stock channel this reads as securities trading"),
+        (r"\bgearing\b", "British for leverage"),
+        (r"\bordinary shares\b", "British for common stock"),
     ]
     hits = []
     for i, sl in enumerate(payload["slides"], 1):

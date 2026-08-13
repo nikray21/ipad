@@ -594,13 +594,13 @@
         "LHX": "L3Harris"
       },
       "target": "IRDM",
-      "defence": [
+      "defense": [
         "BA",
         "NOC",
         "LMT",
         "LHX"
       ],
-      "_note": "`target` is the company RKLB is buying, not a comparable. Any 'versus the defence primes' figure must average `defence` only \u2014 averaging all five gave 23.8x and the headline attributed it to the primes alone."
+      "_note": "`target` is the company RKLB is buying, not a comparable. Any 'versus the defense primes' figure must average `defense` only \u2014 averaging all five gave 23.8x and the headline attributed it to the primes alone."
     },
     "contracts": {
       "newLaunchContracts": {
@@ -748,7 +748,7 @@
     "collar": "The stock half has a collar. Between sixty-seven fifty and a hundred twelve fifty, Iridium holders get a fixed twenty-seven dollars of stock. Below sixty-seven fifty, the ratio locks. The stock is inside that band tonight, close to the bottom of it. TARGET 28s.",
     "insider": "Nine hundred and twenty-four million of insider selling over the year. Not one share bought. Five hundred and fifty-seven million of it by the founder and chief executive. And fewer than four in ten of those filings mention a pre-set plan. TARGET 32s.",
     "valuation": "So what are you paying. Annualise this quarter and it is about sixty times sales, for a company that has never earned an operating profit. TARGET 26s.",
-    "peers": "Against the defence primes it builds alongside \u2014 and against Iridium, the company it is buying \u2014 Rocket Lab is in a different universe on price. TARGET 24s.",
+    "peers": "Against the defense primes it builds alongside \u2014 and against Iridium, the company it is buying \u2014 Rocket Lab is in a different universe on price. TARGET 24s.",
     "verdict": "Six dimensions. The growth and the backlog are excellent. The profit path, the launch business and the price are not. TARGET 24s.",
     "twolists": "What's working, and what I'd watch. TARGET 20s.",
     "fairvalue": "My own arithmetic, and it has to be generous to get anywhere near tonight's price. TARGET 26s.",

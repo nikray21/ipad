@@ -172,6 +172,15 @@ def derive(snap, ep, fund, qrows, die, fact):
     rpy["shareOfInterest"] = rpy["interestQ2"] / fv("results", "interestExpenseQ2") * 100
     # The 13G filed Aug 11: the same director is also a 6.5% holder, and it took
     # thirty vehicles to keep any single one under the 5% disclosure line.
+    # 34% of the borrowings but 52% of the interest bill means the related-party
+    # loan is priced well above everything else. Both rates from filed figures.
+    _ti = fv("results", "interestExpenseQ2")
+    _td = fv("balanceSheet", "totalDebtAndLeases")
+    rpy["rateValor"] = rpy["interestQ2"] * 4 / rpy["debt"] * 100
+    rpy["rateOther"] = (_ti - rpy["interestQ2"]) * 4 / (_td - rpy["debt"]) * 100
+    rpy["rateMultiple"] = rpy["rateValor"] / rpy["rateOther"]
+    if rpy["rateOther"] <= 0:
+        die("cannot price the non-related-party debt: no interest or no balance left over")
     rpy["equityShares"] = fv("relatedParty", "valorClassAShares")
     rpy["equityPct"] = fv("relatedParty", "valorClassAPct")
     rpy["equityBase"] = fv("relatedParty", "valorPctBase")
@@ -283,6 +292,23 @@ def derive(snap, ep, fund, qrows, die, fact):
     bs["burnPerYear"] = abs(cf["fcfH1"]) * 2
     bs["runwayYears"] = bs["liquid"] / bs["burnPerYear"]
 
+    # Starlink's revenue is two halves, and ARPU only describes one of them.
+    conn["consumer"] = fv("connectivity", "consumerRevQ2")
+    conn["consumerPrior"] = fv("connectivity", "consumerRevQ2prior")
+    conn["enterprise"] = fv("connectivity", "enterpriseRevQ2")
+    conn["enterprisePrior"] = fv("connectivity", "enterpriseRevQ2prior")
+    conn["consumerGrowth"] = (conn["consumer"] / conn["consumerPrior"] - 1) * 100
+    conn["enterpriseGrowth"] = (conn["enterprise"] / conn["enterprisePrior"] - 1) * 100
+    conn["consumerShare"] = conn["consumer"] / seg["revQ2"]["connectivity"] * 100
+    if abs(conn["consumer"] + conn["enterprise"] - seg["revQ2"]["connectivity"]) > 2:
+        die("consumer plus enterprise revenue does not equal the Connectivity segment")
+    # And the subscriber maths has to land in the right place, or the slide invites
+    # a viewer to multiply subs by ARPU and get a number that is not on any slide.
+    _implied = conn["subs"] * conn["arpu"] * 3
+    if not (0.80 * conn["consumer"] <= _implied <= 1.02 * conn["consumer"]):
+        die(f"subs x ARPU x 3 = {_implied:,.0f} does not sit just under the "
+            f"{conn['consumer']:,.0f} consumer line — check what ARPU is measuring")
+
     # Peers — fetched live, one request per ticker, never typed in.
     peers = [_peer(x, die) for x in F["peers"]["tickers"]]
     self_ps = val["psAnnualised"]
@@ -374,13 +400,16 @@ def slides(snap, ep, fact, fund_quarters=None):
             {"v": f"{pl['grossMargin']:.0f}%", "l": "Gross margin",
              "n": f"{b_(pl['gross'])} of gross profit", "tone": "good"},
             {"v": b_(pl["rnd"]), "l": "Research and development",
-             "n": "the single biggest cost line", "tone": "warn"},
+             "n": f"about the same as the {b_(fv('results','costOfRevenueQ2'))} cost of sales",
+             "tone": "warn"},
             {"v": m(pl["opLoss"]), "l": "Operating loss",
              "n": f"from {m(pl['opLossPrior'])} a year ago", "tone": "warn"},
             {"v": m(pl["netLoss"]), "l": "Net loss",
              "n": f"from {m(pl['netLossPrior'])} a year ago", "tone": "bad"},
-            {"v": d2(pl["eps"]), "l": "Earnings per share",
-             "n": f"on {fv('results','wtdAvgSharesQ2'):,.0f}M shares", "tone": "bad"},
+            {"v": d2(pl["eps"]), "l": "Loss per share",
+             "n": (f"on the quarter's average {fv('results','wtdAvgSharesQ2')/1000:,.1f}B shares "
+                   f"— {fv('balanceSheet','sharesOutstanding')/1e6:,.1f}B exist now, after the IPO"),
+             "tone": "bad"},
         ],
         "punch": (f"{pc(pl['revGrowth'], 0)} revenue growth, and it still "
                   f"<b>lost {b_(abs(pl['netLoss']))}</b>."),
@@ -409,12 +438,12 @@ def slides(snap, ep, fact, fund_quarters=None):
                        "from": seg["rev"]["connectivity"], "to": seg["op"]["connectivity"],
                        "fromLab": m(seg["rev"]["connectivity"]),
                        "toLab": m(seg["op"]["connectivity"]),
-                       "delta": f"kept {conn['margin']:.0f}c in the dollar", "deltaGood": True},
+                       "delta": f"kept {conn['margin']:.0f} cents of it", "deltaGood": True},
                       {"name": "Space", "sub": "rockets",
                        "from": seg["rev"]["space"], "to": seg["op"]["space"],
                        "fromLab": m(seg["rev"]["space"]), "toLab": m(seg["op"]["space"]),
                        "delta": "lost money", "deltaGood": False},
-                      {"name": "AI", "sub": "Grok and data centres",
+                      {"name": "AI", "sub": "Grok and data centers",
                        "from": seg["rev"]["ai"], "to": seg["op"]["ai"],
                        "fromLab": m(seg["rev"]["ai"]), "toLab": m(seg["op"]["ai"]),
                        "delta": "lost money", "deltaGood": False},
@@ -434,6 +463,10 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "chart", "kicker": "The good business, from underneath",
         "src": "8-K EX-99.1 — the subscriber row, and the row directly under it",
         "head": f"Twice the customers, {abs(conn['arpuChange']):.0f}% less each",
+        # Naming the half matters: subscribers x ARPU x 3 lands near the CONSUMER
+        # line, not the segment, so without this a viewer multiplies and is wrong.
+        "sub": (f"Consumer Starlink &mdash; {b_(conn['consumer'])} of the "
+                f"{b_(seg['rev']['connectivity'])} segment."),
         # One trajectory instead of two panels of bars: the path walks RIGHT as
         # customers double and DOWN as each one pays less. That is the whole
         # headline in a single shape.
@@ -449,11 +482,18 @@ def slides(snap, ep, fact, fund_quarters=None):
                        "sub": dm(conn["arpu"])},
                   ]},
         "punch": "The release says ARPU held. <b>Against last year it fell.</b>",
-        "why": (f"The release says revenue per customer was maintained, and against last quarter it "
-                f"was — {dm(conn['arpu'])} both times. Against last year it fell from "
-                f"{dm(conn['arpuPrior'])} to {dm(conn['arpu'])}. They doubled the customers and cut "
-                f"the price by about a fifth. Still growth, just a cheaper kind of growth than "
-                f"doubling alone suggests, and it is the number to watch every quarter from here."),
+        "why": (f"First, which half this is. {conn['subs']:.0f} million subscribers at "
+                f"{dm(conn['arpu'])} a month is roughly "
+                f"{b_(conn['subs'] * conn['arpu'] * 3)} of the {b_(conn['consumer'])} consumer "
+                f"line — the rest is hardware — and consumer is only "
+                f"{conn['consumerShare']:.0f}% of the segment. The other "
+                f"{b_(conn['enterprise'])} is enterprise and government, and that half grew "
+                f"{pc(conn['enterpriseGrowth'], 0)} against {pc(conn['consumerGrowth'], 0)} for "
+                f"consumers. Now the point. The release says revenue per customer was maintained, "
+                f"and against last quarter it was — {dm(conn['arpu'])} both times. Against last "
+                f"year it fell from {dm(conn['arpuPrior'])} to {dm(conn['arpu'])}. They doubled the "
+                f"customers and cut the price by about a fifth. Still growth, just a cheaper kind "
+                f"than doubling alone suggests."),
         "notes": N["arpu"], "target": 30,
     })
 
@@ -502,7 +542,7 @@ def slides(snap, ep, fact, fund_quarters=None):
                  "lab": m(s["ppe"]["constructionInProgress"]), "cls": "mut"},
                 {"name": "Machinery", "v": s["ppe"]["machinery"],
                  "lab": m(s["ppe"]["machinery"]), "cls": "mut"},
-                {"name": "Data centres", "v": s["ppe"]["dataCentre"],
+                {"name": "Data centers", "v": s["ppe"]["dataCentre"],
                  "lab": m(s["ppe"]["dataCentre"]), "cls": "mut"},
                 {"name": "Launch sites", "v": s["ppe"]["launchSites"],
                  "lab": m(s["ppe"]["launchSites"]), "cls": "mut"},
@@ -526,7 +566,7 @@ def slides(snap, ep, fact, fund_quarters=None):
         "head": f"Made {b_(cf['cfoH1'])}. Spent {b_(cf['capexH1'])}.",
         "chart": {"kind": "bridge", "height": 510, "fmtKind": "usdM", "steps": [
             {"type": "start", "v": cf["cfoH1"], "lab": m(cf["cfoH1"]),
-             "x": "From trading", "x2": "six months"},
+             "x": "From operations", "x2": "cash the business made, six months"},
             {"type": "step", "v": -cf["capexH1"], "lab": f"{MINUS}{m(cf['capexH1'])[1:]}",
              "x": "Equipment", "x2": "capital spending", "cls": "bad"},
             {"type": "total", "v": cf["fcfH1"], "lab": m(cf["fcfH1"]),
@@ -535,7 +575,7 @@ def slides(snap, ep, fact, fund_quarters=None):
         "punch": f"<b>{b_(abs(cf['fcfH1']))} out the door</b> in six months.",
         "why": (f"Six months of trading produced {m(cf['cfoH1'])} of cash. They spent "
                 f"{m(cf['capexH1'])} on equipment, so the company went backwards by about "
-                f"{b_(abs(cf['fcfH1']))}. The gap was filled by the flotation and the bond — "
+                f"{b_(abs(cf['fcfH1']))}. The gap was filled by the IPO and the bond — "
                 f"{b_(cf['financingH1'])} raised. This is fine while the money is there. It is "
                 f"also the reason the money had to be raised."),
         "notes": N["cash"], "target": 30,
@@ -630,17 +670,23 @@ def slides(snap, ep, fact, fund_quarters=None):
         "tiles": [
             {"v": b_(rpy["debt"]), "l": "Lent to SpaceX by his fund",
              "n": f"{rpy['shareOfDebt']:.0f}% of every dollar SpaceX owes", "tone": "bad"},
-            {"v": f"{rpy['shareOfInterest']:.0f}%", "l": "Of the quarter's interest bill",
-             "n": f"{m(rpy['interestQ2'])} of {m(fv('results','interestExpenseQ2'))}", "tone": "bad"},
+            {"v": f"{rpy['rateValor']:.1f}%", "l": "The rate his fund charges",
+             "n": (f"against {rpy['rateOther']:.1f}% on everything else SpaceX owes — "
+                   f"{m(rpy['interestQ2'])} of the {m(fv('results','interestExpenseQ2'))} "
+                   f"interest bill"), "tone": "bad"},
             {"v": f"{rpy['equityPct']:.1f}%", "l": "Of the Class A stock he controls",
              "n": f"{rpy['equityShares']/1e6:.1f} million shares", "tone": "warn"},
             {"v": f"{rpy['entities']}", "l": "Entities hold that stake",
              "n": "not one of them reaches 5% alone", "tone": "warn"},
         ],
-        "punch": "He sits on the board. <b>Nobody could see the equity until August 11.</b>",
+        "punch": (f"{rpy['shareOfDebt']:.0f}% of the debt. "
+                  f"<b>{rpy['shareOfInterest']:.0f}% of the interest.</b>"),
         "why": (f"The same person is on both sides of this company. His fund is its biggest lender, "
-                f"owed {b_(rpy['debt'])}, and more than half the interest SpaceX paid this quarter "
-                f"went to him. He also controls {rpy['equityPct']:.1f}% of the shares, held across "
+                f"owed {b_(rpy['debt'])} — {rpy['shareOfDebt']:.0f}% of the borrowings, taking "
+                f"{rpy['shareOfInterest']:.0f}% of the interest. Work that back and his money is "
+                f"priced at about {rpy['rateValor']:.1f}% a year against {rpy['rateOther']:.1f}% on "
+                f"everything else they owe, so it is roughly "
+                f"{x(rpy['rateMultiple'], 1)} the going rate. He also controls {rpy['equityPct']:.1f}% of the shares, held across "
                 f"{rpy['entities']} separate companies — and 5% is the level at which you must tell "
                 f"the public. The accountants call the lending a failed sale-leaseback, which means "
                 f"the equipment never really changed hands, so treat the money as a loan. None of "

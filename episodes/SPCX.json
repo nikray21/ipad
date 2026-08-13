@@ -312,7 +312,23 @@
         "src": "8k-q2-26",
         "unit": "USD billions",
         "searchAs": "over $6 billion in multi-year U.S. government contracts"
-      }
+      },
+      "consumerRevQ2prior": {
+        "v": 1721,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "enterpriseRevQ2": {
+        "v": 1806,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "enterpriseRevQ2prior": {
+        "v": 867,
+        "src": "8k-q2-26",
+        "unit": "USD millions"
+      },
+      "_note": "ARPU describes the CONSUMER half only. 12.0M subscribers x $66 x 3 months is about $2.4B of the $2,485M consumer line \u2014 the rest is hardware \u2014 and consumer is only 58% of the $4,291M segment. A slide showing subscribers and ARPU without that split invites the viewer to multiply and get the wrong total."
     },
     "ai": {
       "computeGwQ2": {
@@ -892,7 +908,7 @@
     "title": "Space Exploration Technologies \u2014 SpaceX \u2014 went public on the twelfth of June. It is now worth about one and three quarter trillion dollars, and today it moved almost sixteen percent. This is the first proper look inside the accounts, because this is the first quarter they have ever had to file. TARGET 20s.",
     "tape": "Here is the whole life of this stock. All thirty-nine trading days of it. It opened at a hundred and fifty, ran to two hundred and eleven in three days, then fell almost half. That low was the fifth of August \u2014 the day after the first earnings report. And then it turned around hard. TARGET 22s.",
     "findings": "Five things in here that I have not seen anyone else talk about. Every one of them comes out of documents filed in the last eight weeks. We will do each one properly. TARGET 26s.",
-    "business": "Three businesses under one roof. Space puts things in orbit. Connectivity is Starlink. AI is Grok and the data centres. Hold on to the fact that they are wildly different in size and in health. TARGET 22s.",
+    "business": "Three businesses under one roof. Space puts things in orbit. Connectivity is Starlink. AI is Grok and the data centers. Hold on to the fact that they are wildly different in size and in health. TARGET 22s.",
     "segments": "Here is the shape of it. Connectivity makes all the money. Space loses money. AI loses more. The company as a whole lost a hundred and forty-three million in the quarter. TARGET 26s.",
     "starlink": "This is the good news, and it is genuinely good. Twelve million subscribers, double a year ago. One point seven billion dollars of operating profit in a quarter. If this were a standalone company it would be one of the best businesses in the world. TARGET 24s.",
     "arpu": "But look underneath it. Revenue per customer has gone from eighty-five dollars a month to sixty-six. That is a twenty-two percent fall. The release says ARPU was maintained \u2014 and against last quarter it was. Against last year it fell hard. Doubling your customers while cutting your price by a fifth is growth, but it is a different kind of growth than the headline suggests. TARGET 30s.",
@@ -909,7 +925,7 @@
     "backlog": "Here is the best argument for the growth continuing, and it is not a forecast. Forty-seven and a half billion dollars of work is already under contract. Fifty-six percent of it \u2014 call it twenty-seven billion \u2014 is due inside twelve months. That is signed, not hoped for. One thing worth knowing: fourteen billion of that is money customers have already paid, sitting on the balance sheet as a liability until the work gets done. TARGET 26s.",
     "lockup": "Here is the calendar nobody put in a headline. The lockup does not end all at once. Twenty percent came free on the sixth of August. There was a bonus ten percent available if the stock had held thirty percent above the IPO price \u2014 it did not, zero days out of ten. Then seven percent more on each of five dates between now and October, twenty-eight percent after the next results, and everything on the eighth of December. TARGET 34s.",
     "governance": "One person holds eighty-two point four percent of the votes, through shares that carry ten votes each. The company is officially a controlled company, which lets it skip several Nasdaq governance rules. TARGET 24s.",
-    "dilution": "And there are one point three billion shares promised to the founder that do not appear in the share count yet, because the targets have not been hit. One tranche of them only vests if SpaceX builds data centres in space. TARGET 26s.",
+    "dilution": "And there are one point three billion shares promised to the founder that do not appear in the share count yet, because the targets have not been hit. One tranche of them only vests if SpaceX builds data centers in space. TARGET 26s.",
     "valuation": "So what are you paying. Annualise this quarter and it is about fifty-six times sales, for a company that lost money. There is no guidance to check that against, because SpaceX gives none. TARGET 26s.",
     "peers": "Against the most expensive software companies on the market, SpaceX is in a category of its own \u2014 and those companies make profits. TARGET 24s.",
     "street": "Nine to ten analysts cover it and they cannot agree at all. For twenty twenty-seven the estimates run from a loss to three dollars forty-six a share. TARGET 22s.",

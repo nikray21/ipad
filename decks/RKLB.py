@@ -223,20 +223,20 @@ def derive(snap, ep, fund, qrows, die, fact):
                               "growth": snap["ttmRevGrowth"]}], key=lambda x: -x["ps"])
     avg_ps = sum(p["ps"] for p in peers) / len(peers)
     # Iridium is the company being BOUGHT, not a comparable. Averaging it in and
-    # then calling the result "what the defence companies cost" understated the
+    # then calling the result "what the defense companies cost" understated the
     # premium by a third (23.8x against a true 34.9x).
-    dfn = set(F["peers"].get("defence") or [])
+    dfn = set(F["peers"].get("defense") or [])
     if not dfn:
-        die("peers block declares no `defence` set — a 'versus the primes' "
+        die("peers block declares no `defense` set — a 'versus the primes' "
             "figure cannot be computed without knowing which peers those are")
     dfn_ps = [p["ps"] for p in peers if p["sym"] in dfn]
     if len(dfn_ps) != len(dfn):
-        die(f"declared {len(dfn)} defence peers but priced {len(dfn_ps)}")
+        die(f"declared {len(dfn)} defense peers but priced {len(dfn_ps)}")
     avg_dfn = sum(dfn_ps) / len(dfn_ps)
     peerblock = {"rows": rows_p, "avgPs": avg_ps, "selfPs": self_ps,
                  "psPremium": self_ps / avg_ps,
-                 "avgDefencePs": avg_dfn, "psPremiumDefence": self_ps / avg_dfn,
-                 "defenceCount": len(dfn_ps),
+                 "avgDefensePs": avg_dfn, "psPremiumDefense": self_ps / avg_dfn,
+                 "defenseCount": len(dfn_ps),
                  "avgGrowth": sum(p["growth"] for p in peers) / len(peers)}
 
     return {
@@ -690,11 +690,11 @@ def slides(snap, ep, fact, fund_quarters=None):
     S.append({
         "type": "chart", "kicker": "Against the companies it competes with",
         "src": "Live market caps and trailing revenue, fetched at build time",
-        "head": f"{x(pb['psPremiumDefence'], 1)} what the defence primes cost",
+        "head": f"{x(pb['psPremiumDefense'], 1)} what the defense primes cost",
         "sub": ("Price to trailing revenue. Includes Iridium — the company Rocket Lab has agreed "
-                "to buy — and four defence primes that all earn profits."),
-        "chart": {"kind": "peers", "height": 480, "avg": pb["avgDefencePs"],
-                  "avgLab": f"defence average {xt(pb['avgDefencePs'], 1)}",
+                "to buy — and four defense primes that all earn profits."),
+        "chart": {"kind": "peers", "height": 480, "avg": pb["avgDefensePs"],
+                  "avgLab": f"defense average {xt(pb['avgDefensePs'], 1)}",
                   "rightHead": "revenue growth",
                   "rows": [{"name": F["peers"]["names"].get(r["sym"], r["sym"]),
                             "v": r["ps"], "lab": xt(r["ps"], 1),
