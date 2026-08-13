@@ -287,6 +287,20 @@ def derive(snap, ep, fund, qrows, die, fact):
         die("the backlog timing split does not sum to a whole")
     bk["withinOneYear"] = bk["total"] * bk["withinOneYearPct"] / 100
 
+    # Management's spoken target, turned into the number it implies per quarter.
+    # This is the biggest figure in the story and it is NOT in either filing — the
+    # only $100B in the 8-K is the cash balance.
+    gd = {
+        "arr": fv("guidance", "arrTarget"),
+        "when": fv("guidance", "arrTargetWhen"),
+        "newCloud": fv("guidance", "newCloudContracts"),
+    }
+    gd["perQuarter"] = gd["arr"] / 4
+    gd["multipleOfNow"] = gd["perQuarter"] / pl["rev"]
+    gd["backlogPerQuarter"] = bk["withinOneYear"] / 4
+    if gd["perQuarter"] <= pl["rev"]:
+        die("the run-rate target implies less than the quarter just reported — check the units")
+
     # How long the cash lasts at the current burn — the question every investor
     # asks about a company spending like this. Annualised from the half year.
     bs["burnPerYear"] = abs(cf["fcfH1"]) * 2
@@ -326,7 +340,7 @@ def derive(snap, ep, fund, qrows, die, fact):
                 "adjEbitda": seg["adjEbitdaQ2"]},
         "val": val, "conn": conn, "sp": sp, "ai": ai, "cf": cf, "rpy": rpy,
         "ppe": ppe, "lock": lock, "peers": peerblock,
-        "pl": pl, "bs": bs, "bk": bk,
+        "pl": pl, "bs": bs, "bk": bk, "gd": gd,
         "netDebt": val["netDebt"], "netCash": net_cash,
         "ev": snap["marketCap"] + val["netDebt"],
         # Flattened aliases so episode verdict prose can reference them as tokens.
@@ -367,7 +381,7 @@ def slides(snap, ep, fact, fund_quarters=None):
     rev = fv("results", "revenueQ2")
 
     S = []
-    pl, bs, bk = s["pl"], s["bs"], s["bk"]
+    pl, bs, bk, gd = s["pl"], s["bs"], s["bk"], s["gd"]
 
     # EXECUTIVE STYLE. Every slide is one visual, a headline of a few words, and a
     # single punch line. The long explanation that used to sit on screen in a "why
@@ -607,30 +621,36 @@ def slides(snap, ep, fact, fund_quarters=None):
         "notes": N["balancesheet"], "target": 30,
     })
 
-    # 09 — what is already contracted ------------------------------------
+    # 09 — the target, against the quarter it starts from ----------------
     S.append({
-        "type": "chart", "kicker": "What is already sold",
-        "src": "10-Q, remaining performance obligations",
-        "head": f"{b_(bk['total'])} already contracted",
-        "chart": {"kind": "stackedh", "height": 330, "fmtKind": "pct0", "labelRoom": 300,
-                  "rows": [{"name": "When it is due",
-                            "segs": [
-                                {"label": "Within a year", "v": bk["withinOneYearPct"],
-                                 "lab": f"{bk['withinOneYearPct']:.0f}%", "cls": "good"},
-                                {"label": "One to three years", "v": bk["oneToThreePct"],
-                                 "lab": f"{bk['oneToThreePct']:.0f}%", "cls": "mut"},
-                                {"label": "Later", "v": bk["thereafterPct"],
-                                 "lab": f"{bk['thereafterPct']:.0f}%", "cls": "mut"},
-                            ]}]},
-        "punch": (f"<b>{b_(bk['withinOneYear'])} of it</b> lands inside twelve months."),
-        "why": (f"{b_(bk['total'])} of work is already under contract, and "
-                f"{bk['withinOneYearPct']:.0f}% of it is due within twelve months — about "
-                f"{b_(bk['withinOneYear'])}. That is the strongest argument for the growth "
-                f"continuing: it is not a forecast, it is signed. Worth knowing that "
-                f"{b_(fv('backlog','asDeferredRevenue'))} of it is money customers have already "
-                f"handed over, and it sits on the balance sheet as a liability until the work is "
-                f"done."),
-        "notes": N["backlog"], "target": 26,
+        "type": "chart", "kicker": f"Said out loud on the call, not in the filing",
+        "src": "Q2 2026 earnings call, August 4 · backlog from the 10-Q",
+        "head": f"{b_(gd['arr'])} a year, by {gd['when']}",
+        "sub": (f"Revenue by quarter, against the {b_(gd['perQuarter'])} a quarter that target "
+                f"needs."),
+        "chart": {"kind": "forecast", "height": 470, "fmtKind": "usdM", "points": [
+            {"x": "Q2 2025", "v": pl["revPrior"], "lab": b_(pl["revPrior"])},
+            {"x": "Q1 2026", "v": fv("results", "revenueQ1"), "lab": b_(fv("results","revenueQ1"))},
+            {"x": "Q2 2026", "v": pl["rev"], "lab": b_(pl["rev"]), "growth": "reported"},
+            {"x": f"{gd['when']} target", "v": gd["perQuarter"], "lab": b_(gd["perQuarter"]),
+             "guided": True, "growth": "management's words"},
+        ], "pastLab": "reported", "futureLab": "the target"},
+        "punch": (f"That is <b>{x(gd['multipleOfNow'], 1)} this quarter</b>, two quarters out."),
+        "why": (f"On the call management said they reach a {b_(gd['arr'])} annualized revenue run "
+                f"rate by {gd['when']} — and I am quoting — that it is not a question mark, it is "
+                f"what they would get if they basically did nothing. Test it. "
+                f"{b_(gd['arr'])} a year is {b_(gd['perQuarter'])} a quarter. They just did "
+                f"{b_(pl['rev'])}. That is {x(gd['multipleOfNow'], 1)} in two quarters. What is "
+                f"actually contracted is {b_(bk['total'])}, of which "
+                f"{bk['withinOneYearPct']:.0f}% falls inside a year — {b_(bk['withinOneYear'])}, "
+                f"so about {b_(gd['backlogPerQuarter'])} a quarter — plus "
+                f"{b_(gd['newCloud'])} of cloud work signed since, starting to ramp in October. "
+                f"Be fair to them: consumer Starlink is month to month, so it never appears in "
+                f"backlog at all, and that is {b_(conn['consumer'])} a quarter on its own. But the "
+                f"gap between what is signed and what is promised is the thing to hold them to. "
+                f"And note where the number lives: the only {b_(gd['arr'])} in the filings is the "
+                f"cash in the bank."),
+        "notes": N["backlog"], "target": 34,
     })
 
     # 10 — the loss that becomes a profit --------------------------------

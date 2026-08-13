@@ -20,6 +20,12 @@
       "label": "Schedule 13G \u2014 Antonio J. Gracias / the Valor entities, filed Aug 11 2026",
       "url": "https://www.sec.gov/Archives/edgar/data/1181412/000121390026087780/primary_doc.xml",
       "note": "Rule 13d-1(d) exempt-investor filing. Event date June 30 2026, filed Aug 11 \u2014 four business days after the 10-Q that carries the $13.3B of Valor debt."
+    },
+    "call-q2-26": {
+      "label": "Q2 2026 earnings call, August 4 2026 \u2014 management commentary",
+      "url": "https://www.fool.com/earnings/call-transcripts/2026/08/11/spacex-spcx-q2-2026-earnings-call-transcript/",
+      "note": "NOT an SEC filing. The $100B annualized run-rate target exists only in spoken commentary \u2014 the only $100B in the 8-K is the cash balance. Facts sourced here are marked _spoken and are not text-matched against a filing.",
+      "_spoken": true
     }
   },
   "findings": [
@@ -797,6 +803,32 @@
         "MDB": "MongoDB",
         "DDOG": "Datadog",
         "SNOW": "Snowflake"
+      }
+    },
+    "guidance": {
+      "arrTarget": {
+        "v": 100000,
+        "src": "call-q2-26",
+        "unit": "USD millions",
+        "_spoken": true,
+        "note": "Annualized revenue run rate management says it reaches in December 2026."
+      },
+      "arrTargetWhen": {
+        "v": "December 2026",
+        "src": "call-q2-26",
+        "_spoken": true
+      },
+      "arrQuote": {
+        "v": "The $100 billion ARR in December is not a question mark. That's what we'd achieve if we basically did nothing.",
+        "src": "call-q2-26",
+        "_spoken": true
+      },
+      "newCloudContracts": {
+        "v": 6700,
+        "src": "call-q2-26",
+        "unit": "USD millions",
+        "_spoken": true,
+        "note": "Cloud services contracted in the first weeks of Q3, over a six-month period beginning October."
       }
     }
   },

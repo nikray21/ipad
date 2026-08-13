@@ -120,6 +120,14 @@ def present(needle, haystack):
 
 def check(node, path, ep, cache, parent=None):
     if isinstance(node, dict):
+        if node.get("_spoken"):
+            # Said on the earnings call, not printed in a filing. It cannot be
+            # text-matched, so it is skipped WITH A REASON and the slide has to
+            # attribute it to management out loud — never as a filed figure.
+            SKIPPED.append((".".join(path),
+                            "spoken on the earnings call — not in any filing, "
+                            "and labelled as management's words on screen"))
+            return
         if node.get("_derived"):
             # Derived either way: an aggregate no document prints, or a total whose
             # components ARE printed and validated individually. Both are verified

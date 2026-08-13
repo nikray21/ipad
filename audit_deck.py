@@ -103,11 +103,39 @@ def audit_episode_sourcing(ep):
     else:
         ok("episode-sourcing")
 
+    # Every source must be an SEC filing, with ONE controlled exception: spoken
+    # management commentary. The $100B annualized run-rate target exists only on
+    # the earnings call — the only $100B in the 8-K is the cash balance — and a
+    # deck that cannot cite it has to leave out the biggest number in the quarter.
+    # The exception is paid for: the source must be declared `_spoken: True`, and
+    # EVERY fact citing it must itself be marked `_spoken`, so nothing said out
+    # loud can ever be presented as a filed figure.
+    spoken_srcs = {k for k, v in ep["sources"].items() if v.get("_spoken")}
     for k, v in ep["sources"].items():
-        if not v.get("url", "").startswith("https://www.sec.gov/"):
-            bad("source-urls", f"{k} does not point at sec.gov")
+        if v.get("url", "").startswith("https://www.sec.gov/"):
+            continue
+        if k not in spoken_srcs:
+            bad("source-urls", f"{k} is not on sec.gov and is not declared `_spoken: True`")
             return
-    ok("source-urls")
+    leaked = []
+
+    def walk_spoken(node, path):
+        if isinstance(node, dict):
+            if node.get("src") in spoken_srcs and not node.get("_spoken"):
+                leaked.append(".".join(path))
+            for k2, v2 in node.items():
+                if not k2.startswith("_"):
+                    walk_spoken(v2, path + [k2])
+        elif isinstance(node, list):
+            for i, v2 in enumerate(node):
+                walk_spoken(v2, path + [str(i)])
+
+    walk_spoken(ep["filings"], [])
+    if leaked:
+        bad("source-urls", f"{len(leaked)} fact(s) cite spoken commentary without `_spoken`: "
+                           f"{leaked[:5]}")
+        return
+    ok(f"source-urls ({len(spoken_srcs)} spoken source(s), every fact from them marked)")
 
 
 def audit_no_hardcoded_figures(ep):
