@@ -28,10 +28,10 @@ midpoint, the tax line. That work is Phase 1 and it is most of the value.
   **commit the output folder** — the repo is the only persistence between sessions.
   `deckpath.py` *finds* a built episode afterwards even if it has been
   filed into a subfolder, so tidying the Desktop never breaks its audit trail.
-- **Sibling skills:** `design` (**load before touching any chart**) · `fa` · `bull`.
-  The `terminal` skill is no longer a dependency — the data traps that mattered are
-  carried in `marketdata.py`'s comments — but it is still worth reading if you touch
-  the data layer, and **`bull` is required reading before anything near 8787.**
+- **Sibling skills (all in this repo's `.claude/skills/`):** `design` (**load
+  before touching any chart**) · `fa` · `learn-stock` (the Wednesday format) ·
+  `find-stock`. The retired `terminal` and `bull` skills are gone — every data
+  trap that mattered is carried in `marketdata.py`'s comments.
 
 ## This skill is standalone — no server, no Terminal
 

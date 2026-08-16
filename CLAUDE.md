@@ -39,7 +39,14 @@ prove every number traces to a filing. The workflow lives in
 matter most: **stock-analysis-presentation** (Sunday ticker episode) and
 **learn-stock** (Wednesday educational episode). Supporting: `design` (load
 before touching any chart), `fa`, `find-stock`, `technical-analysis`.
+`design-craft` (high-craft HTML/CSS/JS visual work — learn-stock leans on it
+for new visual patterns).
 Reference-only in cloud (they need local tools/MCPs the sandbox lacks):
 `race-dossier` (local ~/Projects/f1-dossier), `youtube-thumbnail-maker`,
 `youtube-popup-graphic`, `youtube-broll-maker`, `youtube-clipper` (Higgsfield
 MCP — usually absent in cloud).
+
+The `dataviz` skill both deck skills cite is bundled inside Claude Code
+itself (not a repo file) and should exist in cloud sessions too. If it is
+ever absent: the `design` skill already records the validated palette pairs —
+do not invent new chart colors without the validator.

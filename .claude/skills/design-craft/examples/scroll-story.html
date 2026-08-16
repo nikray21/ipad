@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Scrollytelling</title>
+<!--
+  DEMONSTRATES: scroll-driven storytelling. A sticky visual stage on one side,
+  scrolling text "steps" on the other; each step activates the matching visual
+  state via IntersectionObserver. Native scroll-driven fade for accents. This
+  is the backbone of product explainers and data stories.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Fraunces',Georgia,serif; --body:'Space Grotesk',system-ui,sans-serif;
+    --bg:oklch(0.16 0.03 260); --text:oklch(0.96 0.01 260); --muted:oklch(0.68 0.02 260);
+    --c1:oklch(0.72 0.15 30); --c2:oklch(0.75 0.14 160); --c3:oklch(0.72 0.14 260);
+    --ease:cubic-bezier(0.16,1,0.3,1);
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased}
+  .intro,.outro{min-height:70svh;display:grid;place-content:center;text-align:center;padding:10vh 24px;gap:16px}
+  .intro h1{font-family:var(--display);font-weight:600;font-size:clamp(2.5rem,1rem+6vw,6rem);line-height:1;letter-spacing:-0.02em;text-wrap:balance}
+  .intro p,.outro p{color:var(--muted);max-width:44ch;margin-inline:auto;font-size:1.1rem;line-height:1.5}
+
+  .scrolly{display:grid;grid-template-columns:1fr 1fr;gap:0;max-width:1400px;margin-inline:auto}
+  .stage{position:sticky;top:0;height:100svh;display:grid;place-items:center}
+  .viz{width:min(60%,420px);aspect-ratio:1;border-radius:24px;position:relative;
+    background:var(--c1);transition:background .6s var(--ease),transform .6s var(--ease);
+    box-shadow:0 40px 80px rgb(0 0 0/.4)}
+  .viz::after{content:attr(data-n);position:absolute;inset:0;display:grid;place-items:center;
+    font-family:var(--display);font-weight:600;font-size:6rem;color:oklch(0.16 0.03 260/.85)}
+  .steps{padding:30svh 6vw}
+  .step{min-height:70svh;display:grid;align-content:center;gap:12px;
+    opacity:.25;transition:opacity .5s var(--ease)}
+  .step.active{opacity:1}
+  .step h2{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,1rem+2vw,2.6rem);
+    line-height:1.05;letter-spacing:-0.01em;text-wrap:balance}
+  .step p{color:var(--muted);font-size:1.1rem;line-height:1.55;max-width:38ch;text-wrap:pretty}
+  @media(max-width:820px){.scrolly{grid-template-columns:1fr}.stage{height:60svh}.steps{padding:5vh 24px}.step{min-height:50svh}}
+  @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+  <section class="intro">
+    <h1>How it comes together</h1>
+    <p>Scroll. The panel on the left stays pinned and reacts as each step below enters view.</p>
+  </section>
+
+  <div class="scrolly">
+    <div class="stage"><div class="viz" id="viz" data-n="1"></div></div>
+    <div class="steps" id="steps">
+      <div class="step active" data-n="1" data-color="var(--c1)">
+        <h2>Start with the raw material</h2>
+        <p>Every story opens on a single, concrete thing. Establish it before you complicate it.</p>
+      </div>
+      <div class="step" data-n="2" data-color="var(--c2)">
+        <h2>Introduce the change</h2>
+        <p>The visual shifts as this step enters the viewport — motion carries the meaning of "something happened."</p>
+      </div>
+      <div class="step" data-n="3" data-color="var(--c3)">
+        <h2>Land the conclusion</h2>
+        <p>End on the takeaway. The pinned stage has walked the reader through the whole argument without a single hard cut.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="outro"><p>That's scrollytelling: one pinned stage, a few honest steps, motion that means something.</p></section>
+
+  <script>
+    const viz = document.getElementById('viz');
+    const steps = [...document.querySelectorAll('.step')];
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          steps.forEach(s => s.classList.toggle('active', s === e.target));
+          viz.style.background = e.target.dataset.color;
+          viz.dataset.n = e.target.dataset.n;
+          viz.style.transform = `rotate(${(e.target.dataset.n-1)*8-8}deg) scale(${1+(e.target.dataset.n-1)*0.04})`;
+        }
+      });
+    }, { rootMargin:'-45% 0px -45% 0px', threshold:0 });
+    steps.forEach(s => io.observe(s));
+  </script>
+</body>
+</html>

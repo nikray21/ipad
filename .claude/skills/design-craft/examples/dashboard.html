@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Dashboard</title>
+<!--
+  DEMONSTRATES: dense but calm data UI. Restrained neutral palette + one accent,
+  tabular numbers, hand-built SVG sparkline & bar chart (direct-labelled, muted
+  axes, data in accent), grid layout with subgrid-style alignment, animated
+  count-up + bar grow on load. No chart library — full control, on-system.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --body:'Space Grotesk',system-ui,sans-serif;
+    --bg:oklch(0.98 0.004 250); --surface:#fff; --text:oklch(0.24 0.02 260);
+    --muted:oklch(0.56 0.02 260); --border:oklch(0.91 0.008 260);
+    --accent:oklch(0.55 0.16 260); --up:oklch(0.55 0.14 150); --down:oklch(0.58 0.16 25);
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);padding:32px;
+    -webkit-font-smoothing:antialiased}
+  .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px}
+  h1{font-size:1.4rem;font-weight:600;letter-spacing:-0.01em}
+  .sub{color:var(--muted);font-size:.9rem}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .kpi{grid-column:span 1}
+  .kpi .label{color:var(--muted);font-size:.8rem;font-weight:500;letter-spacing:.02em}
+  .kpi .val{font-size:2rem;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;margin-top:6px}
+  .kpi .delta{font-size:.85rem;font-weight:600;margin-top:2px}
+  .up{color:var(--up)} .down{color:var(--down)}
+  .wide{grid-column:span 3} .tall{grid-column:span 1}
+  .card h3{font-size:.95rem;font-weight:600;margin-bottom:2px}
+  .card .cap{color:var(--muted);font-size:.8rem;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:500;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .bar-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;width:80px;display:inline-block;vertical-align:middle}
+  .bar-fill{height:100%;background:var(--accent);width:0;border-radius:3px;transition:width 1s cubic-bezier(0.16,1,0.3,1)}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.wide,.tall{grid-column:span 2}}
+  @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div><h1>Revenue overview</h1><div class="sub">Last 30 days · updated 2m ago</div></div>
+    <div class="sub">Aug 2026</div>
+  </div>
+
+  <div class="grid">
+    <div class="card kpi"><div class="label">MRR</div><div class="val" data-count="284900" data-prefix="$">$0</div><div class="delta up">▲ 12.4%</div></div>
+    <div class="card kpi"><div class="label">Active accounts</div><div class="val" data-count="1842">0</div><div class="delta up">▲ 3.1%</div></div>
+    <div class="card kpi"><div class="label">Churn</div><div class="val" data-count="1.8" data-suffix="%" data-dec="1">0%</div><div class="delta down">▲ 0.3%</div></div>
+    <div class="card kpi"><div class="label">NPS</div><div class="val" data-count="61">0</div><div class="delta up">▲ 4</div></div>
+
+    <div class="card wide">
+      <h3>Weekly revenue</h3><div class="cap">Bars grow on load; axis muted, data in accent.</div>
+      <svg id="chart" viewBox="0 0 600 200" style="width:100%;height:auto;font:500 12px var(--body)"></svg>
+    </div>
+
+    <div class="card tall">
+      <h3>This week</h3><div class="cap">Trend</div>
+      <svg id="spark" viewBox="0 0 200 90" style="width:100%;height:auto"></svg>
+      <div style="font-size:1.8rem;font-weight:700;letter-spacing:-.02em;margin-top:8px;font-variant-numeric:tabular-nums">$71,204</div>
+      <div class="delta up" style="font-size:.85rem">▲ 8.2% vs last week</div>
+    </div>
+
+    <div class="card" style="grid-column:span 4">
+      <h3>Top plans</h3><div class="cap">Sorted by revenue share</div>
+      <table>
+        <thead><tr><th>Plan</th><th class="num">Accounts</th><th class="num">MRR</th><th>Share</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const ease = t => 1-Math.pow(1-t,3);
+    // count-up KPIs
+    document.querySelectorAll('[data-count]').forEach(el=>{
+      const to=+el.dataset.count, dec=+el.dataset.dec||0, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+      const t0=performance.now(), dur=1100;
+      const fmt=n=>pre+(dec?n.toFixed(dec):Math.round(n).toLocaleString())+suf;
+      (function step(now){const p=Math.min(1,(now-t0)/dur);el.textContent=fmt(to*ease(p));if(p<1)requestAnimationFrame(step);})(t0);
+    });
+
+    // bar chart
+    const data=[42,55,48,63,58,71,66,78];
+    const chart=document.getElementById('chart');
+    const W=600,H=200,pad=24,bw=(W-pad*2)/data.length, max=Math.max(...data);
+    chart.innerHTML = data.map((v,i)=>{
+      const h=(v/max)*(H-pad*2), x=pad+i*bw, y=H-pad-h;
+      return `<rect x="${x+6}" y="${H-pad}" width="${bw-14}" height="0" rx="3" fill="var(--accent)">
+        <animate attributeName="height" from="0" to="${h}" dur="0.9s" begin="${i*0.06}s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1" keyTimes="0;1" values="0;${h}"/>
+        <animate attributeName="y" from="${H-pad}" to="${y}" dur="0.9s" begin="${i*0.06}s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1" keyTimes="0;1" values="${H-pad};${y}"/>
+      </rect>`;
+    }).join('') + `<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--border)" stroke-width="1"/>`;
+
+    // sparkline
+    const s=[30,42,38,50,46,62,58,71], sw=200,sh=90,sp=8;
+    const pts=s.map((v,i)=>[sp+i*((sw-sp*2)/(s.length-1)), sh-sp-((v-25)/(75-25))*(sh-sp*2)]);
+    const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    document.getElementById('spark').innerHTML=
+      `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(0.16,1,0.3,1) forwards"/>
+       <circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="3.5" fill="var(--accent)"/>
+       <style>@keyframes draw{to{stroke-dashoffset:0}}</style>`;
+
+    // table rows with animated share bars
+    const plans=[['Enterprise',214,'$142,300',72],['Team',612,'$98,400',50],['Pro',1016,'$44,200',22]];
+    document.getElementById('rows').innerHTML=plans.map(([n,a,m,pct])=>
+      `<tr><td>${n}</td><td class="num">${a.toLocaleString()}</td><td class="num">${m}</td>
+       <td><span class="bar-track"><span class="bar-fill" data-w="${pct}"></span></span></td></tr>`).join('');
+    requestAnimationFrame(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'));
+  </script>
+</body>
+</html>

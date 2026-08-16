@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Filterable card grid with motion</title>
+<!--
+  DEMONSTRATES: auto-responsive grid (no media queries), staggered scroll reveal
+  via CSS var delay, tactile hover lift, animated active-filter pill (FLIP-free,
+  translated indicator), View Transitions API for the filter re-layout,
+  reduced-motion guard. Plain HTML/CSS/JS.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --body:'Space Grotesk',system-ui,sans-serif;
+    --bg:oklch(0.17 0.02 265);
+    --surface:oklch(0.22 0.025 265);
+    --surface-2:oklch(0.26 0.03 265);
+    --text:oklch(0.96 0.01 265);
+    --muted:oklch(0.68 0.02 265);
+    --border:oklch(0.34 0.03 265);
+    --accent:oklch(0.72 0.15 155); /* mint */
+    --ease:cubic-bezier(0.25,1,0.5,1);
+    --ease-back:cubic-bezier(0.34,1.4,0.64,1);
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);
+    padding:clamp(24px,5vw,80px);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  header{max-width:900px;margin-bottom:40px}
+  h1{font-size:clamp(1.8rem,1rem+3vw,3rem);font-weight:700;letter-spacing:-0.02em;
+    line-height:1.05;text-wrap:balance}
+  header p{color:var(--muted);margin-top:12px;font-size:1.05rem;max-width:52ch;text-wrap:pretty}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:32px 0;
+    background:var(--surface);padding:6px;border-radius:999px;width:fit-content}
+  .filters button{position:relative;border:0;background:transparent;color:var(--muted);
+    font:500 14px/1 var(--body);padding:10px 18px;border-radius:999px;cursor:pointer;
+    transition:color .25s var(--ease);z-index:1}
+  .filters button[aria-pressed="true"]{color:var(--bg)}
+  .pill{position:absolute;inset:6px auto 6px 6px;height:calc(100% - 12px);
+    background:var(--accent);border-radius:999px;z-index:0;
+    transition:transform .4s var(--ease-back),width .4s var(--ease-back)}
+
+  .grid{display:grid;gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr))}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:24px;min-height:200px;display:flex;flex-direction:column;justify-content:space-between;
+    opacity:0;transform:translateY(24px);
+    transition:opacity .6s var(--ease),transform .6s var(--ease),
+      background .25s var(--ease),border-color .25s var(--ease);
+    transition-delay:calc(var(--i,0) * 55ms);will-change:transform}
+  .grid.in .card{opacity:1;transform:none}
+  .card:hover{transform:translateY(-6px);background:var(--surface-2);
+    border-color:var(--accent)}
+  .card .tag{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent)}
+  .card h3{font-size:1.3rem;font-weight:600;margin-top:auto;letter-spacing:-0.01em}
+  .card p{color:var(--muted);font-size:0.95rem;margin-top:8px;line-height:1.5}
+  .card .n{font-size:2.4rem;font-weight:700;color:var(--surface-2);
+    -webkit-text-stroke:1px var(--border);align-self:flex-end}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Selected work</h1>
+    <p>Filtering re-lays-out the grid through the View Transitions API, so cards
+      glide to their new positions instead of snapping. Hover lifts a card;
+      the filter indicator slides. Reveal staggers on scroll.</p>
+  </header>
+
+  <div class="filters" id="filters">
+    <span class="pill"></span>
+    <button aria-pressed="true" data-cat="all">All</button>
+    <button aria-pressed="false" data-cat="brand">Identity</button>
+    <button aria-pressed="false" data-cat="ui">Product</button>
+    <button aria-pressed="false" data-cat="motion">Motion</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const items = [
+      {t:'Meridian', cat:'brand', d:'Identity for a climate-data firm.', n:'01'},
+      {t:'Halo OS',  cat:'ui',    d:'Design system for a hardware console.', n:'02'},
+      {t:'Drift',    cat:'motion',d:'Launch film for an audio startup.', n:'03'},
+      {t:'Cardinal', cat:'brand', d:'Wordmark and editorial system.', n:'04'},
+      {t:'Ledger',   cat:'ui',    d:'A calmer interface for money.', n:'05'},
+      {t:'Signal',   cat:'motion',d:'Data-driven title sequence.', n:'06'},
+      {t:'Fathom',   cat:'ui',    d:'Analytics without the dashboard slop.', n:'07'},
+      {t:'Orchard',  cat:'brand', d:'Packaging for a small-batch cidery.', n:'08'},
+    ];
+    const grid = document.getElementById('grid');
+    let active = 'all';
+
+    function cardHTML(it, i){
+      return `<article class="card" style="--i:${i}" data-cat="${it.cat}">
+        <span class="tag">${it.cat}</span>
+        <div><h3>${it.t}</h3><p>${it.d}</p></div>
+        <span class="n">${it.n}</span></article>`;
+    }
+    function paint(){
+      const list = items.filter(it => active === 'all' || it.cat === active);
+      grid.innerHTML = list.map(cardHTML).join('');
+      requestAnimationFrame(() => grid.classList.add('in'));
+    }
+    function setFilter(cat){
+      active = cat;
+      const run = () => paint();
+      if (document.startViewTransition && !matchMedia('(prefers-reduced-motion:reduce)').matches)
+        document.startViewTransition(run); else run();
+    }
+
+    // Filter buttons + sliding pill
+    const filters = document.getElementById('filters');
+    const pill = filters.querySelector('.pill');
+    const btns = [...filters.querySelectorAll('button')];
+    function movePill(btn){
+      pill.style.width = btn.offsetWidth + 'px';
+      pill.style.transform = `translateX(${btn.offsetLeft - 6}px)`;
+    }
+    btns.forEach(b => b.addEventListener('click', () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', x === b));
+      movePill(b); setFilter(b.dataset.cat);
+    }));
+
+    paint();
+    requestAnimationFrame(() => movePill(btns[0]));
+    addEventListener('resize', () => movePill(btns.find(b => b.getAttribute('aria-pressed')==='true')));
+  </script>
+</body>
+</html>
