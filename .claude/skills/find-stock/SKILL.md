@@ -20,7 +20,22 @@ Launch three `general-purpose` agents concurrently, each told today's date, the 
 
 ## Phase 2 — Google Trends with the YouTube Search property (do this yourself)
 
-This is the deciding dataset and agents usually can't reach it. Follow `~/.claude/skills/find-stock/trends-api.md` exactly: try Claude-in-Chrome first, fall back to Playwright; get onto a `trends.google.com` page, then call the Trends JSON API from the page context via `browser_evaluate`.
+This is the deciding dataset. **First choice everywhere (cloud and local): the
+bundled script — no browser needed** (stdlib only, verified 2026-08-15):
+
+```bash
+python3 .claude/skills/find-stock/trends_http.py "NBIS stock" "nebius stock" "PLTR stock"
+python3 .claude/skills/find-stock/trends_http.py --related "NBIS stock"
+```
+
+It prints daily averages, a last-2-day momentum verdict per keyword, and
+related queries. If Google blocks it (429 — datacenter IPs sometimes are),
+it says so plainly. Then, **local sessions only**: fall back to the browser
+route in `trends-api.md` (Claude-in-Chrome, then Playwright — call the Trends
+JSON API from the page context via `browser_evaluate`). In a cloud session
+with no browser, skip straight to Phase 1 agent #3's autocomplete +
+view-velocity evidence and say Trends was unavailable — never fabricate
+Trends numbers.
 
 Run comparisons (max 5 keywords each, `property: "youtube"`, `now 7-d`, geo US) over the candidates from Phase 1:
 - **Both query forms per candidate**: ticker form ("NBIS stock") AND company-name form ("nebius stock"). Name form usually dominates; a rising *ticker* form means retail just found it — a strong early signal.
