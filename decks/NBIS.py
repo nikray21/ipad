@@ -36,6 +36,8 @@ from . import fmt
 LITERALS_OK = (
     "10% disclosure line",        # the SEC's significant-customer threshold — a
                                   # reporting constant, not a figure about Nebius
+    "$1,200 for every $1,000",    # the March 2026 notes' accretion term, fixed by
+                                  # the indenture and quoted from the filing
 )
 
 
@@ -347,6 +349,7 @@ def slides(snap, ep, fact, fund_quarters=None):
         "type": "findings", "kicker": "Nobody reads these filings",
         "src": "Filed with the SEC on Aug 12 2026, plus the Form 4 trail",
         "head": "What the filings say. The release doesn&rsquo;t.",
+        "sub": f"After a {pc(react['move'], 0)} one-day pop, here is the paperwork.",
         "items": ep["findings"],
         "punch": (f"{_word(len(ep['findings']), True)} things they filed. "
                   f"<b>None made the press release.</b>"),
@@ -359,11 +362,11 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     # 02 — the quarter as reported ---------------------------------------
     S.append({
-        "type": "tiles", "kicker": "Start with the headline they sold", "cols": 3,
+        "type": "tiles", "kicker": "The scoreboard · finding 1 of 5", "cols": 3,
         "src": "6-K EX-99.1, Q2 2026 highlights · quarter ended June 30 2026",
         "head": f"Revenue up {pc(s['revGrowth'], 0)}. Still losing money.",
         "tiles": [
-            {"v": b_(rev), "l": "Revenue",
+            {"v": b_(rev), "l": "Revenue", "hero": True,
              "n": f"{pc(s['revGrowth'], 0)} on a year ago", "tone": "good"},
             {"v": b_(fv("results", "adjEbitdaQ2")), "l": "Adjusted EBITDA",
              "n": f"a {fv('results','adjEbitdaQ2')/rev*100:.0f}% margin, from "
@@ -386,9 +389,7 @@ def slides(snap, ep, fact, fund_quarters=None):
                 f"{fv('results','adjEbitdaQ2')/rev*100:.0f} cents of each dollar before wear "
                 f"on equipment and share pay. But underneath: an operating loss of "
                 f"{m(abs(fv('results','opLossQ2')))}, a net loss of "
-                f"{m(abs(fv('results','netLossQ2')))}, an interest bill up from "
-                f"{m(fv('results','interestExpQ2prior'))} to "
-                f"{m(fv('results','interestExpQ2'))} in a year. And the half-year profit of "
+                f"{m(abs(fv('results','netLossQ2')))}. And the half-year profit of "
                 f"{m(ch['netIncomeH1'])}? {m(ch['gain'])} of it is the ClickHouse markup — a "
                 f"stake marked up because someone else's funding round set a new price. "
                 f"Without it, the half year is a {m(abs(ch['exGainH1']))} loss. Every profit "
@@ -501,7 +502,7 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     # 06 — the cash walk ---------------------------------------------------
     S.append({
-        "type": "chart", "kicker": "Now the fine print — the cash",
+        "type": "chart", "kicker": "Finding 2 of 5 — now the cash",
         "src": "6-K EX-99.2 cash flow statement · MD&A liquidity section",
         "head": "Where the operating cash flow really came from",
         "sub": "Six months ended June 30, 2026.",
@@ -517,19 +518,20 @@ def slides(snap, ep, fact, fund_quarters=None):
         "punch": f"<b>{pc(cw['prepayShare'], 1, signed=False)} of it</b> is customers paying years ahead.",
         "why": (f"The headline says {b_(cw['cfoH1'])} of operating cash flow in six months — "
                 f"it reads like a money machine. Walk it. {b_(cw['prepayH1'])} of that is "
-                f"customers paying up front for compute not yet delivered, booked as revenue "
-                f"over as much as five years. That is "
-                f"{pc(cw['prepayShare'], 1, signed=False)} of the whole figure. Running the "
-                f"business actually produced {m(cw['coreOpCash'])} — against "
-                f"{b_(cw['capexH1'])} spent on equipment in the same six months. The gap was "
-                f"filled by raising {b_(cw['raisedH1'])} in new money. This company is not "
-                f"self-funding. It is customer-funded and debt-funded — a different sentence."),
-        "notes": N["cashwalk"], "target": 30,
+                f"customers paying up front for compute not yet delivered, booked over as much "
+                f"as five years. Running the business actually produced "
+                f"{m(cw['coreOpCash'])} — against {b_(cw['capexH1'])} spent on equipment. "
+                f"The gap was "
+                f"filled by raising {b_(cw['raisedH1'])} in new money — and the first of "
+                f"those convertible bonds comes due in 2029, with the newest repaying "
+                f"$1,200 for every $1,000 borrowed at maturity. This company is not "
+                f"self-funding. It is customer-funded and debt-funded."),
+        "notes": N["cashwalk"], "target": 32,
     })
 
     # 07 — whose money is it -----------------------------------------------
     S.append({
-        "type": "quote", "kicker": "Whose money is that, then?",
+        "type": "quote", "kicker": "Finding 2 of 5 — whose money is that?",
         "src": "Deferred Revenue note (F-18) · Interest Expense note (F-19)",
         "head": "Most of that cash is not theirs yet",
         "quote": ("The Group recognizes deferred revenue when cash is received and before "
@@ -561,7 +563,7 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     # 08 — the depreciation change ----------------------------------------
     S.append({
-        "type": "mega", "kicker": "Then the quiet accounting change",
+        "type": "mega", "kicker": "Finding 3 of 5 — the quiet accounting change",
         "src": "Use of Estimates note (F-9) — absent from the press release",
         "head": "One sentence in January flattered every 2026 number",
         "value": m(dep["cutQ2"]), "tone": "warn",
@@ -592,7 +594,7 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     # 09 — the customer turnover ------------------------------------------
     S.append({
-        "type": "chart", "kicker": "And the customers behind it all changed",
+        "type": "chart", "kicker": "Finding 4 of 5 — the customers all changed",
         "src": "Significant Customers table (F-17) — the filing's own letters",
         "head": "The entire top of the customer list changed",
         "sub": "Share of quarterly revenue, as the filing labels them.",
@@ -631,7 +633,7 @@ def slides(snap, ep, fact, fund_quarters=None):
 
     # 10 — the insiders -----------------------------------------------------
     S.append({
-        "type": "chart", "kicker": "What insiders do with their own money",
+        "type": "chart", "kicker": "Finding 5 of 5 — what insiders did",
         "src": f"SEC Form 4 XML — {ins['totalFilings']} filings, aggregated and recomputed",
         "head": f"{m(ins['totalSoldValue'])} sold. Nothing bought.",
         "sub": "Shares sold on the market since March 2026, by month.",
@@ -753,10 +755,10 @@ def slides(snap, ep, fact, fund_quarters=None):
                 f"if it goes badly, {d2(fair['base'])} in my base case, and a bull case at "
                 f"{d2(fair['bull'])} that needs fifty percent compound growth for five straight "
                 f"years with margins they have never shown. Today's price sits past the top of "
-                f"it. Everything real about this company — and plenty is real — is already in "
-                f"the price. My line is {d2(fair['mid'])}, halfway between base and bull. Above "
-                f"it, you are paying for perfection. Near it or below, the odds start working "
-                f"for you. That is the fundamentals. Now let's go to the chart."),
+                f"it. Everything real about this company is already in the price. My line is "
+                f"{d2(fair['mid'])}, halfway between base and bull. Above it, you are paying "
+                f"for perfection. Near it or below, the odds work for you. That is the "
+                f"fundamentals. Now let's go to the chart."),
         "notes": N["call"], "target": 32,
     })
 

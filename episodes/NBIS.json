@@ -228,7 +228,11 @@
 
     "financing": {
       "absFacility":  { "v": 775, "src": "6k-abs", "unit": "USD millions", "searchAs": "$775 million" },
-      "absMarginPct": { "v": 2.50, "src": "6k-abs", "unit": "%", "searchAs": "2.50%" }
+      "absMarginPct": { "v": 2.50, "src": "6k-abs", "unit": "%", "searchAs": "2.50%" },
+      "maturitiesQuote": { "v": "The Group's convertible notes comprise the notes due 2029 and 2031 issued in June 2025, the notes due 2030 and 2032 issued in September 2025 and the notes due 2031 and 2033 issued in March 2026",
+        "src": "6k-q2-26-fin", "note": "convertible notes note — the maturity ladder starts June 2029" },
+      "accretionQuote": { "v": "The Notes due March 2031 accrete in stages over their term, reaching 120% of their original principal at maturity (i.e. $1,200 for every $1,000 issued)",
+        "src": "6k-q2-26-fin", "note": "same note — the March 2026 notes repay 120 cents on the dollar" }
     },
 
     "clickhouse": {
@@ -315,19 +319,24 @@
   },
 
   "findings": [
-    { "claim": "97.6% of the half-year's operating cash flow is customers paying years in advance — money that may be refundable, accrues interest like a loan, and equals 74% of the cash.",
-      "where": "Cash flow statement's deferred-revenue line; Deferred Revenue note (F-18); Interest Expense note (F-19)",
-      "src": "6k-q2-26-fin" },
-    { "claim": "In January they gave their servers a fifth year of accounting life, cutting this quarter's depreciation by $43M. The press release never mentions it.",
-      "where": "Use of Estimates note (F-9), two paragraphs past the boilerplate",
-      "src": "6k-q2-26-fin" },
-    { "claim": "Last year's two biggest customers — 54% of revenue between them — are gone from the significant-customer table. Three new names now carry 59%.",
-      "where": "Significant Customers table (F-17)",
-      "src": "6k-q2-26-fin" },
-    { "claim": "The entire half-year 'profit' is a $781M paper markup of their ClickHouse stake — triggered by a funding round they did not even participate in.",
+    { "stat": "$781M",
+      "claim": "The entire half-year 'profit' is a paper markup of their ClickHouse stake — from a funding round they did not even join.",
       "where": "Investments in non-marketable equity securities note — the ClickHouse revaluation paragraph",
       "src": "6k-q2-26-fin" },
-    { "claim": "Since insiders became Form 4 filers in March, eight of them sold $157M of stock. Open-market buys: zero.",
+    { "stat": "97.6%",
+      "claim": "Nearly all the operating cash flow is customers paying years in advance — refundable, interest-bearing, and 74% of the cash.",
+      "where": "Cash flow statement's deferred-revenue line; Deferred Revenue note (F-18); Interest Expense note (F-19)",
+      "src": "6k-q2-26-fin" },
+    { "stat": "$43M",
+      "claim": "In January their servers got a fifth year of accounting life, trimming this quarter's loss. The press release never mentions it.",
+      "where": "Use of Estimates note (F-9), two paragraphs past the boilerplate",
+      "src": "6k-q2-26-fin" },
+    { "stat": "54%",
+      "claim": "Last year's two biggest customers — 54% of revenue — vanished from the significant-customer table. Three new names carry 59%.",
+      "where": "Significant Customers table (F-17)",
+      "src": "6k-q2-26-fin" },
+    { "stat": "$157M",
+      "claim": "Eight insiders sold $157M of stock since becoming Form 4 filers in March. Open-market buys: zero.",
       "where": "22 Form 4 filings — derived by aggregating the raw XML, and recomputed by the audit",
       "src": "form4" }
   ],
@@ -388,12 +397,12 @@
   },
 
   "notes": {
-    "findings": "Nebius just printed one of the wildest quarters on the Nasdaq — revenue up four hundred and fifty-four percent, and the stock jumped a third in a day on it. Everyone has seen the headline. Almost nobody has read the two documents they filed with it. I did, and here are five things that are in the filings and not in the press release. Each one changes how you should read this company, and we will take them one at a time. TARGET 26s.",
-    "quarter": "First, the quarter as they reported it. Revenue five hundred eighty-two million, up four hundred fifty-four percent — that is not a typo. Adjusted EBITDA turned properly positive at a forty-one percent margin. But look at the bottom half: still an operating loss, still a net loss, and an interest bill that went from five million to a hundred and nineteen. And that half-year profit figure you will see quoted? Every dollar of it is a paper markup of their ClickHouse stake — a private database company whose funding round Nebius did not even join. Strip that out and the half year is a loss. TARGET 28s.",
+    "findings": "COLD OPEN, to camera before the deck: Nebius just posted the wildest quarter on the Nasdaq and the stock jumped a third in a day. But its entire profit this year is a paper markup of a company it does not even control — and that is just the first of five things buried in the filings that never made the press release. THEN the slide: here are all five. Each one changes how you should read this company, and we will take them one at a time — watch the counter in the corner so you know where we are. TARGET 26s.",
+    "quarter": "First, the quarter as they reported it. Revenue five hundred eighty-two million, up four hundred fifty-four percent — that is not a typo. Adjusted EBITDA turned properly positive at a forty-one percent margin. But look at the bottom half: still an operating loss, still a net loss, and an interest bill that went from five million to a hundred and nineteen. And that half-year profit figure you will see quoted? That is finding number one: every dollar of it is a paper markup of their ClickHouse stake — a private database company whose funding round Nebius did not even join. Strip that out and the half year is a loss. TARGET 28s.",
     "leverage": "Now the genuinely impressive part, and I want to give it its due. Each dot on this curve is one quarter, working left to right: revenue across the bottom, profit margin up the side. Two years ago this was a thirty-two million dollar quarter losing a dollar forty for every dollar it sold. Eight quarters later revenue is eighteen times bigger and the adjusted margin is plus forty-one. That is what real operating leverage looks like drawn on one line — the AI cloud business itself ran at a fifty percent margin this quarter. This part of the story is real. TARGET 26s.",
     "arrpath": "Here is their run-rate revenue, the number this company guides on — and its history with promises. December 2024: ninety million, and their own release admits that was below guidance. Then they guided seven hundred fifty to a billion for the end of 2025, raised it in August, and delivered one point two five billion — a genuine beat. It is three billion now. But look at the last point: the 2026 guide is seven to nine billion. That means the run-rate has to more than double in six months. They have done it before — they are asking you to believe they do it again, on a number ten times bigger. TARGET 30s.",
     "rpo": "Can they? Here is the case that they can: thirty-seven and a half billion dollars of signed contracts. Microsoft alone signed up to seventeen point four billion, with options to nineteen point four. Meta added about three billion. That bottom bar is everything Nebius sold in the last twelve months — the order book is nearly twenty-eight times that. But two footnotes. Only about a third of it turns into revenue in the next two years. And the company's own annual report says, in writing, that it has limited experience delivering long-term contracts like these. The mountain is real; so is the climb. TARGET 28s.",
-    "cashwalk": "Now the first thing the press release does not tell you. Headline: four and a half billion dollars of operating cash flow in six months. Sounds like a money machine. Walk it: four point four billion of that is customer prepayments — deferred revenue, money for compute they have not delivered yet, recognized over as much as five years. What the business generated by actually running is a hundred and nine million. Against eight point one billion of capital spending. This company is not self-funding — it is customer-funded and debt-funded, which is a completely different sentence. TARGET 30s.",
+    "cashwalk": "Finding two, and it is the big one. Headline: four and a half billion dollars of operating cash flow in six months. Sounds like a money machine. Walk it: four point four billion of that is customer prepayments — money for compute they have not delivered yet, recognized over as much as five years. What the business generated by actually running is a hundred and nine million. Against eight point one billion of capital spending. This company is not self-funding — it is customer-funded and debt-funded. And on the debt: the first convertible bonds come due in twenty twenty-nine, and the newest ones repay a hundred and twenty cents on every dollar borrowed at maturity. The clock is real. TARGET 32s.",
     "refundable": "And that prepaid money comes with strings. This is the company's own accounting note, word for word — including amounts that may be refundable. They never say how much. The balance is six billion dollars, which is seventy-four percent of all the cash you see on the balance sheet. And buried in the interest note: they pay interest on advances from major customers. Think about what that means — a prepayment you pay interest on is a loan wearing a different name. The cash pile is real, but most of it is other people's money with conditions attached. TARGET 28s.",
     "depreciation": "The next finding is one sentence in the estimates note. In January, Nebius decided its servers last five years instead of four. Perfectly legal, arguably even reasonable. But apply the arithmetic: this single change cut this quarter's depreciation by forty-three million dollars — without it, the loss is two hundred twenty-four million, not one ninety. And the disclosed benefit only covers servers owned before 2026. The eight billion dollars of kit they bought this year gets the friendlier math too, and that benefit is not disclosed anywhere. The press release does not mention any of this. TARGET 26s.",
     "customers": "Next finding: the customer list did not grow — it was replaced. A year ago customers A and B were more than half of all revenue. Today both have vanished from the disclosure table entirely, and three brand-new names — almost certainly Microsoft and Meta among them — carry fifty-nine percent. This is what it looks like when a company graduates from startups to hyperscalers, and that is genuinely good news. But understand the shape of the risk: three counterparties now decide this company's future, and twelve months ago none of them were here. TARGET 26s.",

@@ -22,7 +22,8 @@ midpoint, the tax line. That work is Phase 1 and it is most of the value.
   (filing-read facts), `deck_template.html`, `audit_deck.py`, `validate_facts.py`, `crosscheck.py` (independent vendor check),
   `deckpath.py` (finds a built episode wherever it was filed)
 - **Output:** `$DECK_OUT/<TICKER> <YYYY-MM-DD>/` — deck HTML, `SCRIPT.md`,
-  `SOURCES.md`, `data/<SYM>-<DATE>.json`. Locally `DECK_OUT` is unset and this
+  `SOURCES.md`, `data/<SYM>-<DATE>.json`, and `Notes/` (talking-point bullets
+  per slide, via `export_notes.py`). Locally `DECK_OUT` is unset and this
   defaults to `~/Desktop/…`; in a cloud session `export DECK_OUT=output` and
   **commit the output folder** — the repo is the only persistence between sessions.
   `deckpath.py` *finds* a built episode afterwards even if it has been
@@ -112,6 +113,7 @@ python3 audit_deck.py <SYM>          # must print ALL DECK INVARIANTS PASS
 python3 validate_facts.py <SYM>      # must print ALL EPISODE FACTS TRACE
 python3 audit_deck.py <SYM> --prove  # must go red
 python3 validate_facts.py <SYM> --prove
+python3 export_notes.py <SYM>       # talking-point bullets -> Notes/
 ```
 
 **A check that cannot fail is worthless.** Run `--prove` after adding any check.
@@ -221,6 +223,66 @@ what the business does → the one thing you must understand → the unit econom
 what management said → multi-quarter proof → where the profit actually came from →
 cash → how it is financed → the forward risk → valuation → peers → the Street →
 insiders → scored verdict → working/watch → fair value → the call.
+
+## The presentation toolkit (added 2026-08-15, NBIS)
+
+Template-level capabilities every deck now has. Use them; do not re-invent them.
+
+* **Ticker identity on every slide** — `NBIS · Nebius Group N.V.` renders
+  automatically top-right from the payload. Nothing to pass.
+* **Stat-anchored findings** — give each finding a `stat` ("$781M", "97.6%") and
+  the card leads with it at 44px accent under a `FINDING 01` label; the claim
+  becomes one explaining line. Cards without `stat` keep the classic layout.
+  Pair with a `sub` carrying the reaction move ("After a {react.move|%+} one-day
+  pop, here is the paperwork.") and cards deal in ~180ms apart.
+* **Breadcrumb kickers** — the finding-delivery slides carry "Finding 2 of 5 —
+  …" kickers, AND the findings list must be ORDERED to delivery order or the
+  numbers lie. A finding delivered on a non-finding slide (NBIS's ClickHouse
+  markup lands on the scoreboard slide) gets "· finding 1 of 5" appended to
+  that slide's kicker.
+* **Hero tile** — `"hero": True` on ONE tile per tiles slide renders its value
+  at 82px: the slide's entry point. Scale contrast is the engine; six equal
+  tiles read as no hierarchy.
+* **`extra` on chart slides** — a compact HTML block under the visual (tile
+  row, or a `whylist` of ✓/✕ one-liners). This is how the fvband close carries
+  its readable bullets.
+* **The ruler close** — the pattern that replaced the verdict+calculator slide:
+  an `fvband` with `rangeLo/Hi` = bear/bull, `fairValue` = the entry line
+  (computed, e.g. midpoint of base and bull — `fair["mid"]` in derive), zones
+  labelled "below my base case / my base-to-bull range / above even the bull
+  case", a computed verdict line, ✓/✕ bullet recap in `extra`, and the punch
+  carrying the call + entry price. **Trade-off:** no `verdict`-type slide means
+  the live ⇥-stepping calculator is gone; re-add it as an optional 14th slide
+  if the episode wants the on-camera bit.
+* **Motion, all automatic:** headlines wipe up (`maskrise`), subs follow, the
+  punch lands LAST (~1.15s) so the conclusion is a beat; `.tile .tv`,
+  `.mega .v` and `.find .fstat` numerals COUNT UP on slide entry (the final
+  frame always writes the exact built string — the animation can never leave a
+  drifted figure); chart bodies are vertically centred; every slide must still
+  land its build inside 1.4–3.0s.
+* **Chart polish, available in chart code:** `areaFill(s, color, top)` gradient
+  fades under lines (line/forecast/steparea already use it), `halo(s, x, y, r,
+  color, delay)` radial emphasis glow on THE hero mark only (scatter/forecast/
+  steparea endpoints already do), `scatter` is negative-safe (spans [min,max],
+  zero line), and a `bridge` total prints at 44px accent automatically — the
+  landing number is the slide.
+* **Talking points** — after any (re)build:
+  `python3 export_notes.py <SYM>` writes `Notes/` into the episode folder: one
+  txt per slide of one-sentence bullets (the N-key notes, sentence-split) plus
+  a combined `00 TALKING-POINTS.txt`. Rerun after every rebuild; figures come
+  from the frozen payload so they always match the screen.
+
+Two engine truths found on NBIS, now generalizable:
+
+* **Foreign private issuers** file 6-K/20-F, not 8-K/10-Q — and shareholder
+  letters filed as EX-99.2 are SEC-traceable sources for guidance. Restated
+  comparatives in year-later releases are the ONE consistent basis for a
+  quarterly series when a deconsolidation reclassified history.
+* **Pre-market reporters** break the engine's next-session reaction assumption;
+  derive the same-day move from the daily bars in the deck module and never
+  render the engine's `releases` moves. The quote route's `asOf` now
+  self-corrects against the last daily bar (Nasdaq's label can lag its own
+  price by a session).
 
 # HARD RULES
 

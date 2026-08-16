@@ -88,9 +88,11 @@ body.camzone .slide{padding-left:var(--cam-l,96px);padding-right:var(--cam-r,96p
   white-space:nowrap;
 }
 .kicker .ident b{color:var(--accent); font-weight:800; letter-spacing:.12em}
-h1.head{font-size:64px;font-weight:760;letter-spacing:-.022em;line-height:1.03;margin-bottom:10px}
+h1.head{font-size:64px;font-weight:760;letter-spacing:-.022em;line-height:1.03;margin-bottom:10px;
+  text-wrap:balance}
 h1.head.sm{font-size:52px}
-.sub{font-size:25px;color:var(--ink-2);line-height:1.4;max-width:1500px;font-weight:400}
+.sub{font-size:25px;color:var(--ink-2);line-height:1.4;max-width:1500px;font-weight:400;
+  text-wrap:pretty}
 
 .footer{
   /* absolutely positioned, so it ignores the slide's padding — it printed
@@ -121,7 +123,7 @@ h1.head.sm{font-size:52px}
   border-left:5px solid var(--accent); padding:6px 0 6px 26px;
 }
 .punch p{font-size:40px;line-height:1.22;font-weight:680;letter-spacing:-.012em;
-  color:var(--ink);max-width:1180px}
+  color:var(--ink);max-width:1180px;text-wrap:balance}
 .punch p b,.punch p strong{font-weight:800;color:var(--accent)}
 
 .body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;min-height:0;padding:14px 0}
@@ -161,6 +163,9 @@ h1.head.sm{font-size:52px}
 .tile .tv{font-size:52px;font-weight:770;letter-spacing:-.02em;line-height:1;
   font-variant-numeric:tabular-nums}
 .tile .tv.sm{font-size:40px}
+/* One tile per grid may be the HERO — the slide's entry point, at display
+   scale (scale contrast: the biggest number should be the one that matters). */
+.tile.hero .tv{font-size:82px;letter-spacing:-.028em}
 .tile .tl{font-size:17px;color:var(--ink-2);font-weight:600}
 .tile .tn{font-size:15px;color:var(--muted);line-height:1.38}
 .tile.accent .tv{color:var(--accent)}
@@ -271,6 +276,14 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 .slide.on.title>.pxrow{animation-delay:390ms}
 .slide.on .finds>.find:nth-child(n+5),.slide.on .tiles>.tile:nth-child(n+5),
 .slide.on .whylist>p:nth-child(n+5),.slide.on.title>.hook{animation-delay:500ms}
+/* Findings cards land one at a time — a deliberate build for the cold open,
+   each card arriving as its finding is named. Later rule wins over the shared
+   tiles/finds stagger above. */
+.slide.on .finds>.find:nth-child(1){animation-delay:100ms}
+.slide.on .finds>.find:nth-child(2){animation-delay:280ms}
+.slide.on .finds>.find:nth-child(3){animation-delay:460ms}
+.slide.on .finds>.find:nth-child(4){animation-delay:640ms}
+.slide.on .finds>.find:nth-child(n+5){animation-delay:820ms}
 .slide.on .ww .wcol li:nth-child(1){animation-delay:120ms}
 .slide.on .ww .wcol li:nth-child(2){animation-delay:210ms}
 .slide.on .ww .wcol li:nth-child(3){animation-delay:300ms}
@@ -361,6 +374,14 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
   border-radius:0 12px 12px 0;padding:22px 28px;box-shadow:var(--shadow)}
 .find .fn{font-size:44px;font-weight:820;line-height:.9;color:var(--accent);
   letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+/* A finding may carry its headline STAT — the card then leads with the number
+   (scannable in a second) and the sentence explains it, instead of five cards
+   of prose. Cards without a stat keep the classic numbered layout. */
+.find.hasstat{grid-template-columns:216px 1fr}
+.find .fno{font-size:15px;font-weight:800;letter-spacing:.14em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:6px}
+.find .fstat{font-size:44px;font-weight:820;line-height:.95;color:var(--accent);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .find .fc{font-size:23px;line-height:1.38;color:var(--ink)}
 .find .fw{margin-top:9px;font-size:15px;color:var(--muted);letter-spacing:.02em}
 .find .fw b{color:var(--ink-2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
@@ -615,6 +636,39 @@ function svgRoot(w, h){
   return s;
 }
 
+/*
+   Vertical fade fill — a flat translucent block under a line reads as a default
+   chart; a color→transparent gradient reads as designed (the ECharts area-fill
+   idea, rebuilt as plain SVG). One gradient def per call, colors stay on the
+   palette tokens so both themes keep working.
+*/
+let GRAD_N = 0;
+function areaFill(s, color, top){
+  const id = "ag" + (++GRAD_N);
+  let defs = s.querySelector("defs");
+  if (!defs) { defs = el("defs", {}); s.insertBefore(defs, s.firstChild); }
+  const g = el("linearGradient", {id, x1: 0, y1: 0, x2: 0, y2: 1});
+  g.appendChild(el("stop", {offset: "0%", "stop-color": color, "stop-opacity": top}));
+  g.appendChild(el("stop", {offset: "100%", "stop-color": color, "stop-opacity": 0.02}));
+  defs.appendChild(g);
+  return `url(#${id})`;
+}
+
+/* Emphasis halo — a soft radial glow behind a hero mark (the ECharts
+   "emphasis" state). A radial gradient fading to zero, NOT stacked rings:
+   the ring version read as a bigger dot, not a glow. */
+function halo(s, cx, cy, r, color, delayMs){
+  const id = "hg" + (++GRAD_N);
+  let defs = s.querySelector("defs");
+  if (!defs) { defs = el("defs", {}); s.insertBefore(defs, s.firstChild); }
+  const g = el("radialGradient", {id});
+  g.appendChild(el("stop", {offset: "30%", "stop-color": color, "stop-opacity": 0.26}));
+  g.appendChild(el("stop", {offset: "100%", "stop-color": color, "stop-opacity": 0}));
+  defs.appendChild(g);
+  s.appendChild(el("circle", {cx, cy, r: r * 2.8, fill: `url(#${id})`,
+    class: "fade", style: `animation-delay:${AD(delayMs)}ms`}));
+}
+
 /* Vertical bars with a value label above each. */
 function chartBars(spec){
   const W = chartW(), H = spec.height || 470, PT = 54, PL = 20, PR = 20;
@@ -724,7 +778,7 @@ function chartLine(spec){
 
   const d = pts.map((p,i) => (i?"L":"M") + x(i).toFixed(1) + " " + y(p.v).toFixed(1)).join(" ");
   const area = d + ` L ${x(pts.length-1).toFixed(1)} ${(PT+plotH)} L ${x(0).toFixed(1)} ${(PT+plotH)} Z`;
-  s.appendChild(el("path", {d:area, fill:"var(--accent)", opacity:".07"}));
+  s.appendChild(el("path", {d:area, fill: areaFill(s, "var(--accent)", .16)}));
   const path = el("path", {d, fill:"none", stroke:"var(--accent)", "stroke-width":"3.4",
     "stroke-linejoin":"round", "stroke-linecap":"round", class:"draw"});
   s.appendChild(path);
@@ -803,8 +857,14 @@ function chartBridge(spec){
     // A bar sitting below the zero line wears its label underneath, or the label
     // lands inside the bar above it.
     const endsBelow = Math.min(t.from, t.to) < 0 && Math.max(t.from, t.to) <= 0.0001;
-    s.appendChild(el("text", {x:cx, y: endsBelow ? bot + 30 : top - 14, "text-anchor":"middle",
-      class:"vlab fade", style:`animation-delay:${AD(300+i*80)}ms`}, st.lab));
+    // The TOTAL is the landing of the whole walk — the number the slide exists
+    // for — so it dwarfs the step labels and wears the accent (scale contrast:
+    // the hero should not whisper at the same size as its supporting cast).
+    const isTotal = st.type === "total";
+    s.appendChild(el("text", {x:cx, y: endsBelow ? bot + (isTotal ? 44 : 30) : top - 14,
+      "text-anchor":"middle", class:"vlab fade",
+      style:`animation-delay:${AD(300+i*80)}ms`
+        + (isTotal ? ";font-size:44px;fill:var(--accent)" : "")}, st.lab));
     s.appendChild(el("text", {x:cx, y:H-PB+30, "text-anchor":"middle", class:"axb"}, st.x));
     if (st.x2) s.appendChild(el("text", {x:cx, y:H-PB+54, "text-anchor":"middle", class:"ax"}, st.x2));
     // No connector into a total — its `from` is 0, which drew a stray rule
@@ -1221,7 +1281,7 @@ function chartForecast(spec){
     const d = P.slice(from, to + 1).map((p, k) =>
       (k ? "L" : "M") + X(from + k).toFixed(1) + " " + Y(p.v).toFixed(1)).join(" ");
     const area = d + ` L ${X(to).toFixed(1)} ${PT + plotH} L ${X(from).toFixed(1)} ${PT + plotH} Z`;
-    s.appendChild(el("path", {d: area, fill: "var(--s1)", opacity: dashed ? .07 : .14}));
+    s.appendChild(el("path", {d: area, fill: areaFill(s, "var(--s1)", dashed ? .10 : .28)}));
     const path = el("path", {d, fill: "none", stroke: "var(--s1)", "stroke-width": dashed ? 3.4 : 4,
       "stroke-linejoin": "round", "stroke-linecap": "round",
       "stroke-dasharray": dashed ? "9 7" : null, class: dashed ? "fade" : "draw",
@@ -1241,9 +1301,11 @@ function chartForecast(spec){
       p.growth));
     s.appendChild(el("text", {x: X(i), y: H - PB + 32, "text-anchor": "middle", class: "axb",
       style: "font-size:16px"}, p.x));
-    if (i === firstG - 1 || i === n - 1)
+    if (i === firstG - 1 || i === n - 1) {
+      if (i === n - 1) halo(s, X(i), Y(p.v), 9, "var(--s1)", 760);
       s.appendChild(el("circle", {cx: X(i), cy: Y(p.v), r: 8, fill: "var(--s1)",
         stroke: "var(--bg)", "stroke-width": 3}));
+    }
   });
   if (spec.growthLab) s.appendChild(el("text", {x: PL, y: H - PB + 58, class: "ax",
     "text-anchor": "start", style: "font-size:15px;letter-spacing:.08em;text-transform:uppercase"},
@@ -1951,7 +2013,7 @@ function chartStepArea(spec){
   pts.forEach((p, i) => { d += ` L${X(i)} ${Y(p.v)}`;
     if (i < pts.length - 1) d += ` L${X(i+1)} ${Y(p.v)}`; });
   const area = d + ` L${X(pts.length-1)} ${Y(0)} Z`;
-  s.appendChild(el("path", {d: area, fill:"var(--s1)", "fill-opacity":".14",
+  s.appendChild(el("path", {d: area, fill: areaFill(s, "var(--s1)", .26),
     class:"fade", style:`animation-delay:${AD(200)}ms`}));
   const line = el("path", {d, fill:"none", stroke:"var(--s1)", "stroke-width":3.5,
     "stroke-linejoin":"round", class:"draw"});
@@ -1962,6 +2024,7 @@ function chartStepArea(spec){
   pts.forEach((p, i) => {
     const last = i === pts.length - 1;
     const show = i === 0 || last || p.mark;
+    if (last) halo(s, X(i), Y(p.v), 12, "var(--crit)", 340 + i * 90);
     s.appendChild(el("circle", {cx:X(i), cy:Y(p.v), r: last ? 12 : 8,
       fill: last ? "var(--crit)" : "var(--s1)", stroke:"var(--bg)", "stroke-width":3,
       class:"fade", style:`animation-delay:${AD(340 + i * 90)}ms`}));
@@ -2038,6 +2101,7 @@ function chartScatter(spec){
     const last = i === n - 1;
     // A fixed 130ms stagger overran the 3s envelope at 8 points (NBIS's eight
     // quarters ended at 4.15s); 60ms keeps a long trajectory inside it.
+    if (last) halo(s, X(p.x), Y(p.y), 14, "var(--s1)", 280 + i * 60);
     s.appendChild(el("circle", {cx:X(p.x), cy:Y(p.y), r: last ? 14 : 10,
       fill: last ? "var(--s1)" : "var(--bg)", stroke:"var(--s1)", "stroke-width":3.5,
       class:"fade", style:`animation-delay:${AD(280 + i * 60)}ms`}));
@@ -2153,7 +2217,7 @@ function render(sl, idx, total){
   else if (sl.type === "tiles") {
     const cols = sl.cols || Math.min(4, sl.tiles.length);
     inner += `<div class="body"><div class="tiles" style="grid-template-columns:repeat(${cols},1fr)">` +
-      sl.tiles.map(t => `<div class="tile ${t.tone||""}">
+      sl.tiles.map(t => `<div class="tile ${t.tone||""}${t.hero?" hero":""}">
         <div class="tv${t.small?" sm":""} num">${t.v}</div>
         <div class="tl">${t.l}</div>${t.n?`<div class="tn">${t.n}</div>`:""}</div>`).join("") +
       `</div></div>`;
@@ -2165,7 +2229,9 @@ function render(sl, idx, total){
   else if (sl.type === "chart") {
     // `extra` lets a chart slide carry a compact tile row under the visual —
     // the NBIS close puts its four-chip recap beneath the fair-value ruler.
-    inner += `<div class="body top"><div class="chartwrap" data-chart="${idx}"></div>
+    // Centered body (not .top): top-aligned charts left a dead band between
+    // the visual and the punch line on every short chart.
+    inner += `<div class="body"><div class="chartwrap" data-chart="${idx}"></div>
       ${sl.legend ? `<div class="legend">${sl.legend.map(g=>`<span><i style="background:${g.c}"></i>${esc(g.t)}</span>`).join("")}</div>` : ""}
       ${sl.extra ? sl.extra : ""}</div>`;
   }
@@ -2182,9 +2248,14 @@ function render(sl, idx, total){
   }
   else if (sl.type === "findings") {
     inner += `<div class="body"><div class="finds">` + sl.items.map((f, i) =>
-      `<div class="find"><div class="fn num">${String(i + 1).padStart(2, "0")}</div>
-       <div><div class="fc">${f.claim}</div>
-       <div class="fw"><b>Buried in</b>${esc(f.where)}</div></div></div>`).join("") +
+      f.stat
+        ? `<div class="find hasstat"><div><div class="fno num">Finding ${String(i + 1).padStart(2, "0")}</div>
+           <div class="fstat num">${esc(f.stat)}</div></div>
+           <div><div class="fc">${f.claim}</div>
+           <div class="fw"><b>Buried in</b>${esc(f.where)}</div></div></div>`
+        : `<div class="find"><div class="fn num">${String(i + 1).padStart(2, "0")}</div>
+           <div><div class="fc">${f.claim}</div>
+           <div class="fw"><b>Buried in</b>${esc(f.where)}</div></div></div>`).join("") +
       `</div></div>`;
   }
   else if (sl.type === "twocol") {
@@ -2573,7 +2644,7 @@ function drawCamGuide(){
 const CU_RE = /^([+\-−]?[^0-9]*)([\d,]+)(\.\d+)?([^0-9]*)$/;
 function countUps(slideEl){
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  slideEl.querySelectorAll(".mega .v, .tile .tv").forEach(el => {
+  slideEl.querySelectorAll(".mega .v, .tile .tv, .find .fstat").forEach(el => {
     const fin = el.dataset.cuFinal || (el.dataset.cuFinal = el.textContent);
     const m = fin.match(CU_RE);
     if (!m) return;                               // "none", "+ interest" — leave alone
