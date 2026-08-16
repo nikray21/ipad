@@ -1278,27 +1278,36 @@ function vMistakes(vis){
 
 /* ---- 16 · Patience ---- */
 function vPatience(vis){
+  // Month heat grid (visual-library pattern 11) — a full month makes the
+  // sparsity argument harder than one week did. 4 trades in 20 days is
+  // exactly the "~4 of 5 nights" the line states.
   const ups = [];
-  const strip = H('div', {display:'flex', gap:'14px'});
-  ['MON','TUE','WED','THU','FRI'].forEach((day, i) => {
-    const trade = i === 3;
-    const d = H('div', {flex:'1', padding:'20px 12px', borderRadius:'12px',
-      textAlign:'center', background: trade ? C.goodWash : C.surface,
-      border:`1px solid ${trade ? C.good : C.grid}`, opacity:'0'});
-    d.innerHTML = `<div style="font-size:15px;font-weight:700;color:${C.muted};letter-spacing:.08em"></div>` +
-      `<div style="margin-top:10px;font-size:${trade?'20':'24'}px;font-weight:800;color:${trade?C.good:C.muted}"></div>`;
-    d.children[0].textContent = day;
-    d.children[1].textContent = trade ? 'TRADE' : '—';
-    strip.appendChild(d);
-    ups.push(t => stRise(d, t, 0.7 + i*0.13, 16));
+  const days = [null,null,'+2.1R',null,null, null,'−1R',null,null,null,
+                null,null,'+1.4R',null,null, null,null,null,'+2.5R',null];
+  const grid = H('div', {display:'grid', gridTemplateColumns:'repeat(5, 1fr)',
+    gap:'12px'});
+  const cells = days.map(v => {
+    const win = v && v.startsWith('+');
+    const cell = H('div', {padding:'16px 10px', borderRadius:'12px', textAlign:'center',
+      background: v ? (win ? C.goodWash : C.critWash) : C.surface,
+      border:`1px solid ${v ? (win ? C.good : C.crit) : C.grid}`,
+      fontSize:'18px', fontWeight:'800', opacity:'0',
+      color: v ? (win ? C.good : C.crit) : C.muted,
+      fontVariantNumeric:'tabular-nums'});
+    cell.textContent = v || '—';
+    grid.appendChild(cell);
+    return cell;
   });
-  vis.appendChild(strip);
-  const line = H('div', {marginTop:'28px', fontSize:'26px', fontWeight:'740',
+  vis.appendChild(grid);
+  const line = H('div', {marginTop:'26px', fontSize:'26px', fontWeight:'740',
     textAlign:'center', color:C.ink, opacity:'0'});
   line.innerHTML = `<span style="color:${C.accent}">~4 of 5 nights</span>` +
     `<span> there is no setup — and that’s fine.</span>`;
   vis.appendChild(line);
-  ups.push(t => stRise(line, t, 1.6, 16));
+  ups.push(t => {
+    cells.forEach((cEl, i) => stPop(cEl, t, .6 + i*.07, .45));
+    stRise(line, t, 2.4, 16);
+  });
   return ups;
 }
 
@@ -1345,39 +1354,58 @@ function vJournal(vis){
 
 /* ---- 18 · Expectancy ---- */
 function vExpectancy(vis){
+  // Probability tree (visual-library pattern 3) — the branches make the
+  // expectancy math visible instead of asserted. EV chip is computed from
+  // the same numbers the branches show.
   const ups = [];
-  const row = H('div', {display:'flex', gap:'32px', alignItems:'center'});
-  const cEl = card({width:'46%', padding:'26px 28px', opacity:'0'});
-  cEl.innerHTML =
-    `<div style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:${C.muted};margin-bottom:12px">EXPECTANCY / TRADE</div>` +
-    `<div style="font-size:24px;font-weight:600;color:${C.ink};font-variant-numeric:tabular-nums">40% × <b style="color:${C.good}">2R</b> − 60% × <b style="color:${C.crit}">1R</b></div>` +
-    `<div style="font-size:30px;font-weight:820;color:${C.good};margin-top:12px;font-variant-numeric:tabular-nums">= +0.2R</div>`;
-  row.appendChild(cEl);
-
-  const barsWrap = H('div', {flex:'1', display:'flex', gap:'40px', alignItems:'flex-end',
-    height:'190px', justifyContent:'center'});
-  function bar(color, hMax, label, caption){
-    const wrap = H('div', {display:'flex', flexDirection:'column', alignItems:'center',
-      justifyContent:'flex-end', height:'190px'});
-    const lab = H('div', {fontSize:'19px', fontWeight:'800', color, marginBottom:'8px',
-      opacity:'0', fontVariantNumeric:'tabular-nums'}, label);
-    const b = H('div', {width:'86px', background:color, borderRadius:'8px 8px 0 0',
-      height:'0px'});
-    const cap = H('div', {fontSize:'14px', color:C.muted, marginTop:'8px'}, caption);
-    wrap.append(lab, b, cap);
-    barsWrap.appendChild(wrap);
-    return {b, lab, hMax};
-  }
-  const win = bar(C.good, 118, '+0.8R', 'wins · 40%');
-  const loss = bar(C.crit, 88, '−0.6R', 'losses · 60%');
-  row.appendChild(barsWrap);
-  vis.appendChild(row);
+  const svg = S('svg', {viewBox:'0 0 960 330',
+    style:'width:100%;max-width:960px;display:block;margin:0 auto;overflow:visible'});
+  const node = (x, y, w, lab, col) => {
+    const g = S('g', {opacity:0});
+    g.appendChild(S('rect', {x:x-w/2, y:y-24, width:w, height:48, rx:10,
+      fill:C.surface, stroke:col, 'stroke-width':1.5}));
+    const tx = S('text', {x, y:y+7, fill:col, 'font-size':20, 'font-weight':760,
+      'text-anchor':'middle', 'font-family':FONT, 'font-variant-numeric':'tabular-nums'});
+    tx.textContent = lab;
+    g.appendChild(tx); svg.appendChild(g);
+    return {g, x, y};
+  };
+  const root = node(110, 165, 150, '1 trade', C.ink);
+  const win  = node(480, 75, 130, 'WIN', C.good);
+  const lose = node(480, 255, 130, 'LOSE', C.crit);
+  const win2 = node(820, 75, 150, '+2R', C.good);
+  const lose2= node(820, 255, 150, '−1R', C.crit);
+  const e1 = drawablePath('M185,153 C300,115 360,90 415,79', C.good, 2.5);
+  const e2 = drawablePath('M185,177 C300,215 360,240 415,251', C.crit, 2.5);
+  const e3 = drawablePath('M545,75 L745,75', C.good, 2.5);
+  const e4 = drawablePath('M545,255 L745,255', C.crit, 2.5);
+  svg.append(e1, e2, e3, e4);
+  const p1 = S('text', {x:300, y:96, fill:C.good, 'font-size':18, 'font-weight':800,
+    'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+  p1.textContent = '40%';
+  const p2 = S('text', {x:300, y:246, fill:C.crit, 'font-size':18, 'font-weight':800,
+    'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+  p2.textContent = '60%';
+  svg.append(p1, p2);
+  const EV = 0.4*2 - 0.6*1;                            // computed, not typed
+  const evChip = H('div', {display:'inline-flex', gap:'10px', alignItems:'center',
+    marginTop:'16px', padding:'12px 22px', borderRadius:'999px',
+    background:C.accentWash, border:`1px solid ${C.accent}`, fontSize:'22px',
+    fontWeight:'760', color:C.ink, opacity:'0', fontVariantNumeric:'tabular-nums'});
+  evChip.innerHTML = `40% × 2R − 60% × 1R = ` +
+    `<span style="color:${C.accent};font-weight:800">+${EV.toFixed(1)}R per trade</span>`;
+  const wrap = H('div', {textAlign:'center'});
+  wrap.append(svg, evChip);
+  vis.appendChild(wrap);
   ups.push(t => {
-    stEnter(cEl, t, .7, 16);
-    const p = draw(t, 1.6, .9);
-    win.b.style.height = (118*p).toFixed(1)+'px';
-    loss.b.style.height = (88*p).toFixed(1)+'px';
-    win.lab.style.opacity = loss.lab.style.opacity = p > .7 ? 1 : 0;
+    svPop(root.g, t, .7, root.x, root.y);
+    setDraw(e1, draw(t, 1.2, .7)); setDraw(e2, draw(t, 1.35, .7));
+    p1.setAttribute('opacity', draw(t, 1.7, .4));
+    p2.setAttribute('opacity', draw(t, 1.85, .4));
+    svPop(win.g, t, 1.9, win.x, win.y); svPop(lose.g, t, 2.05, lose.x, lose.y);
+    setDraw(e3, draw(t, 2.5, .6)); setDraw(e4, draw(t, 2.65, .6));
+    svPop(win2.g, t, 3.0, win2.x, win2.y); svPop(lose2.g, t, 3.15, lose2.x, lose2.y);
+    stEnter(evChip, t, 3.8, 14);
   });
   return ups;
 }

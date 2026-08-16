@@ -30,9 +30,9 @@ Steal the mount function, keep its animation formulas, swap the data.
 | 13 | Mini trend chart + relay of ✓ pills | recapping a system |
 | 14 | Stat tiles + survival staircase (computed 0.98^n) + NEVER shudder | guardrails |
 | 15 | ✕ mistake cards, 2-col | anti-patterns |
-| 16 | Week strip (one TRADE day) | patience, sparsity |
+| 16 | Month heat grid (upgraded from week strip 2026-08-15) | patience, sparsity |
 | 17 | Journal table (colored results) | logging habits |
-| 18 | Expectancy formula card + win/loss bar pair | why edges work |
+| 18 | Probability tree w/ computed EV (upgraded from bars 2026-08-15) | why edges work |
 | 19 | Chip relay + word-by-word line + cursor clicks Subscribe | recap + CTA |
 
 ## Patterns in the visual library (12 more)

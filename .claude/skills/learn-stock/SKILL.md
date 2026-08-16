@@ -18,8 +18,8 @@ this** — one concept taught to beginner/intermediate viewers, in the same
 signature design language, recorded the same way (camera beside the deck).
 
 The canonical, verified reference build is **SWING-9TO5**
-(`~/Desktop/SWING-9TO5 2026-08-12/SWING-9TO5-deck.html`). A snapshot of that
-exact file ships with this skill as the starting template:
+(`~/Desktop/educational/SWING-9TO5 2026-08-12/SWING-9TO5-deck.html`). A
+snapshot of that exact file ships with this skill as the starting template:
 
 ```
 cp .claude/skills/learn-stock/assets/deck-engine.html "<workdir>/<TOPIC>-deck.html"   # path from repo root
