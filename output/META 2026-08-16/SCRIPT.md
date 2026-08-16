@@ -1,6 +1,6 @@
 # Meta Platforms, Inc. (META) — spoken script
 
-Built 2026-08-16T03:15:48+00:00 · price 589.85 as of Aug 14, 2026
+Built 2026-08-16T03:25:26+00:00 · price 589.85 as of Aug 14, 2026
 
 - **Full cut:** 12 slides, 5:08
 - **Core cut:** 4:00 — drop the 3 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
@@ -139,10 +139,10 @@ Before my own call, here's what Wall Street's models actually say. Most analysts
 
 > My model's range, against today's price.
 
-**On screen:** My call: WATCH — price isn't the problem here.
+**On screen:** My call: BUY — the findings say size it, not skip it.
 
-So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — not expensive, not a screaming bargain either. My call is WATCH. The growth is real. The fine print — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — is also real, and it's exactly why the market isn't paying up for the headline number the way you'd expect. That's the fundamentals. Now let's go to the chart.
+So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — already cheaper than what I think this is worth, even on conservative assumptions. My call is BUY. The fine print is real — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — but that's what tells you how to size it, not whether to wait. The market isn't paying up for the headline number, and I think that's already in the price. That's the fundamentals. Now let's go to the chart.
 
-That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull lands. Today's price already sits below my base case, so valuation is not the argument against this stock. What I'm watching is everything else in this deck — the tax line, the debt-funded buildout, the segment that is supposed to be the profit engine shrinking instead. My call is WATCH: a bet on those resolving, not on the price moving. Now let's go to the chart.
+That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull lands. Today's price already sits below my base case. My call is BUY — the findings in this deck are real, but they are reasons to size the position carefully, not reasons to wait for a better price. Today already is one. Now let's go to the chart.
 
 ---

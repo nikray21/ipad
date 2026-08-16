@@ -548,14 +548,13 @@ def slides(snap, ep, fact, fund_quarters=None):
                   f'<p style="animation-delay:1500ms;font-size:23px">'
                   f'<b style="color:var(--crit)">✕</b>&ensp;<b>The tax line isn’t settled</b> '
                   f'— a live IRS notice sits on an argument Meta already lost once.</p></div>'),
-        "punch": f"My call: <b>{ep['verdict']['call']}</b> — <b>price isn't the problem here</b>.",
+        "punch": f"My call: <b>{ep['verdict']['call']}</b> — the findings say size it, not skip it.",
         "why": (f"That ruler is the whole episode. {d2(fair['bear'])} if the AI spend does not "
                 f"pay off, {d2(fair['base'])} in my base case, {d2(fair['bull'])} if the bull "
-                f"lands. Today's price already sits below my base case, so valuation is not the "
-                f"argument against this stock. What I'm watching is everything else in this deck "
-                f"— the tax line, the debt-funded buildout, the segment that is supposed to be "
-                f"the profit engine shrinking instead. My call is {ep['verdict']['call']}: a bet "
-                f"on those resolving, not on the price moving. Now let's go to the chart."),
+                f"lands. Today's price already sits below my base case. My call is "
+                f"{ep['verdict']['call']} — the findings in this deck are real, but they are "
+                f"reasons to size the position carefully, not reasons to wait for a better price. "
+                f"Today already is one. Now let's go to the chart."),
         "notes": N["call"], "target": 30,
     })
 

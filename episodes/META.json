@@ -242,15 +242,15 @@
   ],
 
   "verdict": {
-    "call": "WATCH",
-    "callLine": "Real ad growth, financed by debt and one-time tax swings the filings won't let you ignore.",
+    "call": "BUY",
+    "callLine": "Priced like the bad news already happened — the findings say size it carefully, not wait for a better price.",
     "tiles": [
       { "dim": "Growth", "rating": "strong", "fact": "Revenue up 28%; ad pricing and ad impressions both grew double digits" },
       { "dim": "Profitability", "rating": "weak", "fact": "Operating income fell 8% and margin went from 43% to 31%; Family of Apps profit itself shrank" },
       { "dim": "Cash & funding", "rating": "risk", "fact": "Free cash flow fell 91% to $784M; $55B of new bonds raised in nine months" },
       { "dim": "Tax clarity", "rating": "weak", "fact": "Two one-time items swung EPS by more than $9 in two quarters; a $15.89B IRS notice is unresolved" },
       { "dim": "Capital discipline", "rating": "mixed", "fact": "Capex guidance has only ever gone up; part of the buildout just moved off the balance sheet" },
-      { "dim": "Valuation", "rating": "mixed", "fact": "Trades just below my base-case fair value, well below my bull case, and below the Street's own target" }
+      { "dim": "Valuation", "rating": "strong", "fact": "Trades just below my base-case fair value, well below my bull case, and below the Street's own target" }
     ],
     "scored": [
       { "dim": "Growth", "score": 4, "tone": "", "fact": "Revenue up 28% year over year" },
@@ -258,7 +258,7 @@
       { "dim": "Cash & funding", "score": 2, "tone": "warn", "fact": "Free cash flow collapsed; debt funded the gap" },
       { "dim": "Tax clarity", "score": 2, "tone": "warn", "fact": "EPS whipsawed; a live IRS dispute is unresolved" },
       { "dim": "Capital discipline", "score": 3, "tone": "", "fact": "Real spend on a real opportunity, but guided only upward" },
-      { "dim": "Valuation", "score": 3, "tone": "", "fact": "Roughly fair on my model; the Street is more optimistic" }
+      { "dim": "Valuation", "score": 4, "tone": "", "fact": "Below my base case even on conservative assumptions" }
     ],
     "working": [
       "Advertising is still compounding — revenue up {wd.revGrowthQ2|%0} with ad pricing and ad volume both growing double digits.",
@@ -279,7 +279,7 @@
       "<b>But the profit and the cash did not follow it.</b> Operating income fell 8%, free cash flow collapsed 91% to $784M, and Family of Apps — the segment that actually earns the money — saw its own operating income shrink 6%.",
       "<b>The balance sheet is doing a lot of the work.</b> Meta raised $55B of new bonds in nine months and is now guaranteeing up to $13B on a data-center joint venture it just moved off its own books.",
       "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 in two quarters, and a live IRS notice puts another $15.89B on the table — on a transfer-pricing argument Meta already lost once in Tax Court.",
-      "<b>The price is not the argument against this stock.</b> At {price|$} you are already just below my base case of {fair.base|$}, and well below the {fair.bull|$} the AI bull case would require. What I am watching is not the tape — it is whether the tax dispute, the debt-funded buildout and the shrinking segment margin resolve."
+      "<b>The price is not the argument against this stock.</b> At {price|$} you are already just below my base case of {fair.base|$}, and well below the {fair.bull|$} the AI bull case would require. My call is BUY — the tax dispute, the debt-funded buildout and the shrinking segment margin are reasons to size the position carefully, not reasons to wait for a better price."
     ]
   },
 
@@ -295,6 +295,6 @@
     "insiders": "What are the people running the company doing with their own money? Selling — nobody's buying on the open market. It's real money, a few hundred million dollars worth. To be fair, almost all of it runs through pre-scheduled trading plans set up months in advance, so don't read too much timing into it. But zero purchases, at any price, from anyone, is still zero. TARGET 22s.",
     "peers": "So what are you actually paying for all of this? I've put Meta next to the other mega-cap names on the same basis — price against next year's expected earnings, growth rate right beside it, because cheap and cheap-for-its-growth are different claims. Meta isn't the most expensive name on this list, and it isn't the cheapest either — it's paying a normal multiple for above-average growth, which is a fine place to be if the profit line stabilizes. TARGET 24s.",
     "street": "Before my own call, here's what Wall Street's models actually say. Most analysts still rate this a buy, and the average target sits well above today's price. But look at what's happening underneath: more analysts are cutting their earnings estimates than raising them, even with the stock this close to its highs. The professionals are optimistic on the target and getting quietly less optimistic on the earnings that are supposed to get it there. TARGET 24s.",
-    "call": "So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — not expensive, not a screaming bargain either. My call is WATCH. The growth is real. The fine print — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — is also real, and it's exactly why the market isn't paying up for the headline number the way you'd expect. That's the fundamentals. Now let's go to the chart. TARGET 30s."
+    "call": "So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — already cheaper than what I think this is worth, even on conservative assumptions. My call is BUY. The fine print is real — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — but that's what tells you how to size it, not whether to wait. The market isn't paying up for the headline number, and I think that's already in the price. That's the fundamentals. Now let's go to the chart. TARGET 30s."
   }
 }
