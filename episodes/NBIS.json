@@ -1,0 +1,405 @@
+{
+  "symbol": "NBIS",
+  "company": "Nebius Group N.V.",
+  "episodeDate": "2026-08-15",
+
+  "sources": {
+    "6k-q2-26": {
+      "label": "6-K — Q2 2026 press release (EX-99.1) and shareholder letter (EX-99.2), filed Aug 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/"
+    },
+    "6k-q2-26-fin": {
+      "label": "6-K — Q2 2026 Operating and Financial Review (EX-99.1) and unaudited condensed consolidated financial statements (EX-99.2), filed Aug 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/"
+    },
+    "6k-q1-26": {
+      "label": "6-K — Q1 2026 press release and shareholder letter, filed May 13 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926059872/"
+    },
+    "6k-q4-25": {
+      "label": "6-K — Q4 and full-year 2025 press release and shareholder letter, filed Feb 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926013946/"
+    },
+    "6k-q3-25": {
+      "label": "6-K — Q3 2025 press release and shareholder letter, filed Nov 12 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925109806/"
+    },
+    "6k-q2-25": {
+      "label": "6-K — Q2 2025 press release (raised 2025 ARR guidance), filed Aug 7 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925075028/"
+    },
+    "6k-q1-25": {
+      "label": "6-K — Q1 2025 press release, filed May 20 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925050975/"
+    },
+    "6k-q4-24": {
+      "label": "6-K — Q4 and full-year 2024 press release, filed Feb 20 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925015480/"
+    },
+    "6k-q3-24": {
+      "label": "6-K — Q3 2024 press release, filed Oct 31 2024",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465924112875/"
+    },
+    "6k-msft": {
+      "label": "6-K — commercial agreement with Microsoft, filed Sep 8 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925088312/tm2525580d1_6k.htm"
+    },
+    "6k-meta": {
+      "label": "6-K — commercial agreement with Meta, filed Nov 12 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465925109803/tm2530882d2_6k.htm"
+    },
+    "6k-nvda": {
+      "label": "6-K — $2B pre-funded warrant private placement to NVIDIA, filed Mar 11 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926026163/tm268532d1_6k.htm"
+    },
+    "6k-abs": {
+      "label": "6-K — $775M senior secured asset-backed facility (MUFG), filed Jul 17 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926084452/tm2620683d1_6k.htm"
+    },
+    "20f-2025": {
+      "label": "20-F — annual report for the year ended Dec 31 2025, filed Apr 30 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926052948/nbis-20251231x20f.htm"
+    },
+    "form4": {
+      "label": "SEC Form 4 filings, Mar–Aug 2026, aggregated from the raw XML in .cache_form4/NBIS/",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001513845&type=4&dateb=&owner=include&count=40"
+    }
+  },
+
+  "filings": {
+    "_vendorNote": "crosscheck.py (yfinance) disagrees on all eight mapped figures because the vendor's latest NBIS statements are Q1 2026 — the Q2 2026 6-K financials are not XBRL-tagged, so the vendor lags the filings by one quarter on every line. Verified: its 'revenue' 399 is Q1'26, its cash 9,298 is the Mar 31 balance, its trailing-six-month CFO 3,092 = Q4'25's 834.0 + Q1'26's 2,258.3, and its capex 4,529 = 2,056 + 2,473. The filings win.",
+    "results": {
+      "revenueQ2":        { "v": 582.3,  "src": "6k-q2-26", "unit": "USD millions" },
+      "revenueQ2prior":   { "v": 105.1,  "src": "6k-q2-26", "unit": "USD millions" },
+      "revenueH1":        { "v": 981.3,  "src": "6k-q2-26", "unit": "USD millions" },
+      "revenueH1prior":   { "v": 156.0,  "src": "6k-q2-26", "unit": "USD millions" },
+      "adjEbitdaQ2":      { "v": 236.2,  "src": "6k-q2-26", "unit": "USD millions" },
+      "adjEbitdaQ2prior": { "v": -21.0,  "src": "6k-q2-26", "unit": "USD millions" },
+      "adjEbitdaH1":      { "v": 365.7,  "src": "6k-q2-26", "unit": "USD millions" },
+      "opLossQ2":         { "v": -175.9, "src": "6k-q2-26", "unit": "USD millions" },
+      "opLossH1":         { "v": -303.9, "src": "6k-q2-26", "unit": "USD millions" },
+      "netLossQ2":        { "v": -190.4, "src": "6k-q2-26", "unit": "USD millions" },
+      "netIncomeH1":      { "v": 430.8,  "src": "6k-q2-26", "unit": "USD millions" },
+      "netIncomeQ2prior": { "v": 502.5,  "src": "6k-q2-26", "unit": "USD millions",
+                            "note": "carried a 597.4 revaluation gain, same pattern" },
+      "revalGainQ2prior": { "v": 597.4,  "src": "6k-q2-26", "unit": "USD millions" },
+      "adjNetLossQ2":     { "v": -33.2,  "src": "6k-q2-26", "unit": "USD millions" },
+      "adjNetLossH1":     { "v": -133.5, "src": "6k-q2-26", "unit": "USD millions" },
+      "costOfRevQ2":      { "v": 133.6,  "src": "6k-q2-26", "unit": "USD millions" },
+      "prodDevQ2":        { "v": 191.0,  "src": "6k-q2-26", "unit": "USD millions" },
+      "sgaQ2":            { "v": 173.9,  "src": "6k-q2-26", "unit": "USD millions" },
+      "dnaQ2":            { "v": 259.7,  "src": "6k-q2-26", "unit": "USD millions" },
+      "totalOpexQ2":      { "v": 758.2,  "src": "6k-q2-26", "unit": "USD millions" },
+      "sbcQ2":            { "v": 102.5,  "src": "6k-q2-26", "unit": "USD millions" },
+      "acqCostsQ2":       { "v": 49.9,   "src": "6k-q2-26", "unit": "USD millions",
+                            "note": "acquisition and other corporate transaction-related costs, EBITDA reconciliation" },
+      "sbcQ2prior":       { "v": 14.7,   "src": "6k-q2-26", "unit": "USD millions" },
+      "interestExpQ2":    { "v": 119.1,  "src": "6k-q2-26", "unit": "USD millions" },
+      "interestExpQ2prior": { "v": 4.8,  "src": "6k-q2-26", "unit": "USD millions" },
+      "interestIncomeQ2": { "v": 24.1,   "src": "6k-q2-26", "unit": "USD millions" },
+      "revalGainH1":      { "v": 780.6,  "src": "6k-q2-26", "unit": "USD millions" },
+      "taxQ2":            { "v": 13.7,   "src": "6k-q2-26", "unit": "USD millions" },
+      "aiCloudRevQ2":     { "v": 574.9,  "src": "6k-q2-26", "unit": "USD millions" },
+      "aiCloudMarginQ2":  { "v": 50,     "src": "6k-q2-26", "unit": "%" },
+      "aiCloudShareQ2":   { "v": 98,     "src": "6k-q2-26", "unit": "%" }
+    },
+
+    "cashFlow": {
+      "cfoH1":            { "v": 4504.1,  "src": "6k-q2-26", "unit": "USD millions" },
+      "cfoQ2":            { "v": 2246.1,  "src": "6k-q2-26", "unit": "USD millions" },
+      "cfoH1prior":       { "v": -352.0,  "src": "6k-q2-26", "unit": "USD millions" },
+      "deferredRevDeltaH1": { "v": 4395.0, "src": "6k-q2-26", "unit": "USD millions",
+                              "note": "the deferred revenue line inside operating cash flow" },
+      "capexH1":          { "v": 8130.3,  "src": "6k-q2-26", "unit": "USD millions" },
+      "capexQ2":          { "v": 5657.4,  "src": "6k-q2-26", "unit": "USD millions" },
+      "financingH1":      { "v": 9160.4,  "src": "6k-q2-26", "unit": "USD millions" },
+      "convertProceedsH1": { "v": 4337.5, "src": "6k-q2-26", "unit": "USD millions" },
+      "treasurySalesQ2":  { "v": 2846.7,  "src": "6k-q2-26", "unit": "USD millions" },
+      "warrantProceedsH1": { "v": 2000.0, "src": "6k-q2-26", "unit": "USD millions" }
+    },
+
+    "balanceSheet": {
+      "cash":               { "v": 8042.1,  "src": "6k-q2-26", "unit": "USD millions" },
+      "restrictedCashTotal": { "v": 1056.0, "src": "6k-q2-26", "unit": "USD millions" },
+      "debtCurrent":        { "v": 46.7,    "src": "6k-q2-26", "unit": "USD millions" },
+      "debtNonCurrent":     { "v": 8499.0,  "src": "6k-q2-26", "unit": "USD millions" },
+      "deferredRevCurrent": { "v": 979.4,   "src": "6k-q2-26", "unit": "USD millions" },
+      "deferredRevNonCurrent": { "v": 4995.8, "src": "6k-q2-26", "unit": "USD millions" },
+      "deferredRevTotal":   { "v": 5975.2,  "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "deferredRevTotalPrior": { "v": 1577.5, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "ppeNet":             { "v": 13045.2, "src": "6k-q2-26", "unit": "USD millions" },
+      "totalAssets":        { "v": 27961.5, "src": "6k-q2-26", "unit": "USD millions" },
+      "totalLiabilities":   { "v": 17621.0, "src": "6k-q2-26", "unit": "USD millions" },
+      "equity":             { "v": 10340.5, "src": "6k-q2-26", "unit": "USD millions" },
+      "sharesOutstanding":  { "v": 271855.218, "src": "6k-q2-26", "unit": "thousands",
+                              "note": "271,855,218 shares at Jun 30 2026, excluding treasury" },
+      "sharesClassA":       { "v": 238400.165, "src": "6k-q2-26", "unit": "thousands" },
+      "sharesClassB":       { "v": 33455.053,  "src": "6k-q2-26", "unit": "thousands" },
+      "treasuryShares":     { "v": 50185.726,  "src": "6k-q2-26", "unit": "thousands" }
+    },
+
+    "deferredRev": {
+      "quote": { "v": "The Group recognizes deferred revenue when cash is received and before performance obligations are fulfilled, including amounts that may be refundable. Deferred revenue balances primarily relate to strategic customer agreements.",
+                 "src": "6k-q2-26-fin", "note": "Deferred Revenue note, F-18" },
+      "interestQuote": { "v": "Interest expense for the three and six months ended June 30, 2026 primarily relates to interest and amortization of debt issuance costs and accretion associated with the Group's convertible notes, interest expense recognized on advances received from major customers, and interest expense recognized in connection with property and equipment received in advance from suppliers under deferred payment arrangements.",
+                 "src": "6k-q2-26-fin", "note": "Interest Expense note, F-19" },
+      "recognizedFromOpeningQ2": { "v": 130.8, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "recognitionWindow": { "v": "Deferred revenue is expected to be recognized as revenue over the period ranging from one to five calendar years.",
+                 "src": "6k-q2-26-fin", "note": "Deferred Revenue note, F-18" }
+    },
+
+    "rpo": {
+      "total":        { "v": 37490.6, "src": "6k-q2-26-fin", "unit": "USD millions",
+                        "note": "unsatisfied remaining performance obligations at Jun 30 2026" },
+      "pctNext24mo":  { "v": 36, "src": "6k-q2-26-fin", "unit": "%" },
+      "pctMo25to48":  { "v": 40, "src": "6k-q2-26-fin", "unit": "%" },
+      "msftTcv":      { "v": 17400, "src": "6k-msft", "unit": "USD millions", "searchAs": "17.4 billion" },
+      "msftTcvMax":   { "v": 19400, "src": "6k-msft", "unit": "USD millions", "searchAs": "19.4 billion" },
+      "metaTcv":      { "v": 2900,  "src": "6k-meta", "unit": "USD millions", "searchAs": "2.9 billion" },
+      "commitmentsQuote": { "v": "with $40 billion in customer commitments, we will do more of this",
+                        "src": "6k-q2-26", "note": "Q2 2026 shareholder letter, capital section" }
+    },
+
+    "depreciationChange": {
+      "quote": { "v": "In January 2026, the Company completed an assessment of the useful lives of servers and network equipment based on updated information and usage patterns obtained and concluded that the estimated useful lives of such assets should be extended from four to five years.",
+                 "src": "6k-q2-26-fin", "note": "Use of Estimates note, F-9" },
+      "dnaReductionQ2":  { "v": 43.0, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "dnaReductionH1":  { "v": 86.1, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "netBenefitH1":    { "v": 75.7, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "netLossBenefitQ2": { "v": 34.1, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "scopeQuote": { "v": "Based on the servers and network equipment placed in service as of December 31, 2025",
+                 "src": "6k-q2-26-fin", "note": "same note — the disclosed effect excludes 2026 additions" }
+    },
+
+    "customers": {
+      "_pct": ["custA_Q2_25", "custB_Q2_25", "custC_Q2_26", "custD_Q2_26", "custE_Q2_26",
+               "custC_H1_26", "custD_H1_26", "arC_Dec25", "arD_Jun26", "arE_Jun26"],
+      "src": "6k-q2-26-fin",
+      "custA_Q2_25": 39, "custB_Q2_25": 15,
+      "custC_Q2_26": 24, "custD_Q2_26": 21, "custE_Q2_26": 14,
+      "custC_H1_26": 26, "custD_H1_26": 21,
+      "arC_Dec25": 83, "arD_Jun26": 16, "arE_Jun26": 29,
+      "note": "Significant Customers table, F-17; letters are the filing's own anonymisation"
+    },
+
+    "arr": {
+      "dec24":  { "v": 90,   "src": "6k-q4-24", "unit": "USD millions", "searchAs": "$90 million",
+                  "note": "the release itself says: below previous guidance" },
+      "missQuote": { "v": "December 2024 ARR for Nebius was $90 million, below previous guidance.",
+                  "src": "6k-q4-24", "note": "Nebius section of the Q4 2024 release" },
+      "sep25":  { "v": 551,  "src": "6k-q4-25", "unit": "USD millions", "searchAs": "$551 million" },
+      "dec25":  { "v": 1250, "src": "6k-q4-25", "unit": "USD millions", "searchAs": "$1.25 billion" },
+      "mar26":  { "v": 1900, "src": "6k-q2-26", "unit": "USD millions", "searchAs": "$1.9 billion" },
+      "jun26":  { "v": 3000, "src": "6k-q2-26", "unit": "USD millions", "searchAs": "$3.0 billion" },
+      "guide2025Low":  { "v": 750,  "src": "6k-q4-24", "unit": "USD millions", "searchAs": "$750 million to $1 billion" },
+      "guide2025High": { "v": 1000, "src": "6k-q4-24", "unit": "USD millions", "searchAs": "$750 million to $1 billion" },
+      "guide2025RaisedLow":  { "v": 900,  "src": "6k-q2-25", "unit": "USD millions", "searchAs": "$900 million to $1.1 billion" },
+      "guide2025RaisedHigh": { "v": 1100, "src": "6k-q2-25", "unit": "USD millions", "searchAs": "$900 million to $1.1 billion" },
+      "guide2026Low":  { "v": 7000, "src": "6k-q4-25", "unit": "USD millions", "searchAs": "$7 billion to $9 billion" },
+      "guide2026High": { "v": 9000, "src": "6k-q4-25", "unit": "USD millions", "searchAs": "$7 billion to $9 billion" },
+      "reaffirmQuote": { "v": "We are reaffirming our full-year 2026 guidance across all metrics.",
+                  "src": "6k-q2-26", "note": "Q2 2026 shareholder letter" }
+    },
+
+    "guidance2026": {
+      "revLow":  { "v": 3000, "src": "6k-q1-26", "unit": "USD millions", "searchAs": "$3.0B–$3.4B" },
+      "revHigh": { "v": 3400, "src": "6k-q1-26", "unit": "USD millions", "searchAs": "$3.0B–$3.4B" },
+      "prepay2026": { "v": 9000, "src": "6k-q2-26", "unit": "USD millions",
+                      "searchAs": "$9 billion in customer prepayments" }
+    },
+
+    "deals": {
+      "avgTcvQ2": { "v": 1000, "src": "6k-q2-26", "unit": "USD millions",
+                    "searchAs": "more than $1 billion in TCV" },
+      "prepayDealsPct": { "v": 70, "src": "6k-q2-26", "unit": "%" },
+      "capexCoveredQuote": { "v": "70% of deals including prepayments, covering 50-60% of the associat",
+                    "src": "6k-q2-26", "note": "Q2 2026 shareholder letter; the word capex is hyphenated across a line break in the exhibit" },
+      "paybackQuote": { "v": "the expected payback period for the associat-ed capex and related operating costs for Q2 deals is 1 year and 10 months",
+                    "src": "6k-q2-26", "note": "Q2 2026 shareholder letter" }
+    },
+
+    "nvidia": {
+      "warrantShares":   { "v": 21065936, "src": "6k-nvda", "searchAs": "21,065,936" },
+      "warrantProceeds": { "v": 2000, "src": "6k-nvda", "unit": "USD millions", "searchAs": "$2 billion" },
+      "warrantDate":     { "v": "March 11, 2026", "src": "6k-nvda" },
+      "impliedPrice":    { "v": 94.94, "_derived": true, "src": "6k-nvda",
+                           "note": "2,000.0M / 21,065,936 shares — recomputed in decks/NBIS.py" }
+    },
+
+    "financing": {
+      "absFacility":  { "v": 775, "src": "6k-abs", "unit": "USD millions", "searchAs": "$775 million" },
+      "absMarginPct": { "v": 2.50, "src": "6k-abs", "unit": "%", "searchAs": "2.50%" }
+    },
+
+    "clickhouse": {
+      "carryingPrior": { "v": 737.1,  "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "carryingNow":   { "v": 1517.7, "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "seriesD":       { "v": 400.0,  "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "gainH1":        { "v": 780.6,  "src": "6k-q2-26-fin", "unit": "USD millions" },
+      "quote": { "v": "The Company did not participate in the Series D Financing.",
+                 "src": "6k-q2-26-fin", "note": "Investments in non-marketable equity securities note — ClickHouse" }
+    },
+
+    "riskFactor": {
+      "quote": { "v": "We have limited experience in delivering, implementing and managing longer-term customer contracts, which could expose us to increased operational, financial and contractual risks",
+                 "src": "20f-2025", "note": "Item 3.D Risk Factors — summary, Risks Related to Our Business Model and Industry" }
+    },
+
+    "quarterly": {
+      "note": "Continuing-operations basis. Each quarter is taken from the release that shows it as the RESTATED comparative (post-Toloka), so the whole series is one basis. XBRL is wrong for NBIS before Q3 2025 and has no Q2 2026 at all.",
+      "rows": [
+        { "q": "Q3'24", "end": "2024-09-30", "revenue": 32.1,  "adjEbitda": -45.9, "eps": null, "src": "6k-q3-25" },
+        { "q": "Q4'24", "end": "2024-12-31", "revenue": 35.2,  "adjEbitda": -63.9, "eps": null, "src": "6k-q4-25" },
+        { "q": "Q1'25", "end": "2025-03-31", "revenue": 50.9,  "adjEbitda": -53.7, "eps": null, "src": "6k-q1-26" },
+        { "q": "Q2'25", "end": "2025-06-30", "revenue": 105.1, "adjEbitda": -21.0, "eps": null, "src": "6k-q2-26" },
+        { "q": "Q3'25", "end": "2025-09-30", "revenue": 146.1, "adjEbitda": -5.2,  "eps": null, "src": "6k-q3-25" },
+        { "q": "Q4'25", "end": "2025-12-31", "revenue": 227.7, "adjEbitda": 15.0,  "eps": null, "src": "6k-q4-25" },
+        { "q": "Q1'26", "end": "2026-03-31", "revenue": 399.0, "adjEbitda": 129.5, "eps": null, "src": "6k-q1-26" },
+        { "q": "Q2'26", "end": "2026-06-30", "revenue": 582.3, "adjEbitda": 236.2, "eps": null, "src": "6k-q2-26" }
+      ]
+    },
+
+    "earningsHistory": {
+      "note": "Nebius releases results pre-market (8:00 a.m. ET call), so the reaction session is the release day itself. The engine's next-session move is not used on any slide; decks/NBIS.py derives the same-day reaction from the daily bars.",
+      "releases": [
+        { "date": "2024-10-31", "q": "Q3'24", "fy": "2024", "guideLow": null, "guideHigh": null, "src": "6k-q3-24" },
+        { "date": "2025-02-20", "q": "Q4'24", "fy": "2024", "guideLow": null, "guideHigh": null, "src": "6k-q4-24" },
+        { "date": "2025-05-20", "q": "Q1'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "6k-q1-25" },
+        { "date": "2025-08-07", "q": "Q2'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "6k-q2-25" },
+        { "date": "2025-11-11", "q": "Q3'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "6k-q3-25" },
+        { "date": "2026-02-12", "q": "Q4'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "6k-q4-25" },
+        { "date": "2026-05-13", "q": "Q1'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "6k-q1-26" },
+        { "date": "2026-08-12", "q": "Q2'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "6k-q2-26" }
+      ]
+    },
+
+    "insider": {
+      "_derived": true, "src": "form4", "windowStart": "2026-03-18", "windowEnd": "2026-08-15",
+      "totalSoldShares": 808139, "totalSoldValue": 156.8,
+      "totalBought": 0, "distinctSellers": 8,
+      "plan10b5Filings": 12, "totalFilings": 22,
+      "buckets": [
+        { "label": "March 2026", "sold": 43501,  "value": 4.3,   "people": 3, "bought": 0 },
+        { "label": "April",      "sold": 89275,  "value": 10.7,  "people": 4, "bought": 0 },
+        { "label": "May",        "sold": 537195, "value": 108.9, "people": 4, "bought": 0 },
+        { "label": "June",       "sold": 33775,  "value": 8.6,   "people": 4, "bought": 0 },
+        { "label": "July",       "sold": 104393, "value": 24.3,  "people": 4, "bought": 0 }
+      ],
+      "topSellers": [
+        { "name": "Andrey Korolenko", "role": "Chief Infrastructure Officer", "shares": 592204, "value": 115.7 },
+        { "name": "Arkady Volozh",    "role": "Founder and CEO",              "shares": 79985,  "value": 14.4 },
+        { "name": "Danila Shtan",     "role": "Chief Technology Officer",     "shares": 46104,  "value": 9.1 }
+      ]
+    },
+
+    "peers": {
+      "tickers": ["CRWV", "ORCL", "AMZN"],
+      "names": { "CRWV": "CoreWeave", "ORCL": "Oracle", "AMZN": "Amazon", "NBIS": "Nebius" },
+      "pure": ["CRWV"]
+    }
+  },
+
+  "fairValue": {
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": { "revGrowth": 20.0, "opMargin": 8.0,  "exitPE": 20.0, "shareChange": 6.0 },
+      "base": { "revGrowth": 35.0, "opMargin": 14.0, "exitPE": 25.0, "shareChange": 4.0 },
+      "bull": { "revGrowth": 50.0, "opMargin": 22.0, "exitPE": 30.0, "shareChange": 3.0 }
+    },
+    "constants": {
+      "netDebt": 503.6, "interestRate": 5.6, "taxRate": 15.0,
+      "nciAnnualRunRate": 0.0, "startRevenueTTM": 3200.0,
+      "_note": "startRevenueTTM is the FY2026 revenue guidance midpoint (3,000–3,400); netDebt is total debt 8,545.7 less cash 8,042.1; interestRate is Q2 interest expense annualized over total debt"
+    }
+  },
+
+  "findings": [
+    { "claim": "97.6% of the half-year's operating cash flow is customers paying years in advance — money that may be refundable, accrues interest like a loan, and equals 74% of the cash.",
+      "where": "Cash flow statement's deferred-revenue line; Deferred Revenue note (F-18); Interest Expense note (F-19)",
+      "src": "6k-q2-26-fin" },
+    { "claim": "In January they gave their servers a fifth year of accounting life, cutting this quarter's depreciation by $43M. The press release never mentions it.",
+      "where": "Use of Estimates note (F-9), two paragraphs past the boilerplate",
+      "src": "6k-q2-26-fin" },
+    { "claim": "Last year's two biggest customers — 54% of revenue between them — are gone from the significant-customer table. Three new names now carry 59%.",
+      "where": "Significant Customers table (F-17)",
+      "src": "6k-q2-26-fin" },
+    { "claim": "The entire half-year 'profit' is a $781M paper markup of their ClickHouse stake — triggered by a funding round they did not even participate in.",
+      "where": "Investments in non-marketable equity securities note — the ClickHouse revaluation paragraph",
+      "src": "6k-q2-26-fin" },
+    { "claim": "Since insiders became Form 4 filers in March, eight of them sold $157M of stock. Open-market buys: zero.",
+      "where": "22 Form 4 filings — derived by aggregating the raw XML, and recomputed by the audit",
+      "src": "form4" }
+  ],
+
+  "proseLiteralsOK": [
+    "97.6%",
+    "74% of the cash",
+    "$43M",
+    "four years to five",
+    "54%",
+    "59%",
+    "one to five years",
+    "$37.5 billion of signed contracts",
+    "$17.4 billion",
+    "70% of new deals arrive with prepayments"
+  ],
+
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "The business is real. The price already assumes the bull case happens.",
+    "tiles": [
+      { "dim": "Growth", "rating": "strong", "fact": "Revenue up 454% year over year; H1 2026 nearly doubled all of 2025" },
+      { "dim": "Demand", "rating": "strong", "fact": "$37.5B of contracted work; Microsoft alone signed up to $19.4B" },
+      { "dim": "Operating leverage", "rating": "strong", "fact": "Adjusted EBITDA margin from deep losses to +41% in eight quarters" },
+      { "dim": "Profitability", "rating": "weak", "fact": "Still a GAAP operating loss; the H1 profit is a ClickHouse markup" },
+      { "dim": "Cash & funding", "rating": "weak", "fact": "97.6% of operating cash flow is prepayments; $9.2B raised in six months" },
+      { "dim": "Valuation", "rating": "risk", "fact": "Price sits above even an aggressive bull-case fair value" }
+    ],
+    "scored": [
+      { "dim": "Growth", "score": 5, "tone": "", "fact": "Revenue up 454% year over year" },
+      { "dim": "Demand", "score": 5, "tone": "", "fact": "$37.5B of signed contracts on the books" },
+      { "dim": "Leverage", "score": 4, "tone": "", "fact": "Margins swung from deep losses to +41%" },
+      { "dim": "Profit", "score": 2, "tone": "warn", "fact": "GAAP losses; the profit line is a paper markup" },
+      { "dim": "Cash", "score": 2, "tone": "warn", "fact": "The cash flow is customers' prepaid money" },
+      { "dim": "Price", "score": 1, "tone": "bad", "fact": "Above my bull case" }
+    ],
+    "working": [
+      "Demand is real and contracted: Microsoft, Meta and NVIDIA are all counterparties, and the backlog reaches {wd.rpoB|usdB}.",
+      "Operating leverage is steep and visible — every cost line is falling as a share of revenue.",
+      "Customers pay in advance: 70% of new deals arrive with prepayments. That is pricing power, whatever it does to the cash flow statement.",
+      "The 2025 ARR guide was beaten after being raised — {wd.arrDec25|usd} against a {wd.guide25Hi|usd} top.",
+      "The balance sheet holds {wd.cash|usd} of cash after raising {wd.raisedH1|usd} in six months."
+    ],
+    "watch": [
+      "The moment the prepayment balance stops growing, reported operating cash flow collapses toward {wd.coreOpCash|usd}.",
+      "Refundability: the filing says amounts \"may be refundable\" and never says how much, against a {wd.defRev|usd} balance.",
+      "Customer concentration: three names are 59% of revenue, and none of them were on the table a year ago.",
+      "The depreciation change annualizes — the disclosed benefit excludes everything bought in 2026.",
+      "The FY26 guide needs ARR to go from {wd.arrJun26|usd} to {wd.guide26Lo|usd}–{wd.guide26Hi|usd} in six months."
+    ],
+    "why": [
+      "<b>The business is real.</b> One of the fastest scale-ups on the market — and Microsoft, Meta and NVIDIA are the ones paying for it.",
+      "<b>The price assumes perfection.</b> At {price|$} you pay {val.psAnnQ2|x1} this quarter's sales. Even my bull case lands at {fair.bull|$} — below today.",
+      "<b>The fine print.</b> 97.6% of the cash flow is customer prepayments. The profit is a paper markup. The loss got a $43M accounting assist.",
+      "<b>The insiders.</b> {wd.insiderSold|usd} sold since March. Bought: zero.",
+      "<b>A decent price for me: {fair.mid|$} or lower.</b> Under my bull case, closer to my base case — that is where this gets interesting."
+    ]
+  },
+
+  "notes": {
+    "findings": "Nebius just printed one of the wildest quarters on the Nasdaq — revenue up four hundred and fifty-four percent, and the stock jumped a third in a day on it. Everyone has seen the headline. Almost nobody has read the two documents they filed with it. I did, and here are five things that are in the filings and not in the press release. Each one changes how you should read this company, and we will take them one at a time. TARGET 26s.",
+    "quarter": "First, the quarter as they reported it. Revenue five hundred eighty-two million, up four hundred fifty-four percent — that is not a typo. Adjusted EBITDA turned properly positive at a forty-one percent margin. But look at the bottom half: still an operating loss, still a net loss, and an interest bill that went from five million to a hundred and nineteen. And that half-year profit figure you will see quoted? Every dollar of it is a paper markup of their ClickHouse stake — a private database company whose funding round Nebius did not even join. Strip that out and the half year is a loss. TARGET 28s.",
+    "leverage": "Now the genuinely impressive part, and I want to give it its due. Each dot on this curve is one quarter, working left to right: revenue across the bottom, profit margin up the side. Two years ago this was a thirty-two million dollar quarter losing a dollar forty for every dollar it sold. Eight quarters later revenue is eighteen times bigger and the adjusted margin is plus forty-one. That is what real operating leverage looks like drawn on one line — the AI cloud business itself ran at a fifty percent margin this quarter. This part of the story is real. TARGET 26s.",
+    "arrpath": "Here is their run-rate revenue, the number this company guides on — and its history with promises. December 2024: ninety million, and their own release admits that was below guidance. Then they guided seven hundred fifty to a billion for the end of 2025, raised it in August, and delivered one point two five billion — a genuine beat. It is three billion now. But look at the last point: the 2026 guide is seven to nine billion. That means the run-rate has to more than double in six months. They have done it before — they are asking you to believe they do it again, on a number ten times bigger. TARGET 30s.",
+    "rpo": "Can they? Here is the case that they can: thirty-seven and a half billion dollars of signed contracts. Microsoft alone signed up to seventeen point four billion, with options to nineteen point four. Meta added about three billion. That bottom bar is everything Nebius sold in the last twelve months — the order book is nearly twenty-eight times that. But two footnotes. Only about a third of it turns into revenue in the next two years. And the company's own annual report says, in writing, that it has limited experience delivering long-term contracts like these. The mountain is real; so is the climb. TARGET 28s.",
+    "cashwalk": "Now the first thing the press release does not tell you. Headline: four and a half billion dollars of operating cash flow in six months. Sounds like a money machine. Walk it: four point four billion of that is customer prepayments — deferred revenue, money for compute they have not delivered yet, recognized over as much as five years. What the business generated by actually running is a hundred and nine million. Against eight point one billion of capital spending. This company is not self-funding — it is customer-funded and debt-funded, which is a completely different sentence. TARGET 30s.",
+    "refundable": "And that prepaid money comes with strings. This is the company's own accounting note, word for word — including amounts that may be refundable. They never say how much. The balance is six billion dollars, which is seventy-four percent of all the cash you see on the balance sheet. And buried in the interest note: they pay interest on advances from major customers. Think about what that means — a prepayment you pay interest on is a loan wearing a different name. The cash pile is real, but most of it is other people's money with conditions attached. TARGET 28s.",
+    "depreciation": "The next finding is one sentence in the estimates note. In January, Nebius decided its servers last five years instead of four. Perfectly legal, arguably even reasonable. But apply the arithmetic: this single change cut this quarter's depreciation by forty-three million dollars — without it, the loss is two hundred twenty-four million, not one ninety. And the disclosed benefit only covers servers owned before 2026. The eight billion dollars of kit they bought this year gets the friendlier math too, and that benefit is not disclosed anywhere. The press release does not mention any of this. TARGET 26s.",
+    "customers": "Next finding: the customer list did not grow — it was replaced. A year ago customers A and B were more than half of all revenue. Today both have vanished from the disclosure table entirely, and three brand-new names — almost certainly Microsoft and Meta among them — carry fifty-nine percent. This is what it looks like when a company graduates from startups to hyperscalers, and that is genuinely good news. But understand the shape of the risk: three counterparties now decide this company's future, and twelve months ago none of them were here. TARGET 26s.",
+    "insiders": "The last finding — what the people inside are doing with their own money. Nebius insiders only started filing Form 4s in March. Since then: a hundred fifty-seven million dollars sold, across eight people — the founder, the CFO, the CTO, the chief revenue officer, the infrastructure chief. Purchases on the open market: zero. To be fair, about half the filings cite pre-arranged trading plans, and executives at four-x stocks always sell some. But the biggest single month of selling was May, right into the run-up — and nobody, at any price, bought. TARGET 26s.",
+    "peers": "So what are you paying? I have put everyone on the same honest yardstick — market value against the latest reported quarter annualized, growth beside it, because expensive and expensive-for-its-growth are different claims. CoreWeave, the closest pure comparison, costs about six dollars per dollar of current sales. Amazon and Oracle sit lower still. Nebius costs thirty-two. Yes, it is growing four times faster than CoreWeave — but you are paying nearly six times the price per sales dollar for that growth. TARGET 24s.",
+    "street": "One more thing before my call — what the analysts actually pencil in. Eight of them cover it. Their average price target is below where the stock trades after this jump. And their earnings estimates are the part nobody quotes: losses per share getting bigger every year through 2028, because depreciation and interest keep growing with the buildout. Thin coverage, so hold it loosely — but notice that not even the bulls put profits on paper this decade. TARGET 22s.",
+    "call": "So here is the whole story on one ruler. The bracket is my model: the left tick is the bear case, the middle of the shaded zone is my base case, and the right tick is a bull case that needs fifty percent compound growth for five straight years with margins they have never shown. Now look where today's price sits — past the top of the whole bracket. Everything genuinely great about this company — the growth, the contracts, the customers, all four chips under the chart — is already paid for at this price. So my call is WATCH, and my line is marked on the ruler: halfway between my base and bull cases. Near it or below, the odds flip toward you. If the stock hands back a chunk of this move while the contracts keep landing, that is when it gets interesting. That is the fundamentals — now let us see what the chart says. TARGET 32s."
+  }
+}

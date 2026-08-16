@@ -81,6 +81,13 @@ body.camzone .slide{padding-left:var(--cam-l,96px);padding-right:var(--cam-r,96p
   margin-left:auto; font-size:15px; letter-spacing:.08em; font-weight:600;
   color:var(--muted); text-transform:none;
 }
+/* Persistent identity — the ticker and company on every slide's top row. */
+.kicker .ident{
+  font-size:15px; letter-spacing:.04em; font-weight:600; color:var(--muted);
+  text-transform:none; padding-left:16px; border-left:2px solid var(--border);
+  white-space:nowrap;
+}
+.kicker .ident b{color:var(--accent); font-weight:800; letter-spacing:.12em}
 h1.head{font-size:64px;font-weight:760;letter-spacing:-.022em;line-height:1.03;margin-bottom:10px}
 h1.head.sm{font-size:52px}
 .sub{font-size:25px;color:var(--ink-2);line-height:1.4;max-width:1500px;font-weight:400}
@@ -137,7 +144,8 @@ h1.head.sm{font-size:52px}
 
 /* ---------- Big statement number ---------- */
 .mega{display:flex;align-items:baseline;gap:34px;flex-wrap:wrap}
-.mega .v{font-size:170px;font-weight:800;letter-spacing:-.035em;line-height:.92;color:var(--accent)}
+.mega .v{font-size:170px;font-weight:800;letter-spacing:-.035em;line-height:.92;color:var(--accent);
+  font-variant-numeric:tabular-nums}
 .mega .v.ink{color:var(--ink)}
 .mega .v.bad{color:var(--crit)}
 .mega .v.good{color:var(--good)}
@@ -150,7 +158,8 @@ h1.head.sm{font-size:52px}
   border-radius:12px; padding:26px 28px; box-shadow:var(--shadow);
   display:flex; flex-direction:column; gap:7px;
 }
-.tile .tv{font-size:52px;font-weight:770;letter-spacing:-.02em;line-height:1}
+.tile .tv{font-size:52px;font-weight:770;letter-spacing:-.02em;line-height:1;
+  font-variant-numeric:tabular-nums}
 .tile .tv.sm{font-size:40px}
 .tile .tl{font-size:17px;color:var(--ink-2);font-weight:600}
 .tile .tn{font-size:15px;color:var(--muted);line-height:1.38}
@@ -232,6 +241,16 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 @keyframes rowin{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
 @keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
 @keyframes fade{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+/* Editorial chrome entrance: the headline wipes up out of a mask, the sub
+   follows, and the punch line lands LAST — after the chart has mostly built —
+   so the conclusion arrives as a beat, not as furniture. The clip-path ends
+   on negative insets so descenders are never clipped at rest. */
+.slide.on .kicker{animation:fade .8s cubic-bezier(.25,1,.5,1) both}
+.slide.on h1.head{animation:maskrise .95s cubic-bezier(.16,1,.3,1) both}
+.slide.on .sub{animation:fade .9s cubic-bezier(.25,1,.5,1) .22s both}
+.slide.on .punch{animation:maskrise 1.0s cubic-bezier(.16,1,.3,1) 1.15s both}
+@keyframes maskrise{from{opacity:0;clip-path:inset(0 0 100% 0);transform:translateY(22px)}
+  to{opacity:1;clip-path:inset(-12% -2% -16% -2%);transform:none}}
 /* The text slides used to appear fully formed while every chart slide built
    itself, which read as a bug. Same entrance, staggered by position. */
 .slide.on .finds>.find,.slide.on .tiles>.tile,.slide.on .ww .wcol li,
@@ -262,7 +281,8 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
   .slide.on .quote>*,.slide.on .callrow>*,.slide.on.title>*{animation:none}}
 @media (prefers-reduced-motion:reduce){.slide.on .grow,.slide.on .growX,.slide.on .draw,
   .slide.on .sweep,.slide.on .pop,.slide.on .fade,.slide.on .bloom,
-  .slide.on .snap .row,.slide.on .snap .pip.on{animation:none}}
+  .slide.on .snap .row,.slide.on .snap .pip.on,
+  .slide.on .kicker,.slide.on h1.head,.slide.on .sub,.slide.on .punch{animation:none}}
 
 /* ---------- Verdict ---------- */
 .vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -1588,12 +1608,13 @@ function chartFvBand(spec){
   const scLo = Math.min(lo * 0.72, spec.price * 0.9, (spec.rangeLo ?? Infinity) * 0.9);
   const scHi = Math.max(hi * 1.28, spec.price * 1.1, (spec.rangeHi ?? 0) * 1.06);
   const X = v => PL + ((v - scLo) / (scHi - scLo)) * (W - PL - PR);
-  const zone = (a, b, cls) => el("rect", {x: X(a), y, width: Math.max(2, X(b) - X(a)),
-    height: bh, class: cls});
+  // The zones wash in left-to-right before the markers land on them.
+  const zone = (a, b, cls, k) => el("rect", {x: X(a), y, width: Math.max(2, X(b) - X(a)),
+    height: bh, class: cls + " fade", style: `animation-delay:${AD(k * 120)}ms`});
   const neutral = spec.zoneTone === "neutral";
-  s.appendChild(zone(scLo, lo, neutral ? "fv-n-out" : "fv-under"));
-  s.appendChild(zone(lo, hi, neutral ? "fv-n-mid" : "fv-fair"));
-  s.appendChild(zone(hi, scHi, neutral ? "fv-n-out" : "fv-over"));
+  s.appendChild(zone(scLo, lo, neutral ? "fv-n-out" : "fv-under", 0));
+  s.appendChild(zone(lo, hi, neutral ? "fv-n-mid" : "fv-fair", 1));
+  s.appendChild(zone(hi, scHi, neutral ? "fv-n-out" : "fv-over", 2));
   // A single point estimate reads as false precision. The bracket is the range
   // the same model produces across the bear and bull assumption sets.
   if (spec.rangeLo != null && spec.rangeHi != null) {
@@ -1970,7 +1991,11 @@ function chartScatter(spec){
   const xlo = Math.min(...xs), xhi = Math.max(...xs);
   const ylo = Math.min(...ys), yhi = Math.max(...ys);
   const xp = (xhi - xlo) * 0.22 || 1, yp = (yhi - ylo) * 0.34 || 1;
-  const x0 = xlo - xp, x1 = xhi + xp, y0 = Math.max(0, ylo - yp), y1 = yhi + yp;
+  // The y scale spans [min, max]. It used to clamp at zero, which drew any
+  // negative point below the plot — a margin trajectory that starts in losses
+  // was invisible. A chart's scale spans every mark it draws.
+  const x0 = xlo - xp, x1 = xhi + xp;
+  const y0 = ylo >= 0 ? Math.max(0, ylo - yp) : ylo - yp, y1 = yhi + yp;
   const plotW = W - PL - PR, plotH = H - PT - PB;
   const X = v => PL + ((v - x0) / (x1 - x0)) * plotW;
   const Y = v => PT + plotH - ((v - y0) / (y1 - y0)) * plotH;
@@ -1981,6 +2006,9 @@ function chartScatter(spec){
     s.appendChild(el("text", {x:PL-18, y:Y(gv)+7, "text-anchor":"end", class:"ax"},
       spec.fmt2 ? spec.fmt2(gv) : String(Math.round(gv))));
   }
+  if (y0 < 0 && y1 > 0)
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(0), y2:Y(0),
+      stroke:"var(--ink)", "stroke-width":1.5, opacity:".5"}));
   // axis titles — the whole chart is unreadable without them
   s.appendChild(el("text", {x:PL, y:H-PB+62, class:"axb", style:"font-size:19px"}, spec.xTitle));
   s.appendChild(el("text", {x:PL, y:PT-26, class:"axb", style:"font-size:19px"},
@@ -2008,10 +2036,12 @@ function chartScatter(spec){
 
   spec.points.forEach((p, i) => {
     const last = i === n - 1;
+    // A fixed 130ms stagger overran the 3s envelope at 8 points (NBIS's eight
+    // quarters ended at 4.15s); 60ms keeps a long trajectory inside it.
     s.appendChild(el("circle", {cx:X(p.x), cy:Y(p.y), r: last ? 14 : 10,
       fill: last ? "var(--s1)" : "var(--bg)", stroke:"var(--s1)", "stroke-width":3.5,
-      class:"fade", style:`animation-delay:${AD(360 + i * 130)}ms`}));
-    const g = el("g", {class:"fade", style:`animation-delay:${AD(440 + i * 130)}ms`});
+      class:"fade", style:`animation-delay:${AD(280 + i * 60)}ms`}));
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(340 + i * 60)}ms`});
     // labels go right of the point, except the last which would run off the plot
     const rightOf = !last || X(p.x) < W - PR - 40;
     g.appendChild(el("text", {x:X(p.x) + (rightOf ? 26 : -26), y:Y(p.y) - 6,
@@ -2086,9 +2116,13 @@ function renderCalc(host){
 function slideChrome(sl, idx){
   const parts = [];
   if (sl.type !== "title") {
+    // The ticker + company ride the top of EVERY slide, so a viewer landing
+    // mid-video always knows which stock is on screen. The footer stamp alone
+    // was not enough — it is the least-read corner of the frame.
     parts.push(`<div class="kicker"><span class="no">${String(idx).padStart(2,"0")}</span>
       <span>${esc(sl.kicker || "")}</span>
-      ${sl.src ? `<span class="src">${esc(sl.src)}</span>` : ""}</div>`);
+      ${sl.src ? `<span class="src">${esc(sl.src)}</span>` : ""}
+      <span class="ident"${sl.src ? "" : ' style="margin-left:auto"'}><b>${esc(DECK.symbol)}</b> · ${esc(DECK.company)}</span></div>`);
     if (sl.head) parts.push(`<h1 class="head${sl.head.length > 46 ? " sm" : ""}">${sl.head}</h1>`);
     if (sl.sub)  parts.push(`<div class="sub">${sl.sub}</div>`);
   }
@@ -2129,8 +2163,11 @@ function render(sl, idx, total){
       <div class="attr">${esc(sl.attr)}</div></div>${sl.extra||""}</div>`;
   }
   else if (sl.type === "chart") {
+    // `extra` lets a chart slide carry a compact tile row under the visual —
+    // the NBIS close puts its four-chip recap beneath the fair-value ruler.
     inner += `<div class="body top"><div class="chartwrap" data-chart="${idx}"></div>
-      ${sl.legend ? `<div class="legend">${sl.legend.map(g=>`<span><i style="background:${g.c}"></i>${esc(g.t)}</span>`).join("")}</div>` : ""}</div>`;
+      ${sl.legend ? `<div class="legend">${sl.legend.map(g=>`<span><i style="background:${g.c}"></i>${esc(g.t)}</span>`).join("")}</div>` : ""}
+      ${sl.extra ? sl.extra : ""}</div>`;
   }
   else if (sl.type === "snapshot") {
     inner += `<div class="body"><div class="snap">
@@ -2241,7 +2278,8 @@ slides.forEach(s => stage.appendChild(s));
    turn (the `.slide.on` gate means an inactive slide reports no animation and an
    unlaid-out chart), so it runs on `?audit=1` or on demand via deckAudit().
 */
-const KNOWN_ANIM = new Set(["grow","growX","draw","fade","sweep","pop","bloom","pipin","rowin"]);
+const KNOWN_ANIM = new Set(["grow","growX","draw","fade","sweep","pop","bloom","pipin","rowin",
+                            "maskrise"]);
 
 function deckAudit(){
   const issues = [];
@@ -2524,11 +2562,47 @@ function drawCamGuide(){
       : "");
 }
 
+/*
+   Count-up numerals: big money/percent tiles tally from zero on slide entry,
+   easing out over ~850ms. The LAST frame always writes the exact original
+   string, so the resting deck is byte-identical to the build — the animation
+   can never leave a drifted or misformatted figure on screen. Skipped under
+   prefers-reduced-motion; only runs from show(), so the in-deck audit (which
+   toggles .on directly) always measures the final text.
+*/
+const CU_RE = /^([+\-−]?[^0-9]*)([\d,]+)(\.\d+)?([^0-9]*)$/;
+function countUps(slideEl){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  slideEl.querySelectorAll(".mega .v, .tile .tv").forEach(el => {
+    const fin = el.dataset.cuFinal || (el.dataset.cuFinal = el.textContent);
+    const m = fin.match(CU_RE);
+    if (!m) return;                               // "none", "+ interest" — leave alone
+    const num = parseFloat((m[2] + (m[3] || "")).replace(/,/g, ""));
+    if (!isFinite(num)) return;
+    const dec = m[3] ? m[3].length - 1 : 0;
+    const grouped = m[2].includes(",");
+    if (el._cu) cancelAnimationFrame(el._cu);
+    const t0 = performance.now(), D = 850;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / D);
+      if (p >= 1) { el.textContent = fin; el._cu = 0; return; }
+      const e = 1 - Math.pow(1 - p, 4);           // ease-out-quart
+      let v = (num * e).toFixed(dec);
+      if (grouped) v = (+v).toLocaleString("en-US",
+        {minimumFractionDigits: dec, maximumFractionDigits: dec});
+      el.textContent = m[1] + v + m[4];
+      el._cu = requestAnimationFrame(tick);
+    };
+    el._cu = requestAnimationFrame(tick);
+  });
+}
+
 function show(i){
   cur = Math.max(0, Math.min(slides.length - 1, i));
   slides.forEach((s, k) => s.classList.toggle("on", k === cur));
   // re-trigger entry animations by reflowing the newly shown slide
   void slides[cur].offsetWidth;
+  countUps(slides[cur]);
   const n = DECK.slides[cur];
   document.getElementById("notes-body").textContent = n.notes || "—";
   document.getElementById("notes-head").textContent =

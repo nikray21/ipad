@@ -1054,7 +1054,7 @@ def build_quote(symbol):
         if not prev:
             prev = (price - chg) if chg is not None else None
         in_session = live is pri and pri.get("isRealTime")
-        return {
+        q = {
             "symbol": symbol, "price": price,
             # The headline change is ALWAYS against yesterday's close — the
             # number a viewer means when they say "MSFT is down 8 today".
@@ -1070,6 +1070,20 @@ def build_quote(symbol):
             "name": d.get("companyName"),
             "source": "Nasdaq real-time",
         }
+        # Nasdaq's lastTradeTimestamp can lag its own lastSalePrice by a session:
+        # observed 2026-08-15 on NBIS and SPCX, where the price was Friday's close
+        # and the label still said Thursday. That label ends up in the deck's
+        # footer stamp, so when the last daily bar matches the price but not the
+        # label, the bar's date is the truthful one.
+        try:
+            import datetime as _dt
+            bar = get("history", symbol)["points"][-1]
+            lab = _dt.datetime.fromtimestamp(bar["t"] / 1000, _dt.timezone.utc).strftime("%b %-d, %Y")
+            if q["asOf"] and abs((bar.get("c") or 0) - price) < 0.01 and lab not in str(q["asOf"]):
+                q["asOf"] = lab
+        except Exception:
+            pass
+        return q
     except Exception:
         j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}?range=1d&interval=1d", ua=YAHOO_UA)
         m = (((j.get("chart") or {}).get("result") or [{}])[0].get("meta") or {})

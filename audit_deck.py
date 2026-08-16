@@ -637,8 +637,10 @@ def audit_share_basis(snap, payload, ep):
 # or drawn upside down. `bars` needs zeroLine to get the deeper bottom gutter.
 # lollipop spans [min, max] and draws a zero line, so a negative is drawn honestly.
 # steparea is a running total from zero and must NOT be handed negatives.
+# scatter's y scale spans [min, max] since the NBIS margin trajectory (it used to
+# clamp at zero) and draws a zero line when the domain crosses it.
 NEGATIVE_SAFE = {"lollipop", "bars", "bridge", "dumbbell", "line", "indexed", "smallmult",
-                 "slope", "forecast", "distribution"}
+                 "slope", "forecast", "distribution", "scatter"}
 
 
 def audit_negative_values(payload):
