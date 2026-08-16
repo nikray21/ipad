@@ -1,6 +1,6 @@
 # Meta Platforms, Inc. (META) — where every number came from
 
-Deck built 2026-08-16T02:49:28+00:00.
+Deck built 2026-08-16T03:15:48+00:00.
 
 Two checks stand behind this file:
 
@@ -36,12 +36,12 @@ Two checks stand behind this file:
 
 | Route | Source | Fetched | Age at build |
 |---|---|---|---|
-| `/api/quote/META` | Nasdaq real-time | 2026-08-16 02:49:16 | 0s |
-| `/api/profile/META` | Nasdaq quote summary | 2026-08-16 02:49:21 | 0s |
-| `/api/fundamentals/META` | SEC EDGAR XBRL companyfacts | 2026-08-16 02:49:22 | 0s |
-| `/api/street/META` | Nasdaq analyst consensus | 2026-08-16 02:49:25 | 0s |
-| `/api/estimates/META` | Nasdaq analyst estimates | 2026-08-16 02:49:28 | 0s |
-| `/api/history/META` | Yahoo daily OHLCV | 2026-08-16 02:49:16 | 12s |
+| `/api/quote/META` | Nasdaq real-time | 2026-08-16 03:15:36 | 0s |
+| `/api/profile/META` | Nasdaq quote summary | 2026-08-16 03:15:42 | 0s |
+| `/api/fundamentals/META` | SEC EDGAR XBRL companyfacts | 2026-08-16 03:15:43 | 0s |
+| `/api/street/META` | Nasdaq analyst consensus | 2026-08-16 03:15:46 | 0s |
+| `/api/estimates/META` | Nasdaq analyst estimates | 2026-08-16 03:15:48 | 0s |
+| `/api/history/META` | Yahoo daily OHLCV | 2026-08-16 03:15:36 | 12s |
 
 ## Deliberately not used
 

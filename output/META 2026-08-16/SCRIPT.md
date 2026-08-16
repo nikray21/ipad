@@ -1,6 +1,6 @@
 # Meta Platforms, Inc. (META) — spoken script
 
-Built 2026-08-16T02:49:28+00:00 · price 589.85 as of Aug 14, 2026
+Built 2026-08-16T03:15:48+00:00 · price 589.85 as of Aug 14, 2026
 
 - **Full cut:** 12 slides, 5:08
 - **Core cut:** 4:00 — drop the 3 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
@@ -73,7 +73,7 @@ Family of Apps — the ads business, the thing that funds everything else — gr
 
 Why is infrastructure eating the profit engine? Because the capital spending plan for this year has been revised upward at every single release — never once cut, never once held flat. It started the year at a range topping out around a hundred thirty-five billion and now sits even higher. This is not a company trimming its ambitions.
 
-FY2025's range was revised upward at every release and landed at the top of it. FY2026 opened even higher and has already been raised again. This is not a company trimming its ambitions — it is the reason infrastructure costs keep outrunning the ad business underneath them.
+Every release raised that range, and the final number still came in above the top of it. FY2026 started even higher, and it has already been raised again. This is not a company trimming its ambitions. It is why infrastructure costs keep outrunning the ad business underneath them.
 
 ---
 
@@ -83,9 +83,9 @@ FY2025's range was revised upward at every release and landed at the top of it. 
 
 **On screen:** Last nine months: $55.0B. Everything before: $29.0B.
 
-And here's how that spending actually gets paid for. Two bond sales, nine months apart, twenty-five billion dollars or more each — bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow.
+And here's how that spending actually gets paid for. Two bond sales, six months apart, twenty-five billion dollars or more each — bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow.
 
-$55.0B of bonds in two sales, nine months apart — more than the $29.0B Meta had issued in the fourteen years it carried any bond debt at all before that. Interest expense on the notes alone went from $232M to $754M in a single quarter, year over year. The AI buildout is being financed, not funded out of cash flow.
+$55.0B of bonds in two sales, six months apart — more than the $29.0B Meta had issued in the three years it had carried any bond debt at all before that. Interest expense on the notes alone went from $232M to $754M in a single quarter, year over year. The AI buildout is being financed, not funded out of cash flow.
 
 ---
 
@@ -139,10 +139,10 @@ Before my own call, here's what Wall Street's models actually say. Most analysts
 
 > My model's range, against today's price.
 
-**On screen:** My call: WATCH. Interesting at $828.28 or lower.
+**On screen:** My call: WATCH — price isn't the problem here.
 
 So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — not expensive, not a screaming bargain either. My call is WATCH. The growth is real. The fine print — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — is also real, and it's exactly why the market isn't paying up for the headline number the way you'd expect. That's the fundamentals. Now let's go to the chart.
 
-That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull case fully lands. Today's price sits just under my base case — not expensive, not a screaming bargain. My line is $828.28, halfway between base and bull. The growth is genuinely real. So is every finding in this deck. That is the fundamentals. Now let's go to the chart.
+That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull lands. Today's price already sits below my base case, so valuation is not the argument against this stock. What I'm watching is everything else in this deck — the tax line, the debt-funded buildout, the segment that is supposed to be the profit engine shrinking instead. My call is WATCH: a bet on those resolving, not on the price moving. Now let's go to the chart.
 
 ---

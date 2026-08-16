@@ -104,10 +104,10 @@ once cut, never once held flat. It started the year at a range topping out
 around a hundred thirty-five billion and now sits even higher. This is not a
 company trimming its ambitions.
 
-FY2025's range was revised upward at every release and landed at the top of
-it. FY2026 opened even higher and has already been raised again. This is not a
-company trimming its ambitions — it is the reason infrastructure costs keep
-outrunning the ad business underneath them.
+Every release raised that range, and the final number still came in above the
+top of it. FY2026 started even higher, and it has already been raised again.
+This is not a company trimming its ambitions. It is why infrastructure costs
+keep outrunning the ad business underneath them.
 
 ------------------------------------------------------------------------------
 SLIDE 07  (26s)
@@ -115,14 +115,14 @@ HEADLINE: Two bond sales dwarf the rest
 ON SCREEN: Last nine months: $55.0B. Everything before: $29.0B.
 ------------------------------------------------------------------------------
 
-And here's how that spending actually gets paid for. Two bond sales, nine
+And here's how that spending actually gets paid for. Two bond sales, six
 months apart, twenty-five billion dollars or more each — bigger, combined,
 than every dollar of debt Meta had issued in its entire history before that.
 The interest bill on those bonds more than tripled year over year in a single
 quarter. The AI buildout is being financed, not just funded out of cash flow.
 
-$55.0B of bonds in two sales, nine months apart — more than the $29.0B Meta
-had issued in the fourteen years it carried any bond debt at all before that.
+$55.0B of bonds in two sales, six months apart — more than the $29.0B Meta had
+issued in the three years it had carried any bond debt at all before that.
 Interest expense on the notes alone went from $232M to $754M in a single
 quarter, year over year. The AI buildout is being financed, not funded out of
 cash flow.
@@ -206,7 +206,7 @@ earnings that are supposed to get it there.
 ------------------------------------------------------------------------------
 SLIDE 12  (30s)
 HEADLINE: Real growth. Financed with a lot of fine print.
-ON SCREEN: My call: WATCH. Interesting at $828.28 or lower.
+ON SCREEN: My call: WATCH — price isn't the problem here.
 ------------------------------------------------------------------------------
 
 So here's the whole thing on one ruler. My model's range runs from a bear case
@@ -219,11 +219,12 @@ number the way you'd expect. That's the fundamentals. Now let's go to the
 chart.
 
 That ruler is the whole episode. $206.79 if the AI spend does not pay off,
-$612.81 in my base case, $1,043.75 if the bull case fully lands. Today's price
-sits just under my base case — not expensive, not a screaming bargain. My line
-is $828.28, halfway between base and bull. The growth is genuinely real. So is
-every finding in this deck. That is the fundamentals. Now let's go to the
-chart.
+$612.81 in my base case, $1,043.75 if the bull lands. Today's price already
+sits below my base case, so valuation is not the argument against this stock.
+What I'm watching is everything else in this deck — the tax line, the
+debt-funded buildout, the segment that is supposed to be the profit engine
+shrinking instead. My call is WATCH: a bet on those resolving, not on the
+price moving. Now let's go to the chart.
 
 ==============================================================================
 END — cut to the chart.

@@ -381,10 +381,10 @@ def slides(snap, ep, fact, fund_quarters=None):
                   f"{b_(F['capexGuide']['path'][5]['hi']*1000)[1:]} to "
                   f"<b>{b_(F['capexGuide']['path'][7]['lo']*1000)}–"
                   f"{b_(F['capexGuide']['path'][7]['hi']*1000)[1:]}</b>."),
-        "why": ("FY2025's range was revised upward at every release and landed at the top of it. "
-                "FY2026 opened even higher and has already been raised again. This is not a "
-                "company trimming its ambitions — it is the reason infrastructure costs keep "
-                "outrunning the ad business underneath them."),
+        "why": ("Every release raised that range, and the final number still came in above the "
+                "top of it. FY2026 started even higher, and it has already been raised again. "
+                "This is not a company trimming its ambitions. It is why infrastructure costs "
+                "keep outrunning the ad business underneath them."),
         "notes": N["capexpath"], "target": 24,
     })
 
@@ -402,8 +402,8 @@ def slides(snap, ep, fact, fund_quarters=None):
                    {"c": "var(--s1)", "t": "issued in the last nine months"}],
         "punch": (f"Last nine months: <b>{b_(debtRecent)}</b>. Everything before: "
                   f"{b_(debtPrior)}."),
-        "why": (f"{b_(debtRecent)} of bonds in two sales, nine months apart — more than the "
-                f"{b_(debtPrior)} Meta had issued in the fourteen years it carried any bond debt "
+        "why": (f"{b_(debtRecent)} of bonds in two sales, six months apart — more than the "
+                f"{b_(debtPrior)} Meta had issued in the three years it had carried any bond debt "
                 f"at all before that. Interest expense on the notes alone went from "
                 f"{m(fv('debt','interestExpQ2prior'))} to {m(fv('debt','interestExpQ2'))} in a "
                 f"single quarter, year over year. The AI buildout is being financed, not funded "
@@ -528,7 +528,7 @@ def slides(snap, ep, fact, fund_quarters=None):
         "chart": {"kind": "fvband", "height": 430, "band": band,
                   "price": s["price"], "priceLab": d2(s["price"]),
                   "fairValue": fair["mid"], "fairLab": d2(fair["mid"]),
-                  "fairName": "where I’d get interested",
+                  "fairName": "midpoint of my range",
                   "rangeLo": fair["bear"], "rangeHi": fair["bull"],
                   "rangeLoLab": f"bear {d2(fair['bear'])}",
                   "rangeHiLab": f"bull {d2(fair['bull'])}",
@@ -544,17 +544,18 @@ def slides(snap, ep, fact, fund_quarters=None):
                   f'— Family of Apps operating income fell even as its revenue grew.</p>'
                   f'<p style="animation-delay:1300ms;font-size:23px">'
                   f'<b style="color:var(--warn)">✕</b>&ensp;<b>The buildout is debt-funded</b> '
-                  f'— two bond sales, nine months apart, bigger than everything before them.</p>'
+                  f'— two bond sales, six months apart, bigger than everything before them.</p>'
                   f'<p style="animation-delay:1500ms;font-size:23px">'
                   f'<b style="color:var(--crit)">✕</b>&ensp;<b>The tax line isn’t settled</b> '
                   f'— a live IRS notice sits on an argument Meta already lost once.</p></div>'),
-        "punch": f"My call: <b>{ep['verdict']['call']}</b>. Interesting <b>at {d2(fair['mid'])} or lower</b>.",
+        "punch": f"My call: <b>{ep['verdict']['call']}</b> — <b>price isn't the problem here</b>.",
         "why": (f"That ruler is the whole episode. {d2(fair['bear'])} if the AI spend does not "
                 f"pay off, {d2(fair['base'])} in my base case, {d2(fair['bull'])} if the bull "
-                f"case fully lands. Today's price sits just under my base case — not expensive, "
-                f"not a screaming bargain. My line is {d2(fair['mid'])}, halfway between base and "
-                f"bull. The growth is genuinely real. So is every finding in this deck. That is "
-                f"the fundamentals. Now let's go to the chart."),
+                f"lands. Today's price already sits below my base case, so valuation is not the "
+                f"argument against this stock. What I'm watching is everything else in this deck "
+                f"— the tax line, the debt-funded buildout, the segment that is supposed to be "
+                f"the profit engine shrinking instead. My call is {ep['verdict']['call']}: a bet "
+                f"on those resolving, not on the price moving. Now let's go to the chart."),
         "notes": N["call"], "target": 30,
     })
 

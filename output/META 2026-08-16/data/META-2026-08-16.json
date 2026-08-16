@@ -2381,37 +2381,37 @@
   },
   "provenance": {
    "quote": {
-    "fetchedAt": 1786848556.566,
+    "fetchedAt": 1786850136.581,
     "ageS": 0.0,
     "source": "Nasdaq real-time"
    },
    "profile": {
-    "fetchedAt": 1786848561.967,
+    "fetchedAt": 1786850142.606,
     "ageS": 0.0,
     "source": "Nasdaq quote summary"
    },
    "fundamentals": {
-    "fetchedAt": 1786848562.73,
+    "fetchedAt": 1786850143.324,
     "ageS": 0.0,
     "source": "SEC EDGAR XBRL companyfacts"
    },
    "street": {
-    "fetchedAt": 1786848565.028,
+    "fetchedAt": 1786850146.797,
     "ageS": 0.0,
     "source": "Nasdaq analyst consensus"
    },
    "estimates": {
-    "fetchedAt": 1786848568.263,
+    "fetchedAt": 1786850148.237,
     "ageS": 0.0,
     "source": "Nasdaq analyst estimates"
    },
    "history": {
-    "fetchedAt": 1786848556.566,
+    "fetchedAt": 1786850136.58,
     "ageS": 11.7,
     "source": "Yahoo daily OHLCV"
    }
   },
-  "builtAt": "2026-08-16T02:49:28+00:00",
+  "builtAt": "2026-08-16T03:15:48+00:00",
   "foa": {
    "revFrom": 47146,
    "revTo": 60370,
@@ -2565,7 +2565,7 @@
   "company": "Meta Platforms, Inc.",
   "price": 589.85,
   "sharesOutstanding": 2547.506225,
-  "stamp": "META \u00b7 589.85 as of Aug 14, 2026 \u00b7 built 2026-08-16 02:49",
+  "stamp": "META \u00b7 589.85 as of Aug 14, 2026 \u00b7 built 2026-08-16 03:15",
   "totalTarget": 308,
   "coreTarget": 240,
   "optionalCount": 3,
@@ -2610,11 +2610,11 @@
     "items": [
      {
       "claim": "EPS swung from $1.05 to $10.44 in two quarters on one-time tax items \u2014 and a live $15.89B IRS notice sits underneath both, on a fight Meta already lost.",
-      "where": "10-Q Note 11, Income Taxes \u2014 two paragraphs past the CAMT benefit every headline quoted",
+      "where": "10-Q Note 11, Income Taxes \u2014 under the transfer-pricing litigation history, past the CAMT benefit every headline quoted",
       "src": "10q-q2-26"
      },
      {
-      "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds \u2014 its second such sale in nine months, more than all its debt before that.",
+      "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds \u2014 its second such sale in six months, more than all its debt before that.",
       "where": "10-Q Note 8, Long-term Debt \u2014 the five-tranche issuance table",
       "src": "10q-q2-26"
      },
@@ -2625,7 +2625,7 @@
      },
      {
       "claim": "Meta is contributing $2.3B of data-center assets to a new joint venture for a 20% stake and a $1B payout \u2014 while guaranteeing up to $13B of its residual value.",
-      "where": "10-Q Note 13, Subsequent Event \u2014 three notes past the $349B of commitments it sits beside",
+      "where": "10-Q Note 13, Subsequent Event \u2014 four notes past the $349B of commitments it sits beside, in Note 9",
       "src": "10q-q2-26"
      }
     ],
@@ -2856,7 +2856,7 @@
      ]
     },
     "punch": "FY26: $115B\u2013135B to <b>$130B\u2013145B</b>.",
-    "why": "FY2025's range was revised upward at every release and landed at the top of it. FY2026 opened even higher and has already been raised again. This is not a company trimming its ambitions \u2014 it is the reason infrastructure costs keep outrunning the ad business underneath them.",
+    "why": "Every release raised that range, and the final number still came in above the top of it. FY2026 started even higher, and it has already been raised again. This is not a company trimming its ambitions. It is why infrastructure costs keep outrunning the ad business underneath them.",
     "notes": "Why is infrastructure eating the profit engine? Because the capital spending plan for this year has been revised upward at every single release \u2014 never once cut, never once held flat. It started the year at a range topping out around a hundred thirty-five billion and now sits even higher. This is not a company trimming its ambitions.",
     "target": 24
    },
@@ -2913,8 +2913,8 @@
      }
     ],
     "punch": "Last nine months: <b>$55.0B</b>. Everything before: $29.0B.",
-    "why": "$55.0B of bonds in two sales, nine months apart \u2014 more than the $29.0B Meta had issued in the fourteen years it carried any bond debt at all before that. Interest expense on the notes alone went from $232M to $754M in a single quarter, year over year. The AI buildout is being financed, not funded out of cash flow.",
-    "notes": "And here's how that spending actually gets paid for. Two bond sales, nine months apart, twenty-five billion dollars or more each \u2014 bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow.",
+    "why": "$55.0B of bonds in two sales, six months apart \u2014 more than the $29.0B Meta had issued in the three years it had carried any bond debt at all before that. Interest expense on the notes alone went from $232M to $754M in a single quarter, year over year. The AI buildout is being financed, not funded out of cash flow.",
+    "notes": "And here's how that spending actually gets paid for. Two bond sales, six months apart, twenty-five billion dollars or more each \u2014 bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow.",
     "target": 26
    },
    {
@@ -3099,7 +3099,7 @@
      "priceLab": "$589.85",
      "fairValue": 828.2831041418324,
      "fairLab": "$828.28",
-     "fairName": "where I\u2019d get interested",
+     "fairName": "midpoint of my range",
      "rangeLo": 206.79124653309373,
      "rangeHi": 1043.7524869080949,
      "rangeLoLab": "bear $206.79",
@@ -3111,9 +3111,9 @@
      ],
      "verdict": "today sits 4% below my base case"
     },
-    "extra": "<div class=\"whylist\" style=\"margin-top:16px;gap:13px\"><p style=\"animation-delay:900ms;font-size:23px\"><b style=\"color:var(--good)\">\u2713</b>&ensp;<b>The growth is real</b> \u2014 revenue up 28%, ad pricing and volume both climbing.</p><p style=\"animation-delay:1100ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>The profit engine shrank</b> \u2014 Family of Apps operating income fell even as its revenue grew.</p><p style=\"animation-delay:1300ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>The buildout is debt-funded</b> \u2014 two bond sales, nine months apart, bigger than everything before them.</p><p style=\"animation-delay:1500ms;font-size:23px\"><b style=\"color:var(--crit)\">\u2715</b>&ensp;<b>The tax line isn\u2019t settled</b> \u2014 a live IRS notice sits on an argument Meta already lost once.</p></div>",
-    "punch": "My call: <b>WATCH</b>. Interesting <b>at $828.28 or lower</b>.",
-    "why": "That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull case fully lands. Today's price sits just under my base case \u2014 not expensive, not a screaming bargain. My line is $828.28, halfway between base and bull. The growth is genuinely real. So is every finding in this deck. That is the fundamentals. Now let's go to the chart.",
+    "extra": "<div class=\"whylist\" style=\"margin-top:16px;gap:13px\"><p style=\"animation-delay:900ms;font-size:23px\"><b style=\"color:var(--good)\">\u2713</b>&ensp;<b>The growth is real</b> \u2014 revenue up 28%, ad pricing and volume both climbing.</p><p style=\"animation-delay:1100ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>The profit engine shrank</b> \u2014 Family of Apps operating income fell even as its revenue grew.</p><p style=\"animation-delay:1300ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>The buildout is debt-funded</b> \u2014 two bond sales, six months apart, bigger than everything before them.</p><p style=\"animation-delay:1500ms;font-size:23px\"><b style=\"color:var(--crit)\">\u2715</b>&ensp;<b>The tax line isn\u2019t settled</b> \u2014 a live IRS notice sits on an argument Meta already lost once.</p></div>",
+    "punch": "My call: <b>WATCH</b> \u2014 <b>price isn't the problem here</b>.",
+    "why": "That ruler is the whole episode. $206.79 if the AI spend does not pay off, $612.81 in my base case, $1,043.75 if the bull lands. Today's price already sits below my base case, so valuation is not the argument against this stock. What I'm watching is everything else in this deck \u2014 the tax line, the debt-funded buildout, the segment that is supposed to be the profit engine shrinking instead. My call is WATCH: a bet on those resolving, not on the price moving. Now let's go to the chart.",
     "notes": "So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case \u2014 not expensive, not a screaming bargain either. My call is WATCH. The growth is real. The fine print \u2014 the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet \u2014 is also real, and it's exactly why the market isn't paying up for the headline number the way you'd expect. That's the fundamentals. Now let's go to the chart.",
     "target": 30
    }
@@ -3949,11 +3949,11 @@
   "findings": [
    {
     "claim": "EPS swung from $1.05 to $10.44 in two quarters on one-time tax items \u2014 and a live $15.89B IRS notice sits underneath both, on a fight Meta already lost.",
-    "where": "10-Q Note 11, Income Taxes \u2014 two paragraphs past the CAMT benefit every headline quoted",
+    "where": "10-Q Note 11, Income Taxes \u2014 under the transfer-pricing litigation history, past the CAMT benefit every headline quoted",
     "src": "10q-q2-26"
    },
    {
-    "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds \u2014 its second such sale in nine months, more than all its debt before that.",
+    "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds \u2014 its second such sale in six months, more than all its debt before that.",
     "where": "10-Q Note 8, Long-term Debt \u2014 the five-tranche issuance table",
     "src": "10q-q2-26"
    },
@@ -3964,7 +3964,7 @@
    },
    {
     "claim": "Meta is contributing $2.3B of data-center assets to a new joint venture for a 20% stake and a $1B payout \u2014 while guaranteeing up to $13B of its residual value.",
-    "where": "10-Q Note 13, Subsequent Event \u2014 three notes past the $349B of commitments it sits beside",
+    "where": "10-Q Note 13, Subsequent Event \u2014 four notes past the $349B of commitments it sits beside, in Note 9",
     "src": "10q-q2-26"
    }
   ],
@@ -4002,7 +4002,7 @@
     {
      "dim": "Tax clarity",
      "rating": "weak",
-     "fact": "Two one-time items swung EPS by more than $9 in three quarters; a $15.89B IRS notice is unresolved"
+     "fact": "Two one-time items swung EPS by more than $9 in two quarters; a $15.89B IRS notice is unresolved"
     },
     {
      "dim": "Capital discipline",
@@ -4071,8 +4071,8 @@
     "<b>The ad business is genuinely strong.</b> Revenue grew 28% and both ad pricing and ad volume grew double digits \u2014 growth is not the question here.",
     "<b>But the profit and the cash did not follow it.</b> Operating income fell 8%, free cash flow collapsed 91% to $784M, and Family of Apps \u2014 the segment that actually earns the money \u2014 saw its own operating income shrink 6%.",
     "<b>The balance sheet is doing a lot of the work.</b> Meta raised $55B of new bonds in nine months and is now guaranteeing up to $13B on a data-center joint venture it just moved off its own books.",
-    "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 across three quarters, and a live IRS notice puts another $15.89B on the table \u2014 on a transfer-pricing argument Meta already lost once in Tax Court.",
-    "<b>A decent price for me: $828.28 or lower.</b> At $589.85 you are already just below my base case of $612.81 \u2014 but well below the $1,043.75 the AI bull case would require, and that gap is the difference between interesting and obviously cheap."
+    "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 in two quarters, and a live IRS notice puts another $15.89B on the table \u2014 on a transfer-pricing argument Meta already lost once in Tax Court.",
+    "<b>The price is not the argument against this stock.</b> At $589.85 you are already just below my base case of $612.81, and well below the $1,043.75 the AI bull case would require. What I am watching is not the tape \u2014 it is whether the tax dispute, the debt-funded buildout and the shrinking segment margin resolve."
    ]
   },
   "notes": {
@@ -4082,7 +4082,7 @@
    "irs": "And that's not the end of it \u2014 it's the preview. Buried in the tax note: the IRS is now asking for another fifteen point nine billion dollars for 2017 through 2019, on the exact transfer-pricing argument Meta already fought and partially lost in Tax Court last year. This isn't hypothetical risk language. It's a number, on a fight they've already lost once. TARGET 26s.",
    "foa": "Now the finding that matters most for what this company is actually worth. Family of Apps \u2014 the ads business, the thing that pays for everything else \u2014 grew revenue nicely. Its operating income went the other way. Look at the two bars: revenue climbing, profit falling, same segment, same quarter. Legal costs and infrastructure spend landed inside the one business that is supposed to be the cash machine. TARGET 26s.",
    "capexpath": "Why is infrastructure eating the profit engine? Because the capital spending plan for this year has been revised upward at every single release \u2014 never once cut, never once held flat. It started the year at a range topping out around a hundred thirty-five billion and now sits even higher. This is not a company trimming its ambitions. TARGET 24s.",
-   "debt": "And here's how that spending actually gets paid for. Two bond sales, nine months apart, twenty-five billion dollars or more each \u2014 bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow. TARGET 26s.",
+   "debt": "And here's how that spending actually gets paid for. Two bond sales, six months apart, twenty-five billion dollars or more each \u2014 bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow. TARGET 26s.",
    "offbalance": "And some of it isn't even on the balance sheet yet. In July, Meta agreed to hand a data center over to a joint venture for a twenty percent stake and a quick billion-dollar payout \u2014 while guaranteeing up to thirteen billion dollars if that venture falls short. Add in the leases that haven't even started and the non-cancelable commitments sitting in the footnotes, and there's a lot more building than the balance sheet shows today. TARGET 26s.",
    "insiders": "What are the people running the company doing with their own money? Selling \u2014 nobody's buying on the open market. It's real money, a few hundred million dollars worth. To be fair, almost all of it runs through pre-scheduled trading plans set up months in advance, so don't read too much timing into it. But zero purchases, at any price, from anyone, is still zero. TARGET 22s.",
    "peers": "So what are you actually paying for all of this? I've put Meta next to the other mega-cap names on the same basis \u2014 price against next year's expected earnings, growth rate right beside it, because cheap and cheap-for-its-growth are different claims. Meta isn't the most expensive name on this list, and it isn't the cheapest either \u2014 it's paying a normal multiple for above-average growth, which is a fine place to be if the profit line stabilizes. TARGET 24s.",

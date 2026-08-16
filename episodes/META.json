@@ -223,16 +223,16 @@
 
   "findings": [
     { "claim": "EPS swung from $1.05 to $10.44 in two quarters on one-time tax items — and a live $15.89B IRS notice sits underneath both, on a fight Meta already lost.",
-      "where": "10-Q Note 11, Income Taxes — two paragraphs past the CAMT benefit every headline quoted",
+      "where": "10-Q Note 11, Income Taxes — under the transfer-pricing litigation history, past the CAMT benefit every headline quoted",
       "src": "10q-q2-26" },
-    { "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds — its second such sale in nine months, more than all its debt before that.",
+    { "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds — its second such sale in six months, more than all its debt before that.",
       "where": "10-Q Note 8, Long-term Debt — the five-tranche issuance table",
       "src": "10q-q2-26" },
     { "claim": "Family of Apps — the segment that earns Meta's profit — saw operating income fall even as revenue grew 28%, after absorbing the $2.4B legal charge and AI infrastructure costs.",
       "where": "10-Q Note 12, Segment Information — the 'other costs and expenses' line beneath FoA revenue",
       "src": "10q-q2-26" },
     { "claim": "Meta is contributing $2.3B of data-center assets to a new joint venture for a 20% stake and a $1B payout — while guaranteeing up to $13B of its residual value.",
-      "where": "10-Q Note 13, Subsequent Event — three notes past the $349B of commitments it sits beside",
+      "where": "10-Q Note 13, Subsequent Event — four notes past the $349B of commitments it sits beside, in Note 9",
       "src": "10q-q2-26" }
   ],
 
@@ -248,7 +248,7 @@
       { "dim": "Growth", "rating": "strong", "fact": "Revenue up 28%; ad pricing and ad impressions both grew double digits" },
       { "dim": "Profitability", "rating": "weak", "fact": "Operating income fell 8% and margin went from 43% to 31%; Family of Apps profit itself shrank" },
       { "dim": "Cash & funding", "rating": "risk", "fact": "Free cash flow fell 91% to $784M; $55B of new bonds raised in nine months" },
-      { "dim": "Tax clarity", "rating": "weak", "fact": "Two one-time items swung EPS by more than $9 in three quarters; a $15.89B IRS notice is unresolved" },
+      { "dim": "Tax clarity", "rating": "weak", "fact": "Two one-time items swung EPS by more than $9 in two quarters; a $15.89B IRS notice is unresolved" },
       { "dim": "Capital discipline", "rating": "mixed", "fact": "Capex guidance has only ever gone up; part of the buildout just moved off the balance sheet" },
       { "dim": "Valuation", "rating": "mixed", "fact": "Trades just below my base-case fair value, well below my bull case, and below the Street's own target" }
     ],
@@ -278,8 +278,8 @@
       "<b>The ad business is genuinely strong.</b> Revenue grew 28% and both ad pricing and ad volume grew double digits — growth is not the question here.",
       "<b>But the profit and the cash did not follow it.</b> Operating income fell 8%, free cash flow collapsed 91% to $784M, and Family of Apps — the segment that actually earns the money — saw its own operating income shrink 6%.",
       "<b>The balance sheet is doing a lot of the work.</b> Meta raised $55B of new bonds in nine months and is now guaranteeing up to $13B on a data-center joint venture it just moved off its own books.",
-      "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 across three quarters, and a live IRS notice puts another $15.89B on the table — on a transfer-pricing argument Meta already lost once in Tax Court.",
-      "<b>A decent price for me: {fair.mid|$} or lower.</b> At {price|$} you are already just below my base case of {fair.base|$} — but well below the {fair.bull|$} the AI bull case would require, and that gap is the difference between interesting and obviously cheap."
+      "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 in two quarters, and a live IRS notice puts another $15.89B on the table — on a transfer-pricing argument Meta already lost once in Tax Court.",
+      "<b>The price is not the argument against this stock.</b> At {price|$} you are already just below my base case of {fair.base|$}, and well below the {fair.bull|$} the AI bull case would require. What I am watching is not the tape — it is whether the tax dispute, the debt-funded buildout and the shrinking segment margin resolve."
     ]
   },
 
@@ -290,7 +290,7 @@
     "irs": "And that's not the end of it — it's the preview. Buried in the tax note: the IRS is now asking for another fifteen point nine billion dollars for 2017 through 2019, on the exact transfer-pricing argument Meta already fought and partially lost in Tax Court last year. This isn't hypothetical risk language. It's a number, on a fight they've already lost once. TARGET 26s.",
     "foa": "Now the finding that matters most for what this company is actually worth. Family of Apps — the ads business, the thing that pays for everything else — grew revenue nicely. Its operating income went the other way. Look at the two bars: revenue climbing, profit falling, same segment, same quarter. Legal costs and infrastructure spend landed inside the one business that is supposed to be the cash machine. TARGET 26s.",
     "capexpath": "Why is infrastructure eating the profit engine? Because the capital spending plan for this year has been revised upward at every single release — never once cut, never once held flat. It started the year at a range topping out around a hundred thirty-five billion and now sits even higher. This is not a company trimming its ambitions. TARGET 24s.",
-    "debt": "And here's how that spending actually gets paid for. Two bond sales, nine months apart, twenty-five billion dollars or more each — bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow. TARGET 26s.",
+    "debt": "And here's how that spending actually gets paid for. Two bond sales, six months apart, twenty-five billion dollars or more each — bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow. TARGET 26s.",
     "offbalance": "And some of it isn't even on the balance sheet yet. In July, Meta agreed to hand a data center over to a joint venture for a twenty percent stake and a quick billion-dollar payout — while guaranteeing up to thirteen billion dollars if that venture falls short. Add in the leases that haven't even started and the non-cancelable commitments sitting in the footnotes, and there's a lot more building than the balance sheet shows today. TARGET 26s.",
     "insiders": "What are the people running the company doing with their own money? Selling — nobody's buying on the open market. It's real money, a few hundred million dollars worth. To be fair, almost all of it runs through pre-scheduled trading plans set up months in advance, so don't read too much timing into it. But zero purchases, at any price, from anyone, is still zero. TARGET 22s.",
     "peers": "So what are you actually paying for all of this? I've put Meta next to the other mega-cap names on the same basis — price against next year's expected earnings, growth rate right beside it, because cheap and cheap-for-its-growth are different claims. Meta isn't the most expensive name on this list, and it isn't the cheapest either — it's paying a normal multiple for above-average growth, which is a fine place to be if the profit line stabilizes. TARGET 24s.",
