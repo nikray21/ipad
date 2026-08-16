@@ -24,6 +24,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TOL = 1.5                                   # percent
 
 # episode fact  ->  (yfinance statement, candidate row names)
+# Each deck module invents its own field names (the story is not generic, per
+# the skill's design), so this map has grown additively per episode rather
+# than assuming one company's naming — SPCX's H1-aggregate, loss-making
+# fields alongside META's single-quarter, profitable ones. A key absent from
+# a given episode is simply skipped (see the `if not node: continue` below),
+# so old episodes are unaffected by entries added for a new one.
 MAP = {
     ("results", "revenueQ2"):        ("q", ["Total Revenue", "Operating Revenue"]),
     ("results", "costOfRevenueQ2"):  ("q", ["Cost Of Revenue", "Reconciled Cost Of Revenue"]),
@@ -38,6 +44,20 @@ MAP = {
     ("cashFlow", "cfoH1"):           ("cf2", ["Operating Cash Flow",
                                               "Cash Flow From Continuing Operating Activities"]),
     ("cashFlow", "capexH1"):         ("cf2", ["Capital Expenditure"]),
+    # META (single fiscal quarter, not an H1 aggregate — "cf"/"q"/"b" pull
+    # the latest one period, unlike "cf2" which sums the latest two).
+    ("results", "opIncQ2"):          ("q", ["Operating Income", "Total Operating Income As Reported"]),
+    ("results", "netIncQ2"):         ("q", ["Net Income", "Net Income Common Stockholders"]),
+    ("results", "taxQ2"):            ("q", ["Tax Provision", "Income Tax Expense Benefit"]),
+    ("results", "capexQ2"):          ("cf", ["Capital Expenditure"]),
+    ("results", "cfoQ2"):            ("cf", ["Operating Cash Flow",
+                                             "Cash Flow From Continuing Operating Activities"]),
+    ("balanceSheet", "totalAssetsQ2"):      ("b", ["Total Assets"]),
+    ("balanceSheet", "totalLiabilitiesQ2"): ("b", ["Total Liabilities Net Minority Interest",
+                                                    "Total Liabilities"]),
+    ("balanceSheet", "totalEquityQ2"):      ("b", ["Stockholders Equity", "Common Stock Equity"]),
+    ("debt", "carryingValue"):       ("b", ["Long Term Debt", "Total Debt"]),
+    ("debt", "interestExpQ2"):       ("q", ["Interest Expense"]),
 }
 
 

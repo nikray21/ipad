@@ -1,6 +1,6 @@
 # Meta Platforms, Inc. (META) — spoken script
 
-Built 2026-08-16T03:25:26+00:00 · price 589.85 as of Aug 14, 2026
+Built 2026-08-16T08:36:15+00:00 · price 589.85 as of Aug 14, 2026
 
 - **Full cut:** 12 slides, 5:08
 - **Core cut:** 4:00 — drop the 3 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
