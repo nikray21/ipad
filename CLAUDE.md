@@ -32,3 +32,14 @@ prove every number traces to a filing. The workflow lives in
 - The loop must pass before a deck is done: `build_deck.py` →
   `audit_deck.py` → `validate_facts.py`, then both with `--prove`.
 - `.cache_filings/` and `.cache_form4/` are disposable and gitignored.
+
+## Skills in this repo
+
+`.claude/skills/` carries the channel toolkit for cloud sessions. The two that
+matter most: **stock-analysis-presentation** (Sunday ticker episode) and
+**learn-stock** (Wednesday educational episode). Supporting: `design` (load
+before touching any chart), `fa`, `find-stock`, `technical-analysis`.
+Reference-only in cloud (they need local tools/MCPs the sandbox lacks):
+`race-dossier` (local ~/Projects/f1-dossier), `youtube-thumbnail-maker`,
+`youtube-popup-graphic`, `youtube-broll-maker`, `youtube-clipper` (Higgsfield
+MCP — usually absent in cloud).
