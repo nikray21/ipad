@@ -1333,7 +1333,8 @@ def main():
             snap["ttmRev"] = snap["ttmRev"] * 1.05
         else:                                   # newly listed — corrupt what exists instead
             snap["ttmRev"] = 1.0
-        snap["ev"] = snap["ev"] + 500
+        if snap.get("ev") is not None:                # decks with no EV concept skip this probe
+            snap["ev"] = snap["ev"] + 500
         if snap.get("bridge"):
             snap["bridge"]["ancillary"] += 5
         if "h2Low" in (snap.get("guide") or {}):

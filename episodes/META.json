@@ -1,0 +1,300 @@
+{
+  "symbol": "META", "company": "Meta Platforms, Inc.", "episodeDate": "2026-08-16",
+
+  "sources": {
+    "8k-q2-26": { "label": "8-K EX-99.1 — Q2 2026 results, filed Jul 29 2026",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/" },
+    "8k-q1-26": { "label": "8-K EX-99.1 — Q1 2026 results, filed Apr 29 2026",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/" },
+    "8k-q4-25": { "label": "8-K EX-99.1 — Q4 & FY2025 results, filed Jan 28 2026",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/" },
+    "8k-q3-25": { "label": "8-K EX-99.1 — Q3 2025 results, filed Oct 29 2025",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047114/" },
+    "8k-q2-25": { "label": "8-K EX-99.1 — Q2 2025 results, filed Jul 30 2025",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036719/" },
+    "8k-q1-25": { "label": "8-K EX-99.1 — Q1 2025 results, filed Apr 30 2025",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000050/" },
+    "8k-q4-24": { "label": "8-K EX-99.1 — Q4 & FY2024 results, filed Jan 29 2025",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000014/" },
+    "8k-q3-24": { "label": "8-K EX-99.1 — Q3 2024 results, filed Oct 30 2024",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680124000077/" },
+    "10q-q2-26": { "label": "10-Q — quarter ended June 30 2026, filed Jul 30 2026",
+                   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm" },
+    "10k-fy25": { "label": "10-K — year ended Dec 31 2025, filed Jan 29 2026",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm" },
+    "form4": { "label": "SEC Form 4 filings, Aug 2025–Aug 2026, aggregated from raw XML in .cache_form4/META/",
+               "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001326801&type=4&dateb=&owner=include&count=100" }
+  },
+
+  "filings": {
+    "results": {
+      "revenueQ2":       { "v": 60801,  "src": "8k-q2-26", "unit": "USD millions" },
+      "revenueQ2prior":  { "v": 47516,  "src": "8k-q2-26", "unit": "USD millions" },
+      "opIncQ2":         { "v": 18775,  "src": "8k-q2-26", "unit": "USD millions" },
+      "opIncQ2prior":    { "v": 20441,  "src": "8k-q2-26", "unit": "USD millions" },
+      "marginQ2":        { "v": 31, "src": "8k-q2-26", "unit": "%" },
+      "marginQ2prior":   { "v": 43, "src": "8k-q2-26", "unit": "%" },
+      "taxQ2":           { "v": 2908,  "src": "8k-q2-26", "unit": "USD millions" },
+      "etrQ2":           { "v": 16, "src": "8k-q2-26", "unit": "%" },
+      "etrQ2prior":      { "v": 11, "src": "8k-q2-26", "unit": "%" },
+      "netIncQ2":        { "v": 15848, "src": "8k-q2-26", "unit": "USD millions" },
+      "epsQ2":           { "v": 6.18, "src": "8k-q2-26" },
+      "epsQ2prior":      { "v": 7.14, "src": "8k-q2-26" },
+      "capexQ2":         { "v": 31078, "src": "8k-q2-26", "unit": "USD millions", "searchAs": "31.08 billion",
+                            "note": "includes principal payments on finance leases" },
+      "cfoQ2":           { "v": 31862, "src": "8k-q2-26", "unit": "USD millions" },
+      "fcfQ2":           { "v": 784,   "src": "8k-q2-26", "unit": "USD millions" },
+      "fcfQ2prior":      { "v": 8549,  "src": "8k-q2-26", "unit": "USD millions" },
+      "cashSecuritiesQ2": { "v": 90260, "src": "8k-q2-26", "unit": "USD millions", "searchAs": "90.26 billion" },
+      "headcountQ2":     { "v": 75472, "src": "8k-q2-26" },
+      "legalChargeQ2":   { "v": 2400,  "src": "8k-q2-26", "unit": "USD millions", "searchAs": "2.40 billion",
+                            "note": "included in general and administrative expense" },
+      "severanceQ2":     { "v": 1180,  "src": "8k-q2-26", "unit": "USD millions", "searchAs": "1.18 billion" },
+      "headcountReduced": { "v": 8000, "src": "8k-q2-26", "note": "May 2026 headcount reduction, approximate" },
+      "gaQ2":            { "v": 5609,  "src": "8k-q2-26", "unit": "USD millions" },
+      "gaQ2prior":       { "v": 2663,  "src": "8k-q2-26", "unit": "USD millions" }
+    },
+
+    "taxSwing": {
+      "q3_25ChargeReportedEps": { "v": 1.05, "src": "8k-q3-25" },
+      "q3_25ChargeExEps":       { "v": 7.25, "src": "8k-q3-25" },
+      "q3_25ChargeAmount":      { "v": 15930, "src": "8k-q3-25", "unit": "USD millions", "searchAs": "15.93 billion" },
+      "q3_25ChargeNetIncomeEx": { "v": 18640, "src": "8k-q3-25", "unit": "USD millions", "searchAs": "18.64 billion" },
+      "q1_26BenefitReportedEps": { "v": 10.44, "src": "8k-q1-26" },
+      "q1_26BenefitAmount":      { "v": 8030, "src": "8k-q1-26", "unit": "USD millions", "searchAs": "8.03 billion" },
+      "q1_26BenefitEpsImpact":   { "v": 3.13, "src": "8k-q1-26", "note": "diluted EPS would have been $3.13 lower excluding the benefit" },
+      "irsNoticeAdditionalTax": { "v": 15890, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "15.89 billion" },
+      "grossUtb":               { "v": 18740, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "18.74 billion" },
+      "grossUtbPrior":          { "v": 16450, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "16.45 billion" },
+      "utbBenefitIfRealized":   { "v": 12730, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "12.73 billion" },
+      "taxCourtIpValue":        { "v": 7790, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "7.79 billion" },
+      "taxCourtIpValueExcess":  { "v": 1480, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "1.48 billion" },
+      "irsQuote": { "v": "In September 2025, we received a Statutory Notice of Deficiency (\"2017-2019 Notice\") from the IRS, asserting an additional $15.89 billion in tax, plus interest and penalties for our 2017 through 2019 tax years... The largest issue in the 2017-2019 Notice relates to the same underlying transfer pricing transaction that we litigated in the 2010 tax year trial and for which we received a Tax Court opinion in May 2025.",
+                   "src": "10q-q2-26", "note": "Note 11, Income Taxes" }
+    },
+
+    "segments": {
+      "note": "Family of Apps (FoA) and Reality Labs (RL), each quarter from the release that reports it as the current period.",
+      "rows": [
+        { "q": "Q3'24", "end": "2024-09-30", "foaRev": 40319, "foaOpInc": 21778, "rlRev": 270,  "rlOpInc": -4428, "src": "8k-q3-24" },
+        { "q": "Q4'24", "end": "2024-12-31", "foaRev": 47302, "foaOpInc": 28332, "rlRev": 1083, "rlOpInc": -4967, "src": "8k-q4-24" },
+        { "q": "Q1'25", "end": "2025-03-31", "foaRev": 41902, "foaOpInc": 21765, "rlRev": 412,  "rlOpInc": -4210, "src": "8k-q1-25" },
+        { "q": "Q2'25", "end": "2025-06-30", "foaRev": 47146, "foaOpInc": 24971, "rlRev": 370,  "rlOpInc": -4530, "src": "8k-q2-25" },
+        { "q": "Q3'25", "end": "2025-09-30", "foaRev": 50772, "foaOpInc": 24967, "rlRev": 470,  "rlOpInc": -4432, "src": "8k-q3-25" },
+        { "q": "Q4'25", "end": "2025-12-31", "foaRev": 58938, "foaOpInc": 30766, "rlRev": 955,  "rlOpInc": -6021, "src": "8k-q4-25" },
+        { "q": "Q1'26", "end": "2026-03-31", "foaRev": 55909, "foaOpInc": 26900, "rlRev": 402,  "rlOpInc": -4028, "src": "8k-q1-26" },
+        { "q": "Q2'26", "end": "2026-06-30", "foaRev": 60370, "foaOpInc": 23394, "rlRev": 431,  "rlOpInc": -4619, "src": "8k-q2-26" }
+      ],
+      "foaOtherCostsQ2":      { "v": 22405, "src": "10q-q2-26", "unit": "USD millions" },
+      "foaOtherCostsQ2prior": { "v": 12839, "src": "10q-q2-26", "unit": "USD millions" },
+      "foaOtherCostsNote": { "v": "Includes costs and expenses in FoA segment for infrastructure, professional services, partner arrangements, marketing, facilities, legal-related costs, and other expenses.",
+                             "src": "10q-q2-26", "note": "Note 12, Segment Information, footnote (2)" }
+    },
+
+    "debt": {
+      "tranches": [
+        { "series": "Aug 2022 Notes", "amount": 10000, "src": "10q-q2-26" },
+        { "series": "May 2023 Notes", "amount": 8500,  "src": "10q-q2-26" },
+        { "series": "Aug 2024 Notes", "amount": 10500, "src": "10q-q2-26" },
+        { "series": "Nov 2025 Notes", "amount": 30000, "src": "10q-q2-26" },
+        { "series": "May 2026 Notes", "amount": 25000, "src": "10q-q2-26" }
+      ],
+      "totalFace":        { "v": 84000, "src": "10q-q2-26", "unit": "USD millions" },
+      "carryingValue":    { "v": 83664, "src": "10q-q2-26", "unit": "USD millions" },
+      "carryingValuePriorYE": { "v": 58744, "src": "10q-q2-26", "unit": "USD millions" },
+      "interestExpQ2":      { "v": 754, "src": "10q-q2-26", "unit": "USD millions" },
+      "interestExpQ2prior": { "v": 232, "src": "10q-q2-26", "unit": "USD millions" },
+      "may2026NetProceeds": { "v": 24910, "src": "8k-q2-26", "unit": "USD millions" }
+    },
+
+    "commitments": {
+      "leaseObligationsNotYetCommenced": { "v": 278990, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "278.99 billion" },
+      "julyNewDataCenterLeases":         { "v": 68000,  "src": "10q-q2-26", "unit": "USD millions", "searchAs": "$68 billion" },
+      "nonCancelableTotal":              { "v": 349310, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "349.31 billion" },
+      "due2026":                         { "v": 53520,  "src": "10q-q2-26", "unit": "USD millions", "searchAs": "53.52 billion" },
+      "due2027":                         { "v": 81650,  "src": "10q-q2-26", "unit": "USD millions", "searchAs": "81.65 billion" },
+      "contingentCloudCapacity":         { "v": 14720,  "src": "10q-q2-26", "unit": "USD millions", "searchAs": "14.72 billion" },
+      "restrictedCashEscrow":            { "v": 10800,  "src": "10q-q2-26", "unit": "USD millions", "searchAs": "10.80 billion" }
+    },
+
+    "subsequentEvent": {
+      "elPasoContribution":   { "v": 2300, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "$ 2.3 billion" },
+      "elPasoDistribution":   { "v": 1000, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "$ 1 billion" },
+      "elPasoGuaranteeMax":   { "v": 13000, "src": "10q-q2-26", "unit": "USD millions", "searchAs": "$ 13 billion" },
+      "elPasoStakePct":       { "v": 20, "src": "10q-q2-26", "unit": "%" },
+      "quote": { "v": "In July 2026, we entered into an exclusivity agreement to co-develop a data center campus in El Paso, Texas, through a venture in which we would hold a 20% membership interest... we estimate that we will contribute approximately $2.3 billion of held-for-sale assets, net of liabilities... and receive a one-time distribution of approximately $1 billion. We will also provide residual value guarantees with a maximum aggregate exposure of approximately $13 billion.",
+                 "src": "10q-q2-26", "note": "Note 13, Subsequent Event" }
+    },
+
+    "capexGuide": {
+      "note": "Full-year capex guidance (including finance-lease principal payments), as revised at each release.",
+      "path": [
+        { "label": "Jan '25",  "fy": "FY25", "lo": 60,  "hi": 65,  "src": "8k-q4-24",
+          "searchAs": { "lo": "$60-65 billion", "hi": "$60-65 billion" } },
+        { "label": "Apr '25",  "fy": "FY25", "lo": 64,  "hi": 72,  "src": "8k-q1-25",
+          "searchAs": { "lo": "$64-72 billion", "hi": "$64-72 billion" } },
+        { "label": "Jul '25",  "fy": "FY25", "lo": 66,  "hi": 72,  "src": "8k-q2-25",
+          "searchAs": { "lo": "$66-72 billion", "hi": "$66-72 billion" } },
+        { "label": "Oct '25",  "fy": "FY25", "lo": 70,  "hi": 72,  "src": "8k-q3-25",
+          "searchAs": { "lo": "$70-72 billion", "hi": "$70-72 billion" } },
+        { "label": "FY25",     "fy": "FY25", "actual": 72.22,      "src": "8k-q4-25" },
+        { "label": "Jan '26",  "fy": "FY26", "lo": 115, "hi": 135, "src": "8k-q4-25" },
+        { "label": "Apr '26",  "fy": "FY26", "lo": 125, "hi": 145, "src": "8k-q1-26" },
+        { "label": "Jul '26",  "fy": "FY26", "lo": 130, "hi": 145, "src": "8k-q2-26" }
+      ]
+    },
+
+    "quarterly": {
+      "note": "Diluted EPS as filed, each quarter from its own original release.",
+      "rows": [
+        { "q": "Q3'24", "end": "2024-09-30", "eps": 6.03, "src": "8k-q3-24" },
+        { "q": "Q4'24", "end": "2024-12-31", "eps": 8.02, "src": "8k-q4-24" },
+        { "q": "Q1'25", "end": "2025-03-31", "eps": 6.43, "src": "8k-q1-25" },
+        { "q": "Q2'25", "end": "2025-06-30", "eps": 7.14, "src": "8k-q2-25" },
+        { "q": "Q3'25", "end": "2025-09-30", "eps": 1.05, "src": "8k-q3-25" },
+        { "q": "Q4'25", "end": "2025-12-31", "eps": 8.88, "src": "8k-q4-25" },
+        { "q": "Q1'26", "end": "2026-03-31", "eps": 10.44, "src": "8k-q1-26" },
+        { "q": "Q2'26", "end": "2026-06-30", "eps": 6.18, "src": "8k-q2-26" }
+      ]
+    },
+
+    "earningsHistory": {
+      "note": "Meta guides next-quarter revenue, not a full-year point target, so the engine's built-in guidance-reaction tracker does not apply here — decks/META.py builds its own capex-guidance-path chart from the CFO Outlook Commentary in each release instead.",
+      "releases": [
+        { "date": "2024-10-30", "q": "Q3'24", "fy": "2024", "guideLow": null, "guideHigh": null, "src": "8k-q3-24" },
+        { "date": "2025-01-29", "q": "Q4'24", "fy": "2024", "guideLow": null, "guideHigh": null, "src": "8k-q4-24" },
+        { "date": "2025-04-30", "q": "Q1'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q1-25" },
+        { "date": "2025-07-30", "q": "Q2'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q2-25" },
+        { "date": "2025-10-29", "q": "Q3'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q3-25" },
+        { "date": "2026-01-28", "q": "Q4'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q4-25" },
+        { "date": "2026-04-29", "q": "Q1'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q1-26" },
+        { "date": "2026-07-29", "q": "Q2'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q2-26" }
+      ]
+    },
+
+    "balanceSheet": {
+      "sharesOutstanding": { "v": 2547506.225, "src": "10q-q2-26", "unit": "thousands", "_derived": true,
+                             "note": "cover page as of Jul 24 2026: 2,205,128,509 Class A + 342,377,716 Class B, summed" },
+      "totalAssetsQ2":      { "v": 449956, "src": "10q-q2-26", "unit": "USD millions" },
+      "totalLiabilitiesQ2": { "v": 188735, "src": "10q-q2-26", "unit": "USD millions" },
+      "totalEquityQ2":      { "v": 261221, "src": "10q-q2-26", "unit": "USD millions" }
+    },
+
+    "insider": {
+      "_derived": true, "src": "form4", "windowStart": "2025-08-01", "windowEnd": "2026-08-16",
+      "totalSoldShares": 531328, "totalSoldValue": 374.06,
+      "totalBought": 0, "distinctSellers": 11,
+      "plan10b5Filings": 109, "totalFilings": 168,
+      "buckets": [
+        { "label": "Q3 2025", "sold": 273479, "value": 210.9, "people": 8, "bought": 0 },
+        { "label": "Q4 2025", "sold": 42675,  "value": 26.7,  "people": 7, "bought": 0 },
+        { "label": "Q1 2026", "sold": 161840, "value": 103.6, "people": 5, "bought": 0 },
+        { "label": "Q2 2026", "sold": 39422,  "value": 24.4,  "people": 6, "bought": 0 },
+        { "label": "Q3 2026", "sold": 13912,  "value": 8.5,   "people": 4, "bought": 0 }
+      ],
+      "topSellers": [
+        { "name": "Susan Li", "role": "Chief Financial Officer", "shares": 180884, "value": 118.6 },
+        { "name": "Mark Zuckerberg", "role": "Chairman and CEO", "shares": 143660, "value": 110.6 },
+        { "name": "Christopher Cox", "role": "Chief Product Officer", "shares": 75000, "value": 58.1 },
+        { "name": "Javier Olivan", "role": "Chief Operating Officer", "shares": 59438, "value": 38.6 },
+        { "name": "Andrew Bosworth", "role": "Chief Technology Officer", "shares": 49440, "value": 32.9 }
+      ]
+    },
+
+    "peers": {
+      "tickers": ["GOOGL", "MSFT", "AMZN", "NFLX", "AAPL"],
+      "names": { "GOOGL": "Alphabet", "MSFT": "Microsoft", "AMZN": "Amazon", "NFLX": "Netflix", "AAPL": "Apple", "META": "Meta" }
+    }
+  },
+
+  "fairValue": {
+    "horizonYears": 5, "requiredReturn": 10.0,
+    "cases": {
+      "bear": { "revGrowth": 6.0,  "opMargin": 26.0, "exitPE": 14.0, "shareChange": 2.0 },
+      "base": { "revGrowth": 14.0, "opMargin": 34.0, "exitPE": 20.0, "shareChange": 0.0 },
+      "bull": { "revGrowth": 16.0, "opMargin": 38.0, "exitPE": 24.0, "shareChange": -3.0 }
+    },
+    "constants": {
+      "netDebt": -6596.0, "interestRate": 3.6, "taxRate": 16.0,
+      "nciAnnualRunRate": 0.0, "startRevenueTTM": 228247.0,
+      "_note": "netDebt = long-term debt 83,664 less cash+marketable securities 90,260 (net cash, not net debt); interestRate is Q2'26 interest expense on the Notes (754) annualized over total debt (83,664); taxRate is the midpoint of the guided 15-17% rate for the remainder of 2026; startRevenueTTM is trailing four reported quarters (Q3'25 through Q2'26)."
+    }
+  },
+
+  "findings": [
+    { "claim": "EPS swung from $1.05 to $10.44 in two quarters on one-time tax items — and a live $15.89B IRS notice sits underneath both, on a fight Meta already lost.",
+      "where": "10-Q Note 11, Income Taxes — two paragraphs past the CAMT benefit every headline quoted",
+      "src": "10q-q2-26" },
+    { "claim": "Free cash flow fell 91% to $784M the quarter Meta sold $25B of bonds — its second such sale in nine months, more than all its debt before that.",
+      "where": "10-Q Note 8, Long-term Debt — the five-tranche issuance table",
+      "src": "10q-q2-26" },
+    { "claim": "Family of Apps — the segment that earns Meta's profit — saw operating income fall even as revenue grew 28%, after absorbing the $2.4B legal charge and AI infrastructure costs.",
+      "where": "10-Q Note 12, Segment Information — the 'other costs and expenses' line beneath FoA revenue",
+      "src": "10q-q2-26" },
+    { "claim": "Meta is contributing $2.3B of data-center assets to a new joint venture for a 20% stake and a $1B payout — while guaranteeing up to $13B of its residual value.",
+      "where": "10-Q Note 13, Subsequent Event — three notes past the $349B of commitments it sits beside",
+      "src": "10q-q2-26" }
+  ],
+
+  "proseLiteralsOK": [
+    "grew 28%", "fell 8%", "collapsed 91%", "$784M", "shrink 6%",
+    "$55B", "$13B", "$1.05", "$10.44", "$15.89B"
+  ],
+
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "Real ad growth, financed by debt and one-time tax swings the filings won't let you ignore.",
+    "tiles": [
+      { "dim": "Growth", "rating": "strong", "fact": "Revenue up 28%; ad pricing and ad impressions both grew double digits" },
+      { "dim": "Profitability", "rating": "weak", "fact": "Operating income fell 8% and margin went from 43% to 31%; Family of Apps profit itself shrank" },
+      { "dim": "Cash & funding", "rating": "risk", "fact": "Free cash flow fell 91% to $784M; $55B of new bonds raised in nine months" },
+      { "dim": "Tax clarity", "rating": "weak", "fact": "Two one-time items swung EPS by more than $9 in three quarters; a $15.89B IRS notice is unresolved" },
+      { "dim": "Capital discipline", "rating": "mixed", "fact": "Capex guidance has only ever gone up; part of the buildout just moved off the balance sheet" },
+      { "dim": "Valuation", "rating": "mixed", "fact": "Trades just below my base-case fair value, well below my bull case, and below the Street's own target" }
+    ],
+    "scored": [
+      { "dim": "Growth", "score": 4, "tone": "", "fact": "Revenue up 28% year over year" },
+      { "dim": "Profitability", "score": 2, "tone": "warn", "fact": "Operating income fell even as revenue grew" },
+      { "dim": "Cash & funding", "score": 2, "tone": "warn", "fact": "Free cash flow collapsed; debt funded the gap" },
+      { "dim": "Tax clarity", "score": 2, "tone": "warn", "fact": "EPS whipsawed; a live IRS dispute is unresolved" },
+      { "dim": "Capital discipline", "score": 3, "tone": "", "fact": "Real spend on a real opportunity, but guided only upward" },
+      { "dim": "Valuation", "score": 3, "tone": "", "fact": "Roughly fair on my model; the Street is more optimistic" }
+    ],
+    "working": [
+      "Advertising is still compounding — revenue up {wd.revGrowthQ2|%0} with ad pricing and ad volume both growing double digits.",
+      "Family of Apps still produced {wd.foaOpIncQ2|usd} of operating income in the quarter, even after absorbing the legal charge.",
+      "The balance sheet still holds {wd.cashSecurities|usd} of cash and marketable securities against {wd.debtFace|usd} of bonds outstanding.",
+      "The Street models real upside: a mean target of {wd.streetTarget|usd}, and most covering analysts still rate it a buy.",
+      "Insider selling is real but modest and mostly scheduled — {wd.insiderSold|usd} against zero bought, {wd.plan10b5Pct|%0} of it under pre-set 10b5-1 plans."
+    ],
+    "watch": [
+      "Free cash flow is not a rounding error from zero — it already got there: {wd.fcfQ2|usd} this quarter, down from {wd.fcfQ2prior|usd} a year ago.",
+      "The IRS wants {wd.irsAdditional|usd} more, on the same transfer-pricing argument Meta already lost the valuation fight over once.",
+      "{wd.commitmentsTotal|usd} of contractual commitments and {wd.leaseNotYetCommenced|usd} of leases that have not even started yet sit outside today's balance sheet.",
+      "The El Paso joint venture guarantees up to {wd.jvGuaranteeMax|usd} of residual value on assets Meta just moved off its own books for a {wd.jvStakePct}% stake.",
+      "Buybacks are effectively paused while capex guidance keeps rising — free cash flow now decides whether the dividend and the new debt both keep getting paid."
+    ],
+    "why": [
+      "<b>The ad business is genuinely strong.</b> Revenue grew 28% and both ad pricing and ad volume grew double digits — growth is not the question here.",
+      "<b>But the profit and the cash did not follow it.</b> Operating income fell 8%, free cash flow collapsed 91% to $784M, and Family of Apps — the segment that actually earns the money — saw its own operating income shrink 6%.",
+      "<b>The balance sheet is doing a lot of the work.</b> Meta raised $55B of new bonds in nine months and is now guaranteeing up to $13B on a data-center joint venture it just moved off its own books.",
+      "<b>The tax line is not settled.</b> Two one-time items swung diluted EPS from $1.05 to $10.44 across three quarters, and a live IRS notice puts another $15.89B on the table — on a transfer-pricing argument Meta already lost once in Tax Court.",
+      "<b>A decent price for me: {fair.mid|$} or lower.</b> At {price|$} you are already just below my base case of {fair.base|$} — but well below the {fair.bull|$} the AI bull case would require, and that gap is the difference between interesting and obviously cheap."
+    ]
+  },
+
+  "notes": {
+    "findings": "Meta just posted twenty-eight percent revenue growth and the stock barely moved on it. That headline is true and it is not the story. I read the ten-Q behind it, and here are four things that are in the filing and not in the press release. Each one changes how you should read this quarter, and we're going to take them one at a time. TARGET 26s.",
+    "quarter": "First, the quarter as they reported it. Revenue sixty point eight billion, up twenty-eight percent — genuinely strong. But operating income actually fell, margin went from forty-three percent to thirty-one, and free cash flow — the cash left over after the business runs itself — nearly vanished. That gap between the top line and everything below it is the whole episode. TARGET 28s.",
+    "taxwhiplash": "Here's why the earnings number is so hard to trust right now. Third quarter last year, a fifteen point nine billion dollar one-time tax charge crushed EPS down to a dollar oh five — it would have been seven twenty-five without it. Two quarters later, an eight billion dollar one-time tax benefit did the opposite, pushing EPS up to ten forty-four. Same company, same underlying business, ten dollars of reported earnings per share apart. Neither number was really about the business. TARGET 28s.",
+    "irs": "And that's not the end of it — it's the preview. Buried in the tax note: the IRS is now asking for another fifteen point nine billion dollars for 2017 through 2019, on the exact transfer-pricing argument Meta already fought and partially lost in Tax Court last year. This isn't hypothetical risk language. It's a number, on a fight they've already lost once. TARGET 26s.",
+    "foa": "Now the finding that matters most for what this company is actually worth. Family of Apps — the ads business, the thing that pays for everything else — grew revenue nicely. Its operating income went the other way. Look at the two bars: revenue climbing, profit falling, same segment, same quarter. Legal costs and infrastructure spend landed inside the one business that is supposed to be the cash machine. TARGET 26s.",
+    "capexpath": "Why is infrastructure eating the profit engine? Because the capital spending plan for this year has been revised upward at every single release — never once cut, never once held flat. It started the year at a range topping out around a hundred thirty-five billion and now sits even higher. This is not a company trimming its ambitions. TARGET 24s.",
+    "debt": "And here's how that spending actually gets paid for. Two bond sales, nine months apart, twenty-five billion dollars or more each — bigger, combined, than every dollar of debt Meta had issued in its entire history before that. The interest bill on those bonds more than tripled year over year in a single quarter. The AI buildout is being financed, not just funded out of cash flow. TARGET 26s.",
+    "offbalance": "And some of it isn't even on the balance sheet yet. In July, Meta agreed to hand a data center over to a joint venture for a twenty percent stake and a quick billion-dollar payout — while guaranteeing up to thirteen billion dollars if that venture falls short. Add in the leases that haven't even started and the non-cancelable commitments sitting in the footnotes, and there's a lot more building than the balance sheet shows today. TARGET 26s.",
+    "insiders": "What are the people running the company doing with their own money? Selling — nobody's buying on the open market. It's real money, a few hundred million dollars worth. To be fair, almost all of it runs through pre-scheduled trading plans set up months in advance, so don't read too much timing into it. But zero purchases, at any price, from anyone, is still zero. TARGET 22s.",
+    "peers": "So what are you actually paying for all of this? I've put Meta next to the other mega-cap names on the same basis — price against next year's expected earnings, growth rate right beside it, because cheap and cheap-for-its-growth are different claims. Meta isn't the most expensive name on this list, and it isn't the cheapest either — it's paying a normal multiple for above-average growth, which is a fine place to be if the profit line stabilizes. TARGET 24s.",
+    "street": "Before my own call, here's what Wall Street's models actually say. Most analysts still rate this a buy, and the average target sits well above today's price. But look at what's happening underneath: more analysts are cutting their earnings estimates than raising them, even with the stock this close to its highs. The professionals are optimistic on the target and getting quietly less optimistic on the earnings that are supposed to get it there. TARGET 24s.",
+    "call": "So here's the whole thing on one ruler. My model's range runs from a bear case down here to a bull case up there, with today's price sitting just below my base case — not expensive, not a screaming bargain either. My call is WATCH. The growth is real. The fine print — the tax whiplash, the unresolved IRS fight, the debt-funded buildout, a chunk of it moving off the balance sheet — is also real, and it's exactly why the market isn't paying up for the headline number the way you'd expect. That's the fundamentals. Now let's go to the chart. TARGET 30s."
+  }
+}
