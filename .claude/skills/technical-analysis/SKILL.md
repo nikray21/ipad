@@ -28,46 +28,69 @@ backwards twice). When step 2/3 grading depends on an exact zone edge or wick ex
 printed as text on the chart, ask him to read it off TradingView directly (hover/click the zone,
 or a tight crosshair screenshot of just that point) rather than inferring it from the image.
 
-## Hard Rule — Webull is the data source, 4H is the timeframe
+## Hard Rule — Alpaca is the ONLY data source, 4H is the timeframe
 
-**Decided 2026-08-18, standard from now on: use the Webull MCP (`mcp__Webull__get_stock_bars` /
-`get_stock_bars_single`) for any price/bar data pulled without a live chart screenshot.** Never
-reconstruct 4h bars by grouping Yahoo hourly candles — that was tried and produced numbers that
-didn't match his real TradingView chart, because the bucket boundaries don't line up with how any
-real feed builds 4h candles. Bar-boundary drift, not a math error, and Webull's native `M240`
-bars remove it.
+**Decided 2026-08-18, final: Alpaca is the only API used for any price/bar data, ever. Never
+yfinance/Yahoo, never Webull, never any reconstruction from a different bar granularity — this
+was tested and rejected twice.** Yahoo-hourly-aggregated-into-4h drifted from his real chart
+(bucket boundaries didn't line up with any real feed). Webull's `M240` RTH-only bars were closer
+but still off by a wide margin (its 200-period 4H SMA on AMD computed $434.52 against his chart's
+real $510.67). **Alpaca's 4-hour bars matched his actual TradingView chart to the penny** — SMA200
+computed at $510.66 against his printed $510.67 — because Alpaca's default bar grid already
+includes extended hours the same way his chart's session settings do. That match is why this is
+now the permanent rule, not a preference.
 
-- `timespan: "M240"`, `trading_sessions: "RTH"`, `category: "US_STOCK"` — regular session 4h bars,
-  matching what he actually trades off.
-- Up to 1200 bars per call (~2.4 years of RTH 4h bars, 2 bars/trading day) — plenty for a
-  200-period SMA plus the 20-bar-ago slope check.
-- `get_stock_bars` takes up to 20 symbols per call for checking a watchlist at once;
-  `get_stock_bars_single` for one symbol needing more control (start/end time, real_time_required).
-- **His trading timeframe is 4H, not daily.** Every SMA/trend-template check below (50/150/200,
-  slope, entry-zone distance) runs on 4H bars now, not daily closes — daily was a placeholder used
-  before this was resolved. The Minervini Trend Template's *logic* (SMA stack, 52-week range
-  position) still applies; only the bar granularity changed, from daily to 4H RTH.
-- If a large multi-hundred-ticker screen makes 20-symbols-per-call impractical, daily bars (Yahoo)
-  remain an acceptable **first-pass filter** to narrow the universe — but any name that survives to
-  an actual TAKE IT / SKIP verdict must be re-checked on Webull 4H bars before he acts on it.
+**API access:**
+```
+Data endpoint:   https://data.alpaca.markets/v2/stocks/{symbol}/bars
+Multi-symbol:    https://data.alpaca.markets/v2/stocks/bars?symbols=A,B,C
+Auth headers:    APCA-API-KEY-ID: <key>
+                 APCA-API-SECRET-KEY: <secret>
+Params:          timeframe=4Hour, start=<ISO8601>, limit=10000
+Pagination:      response includes next_page_token when more data remains --
+                 loop with &page_token=<token> until it's null. Each page has
+                 returned well under the requested limit in practice (~60-300
+                 bars/page) -- always loop, never assume one call is complete.
+```
+Trading-account auth (`https://paper-api.alpaca.markets/v2`) is separate from the data endpoint
+above and is never used by this skill — read-only market data only, same as every other rule here
+about never placing orders.
 
-**A printed chart value always beats any API, Webull included.** Discovered 2026-08-18 on AMD:
-Webull's 200-period 4H SMA computed to $434.52; his own TradingView chart, with an actual `SMA 200
-close` indicator loaded, printed $510.67 — a huge gap, on the same ticker, same nominal
-"200-period 4H SMA." Neither was wrong: Webull's feed was RTH-only (2 bars/trading day), while
-TradingView's 4h bars are built on whatever session settings his chart uses (commonly including
-extended hours, which packs more bars into each day) — same period count, very different amount
-of real calendar time covered, so a materially different number. There is no way to guarantee any
-external API matches his specific chart's bar construction. **Rule: if he has a chart open and an
-indicator's value is printed in the legend, that number is the one to grade against — full stop,
-never override it with a Webull or Yahoo recomputation.** Webull is for screening when there's no
-chart to read from, not a tiebreaker against one that exists.
+**Getting enough bars:** for a 200-period SMA plus the 20-bar-ago slope check (220 bars minimum),
+request `start` about 3-4 months back from today rather than paginating from a fixed old date —
+pulling from `2025-01-01` forward hit a wall around 770 bars (roughly Sept 2025) without reaching
+the present in testing 2026-08-18, while starting ~3.5 months back reliably reached today in ~300
+bars across 2 pages. Anchor `start` relative to *today*, not a fixed historical date.
+
+**Credentials belong in an environment variable, never in this file or git.** The key/secret he
+provided live in this session's memory only — they are NOT written to SKILL.md, committed, or
+logged anywhere in the repo. For persistence across cloud sessions, he needs to set them as
+environment variables in the Claude Code environment's settings (outside git) — ask him to do that
+if a future session doesn't have them available, rather than asking him to paste them again in
+chat, and never propose committing them to the repo even if asked casually.
+
+**Rate limit — watch this, don't blow through it:** Alpaca returns `X-Ratelimit-Limit`,
+`X-Ratelimit-Remaining`, and `X-Ratelimit-Reset` (unix timestamp) on every response. Measured
+2026-08-18: **200 requests/minute** on this account's plan. For anything that's more than a
+handful of calls (a multi-symbol screen, a backtest pulling many tickers): check
+`X-Ratelimit-Remaining` periodically and pace requests (small sleep between calls, or batch via
+the multi-symbol endpoint) rather than firing everything at once — don't discover the limit by
+hitting a 429. The multi-symbol bars endpoint (`?symbols=A,B,C,...`) is the way to cut down request
+count for a watchlist-sized check; for full-universe screens (hundreds of tickers), pace it and
+expect it to take longer than the old Yahoo-batch approach did — that's the tradeoff for data
+that's actually correct.
+
+**A printed chart value still beats any API, Alpaca included.** The match on AMD was to the
+penny, but it's still a match, not a guarantee for every ticker/moment. If he has a chart open
+with an indicator's value printed in the legend, that number is what to grade against — Alpaca is
+for when there's no chart to read from, or to cross-check, not to override what's actually on his
+screen.
 
 ## Screening Without a Live Chart
 
 For scanning a universe of tickers (not grading one specific setup) there's no SWING CALL or
 LuxAlgo data available — nothing to screenshot for hundreds of names. Use this systematic proxy
-instead, agreed with him 2026-08-18, computed on **Webull 4H (M240, RTH) bars** per the hard rule
+instead, agreed with him 2026-08-18, computed on **Alpaca 4-hour bars** per the hard rule
 above — not daily:
 
 **Long — Minervini Trend Template, run on 4H bars** (his published 8-criteria filter for "is this
