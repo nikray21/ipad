@@ -66,6 +66,19 @@ AND 200-day SMA; SMAs stacked downward (50 < 150 < 200); the 200-day SMA itself 
 price within 25% of its 52-week low; price at least 25–30% below its 52-week high. Entry zone is
 2–5% below the falling 50-day SMA. Same fade-at-20%+ rule applies, same weight as the long side.
 
+**Optional fourth layer — liquidity-sweep proxy (backtested 2026-08-18, small sample, read the
+caveat).** Since real LuxAlgo zones aren't available for a broad screen, a swing-pivot fractal
+(5-bar: a high/low that's the extreme of the 5 bars on each side) stands in for a zone. Entry
+requires: trend template intact, AND a bar that swept below/above the nearest known pivot and
+closed back through it, AND the reclaim HELD for 3 more trading days without closing back past
+the level. On a 15-name NASDAQ backtest, Jan–Aug 2026: a same-day reclaim (no hold requirement)
+was the worst-performing rule tested (20% hit rate, -8.3R over 15 trades) — a one-candle reclaim
+is mostly noise. Requiring the reclaim to hold 3 days moved it to the best hit rate of everything
+tested (38.5%, roughly breakeven at -0.1R over 13 trades). Sample size is tiny (12-13 trades) —
+this shows the DIRECTION of the effect (durability matters, same as sweep-vs-stall on a live
+chart) more reliably than it proves the exact numbers. Use it as a tie-breaker on close calls, not
+as a standalone signal.
+
 **This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
 is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
 below once the real chart, SWING CALL, and LuxAlgo zones are visible. Also sanity-check any result
@@ -121,6 +134,15 @@ rejected. Measure it before you agree with him.
 
 Always state the two numbers side by side: the extreme it actually printed vs the zone edge it
 had to exceed. On NBIS that was a ~286 high against a ~288 zone top — it never got out of the box.
+
+**A backtest hint, not a live rule yet: watch whether the reclaim holds.** A small 2026-08-18
+backtest (proxy zones, daily bars, 12-13 trades — genuinely small) found that a reclaim confirmed
+on a single candle was the worst-performing entry tested, while requiring the reclaim to hold for
+3 more bars without failing back through the level was the best hit rate of anything tested. This
+does NOT override step 4 above (a confirmed close is still the trigger — that's proven on his
+actual 11-trade log, not a tiny backtest). But when a close-through-the-zone is borderline or he's
+unsure, checking whether it held for a few more candles before committing is a reasonable
+tie-breaker worth watching on the live chart, not yet a required condition.
 
 **Why step 1 is a gate and not a score.** The candles at a zone look *identical* in an uptrend and
 a downtrend — same touch, same stall, same pullback. The pattern alone cannot tell him what comes
