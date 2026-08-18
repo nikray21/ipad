@@ -79,6 +79,23 @@ this shows the DIRECTION of the effect (durability matters, same as sweep-vs-sta
 chart) more reliably than it proves the exact numbers. Use it as a tie-breaker on close calls, not
 as a standalone signal.
 
+**The sweep signal is rare — check it against the full universe, not a pre-filtered shortlist.**
+Base rate from the backtest: ~0.53% chance any given ticker shows a confirmed held sweep on any
+given day, roughly one signal per ticker every 9 months. Checking it against an already-narrow
+list (e.g. the ~59 names that passed the trend/fade screen) has an 80%+ chance of showing zero
+on any given day — that's the expected outcome, not a sign the candidates are bad. Checking the
+full ~500-ticker universe instead averages ~2-3 signals/day. Run it broad, or treat it as an
+occasional bonus confirmation on whatever the trend/fade screen already produced — never require
+it to fire on a small list before acting.
+
+**When the sweep signal conflicts with the fade call, weight the sweep.** Cross-checked
+2026-08-18: PSX and VLO both qualified as fade-SHORTS (20%+ extended above a rising SMA), but a
+full-universe sweep check found both had just swept a prior low and closed back above it, holding
+for a full week — a bullish continuation signal, not a topping one. Extension alone said "stretched,
+fade it"; actual order flow said "the dip already got bought, trend continuing." Live sweep
+confirmation beats a pure distance-based fade call — flag the conflict and lean toward what the
+market actually did, not what the distance number implies it should do next.
+
 **This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
 is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
 below once the real chart, SWING CALL, and LuxAlgo zones are visible. Also sanity-check any result
