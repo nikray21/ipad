@@ -28,6 +28,14 @@ backwards twice). When step 2/3 grading depends on an exact zone edge or wick ex
 printed as text on the chart, ask him to read it off TradingView directly (hover/click the zone,
 or a tight crosshair screenshot of just that point) rather than inferring it from the image.
 
+## Scanning many tickers? Use /screener instead
+
+This skill grades ONE setup — a live chart, or a single named ticker checked against the SMA
+rules. For scanning a watchlist, the S&P 500, NASDAQ-100, or any broader universe for candidates,
+use `/screener` — same underlying rules (Minervini Trend Template on 4H bars, 2-5% entry zone,
+20%+ fade, the sweep-proxy 4th layer), built to run at scale instead of duplicated here. Anything
+`/screener` surfaces still needs the real grade below before he sizes it.
+
 ## Hard Rule — Alpaca is the ONLY data source, 4H is the timeframe
 
 **Decided 2026-08-18, final: Alpaca is the only API used for any price/bar data, ever. Never
@@ -36,133 +44,25 @@ was tested and rejected twice.** Yahoo-hourly-aggregated-into-4h drifted from hi
 (bucket boundaries didn't line up with any real feed). Webull's `M240` RTH-only bars were closer
 but still off by a wide margin (its 200-period 4H SMA on AMD computed $434.52 against his chart's
 real $510.67). **Alpaca's 4-hour bars matched his actual TradingView chart to the penny** — SMA200
-computed at $510.66 against his printed $510.67 — because Alpaca's default bar grid already
-includes extended hours the same way his chart's session settings do. That match is why this is
-now the permanent rule, not a preference.
+computed at $510.66 against his printed $510.67. That match is why this is the permanent rule.
 
-**API access:**
 ```
 Data endpoint:   https://data.alpaca.markets/v2/stocks/{symbol}/bars
-Multi-symbol:    https://data.alpaca.markets/v2/stocks/bars?symbols=A,B,C
 Auth headers:    APCA-API-KEY-ID: <key>
                  APCA-API-SECRET-KEY: <secret>
-Params:          timeframe=4Hour, start=<ISO8601>, limit=10000
-Pagination:      response includes next_page_token when more data remains --
-                 loop with &page_token=<token> until it's null. Each page has
-                 returned well under the requested limit in practice (~60-300
-                 bars/page) -- always loop, never assume one call is complete.
+Params:          timeframe=4Hour, start=<ISO8601, ~3-4 months back from TODAY>, limit=10000
+Pagination:      loop on next_page_token until null -- pages have run ~60-300
+                 bars each in practice, never assume one call is complete
 ```
-Trading-account auth (`https://paper-api.alpaca.markets/v2`) is separate from the data endpoint
-above and is never used by this skill — read-only market data only, same as every other rule here
-about never placing orders.
+Trading-account auth (`https://paper-api.alpaca.markets/v2`) is separate from this and is never
+used — read-only market data only. **Credentials live in an environment variable, never in this
+file or committed to the repo** — if unavailable in a session, ask him to set the env var rather
+than paste them in chat again. **Rate limit is 200 requests/minute** (from `X-Ratelimit-*`
+response headers) — a non-issue for single-ticker checks, but pace it for anything multi-symbol.
 
-**Getting enough bars:** for a 200-period SMA plus the 20-bar-ago slope check (220 bars minimum),
-request `start` about 3-4 months back from today rather than paginating from a fixed old date —
-pulling from `2025-01-01` forward hit a wall around 770 bars (roughly Sept 2025) without reaching
-the present in testing 2026-08-18, while starting ~3.5 months back reliably reached today in ~300
-bars across 2 pages. Anchor `start` relative to *today*, not a fixed historical date.
-
-**Credentials belong in an environment variable, never in this file or git.** The key/secret he
-provided live in this session's memory only — they are NOT written to SKILL.md, committed, or
-logged anywhere in the repo. For persistence across cloud sessions, he needs to set them as
-environment variables in the Claude Code environment's settings (outside git) — ask him to do that
-if a future session doesn't have them available, rather than asking him to paste them again in
-chat, and never propose committing them to the repo even if asked casually.
-
-**Rate limit — watch this, don't blow through it:** Alpaca returns `X-Ratelimit-Limit`,
-`X-Ratelimit-Remaining`, and `X-Ratelimit-Reset` (unix timestamp) on every response. Measured
-2026-08-18: **200 requests/minute** on this account's plan. For anything that's more than a
-handful of calls (a multi-symbol screen, a backtest pulling many tickers): check
-`X-Ratelimit-Remaining` periodically and pace requests (small sleep between calls, or batch via
-the multi-symbol endpoint) rather than firing everything at once — don't discover the limit by
-hitting a 429. The multi-symbol bars endpoint (`?symbols=A,B,C,...`) is the way to cut down request
-count for a watchlist-sized check; for full-universe screens (hundreds of tickers), pace it and
-expect it to take longer than the old Yahoo-batch approach did — that's the tradeoff for data
-that's actually correct.
-
-**A printed chart value still beats any API, Alpaca included.** The match on AMD was to the
-penny, but it's still a match, not a guarantee for every ticker/moment. If he has a chart open
-with an indicator's value printed in the legend, that number is what to grade against — Alpaca is
-for when there's no chart to read from, or to cross-check, not to override what's actually on his
-screen.
-
-## Screening Without a Live Chart
-
-For scanning a universe of tickers (not grading one specific setup) there's no SWING CALL or
-LuxAlgo data available — nothing to screenshot for hundreds of names. Use this systematic proxy
-instead, agreed with him 2026-08-18, computed on **Alpaca 4-hour bars** per the hard rule
-above — not daily:
-
-**Long — Minervini Trend Template, run on 4H bars** (his published 8-criteria filter for "is this
-actually a real uptrend," adapted from daily to his actual 4H trading timeframe):
-- Price above the 50-period, 150-period, AND 200-period 4H SMA
-- The SMAs stacked in order: 50 > 150 > 200
-- The 200-period 4H SMA itself trending up, not just price (compare to its value 20 bars ago)
-- Price within 25% of its 52-week high (still a calendar year of price range, just measured off
-  4H bar highs/lows)
-- Price at least 25–30% above its 52-week low
-
-**Entry zone on top of that:** price 2–5% above the 50-period 4H SMA — close enough to hop on the
-trend with room left to run, not chasing. This is also literally Minervini's own advice: buy near
-the rising trend average, don't chase an extended stock.
-
-**Overextended = a fade trade, opposite direction.** 20%+ away from the 50 SMA is no longer just a
-"don't chase" flag (per his call on 2026-08-18) — it's the entry trigger for the OPPOSITE trade
-of what the trend template says. A name 20%+ ABOVE a rising 50 SMA gets SHORTED. A name 20%+ BELOW
-a falling 50 SMA gets BOUGHT. Same mechanics as the 2-5% trend trade otherwise — same ATR stop
-math, same 4% risk budget, same ≥2:1 target — just the direction flipped and the zone is 20%+
-instead of 2-5%.
-
-**This is deliberately counter-trend — label it as such, always.** A fade trade passing this rule
-is trading AGAINST the SMA stack and the 52-week-range position, not with it. That's the point,
-not a violation of the trend rule above — but never grade or log a fade trade as if it were a
-trend-following entry. This is exactly the distinction that would have caught the NBIS short
-(shorted 32.66% above a rising SMA, scored 5/10 when it should've capped at 1-2/10 as an
-accidental trend violation): if a trade is 20%+ against the trend, it must be an intentional,
-clearly-labeled fade — not a mis-scored trend trade.
-
-**Shorts are the exact opposite, no hedging.** Flip every long condition: price below the 50, 150,
-AND 200-period 4H SMA; SMAs stacked downward (50 < 150 < 200); the 200-period 4H SMA itself
-trending down; price within 25% of its 52-week low; price at least 25–30% below its 52-week high.
-Entry zone is 2–5% below the falling 50-period 4H SMA. Same fade-at-20%+ rule applies, same weight
-as the long side.
-
-**Optional fourth layer — liquidity-sweep proxy (backtested 2026-08-18, small sample, read the
-caveat).** Since real LuxAlgo zones aren't available for a broad screen, a swing-pivot fractal
-(5-bar: a high/low that's the extreme of the 5 bars on each side) stands in for a zone. Entry
-requires: trend template intact, AND a bar that swept below/above the nearest known pivot and
-closed back through it, AND the reclaim HELD for 3 more trading days without closing back past
-the level. On a 15-name NASDAQ backtest, Jan–Aug 2026: a same-day reclaim (no hold requirement)
-was the worst-performing rule tested (20% hit rate, -8.3R over 15 trades) — a one-candle reclaim
-is mostly noise. Requiring the reclaim to hold 3 days moved it to the best hit rate of everything
-tested (38.5%, roughly breakeven at -0.1R over 13 trades). Sample size is tiny (12-13 trades) —
-this shows the DIRECTION of the effect (durability matters, same as sweep-vs-stall on a live
-chart) more reliably than it proves the exact numbers. Use it as a tie-breaker on close calls, not
-as a standalone signal.
-
-**The sweep signal is rare — check it against the full universe, not a pre-filtered shortlist.**
-Base rate from the backtest: ~0.53% chance any given ticker shows a confirmed held sweep on any
-given day, roughly one signal per ticker every 9 months. Checking it against an already-narrow
-list (e.g. the ~59 names that passed the trend/fade screen) has an 80%+ chance of showing zero
-on any given day — that's the expected outcome, not a sign the candidates are bad. Checking the
-full ~500-ticker universe instead averages ~2-3 signals/day. Run it broad, or treat it as an
-occasional bonus confirmation on whatever the trend/fade screen already produced — never require
-it to fire on a small list before acting.
-
-**When the sweep signal conflicts with the fade call, weight the sweep.** Cross-checked
-2026-08-18: PSX and VLO both qualified as fade-SHORTS (20%+ extended above a rising SMA), but a
-full-universe sweep check found both had just swept a prior low and closed back above it, holding
-for a full week — a bullish continuation signal, not a topping one. Extension alone said "stretched,
-fade it"; actual order flow said "the dip already got bought, trend continuing." Live sweep
-confirmation beats a pure distance-based fade call — flag the conflict and lean toward what the
-market actually did, not what the distance number implies it should do next.
-
-**This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
-is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
-below once the real chart, SWING CALL, and LuxAlgo zones are visible. Also sanity-check any result
-with an extreme SMA distance (30%+) against a stock split before trusting it — MNST showed a fake
-47% "breakdown" on 2026-08-18 that was actually a 2-for-1 split the unadjusted price history
-didn't account for.
+**A printed chart value still beats any API, Alpaca included.** If he has a chart open with an
+indicator's value printed in the legend, that number is what to grade against — Alpaca is for
+when there's no chart to read from, not to override what's actually on his screen.
 
 ## The 6-Step Checklist (bullish)
 
