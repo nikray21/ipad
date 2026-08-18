@@ -106,18 +106,15 @@ LONG   Level = nearest LuxAlgo zone BOTTOM below price
 SHORT  Level = nearest LuxAlgo zone TOP above price
        Stop  = Level + (1.5 × ATR)
 Risk/sh = Entry − Stop
-Shares = $risk budget ÷ Risk/sh       ← budget $75–100 (~1.5–2% of $5K)
-R:R    = (Target − Entry) ÷ Risk/sh   ← must be ≥ 2.0
+Shares = $risk budget ÷ Risk/sh       ← budget ~$200 (4% of $5K)
+R:R    = (Target − Entry) ÷ Risk/sh   ← must be ≥ 2.0 (target ~8% reward against 4% risk)
 ```
 
 Common mistake to catch: `Entry − 1.5×ATR` — that parks the stop on top of support so a normal dip stops him out at the bounce spot. If his stop is inside the 1.5×ATR "wiggle zone" below the level, flag it as noise-bait.
 
-**Always round Shares DOWN, never up.** A trade-log review on 2026-08-18 found 4 of 11 trades (PLTR, RKLB, COIN, HOOD) sized at 2.3–2.4% risk instead of the 1.5–2% cap — every one of them at entry sizing, not mid-trade drift (stops were honored 100% of the time). Rounding the naive division up to the next whole share is what did it. Before presenting a share count, verify `Shares × Risk/sh ≤ $100` — if it doesn't, drop a share.
+**Always round Shares DOWN, never up.** A trade-log review on 2026-08-18 found 4 of 11 trades (PLTR, RKLB, COIN, HOOD) sized over the risk budget in place at the time — every one of them at entry sizing, not mid-trade drift (stops were honored 100% of the time). Rounding the naive division up to the next whole share is what did it. Before presenting a share count, verify `Shares × Risk/sh ≤ $200` — if it doesn't, drop a share.
 
-## Portfolio Gates
-
-- Max **2 open positions** / ~**4% of account** ($200 on $5K) at risk in total. Count his open trades before approving a new one; a perfect setup still fails if the book is full.
-- Fun-money event contracts ($10–30) don't count against this cap.
+*(Updated 2026-08-18: risk budget moved from 1.5–2% to 4% of account, reward target to ~8% (still ≥2:1 R:R), and the per-position/portfolio cap below was removed at his request — there's no longer a limit on number of open positions or total risk across the book.)*
 
 ## Post-Trade Log Review
 
