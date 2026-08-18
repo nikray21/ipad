@@ -28,23 +28,23 @@ Pagination:      loop on next_page_token until null -- one call is never the
                  whole dataset, pages have run ~60-300 bars each in practice
 ```
 
-## CRITICAL — a full-universe run corrupted 85% of its results on 2026-08-18, unresolved
+## CRITICAL — pagination page-limit bug, fixed 2026-08-18, keep the guardrail anyway
 
-Running the screener across the full 518-ticker S&P 500 + NASDAQ-100 universe (many hundreds of
-sequential Alpaca calls) produced results where **33 of 39 hits (85%) had a "price" that didn't
-match a fresh direct pull of the same symbol** — not close, wildly off (AMD showed $256.60 against
-a real $484.39; MU showed $239 against a real $940). Small batches (4-5 tickers) verified correct
-earlier the same session. Root cause not yet found — suspected to be something in this
-environment's network path (a proxy in front of outbound requests) misbehaving under a long run of
-same-host sequential calls, not an Alpaca-side data problem, but this is unconfirmed.
+A full-universe run on 2026-08-18 returned "prices" wildly off reality for 85% of hits (AMD showed
+$256.60 against a real $484.39). Root cause found: the pagination loop capped at **8 pages**, but
+420 days of 4H bars needs **~30+ pages** (each page returns ~40-50 bars). At 8 pages the fetch
+silently stopped around **2025-11-05** and the code treated that stale last bar as "today's price"
+— every downstream number (SMAs, 52-week range) was built on that same truncated window too. Not a
+network/proxy issue, not bad Alpaca data — just too low a page cap. **Fix: the pagination loop must
+run enough iterations to actually reach the present (50 is generous headroom), and the last bar's
+timestamp should be sanity-checked as recent (within a few days) before trusting the pull at all.**
 
-**Until this is root-caused: verification is not optional, it's the last step of every run.**
-After computing candidates, before presenting ANY of them: re-fetch a fresh 1-day bar for every
-symbol that made the long/short/fade lists and confirm the price is within ~3% of what the
-screener computed. Drop anything that doesn't match — don't downgrade it to "lower confidence,"
-remove it. If more than a small fraction of hits fail this check, treat the WHOLE run as unreliable
-and say so plainly rather than presenting a partial list — an 85% failure rate means even the
-"passing" few could be coincidental matches, not confirmed-correct data.
+**Keep the verification pass as a permanent safeguard regardless.** Even with the page-limit fixed,
+after computing candidates and before presenting ANY of them: re-fetch a fresh 1-day bar for every
+symbol that made the long/short/fade lists and confirm the price is within ~3% of what the screener
+computed. Drop anything that doesn't match. This is what caught the pagination bug in the first
+place — cheap insurance (one extra call per finalist, not per scan) against whatever the next
+version of this mistake turns out to be.
 
 **Credentials live in an environment variable, never in this file, never committed to the repo.**
 If they're not available in a session, ask him to set them in the Claude Code environment's env
