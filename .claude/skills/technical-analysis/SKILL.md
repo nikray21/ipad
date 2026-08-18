@@ -100,6 +100,30 @@ Common mistake to catch: `Entry − 1.5×ATR` — that parks the stop on top of 
 - Max **2 open positions** / ~**4% of account** ($200 on $5K) at risk in total. Count his open trades before approving a new one; a perfect setup still fails if the book is full.
 - Fun-money event contracts ($10–30) don't count against this cap.
 
+## Known leaks from the trade journal (read 2026-08-18)
+
+Read against his Trading Journal sheet (11 closed trades, 8/7–8/17/2026,
+10W-1L). Three patterns recur enough to grade for proactively:
+
+- **Position sizing drifts over the 2% cap.** PLTR, RKLB, COIN, HOOD all
+  risked 2.3–2.4% of the $5K account — 4 of 11 trades, matching the sheet's
+  own "Over Max Risk Setting" counter. Stop honored 100% of the time, so the
+  leak is at entry sizing, not mid-trade discipline: check his share count
+  against the $75–100 risk budget before he places the order, not after.
+- **Entering on a touch, not a close.** COIN ("too early... should've waited
+  for sma break"), AMD ("got faked out... should have waited for the candle
+  to close above the resistance line"), HOOD (bounced off the channel top
+  and failed) are all the same step-4 leak this playbook already grades —
+  taking the wick, not the close. All three still won on market momentum, so
+  the leak doesn't show up in his P&L, only in his own notes — grade the
+  process, not the outcome, same as his self-assessment score already does
+  (RKLB was a win scored 2/10; AAPL was his only loss, also scored 2/10).
+- **The 50-SMA distance filter is what separated his one loss from his best
+  win.** AAPL (only loss): "didn't follow my rule of above 50 sma by 2-5%."
+  CVX (self-scored 10/10, "perfect trade"): "above 3.6% from the 50 sma."
+  When price is only barely above the SMA, ask about the distance explicitly
+  before grading step 1 a pass.
+
 ## Output Format
 
 Keep it short (his standing preference). Always this shape:
