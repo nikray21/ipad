@@ -28,23 +28,60 @@ backwards twice). When step 2/3 grading depends on an exact zone edge or wick ex
 printed as text on the chart, ask him to read it off TradingView directly (hover/click the zone,
 or a tight crosshair screenshot of just that point) rather than inferring it from the image.
 
+## Hard Rule — Webull is the data source, 4H is the timeframe
+
+**Decided 2026-08-18, standard from now on: use the Webull MCP (`mcp__Webull__get_stock_bars` /
+`get_stock_bars_single`) for any price/bar data pulled without a live chart screenshot.** Never
+reconstruct 4h bars by grouping Yahoo hourly candles — that was tried and produced numbers that
+didn't match his real TradingView chart, because the bucket boundaries don't line up with how any
+real feed builds 4h candles. Bar-boundary drift, not a math error, and Webull's native `M240`
+bars remove it.
+
+- `timespan: "M240"`, `trading_sessions: "RTH"`, `category: "US_STOCK"` — regular session 4h bars,
+  matching what he actually trades off.
+- Up to 1200 bars per call (~2.4 years of RTH 4h bars, 2 bars/trading day) — plenty for a
+  200-period SMA plus the 20-bar-ago slope check.
+- `get_stock_bars` takes up to 20 symbols per call for checking a watchlist at once;
+  `get_stock_bars_single` for one symbol needing more control (start/end time, real_time_required).
+- **His trading timeframe is 4H, not daily.** Every SMA/trend-template check below (50/150/200,
+  slope, entry-zone distance) runs on 4H bars now, not daily closes — daily was a placeholder used
+  before this was resolved. The Minervini Trend Template's *logic* (SMA stack, 52-week range
+  position) still applies; only the bar granularity changed, from daily to 4H RTH.
+- If a large multi-hundred-ticker screen makes 20-symbols-per-call impractical, daily bars (Yahoo)
+  remain an acceptable **first-pass filter** to narrow the universe — but any name that survives to
+  an actual TAKE IT / SKIP verdict must be re-checked on Webull 4H bars before he acts on it.
+
+**A printed chart value always beats any API, Webull included.** Discovered 2026-08-18 on AMD:
+Webull's 200-period 4H SMA computed to $434.52; his own TradingView chart, with an actual `SMA 200
+close` indicator loaded, printed $510.67 — a huge gap, on the same ticker, same nominal
+"200-period 4H SMA." Neither was wrong: Webull's feed was RTH-only (2 bars/trading day), while
+TradingView's 4h bars are built on whatever session settings his chart uses (commonly including
+extended hours, which packs more bars into each day) — same period count, very different amount
+of real calendar time covered, so a materially different number. There is no way to guarantee any
+external API matches his specific chart's bar construction. **Rule: if he has a chart open and an
+indicator's value is printed in the legend, that number is the one to grade against — full stop,
+never override it with a Webull or Yahoo recomputation.** Webull is for screening when there's no
+chart to read from, not a tiebreaker against one that exists.
+
 ## Screening Without a Live Chart
 
 For scanning a universe of tickers (not grading one specific setup) there's no SWING CALL or
 LuxAlgo data available — nothing to screenshot for hundreds of names. Use this systematic proxy
-instead, agreed with him 2026-08-18:
+instead, agreed with him 2026-08-18, computed on **Webull 4H (M240, RTH) bars** per the hard rule
+above — not daily:
 
-**Long — Minervini Trend Template** (his published 8-criteria filter for "is this actually a real
-uptrend," fully computable from price history, no zone-reading needed):
-- Price above the 50-day, 150-day, AND 200-day SMA
+**Long — Minervini Trend Template, run on 4H bars** (his published 8-criteria filter for "is this
+actually a real uptrend," adapted from daily to his actual 4H trading timeframe):
+- Price above the 50-period, 150-period, AND 200-period 4H SMA
 - The SMAs stacked in order: 50 > 150 > 200
-- The 200-day SMA itself trending up, not just price
-- Price within 25% of its 52-week high
+- The 200-period 4H SMA itself trending up, not just price (compare to its value 20 bars ago)
+- Price within 25% of its 52-week high (still a calendar year of price range, just measured off
+  4H bar highs/lows)
 - Price at least 25–30% above its 52-week low
 
-**Entry zone on top of that:** price 2–5% above the 50-day SMA — close enough to hop on the trend
-with room left to run, not chasing. This is also literally Minervini's own advice: buy near the
-rising 50-day line, don't chase an extended stock.
+**Entry zone on top of that:** price 2–5% above the 50-period 4H SMA — close enough to hop on the
+trend with room left to run, not chasing. This is also literally Minervini's own advice: buy near
+the rising trend average, don't chase an extended stock.
 
 **Overextended = a fade trade, opposite direction.** 20%+ away from the 50 SMA is no longer just a
 "don't chase" flag (per his call on 2026-08-18) — it's the entry trigger for the OPPOSITE trade
@@ -62,9 +99,10 @@ accidental trend violation): if a trade is 20%+ against the trend, it must be an
 clearly-labeled fade — not a mis-scored trend trade.
 
 **Shorts are the exact opposite, no hedging.** Flip every long condition: price below the 50, 150,
-AND 200-day SMA; SMAs stacked downward (50 < 150 < 200); the 200-day SMA itself trending down;
-price within 25% of its 52-week low; price at least 25–30% below its 52-week high. Entry zone is
-2–5% below the falling 50-day SMA. Same fade-at-20%+ rule applies, same weight as the long side.
+AND 200-period 4H SMA; SMAs stacked downward (50 < 150 < 200); the 200-period 4H SMA itself
+trending down; price within 25% of its 52-week low; price at least 25–30% below its 52-week high.
+Entry zone is 2–5% below the falling 50-period 4H SMA. Same fade-at-20%+ rule applies, same weight
+as the long side.
 
 **Optional fourth layer — liquidity-sweep proxy (backtested 2026-08-18, small sample, read the
 caveat).** Since real LuxAlgo zones aren't available for a broad screen, a swing-pivot fractal
