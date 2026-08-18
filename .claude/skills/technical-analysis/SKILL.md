@@ -30,11 +30,36 @@ or a tight crosshair screenshot of just that point) rather than inferring it fro
 
 ## Scanning many tickers? Use /screener instead
 
-This skill grades ONE setup — a live chart, or a single named ticker checked against the SMA
-rules. For scanning a watchlist, the S&P 500, NASDAQ-100, or any broader universe for candidates,
-use `/screener` — same underlying rules (Minervini Trend Template on 4H bars, 2-5% entry zone,
-20%+ fade, the sweep-proxy 4th layer), built to run at scale instead of duplicated here. Anything
-`/screener` surfaces still needs the real grade below before he sizes it.
+This skill grades ONE setup — a live chart, or a single named ticker. For scanning a watchlist,
+the NASDAQ-100, S&P 500, or any broader universe, use `/screener`. **Both skills use the SAME
+trend rules below — if you change one, change the other.** Anything `/screener` surfaces still
+needs the real grade below before he sizes it.
+
+## THE TREND RULES (shared with /screener — keep identical)
+
+All on **Alpaca 4H bars**. Three conditions per side, nothing else:
+
+**LONG trend confirmed when ALL THREE are true:**
+1. Price is above the 50, 150, AND 200 SMA
+2. The SMAs are stacked: 50 > 150 > 200
+3. The 200 SMA is rising (higher than its value 20 bars ago)
+
+**SHORT trend confirmed when ALL THREE are true:**
+1. Price is below the 50, 150, AND 200 SMA
+2. The SMAs are stacked down: 50 < 150 < 200
+3. The 200 SMA is falling (lower than its value 20 bars ago)
+
+**Then the entry zone decides the trade:**
+- **2–5% from the 50 SMA** → trend trade, same direction as the trend
+- **20%+ from the 50 SMA** → fade trade, OPPOSITE direction to the trend
+- **Anything else** → no trade. Not "weak signal," not "close enough." No trade.
+
+*(Updated 2026-08-18 at his direction: the 52-week-high and 52-week-low conditions were REMOVED
+from both sides. They previously blocked INTC — under all three falling SMAs, stacked down, 32%
+below its high — solely because it sat far above its 52-week low after crashing and partially
+recovering. Both range conditions are gone; the three SMA conditions above are the whole trend
+filter now. This means the filter is no longer Minervini's published template — it's the SMA-stack
+core of it, which is the part he wants.)*
 
 ## Hard Rule — Alpaca is the ONLY data source, 4H is the timeframe
 

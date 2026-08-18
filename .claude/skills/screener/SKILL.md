@@ -1,135 +1,118 @@
 ---
 name: screener
-description: Scan a universe of tickers (watchlist, S&P 500, NASDAQ-100, or a custom list) for names that meet Nikil's long or short trend/fade rules — Minervini Trend Template on 4H bars, 2-5% entry zone, 20%+ fade — using live Alpaca data. Use when he says "run the screener", "screen the market", "what meets our requirements", "find me longs/shorts", or wants a shortlist of candidates rather than a grade on one specific ticker/chart.
-argument-hint: [universe: watchlist | sp500 | nasdaq100 | tickers,comma,separated]
+description: Scan a universe of tickers (watchlist, NASDAQ-100, S&P 500, or a custom list) for names that meet Nikil's long or short trend rules — SMA stack on 4H bars, 2-5% entry zone, 20%+ fade, plus a liquidity-sweep check — using live Alpaca data. Use when he says "run the screener", "screen the market", "what meets our requirements", "find me longs/shorts", or wants a shortlist of candidates rather than a grade on one specific ticker/chart.
+argument-hint: [universe: watchlist | nasdaq100 | sp500 | tickers,comma,separated]
 ---
 
 # Screener — Universe Scan
 
-Finds candidates across many tickers. This is the "who's worth a closer look" pass — it does NOT
-grade a trade. Once a name passes here, hand it to `/technical-analysis` for the real grade (the
-live SWING CALL + LuxAlgo 6-step check) before he sizes anything. Never present a screener hit as
-a TAKE IT — it's a shortlist, always say so.
+Finds candidates across many tickers. Produces a **shortlist, never a trade** — every hit still
+goes to `/technical-analysis` for the live 6-step grade (SWING CALL + LuxAlgo zone) before he
+sizes anything. Never present a screener hit as a TAKE IT.
 
-## Data source — same hard rule as /technical-analysis
+## THE RULES (identical to /technical-analysis — keep them in sync)
 
-**Alpaca only. Never yfinance/Yahoo, never Webull, never any other reconstruction.** Decided
-2026-08-18: Alpaca's 4-hour bars matched his real TradingView chart's SMA(200) to the penny
-($510.66 vs $510.67) where Yahoo-hourly-aggregation and Webull's RTH-only bars both drifted by a
-wide margin. This is the only source that's been verified to match what he actually trades off.
+All on **Alpaca 4H bars**.
+
+**LONG trend confirmed when ALL THREE are true:**
+1. Price above the 50, 150, AND 200 SMA
+2. Stacked: 50 > 150 > 200
+3. 200 SMA rising (vs its value 20 bars ago)
+
+**SHORT trend confirmed when ALL THREE are true:**
+1. Price below the 50, 150, AND 200 SMA
+2. Stacked down: 50 < 150 < 200
+3. 200 SMA falling (vs its value 20 bars ago)
+
+**Entry zone decides the trade:**
+- **2–5% from the 50 SMA** → trend trade, same direction as the trend
+- **20%+ from the 50 SMA** → fade trade, OPPOSITE direction to the trend
+- **Anything else** → no trade
+
+There are **no 52-week high/low conditions** — removed 2026-08-18 at his direction, on both sides.
+Don't reintroduce them.
+
+**Fade trades are counter-trend — always label them as such.** A fade is deliberately trading
+against the SMA stack. Never present one next to trend entries without the distinction being
+obvious; a fade mislabeled as a trend trade is exactly what mis-scored the NBIS short.
+
+## Run it in stages — cheap filters first
+
+Don't compute everything for every ticker. Each stage runs only on what survived the last:
+
+1. **Stage 1 — pull bars once per ticker** (the expensive part: ~30+ pages each). Do the split
+   check and staleness check here and drop anything that fails.
+2. **Stage 2 — SMA stack + 200 slope.** Pure arithmetic on bars already in memory, no new calls.
+   Most of the universe dies here.
+3. **Stage 3 — entry zone** (2–5% or 20%+). Also free. Usually leaves a handful of names.
+4. **Stage 4 — liquidity-sweep check on survivors only.** ALWAYS run this, don't skip it and don't
+   treat it as optional — he asked for it to be automatic on 2026-08-18 after a run omitted it.
+   Pivot detection is O(n) per ticker so it's cheap, but only worth doing on names that already
+   passed stages 2–3.
+5. **Stage 5 — verification.** One fresh 1-day bar per finalist; drop anything whose price differs
+   from the computed price by more than ~3%.
+
+Stages 2–5 add negligible time. The wall-clock cost is stage 1, so the only real lever is
+universe size — say so up front if he asks for something large.
+
+## Data source — Alpaca only, hard rule
+
+**Never yfinance/Yahoo, never Webull.** Alpaca's 4H bars matched his real TradingView SMA(200) to
+the penny ($510.66 vs $510.67) where both other sources drifted badly.
 
 ```
 Data endpoint:   https://data.alpaca.markets/v2/stocks/{symbol}/bars
-Multi-symbol:    https://data.alpaca.markets/v2/stocks/bars?symbols=A,B,C
 Auth headers:    APCA-API-KEY-ID: <key>
                  APCA-API-SECRET-KEY: <secret>
 Params:          timeframe=4Hour, start=<ISO8601, ~420 days back>, limit=10000
-Pagination:      loop on next_page_token until null -- one call is never the
-                 whole dataset, pages have run ~60-300 bars each in practice
+Pagination:      loop on next_page_token until null
 ```
 
-## CRITICAL — pagination page-limit bug, fixed 2026-08-18, keep the guardrail anyway
+**Credentials live in an environment variable — never in this file, never committed.** If missing
+in a session, ask him to set the env var rather than paste them in chat.
 
-A full-universe run on 2026-08-18 returned "prices" wildly off reality for 85% of hits (AMD showed
-$256.60 against a real $484.39). Root cause found: the pagination loop capped at **8 pages**, but
-420 days of 4H bars needs **~30+ pages** (each page returns ~40-50 bars). At 8 pages the fetch
-silently stopped around **2025-11-05** and the code treated that stale last bar as "today's price"
-— every downstream number (SMAs, 52-week range) was built on that same truncated window too. Not a
-network/proxy issue, not bad Alpaca data — just too low a page cap. **Fix: the pagination loop must
-run enough iterations to actually reach the present (50 is generous headroom), and the last bar's
-timestamp should be sanity-checked as recent (within a few days) before trusting the pull at all.**
+**Rate limit: 200 requests/minute.** Sleep ~0.3-0.4s between calls. A 100-ticker run is ~3000
+requests across pagination — pace it and run it in the background.
 
-**Keep the verification pass as a permanent safeguard regardless.** Even with the page-limit fixed,
-after computing candidates and before presenting ANY of them: re-fetch a fresh 1-day bar for every
-symbol that made the long/short/fade lists and confirm the price is within ~3% of what the screener
-computed. Drop anything that doesn't match. This is what caught the pagination bug in the first
-place — cheap insurance (one extra call per finalist, not per scan) against whatever the next
-version of this mistake turns out to be.
+## Three bugs that have already burned us — guard against all three
 
-**The verification pass only checks price, not the SMA it's compared against — a split can still
-sneak past it.** After the pagination fix, the rerun surfaced MNST as a 20%+ fade candidate. Its
-CURRENT price passed verification (it matched reality), but the 50-SMA it was measured against was
-still built from bars spanning MNST's 2-for-1 split on 2026-08-10/11 — the split-sanity-check only
-scanned the last 15 bars (~4 days), and the split was ~24-32 bars back, outside that window.
-Verification confirms the price is real; it does NOT confirm the SMA it's being compared to is
-clean. **Fix: scan the FULL pulled bar history for a halving/doubling pattern, not just a recent
-tail window** — a split anywhere in the lookback corrupts every SMA computed across it, however
-long ago it happened within that window.
-
-**Credentials live in an environment variable, never in this file, never committed to the repo.**
-If they're not available in a session, ask him to set them in the Claude Code environment's env
-vars (outside git) rather than pasting them in chat again.
-
-**Rate limit: 200 requests/minute on his account (measured 2026-08-18).** Every response carries
-`X-Ratelimit-Limit` / `X-Ratelimit-Remaining` / `X-Ratelimit-Reset`. For a full-universe run
-(hundreds of tickers × several pages each = many hundreds of requests):
-- Pace requests — don't fire everything at once. A small sleep between calls (~0.3-0.5s) keeps a
-  sustained run comfortably under 200/min without needing to poll the header on every call.
-- Check `X-Ratelimit-Remaining` periodically during a long run; back off if it's dropping faster
-  than expected rather than waiting to hit a 429.
-- A full 500+-ticker screen takes real wall-clock time at this pace (expect several minutes) —
-  that's the tradeoff for data that's actually correct. Run it in the background.
-
-## The rules being screened for
-
-Identical logic to `/technical-analysis`'s screening section — this skill exists to *run* it at
-scale, not to redefine it. Full detail (why 2-5%, why 20%, the fade rule, the sweep-proxy 4th
-layer) lives there; summary below.
-
-**Long — Minervini Trend Template, on 4H bars:**
-- Price above the 50-period, 150-period, AND 200-period 4H SMA
-- Stacked in order: 50 > 150 > 200
-- The 200-period 4H SMA itself trending up (compare to its value 20 bars ago)
-- Price within 25% of its 52-week high (measured off 4H bar highs over the last 365 days)
-- Price at least 25-30% above its 52-week low
-- **Entry zone:** price 2-5% above the 50-period SMA
-
-**Short — the exact mirror, no hedging:** price below all three, stacked downward (50 < 150 <
-200), the 200-period SMA declining, within 25% of the 52-week low, 25%+ below the 52-week high,
-entry zone 2-5% below the falling 50 SMA.
-
-**Fade — 20%+ from the 50 SMA, opposite direction of the underlying trend:** 20%+ above a rising
-SMA gets flagged as a SHORT fade candidate; 20%+ below a falling SMA gets flagged LONG. This is
-deliberately counter-trend — label it as such, always, never present it next to trend-following
-hits without the distinction being obvious.
-
-**Split sanity check — mandatory before trusting any result.** Flag and exclude any ticker where a
-single-bar move is a near-exact halving or doubling (ratio 0.47-0.53 or 1.9-2.1 between adjacent
-closes) — that's an unadjusted stock split, not a real move. MNST produced a fake 47% "breakdown"
-this way on 2026-08-18 before this check existed.
+1. **Pagination cap too low.** 420 days of 4H bars needs ~30+ pages (~40-50 bars each). An 8-page
+   cap silently stopped in Nov 2025 and treated a stale bar as "today," corrupting 85% of a run's
+   results (AMD showed $256.60 against a real $484.39). **Loop until `next_page_token` is null,
+   and sanity-check the last bar's timestamp is within a few days of now.**
+2. **Split contamination.** A stock split anywhere in the pulled window corrupts every SMA computed
+   across it. MNST showed a fake 47% "breakdown" from its 2-for-1. **Scan the FULL bar history for
+   an adjacent-close ratio of 0.47-0.53 or 1.9-2.1, not just a recent tail window** — the split
+   that slipped through was ~24-32 bars back, outside a 15-bar check.
+3. **Price verification only checks price, not the SMA.** A name can pass verification (its live
+   price is real) while the SMA it's compared against is still split-corrupted. Both checks are
+   needed; neither substitutes for the other.
 
 ## Universe sources
 
-- **`watchlist`** — his current tracked names (ask him if not already known this session, or use
-  whatever he's most recently referenced as his watchlist).
-- **`sp500`** — S&P 500 constituents. No single clean live source; pull from a maintained list
-  (e.g. the `datasets/s-and-p-500-companies` GitHub CSV) and cross-check against a broker table if
-  anything looks stale.
-- **`nasdaq100`** — `https://api.nasdaq.com/api/quote/list-type/nasdaq100` (Nasdaq's own public
-  screener API, no auth needed) returns the current constituent list directly.
-- **custom list** — whatever tickers he names.
+- **`watchlist`** — his tracked names; ask if not already known this session.
+- **`nasdaq100`** — `https://api.nasdaq.com/api/quote/list-type/nasdaq100` (public, no auth).
+- **`sp500`** — a maintained constituents list (e.g. the `datasets/s-and-p-500-companies` CSV).
+- **custom** — whatever tickers he names.
 
-Ticker LISTS (which symbols exist) can come from any reasonable source — that's just metadata.
-**Price/bar DATA for the actual screening math must always be Alpaca**, per the hard rule above.
+Ticker LISTS can come from any source — that's just metadata. **Price/bar DATA must always be
+Alpaca.**
 
 ## Output format
 
-Keep it short, same standing preference as `/technical-analysis`. Three buckets:
+Short. Three buckets, in this order:
 
-1. **Longs** — ranked by strongest trend (closest to 52-week high, or steepest 200-SMA slope)
-2. **Shorts** — same, mirrored
-3. **Fades** — clearly labeled counter-trend, never mixed into the trend lists
+1. **Longs** — symbol, price, % from 50 SMA, sweep status
+2. **Shorts** — same
+3. **Fades** — clearly marked counter-trend, never mixed into the above
 
-For each hit: symbol, price, distance from 50 SMA, and one line of why it qualified. Always close
-with: this is a shortlist, not a trade — run `/technical-analysis` on the real chart before sizing
-anything, and sanity-check any 30%+ SMA-distance outlier against a stock split before trusting it.
+Close with: this is a shortlist, run `/technical-analysis` on the real chart before sizing.
 
 ## Critical rules
 
 1. Never place, modify, or cancel orders.
-2. A printed value from his actual TradingView chart always beats a screener/API number — if he's
-   cross-checking a specific hit against his live chart and they disagree, his chart wins.
-3. Every number in the output must trace to a real Alpaca pull — never estimate or recall a prior
-   run's numbers as if they were current when asked to "run it" again.
-4. Don't editorialize a fade as a trend call or vice versa — the labeling distinction is load-
-   bearing, not cosmetic (this is the exact mistake that mis-scored the NBIS short).
+2. A printed value from his live TradingView chart beats any screener number.
+3. Every number must trace to a real Alpaca pull this run — never recall a prior run's numbers as
+   current.
+4. If a large share of finalists fail verification, say the whole run is unreliable rather than
+   presenting a partial list.
