@@ -28,6 +28,41 @@ backwards twice). When step 2/3 grading depends on an exact zone edge or wick ex
 printed as text on the chart, ask him to read it off TradingView directly (hover/click the zone,
 or a tight crosshair screenshot of just that point) rather than inferring it from the image.
 
+## Screening Without a Live Chart
+
+For scanning a universe of tickers (not grading one specific setup) there's no SWING CALL or
+LuxAlgo data available — nothing to screenshot for hundreds of names. Use this systematic proxy
+instead, agreed with him 2026-08-18:
+
+**Long — Minervini Trend Template** (his published 8-criteria filter for "is this actually a real
+uptrend," fully computable from price history, no zone-reading needed):
+- Price above the 50-day, 150-day, AND 200-day SMA
+- The SMAs stacked in order: 50 > 150 > 200
+- The 200-day SMA itself trending up, not just price
+- Price within 25% of its 52-week high
+- Price at least 25–30% above its 52-week low
+
+**Entry zone on top of that:** price 2–5% above the 50-day SMA — close enough to hop on the trend
+with room left to run, not chasing. This is also literally Minervini's own advice: buy near the
+rising 50-day line, don't chase an extended stock.
+
+**Overextended flag:** 20%+ away from the 50 SMA (either direction) = flagged as stretched, not a
+new trade signal. Elevated risk of reverting back toward the average, but not a guaranteed
+reversal — a strong trend can also just consolidate sideways while the SMA catches up rather than
+snapping back.
+
+**Shorts are a mirror, not a citation.** Minervini and O'Neil are long-only growth methodologies —
+there's no published short-side Trend Template. The short screen below is his own inversion of
+the same logic (price below all three SMAs, stacked downward, near the 52-week low, far from the
+high, 2–5% below a falling 50 SMA for entry) — treat it as looser-fitting than the long side.
+
+**This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
+is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
+below once the real chart, SWING CALL, and LuxAlgo zones are visible. Also sanity-check any result
+with an extreme SMA distance (30%+) against a stock split before trusting it — MNST showed a fake
+47% "breakdown" on 2026-08-18 that was actually a 2-for-1 split the unadjusted price history
+didn't account for.
+
 ## The 6-Step Checklist (bullish)
 
 Grade each step ✓/✗ explicitly. ALL SIX or no trade — 4/6 is not a pass.
