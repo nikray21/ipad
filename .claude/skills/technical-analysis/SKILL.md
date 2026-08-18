@@ -46,15 +46,25 @@ uptrend," fully computable from price history, no zone-reading needed):
 with room left to run, not chasing. This is also literally Minervini's own advice: buy near the
 rising 50-day line, don't chase an extended stock.
 
-**Overextended flag:** 20%+ away from the 50 SMA (either direction) = flagged as stretched, not a
-new trade signal. Elevated risk of reverting back toward the average, but not a guaranteed
-reversal — a strong trend can also just consolidate sideways while the SMA catches up rather than
-snapping back.
+**Overextended = a fade trade, opposite direction.** 20%+ away from the 50 SMA is no longer just a
+"don't chase" flag (per his call on 2026-08-18) — it's the entry trigger for the OPPOSITE trade
+of what the trend template says. A name 20%+ ABOVE a rising 50 SMA gets SHORTED. A name 20%+ BELOW
+a falling 50 SMA gets BOUGHT. Same mechanics as the 2-5% trend trade otherwise — same ATR stop
+math, same 4% risk budget, same ≥2:1 target — just the direction flipped and the zone is 20%+
+instead of 2-5%.
+
+**This is deliberately counter-trend — label it as such, always.** A fade trade passing this rule
+is trading AGAINST the SMA stack and the 52-week-range position, not with it. That's the point,
+not a violation of the trend rule above — but never grade or log a fade trade as if it were a
+trend-following entry. This is exactly the distinction that would have caught the NBIS short
+(shorted 32.66% above a rising SMA, scored 5/10 when it should've capped at 1-2/10 as an
+accidental trend violation): if a trade is 20%+ against the trend, it must be an intentional,
+clearly-labeled fade — not a mis-scored trend trade.
 
 **Shorts are the exact opposite, no hedging.** Flip every long condition: price below the 50, 150,
 AND 200-day SMA; SMAs stacked downward (50 < 150 < 200); the 200-day SMA itself trending down;
 price within 25% of its 52-week low; price at least 25–30% below its 52-week high. Entry zone is
-2–5% below the falling 50-day SMA. Same overextended flag at 20%+, same weight as the long side.
+2–5% below the falling 50-day SMA. Same fade-at-20%+ rule applies, same weight as the long side.
 
 **This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
 is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
