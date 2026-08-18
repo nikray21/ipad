@@ -100,6 +100,17 @@ about a short — do not volunteer one.
 - If the target is a rising MA, the reward shrinks daily while the risk does not — recompute
   R:R against where the line will BE, not where it is.
 
+## Also look for: squeeze / VCP breakout when there's no zone nearby
+
+Not a graded step, doesn't replace the 6 above — but flag it when you see it. A squeeze (rising
+lows into a flat multi-touch resistance, range visibly contracting — same idea as Minervini's own
+VCP) is a real, informal bullish tell worth surfacing even when no LuxAlgo zone exists near price,
+which is exactly the situation PLTR was in on 2026-08-18: no zone to grade against, but a clean
+ascending-triangle squeeze into $178.86. Point it out, describe what it would take to become
+tradeable (a confirmed close through the flat resistance), and say plainly that it's outside the
+documented 6 steps — don't silently apply it as if it were a graded trigger. The discipline is
+still the point; noticing more is not the same as loosening what counts as a pass.
+
 ## Sweep vs stall — the distinction he keeps missing
 
 Raised 2026-08-17 on NBIS: *"it clearly went in the zone and got rejected."* It had not been
