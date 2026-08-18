@@ -100,29 +100,51 @@ Common mistake to catch: `Entry − 1.5×ATR` — that parks the stop on top of 
 - Max **2 open positions** / ~**4% of account** ($200 on $5K) at risk in total. Count his open trades before approving a new one; a perfect setup still fails if the book is full.
 - Fun-money event contracts ($10–30) don't count against this cap.
 
-## Known leaks from the trade journal (read 2026-08-18)
+## Known leaks from the trade journal (verified 2026-08-18)
 
 Read against his Trading Journal sheet (11 closed trades, 8/7–8/17/2026,
-10W-1L). Three patterns recur enough to grade for proactively:
+10W-1L) — first pass off his own notes, then cross-checked against real 4h
+bars pulled via Webull for all 10 tickers, computing a 50-period SMA on 4h
+RTH bars and checking whether each entry candle actually closed through his
+level or just wicked it. (Caveat: Webull's 4h bar boundaries don't line up
+exactly with his TradingView chart, so treat the % distances as directional,
+not pixel-exact.)
 
 - **Position sizing drifts over the 2% cap.** PLTR, RKLB, COIN, HOOD all
   risked 2.3–2.4% of the $5K account — 4 of 11 trades, matching the sheet's
   own "Over Max Risk Setting" counter. Stop honored 100% of the time, so the
   leak is at entry sizing, not mid-trade discipline: check his share count
   against the $75–100 risk budget before he places the order, not after.
-- **Entering on a touch, not a close.** COIN ("too early... should've waited
-  for sma break"), AMD ("got faked out... should have waited for the candle
-  to close above the resistance line"), HOOD (bounced off the channel top
-  and failed) are all the same step-4 leak this playbook already grades —
-  taking the wick, not the close. All three still won on market momentum, so
-  the leak doesn't show up in his P&L, only in his own notes — grade the
-  process, not the outcome, same as his self-assessment score already does
-  (RKLB was a win scored 2/10; AAPL was his only loss, also scored 2/10).
-- **The 50-SMA distance filter is what separated his one loss from his best
-  win.** AAPL (only loss): "didn't follow my rule of above 50 sma by 2-5%."
-  CVX (self-scored 10/10, "perfect trade"): "above 3.6% from the 50 sma."
-  When price is only barely above the SMA, ask about the distance explicitly
-  before grading step 1 a pass.
+- **The trend gate (step 1) and the confirmed-close gate (step 4), together,
+  predict his own best trades almost perfectly.** Checking real bars: only
+  4 of 11 entries were both on the right side of the 50-SMA *and* closed
+  through the level rather than just spiking to it intrabar — PLTR, both
+  SPCX fills, and CVX. Those are exactly his four highest self-scored trades
+  (7, 10, 10, 10). Every other trade failed one or both gates: TSLA, COIN,
+  HOOD, AMD, AAPL, and NBIS were all on the wrong side of the 50-SMA at
+  entry; RKLB, TSLA, COIN, AMD, AAPL, and NBIS all entered on an intrabar
+  spike that closed back away from the breakout, not through it. He still
+  won most of these on raw momentum — the gates aren't cosmetic, they're
+  finding real weak entries the market bailed him out of.
+- **AAPL (his only loss) failed both gates at once.** Entry $307.22 against
+  a 50-SMA of ~$319.59 (‑3.9%, wrong side), and the entry candle closed at
+  $305.19 — *below* his entry, meaning the breakout he bought was never
+  confirmed by its own candle. This matches his note ("didn't follow my rule
+  of above 50 sma by 2-5%") but is worse than he thought — he wasn't just
+  short of the 2-5% buffer, price was under the SMA outright.
+- **NBIS short: the trend gate was the most violated number in the whole
+  journal, not just a bad zone read.** Entry $272 against a 50-SMA of ~$205
+  — price was **32.66% above** the SMA on a *short*. His bearish playbook
+  requires price below it. He self-scored this 5/10 ("fair trade"); the
+  size of this violation says it should grade closer to AAPL. This is the
+  same NBIS trade already flagged above under "Sweep vs stall."
+- **TSLA note says "above sma line"; the bars say the opposite.** Entry
+  $334.50 against a 50-SMA of ~$350.98 (‑4.7%, wrong side). He self-scored
+  this a 9/10 believing trend was confirmed. Either his on-chart SMA read
+  differs from a straight 50-period close average, or this is the same
+  misread pattern as rule 9 (crosshair showing a hovered value, not live) —
+  worth asking him to re-check the SMA reading live next time this setup
+  comes up, since his own belief and the market data disagree.
 
 ## Output Format
 
