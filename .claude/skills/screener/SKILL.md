@@ -46,6 +46,16 @@ computed. Drop anything that doesn't match. This is what caught the pagination b
 place — cheap insurance (one extra call per finalist, not per scan) against whatever the next
 version of this mistake turns out to be.
 
+**The verification pass only checks price, not the SMA it's compared against — a split can still
+sneak past it.** After the pagination fix, the rerun surfaced MNST as a 20%+ fade candidate. Its
+CURRENT price passed verification (it matched reality), but the 50-SMA it was measured against was
+still built from bars spanning MNST's 2-for-1 split on 2026-08-10/11 — the split-sanity-check only
+scanned the last 15 bars (~4 days), and the split was ~24-32 bars back, outside that window.
+Verification confirms the price is real; it does NOT confirm the SMA it's being compared to is
+clean. **Fix: scan the FULL pulled bar history for a halving/doubling pattern, not just a recent
+tail window** — a split anywhere in the lookback corrupts every SMA computed across it, however
+long ago it happened within that window.
+
 **Credentials live in an environment variable, never in this file, never committed to the repo.**
 If they're not available in a session, ask him to set them in the Claude Code environment's env
 vars (outside git) rather than pasting them in chat again.
