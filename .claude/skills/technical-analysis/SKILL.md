@@ -51,10 +51,10 @@ new trade signal. Elevated risk of reverting back toward the average, but not a 
 reversal — a strong trend can also just consolidate sideways while the SMA catches up rather than
 snapping back.
 
-**Shorts are a mirror, not a citation.** Minervini and O'Neil are long-only growth methodologies —
-there's no published short-side Trend Template. The short screen below is his own inversion of
-the same logic (price below all three SMAs, stacked downward, near the 52-week low, far from the
-high, 2–5% below a falling 50 SMA for entry) — treat it as looser-fitting than the long side.
+**Shorts are the exact opposite, no hedging.** Flip every long condition: price below the 50, 150,
+AND 200-day SMA; SMAs stacked downward (50 < 150 < 200); the 200-day SMA itself trending down;
+price within 25% of its 52-week low; price at least 25–30% below its 52-week high. Entry zone is
+2–5% below the falling 50-day SMA. Same overextended flag at 20%+, same weight as the long side.
 
 **This narrows the universe, it doesn't replace the real grade.** Nothing that passes this screen
 is a trade — it's a shortlist to pull into TradingView and run through the actual 6-step checklist
