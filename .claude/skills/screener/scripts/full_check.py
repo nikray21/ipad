@@ -153,9 +153,18 @@ def analyze(sym):
     closes = [b['c'] for b in bars]
     n = len(closes); i = n-1
 
-    # split check across FULL history
+    # Split check across FULL history.
+    # Band is deliberately WIDE (any ratio <0.55 or >1.8), not a 2:1-only test.
+    # The old 0.47-0.53 / 1.9-2.1 window only caught 2-for-1 splits and let
+    # BKNG's ~20:1 (ratio 0.042, 2026-04-06) and NFLX's ~10:1 (ratio 0.099,
+    # 2025-11-17) through -- both surfaced as screener hits on 2026-08-19 with
+    # SMAs computed across pre- and post-split prices. BKNG's gave itself away
+    # with a 'resistance' 1,805% above price; NFLX's did not, which is why the
+    # band matters more than spotting absurd output.
+    # A genuine >45% single-bar move is possible but rare; dropping one real
+    # mover is far cheaper than trading off a corrupted SMA.
     for a, b in zip(closes[:-1], closes[1:]):
-        if a and b and (0.47 <= b/a <= 0.53 or 1.9 <= b/a <= 2.1):
+        if a and b and (b/a < 0.55 or b/a > 1.8):
             return {"symbol": sym, "error": "split artifact in history"}
 
     # recency check

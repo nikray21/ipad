@@ -224,10 +224,16 @@ requests across pagination — pace it and run it in the background.
    cap silently stopped in Nov 2025 and treated a stale bar as "today," corrupting 85% of a run's
    results (AMD showed $256.60 against a real $484.39). **Loop until `next_page_token` is null,
    and sanity-check the last bar's timestamp is within a few days of now.**
-2. **Split contamination.** A stock split anywhere in the pulled window corrupts every SMA computed
-   across it. MNST showed a fake 47% "breakdown" from its 2-for-1. **Scan the FULL bar history for
-   an adjacent-close ratio of 0.47-0.53 or 1.9-2.1, not just a recent tail window** — the split
-   that slipped through was ~24-32 bars back, outside a 15-bar check.
+2. **Split contamination — and the band must be WIDE, not 2:1-only.** A split anywhere in the
+   pulled window corrupts every SMA computed across it. Two separate failures here:
+   - MNST showed a fake 47% "breakdown" from its 2-for-1 because the check only scanned a 15-bar
+     tail; the split was ~24-32 bars back. **Scan the FULL history.**
+   - On 2026-08-19 **BKNG (~20:1, ratio 0.042) and NFLX (~10:1, ratio 0.099) both became live
+     screener hits** because the band was `0.47-0.53 / 1.9-2.1` — a 2-for-1 test that misses every
+     larger split. **Use `ratio < 0.55 or ratio > 1.8`.** BKNG gave itself away with a "resistance"
+     1,805% above price; NFLX looked completely normal — which is why the band has to be right
+     rather than relying on spotting absurd output. Dropping one genuine >45% mover is far cheaper
+     than trading off a corrupted SMA.
 3. **Price verification only checks price, not the SMA.** A name can pass verification (its live
    price is real) while the SMA it's compared against is still split-corrupted. Both checks are
    needed; neither substitutes for the other.
