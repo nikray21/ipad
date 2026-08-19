@@ -36,6 +36,44 @@ Don't reintroduce them.
 against the SMA stack. Never present one next to trend entries without the distinction being
 obvious; a fade mislabeled as a trend trade is exactly what mis-scored the NBIS short.
 
+## LIQUIDITY SWEEP — run on every hit, never optional
+
+Identical definition to `/technical-analysis`. **No chart is available in a screen, so the level is
+a 5-bar swing pivot** — a bar whose high is the highest (or low the lowest) of the five bars on
+each side. A pivot is only "known" 5 bars after it forms; never use one the market couldn't have
+seen yet.
+
+**A valid sweep needs ALL THREE, in order:**
+1. **Wick prints THROUGH the level** (below the pivot low on a long, above the pivot high on a
+   short). A touch is not a sweep; stalling inside is not a sweep.
+2. **Candle CLOSES back through the level.**
+3. **The reclaim HOLDS 3+ more bars** without closing back past it. One candle is noise — a
+   2026-08-18 backtest put same-day reclaims at the worst hit rate tested (20%, -8.3R) and the
+   3-bar-hold version at the best (38.5%).
+
+Report it on every hit: direction (bullish/bearish), the level, and how many bars it has held.
+Say "no sweep" explicitly when there isn't one — silence reads as "not checked."
+
+**When sweep and trend disagree:**
+- Sweep **beats a fade call** (PSX/VLO, 2026-08-18: extension said fade-short, but both had swept
+  a low and held a week — the dip got bought, trend continuing).
+- Sweep does **NOT flip a confirmed trend** (PLTR, 2026-08-18: bullish trend + bearish sweep held
+  10 bars is still not a short — one rejection in an uptrend is a pause, not a reversal).
+- Flag the conflict explicitly in the output either way.
+
+**The sweep signal is rare — expect mostly "no sweep."** Base rate is roughly one signal per
+ticker every 9 months (~0.5%/ticker/day). Across ~100 tickers expect ~0-1 hits on a given day;
+zero is a normal result, not a broken run. Never treat "no sweep" as a reason to withhold an
+otherwise-valid trend hit — report the trend hit and note the sweep is absent.
+
+## SQUEEZE / VCP — flag only, never a pass
+
+A range visibly contracting into a flat multi-touch resistance with rising lows. **Not a graded
+condition — it cannot make a name a hit, and its absence cannot disqualify one.** Mention it when
+a hit also shows one, or when he asks about a specific name that has one but no zone nearby. A
+2026-08-18 backtest of squeeze breakouts alone returned 30.6% hit rate / -7.4R over 49 trades —
+no demonstrated standalone edge, which is exactly why it stays a flag.
+
 ## Run it in stages — cheap filters first
 
 Don't compute everything for every ticker. Each stage runs only on what survived the last:
@@ -110,6 +148,12 @@ Close with: this is a shortlist, run `/technical-analysis` on the real chart bef
 
 ## Critical rules
 
+0. **Never assume, never leave a step out, always ask.** Every run does all five stages —
+   including the liquidity-sweep check on survivors and the price verification — and reports the
+   sweep status on every hit even when it's "none." If something is ambiguous (which universe,
+   which rule applies to an edge case, two rules appearing to conflict), **ask him in plain simple
+   words** before proceeding. He asked for this explicitly on 2026-08-18 after a run silently
+   omitted the sweep layer. A partial run presented as complete is the worst outcome.
 1. Never place, modify, or cancel orders.
 2. A printed value from his live TradingView chart beats any screener number.
 3. Every number must trace to a real Alpaca pull this run — never recall a prior run's numbers as

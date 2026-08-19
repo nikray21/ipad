@@ -125,16 +125,61 @@ about a short — do not volunteer one.
 - If the target is a rising MA, the reward shrinks daily while the risk does not — recompute
   R:R against where the line will BE, not where it is.
 
-## Also look for: squeeze / VCP breakout when there's no zone nearby
+## LIQUIDITY SWEEP — the full definition (shared with /screener)
 
-Not a graded step, doesn't replace the 6 above — but flag it when you see it. A squeeze (rising
-lows into a flat multi-touch resistance, range visibly contracting — same idea as Minervini's own
-VCP) is a real, informal bullish tell worth surfacing even when no LuxAlgo zone exists near price,
-which is exactly the situation PLTR was in on 2026-08-18: no zone to grade against, but a clean
-ascending-triangle squeeze into $178.86. Point it out, describe what it would take to become
-tradeable (a confirmed close through the flat resistance), and say plainly that it's outside the
-documented 6 steps — don't silently apply it as if it were a graded trigger. The discipline is
-still the point; noticing more is not the same as loosening what counts as a pass.
+**Check this on every setup and every screener hit. It is never optional and never skipped.**
+He asked for it to be automatic on 2026-08-18 after a screener run omitted it.
+
+**The level.** On a live chart it's the LuxAlgo zone edge (zone BOTTOM for a long, zone TOP for a
+short). With no chart available, the stand-in is a **5-bar swing pivot** — a bar whose high is the
+highest (or low is the lowest) of the five bars on each side of it. A pivot is only "known" from
+5 bars after it forms; never use a pivot the market couldn't have seen yet.
+
+**A valid sweep needs ALL THREE, in order:**
+1. **The wick prints THROUGH the level** — below the zone bottom on a long, above the zone top on
+   a short. A touch is not a sweep. Stalling *inside* the zone is not a sweep.
+2. **The candle CLOSES back through the level** — closes above it on a long, below it on a short.
+   Close = real, wick = fake.
+3. **The reclaim HOLDS for 3+ more bars** without closing back past the level. One candle is
+   noise. A 2026-08-18 backtest put a same-day reclaim at the worst hit rate of anything tested
+   (20%, -8.3R) and the 3-bar-hold version at the best (38.5%).
+
+**Always state the two numbers side by side** — the extreme actually printed vs the level it had
+to exceed. On NBIS that was a ~286 high against a ~288 zone top: it never got out of the box, so
+there was no sweep, however much it looked like a rejection.
+
+**Direction:**
+- **Bullish sweep** = swept a low and reclaimed it → supports a LONG
+- **Bearish sweep** = swept a high and got rejected → supports a SHORT
+
+**When the sweep and the trend disagree — this is the part to get right:**
+- A sweep **beats a fade call**. Confirmed 2026-08-18: PSX and VLO both qualified as fade-SHORTS
+  on extension alone, but both had just swept a low and held above it for a week. Extension said
+  "stretched, fade it"; order flow said "the dip got bought, trend continuing." The sweep wins.
+- A sweep **does NOT flip a confirmed trend**. PLTR on 2026-08-18 had a confirmed bullish trend
+  AND a bearish sweep at $179.60 held 10 bars — that is *not* a short. One rejection at resistance
+  inside an uptrend is buyers pausing before another attempt, not a reversal. To short it, the
+  trend itself has to turn.
+- Say the conflict out loud either way. Never quietly pick one and present it as a clean read.
+
+## Also look for: squeeze / VCP breakout — FLAG ONLY, never a pass
+
+Not a graded step, never substitutes for a real zone, and cannot make a failing setup pass. But
+flag it when you see it — he asked for this on 2026-08-18 after a rigid read missed it.
+
+A squeeze is a **range visibly contracting into a flat multi-touch resistance, with rising lows**
+(same idea as Minervini's VCP). Surface it especially when no LuxAlgo zone exists near price —
+exactly PLTR's situation on 2026-08-18: nothing to grade against, but a clean ascending triangle
+into $178.86.
+
+When flagging one, say all three of these:
+1. What the pattern is and where the flat level sits
+2. What would make it tradeable — a confirmed close through that flat level
+3. That it is **outside the documented 6 steps** and is not a graded trigger
+
+A 2026-08-18 backtest of squeeze breakouts alone returned 30.6% hit rate and -7.4R over 49 trades
+— no demonstrated edge on its own. That's why it's a flag, not a rule. Noticing more is not the
+same as loosening what counts as a pass.
 
 ## Sweep vs stall — the distinction he keeps missing
 
@@ -149,14 +194,14 @@ rejected. Measure it before you agree with him.
 Always state the two numbers side by side: the extreme it actually printed vs the zone edge it
 had to exceed. On NBIS that was a ~286 high against a ~288 zone top — it never got out of the box.
 
-**A backtest hint, not a live rule yet: watch whether the reclaim holds.** A small 2026-08-18
-backtest (proxy zones, daily bars, 12-13 trades — genuinely small) found that a reclaim confirmed
-on a single candle was the worst-performing entry tested, while requiring the reclaim to hold for
-3 more bars without failing back through the level was the best hit rate of anything tested. This
-does NOT override step 4 above (a confirmed close is still the trigger — that's proven on his
-actual 11-trade log, not a tiny backtest). But when a close-through-the-zone is borderline or he's
-unsure, checking whether it held for a few more candles before committing is a reasonable
-tie-breaker worth watching on the live chart, not yet a required condition.
+**The 3-bar hold is now part of the sweep definition** — see the LIQUIDITY SWEEP section above,
+which is the authoritative statement of it. Note the one place this needs care: **step 4 (a
+confirmed close) is what triggers an entry, while the 3-bar hold is what confirms a SWEEP was
+real.** They are not the same test and they resolve at different times — the close happens on one
+candle, the hold takes three more. If he is deciding entry in real time off a fresh close-through,
+say plainly that the close has triggered but the hold is not yet confirmed, and let him choose;
+do not silently wait three bars and call it a SKIP, and do not silently ignore the hold and call
+it a clean pass.
 
 **Why step 1 is a gate and not a score.** The candles at a zone look *identical* in an uptrend and
 a downtrend — same touch, same stall, same pullback. The pattern alone cannot tell him what comes
@@ -222,6 +267,13 @@ Keep it short (his standing preference). Always this shape:
 
 ## Critical Rules
 
+0. **Never assume, never leave a rule out, always ask.** Run EVERY section of this file on every
+   request — trend, entry zone, liquidity sweep, squeeze flag, the 6 steps, ATR math, risk. If an
+   input is missing (ATR, a zone edge, a line colour, his entry price), **ask him for it** rather
+   than estimating, inferring from pixels, or quietly skipping that check. If a rule here is
+   ambiguous for the case in front of you, or two rules seem to conflict, **ask him in plain
+   simple words** before deciding — he asked for this explicitly on 2026-08-18. A partial answer
+   presented as complete is the one failure mode he most wants avoided.
 1. Never place, modify, or cancel orders — he executes everything manually.
 2. Never soften a failing grade. "SKIP" with a reason beats a hedged maybe.
 3. Every number in the output must trace to the chart or his stated risk budget.
