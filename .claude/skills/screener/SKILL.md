@@ -87,10 +87,21 @@ right on top of the level it would trade into is worth calling out explicitly, i
 **BOTH DIRECTIONS, equal weight.** Breakdown through support = SHORT setup. Breakout through
 resistance = LONG setup. His explicit instruction — do not treat this as short-only.
 
-**What counts as a real break** (same template as the sweep — don't invent a new test):
+**What counts as a real break — 1 bar, NOT 3.** Breaks and sweeps use different hold counts; each
+was earned on its own backtest. Do not harmonise them.
 1. A **full 4H candle CLOSES through the level** — below support (short) or above resistance
    (long). A wick through is not a break.
-2. The break **HOLDS 3+ more bars** without closing back through.
+2. The break **HOLDS 1+ more bar** without closing back through.
+
+Tested 2026-08-18 (30 names, Alpaca 4H, 2026 YTD, 754–1,284 trades per setting — the largest
+sample of any test run for him): hold 0 = **−11.88R, the only losing setting**; hold 1 = **+25.79R
+(best total)**; hold 2 = +7.61R; hold 3 = +22.66R; hold 4 = +19.09R. Settings 1–4 are
+statistically tied on per-trade edge, so take the earliest that works — 1 bar enters 8 hours
+sooner on a 4H chart with the stop still tight to the level, across 24% more trades. **The sweep
+rule keeps its 3 bars** — that number was earned on reclaims, which behave differently.
+
+**Thin-edge caveat, state it whenever a break is flagged:** avg R ≈ +0.025. Positive but small;
+most trades exit on the time stop, not at target.
 
 **Two paths, report which one applies:**
 - **Path A — the break itself.** Flag it, never grade it a pass. It sits outside the 6 steps, same

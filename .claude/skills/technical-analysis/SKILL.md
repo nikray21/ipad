@@ -215,10 +215,36 @@ support is a SHORT setup; a breakout through resistance is a LONG setup. Everyth
 written for both and neither side gets less attention. Do not treat this as a short-only tool just
 because VRT was the example that produced it.
 
-**What counts as a real break** — reuse the sweep template, don't invent a new test:
+**What counts as a real break — 1 bar, NOT 3.** Breaks and sweeps use different hold counts and
+each number was earned on its own backtest. Do not "harmonise" them.
 1. A **full 4H candle CLOSES through the level** — below support for a SHORT, above resistance
    for a LONG. A wick through is not a break.
-2. The break **HOLDS 3+ more bars** without closing back through. One candle is noise.
+2. The break **HOLDS 1+ more bar** without closing back through.
+
+**Why 1 and not 3 (tested 2026-08-18, 30 names, Alpaca 4H, 2026 YTD — 754-1,284 trades per
+setting, by far the largest sample of any test run for him):**
+
+| Hold | Trades | Win% | Total R | Avg R |
+|---|---|---|---|---|
+| 0 bars | 1,284 | 40.1% | **−11.88** | −0.009 |
+| **1 bar** | 1,046 | 42.4% | **+25.79** | +0.025 |
+| 2 bars | 943 | 42.8% | +7.61 | +0.008 |
+| 3 bars | 844 | 44.4% | +22.66 | +0.027 |
+| 4 bars | 754 | 43.9% | +19.09 | +0.025 |
+
+- **Zero hold is the only losing setting** — entering the instant it closes through loses money.
+  Some confirmation is genuinely required; that part of the sweep logic carries over.
+- **1 through 4 are statistically tied** (2 bars scoring below both 1 and 3 is the tell that the
+  gaps are noise). So take the earliest one that works.
+- **1 bar has the highest TOTAL R** (+25.79) — near-identical per-trade edge across 24% more
+  trades, and it enters 8 hours earlier on a 4H chart with the stop still tight to the level.
+- **The sweep rule keeps its 3 bars.** That number was earned on the sweep backtest, where waiting
+  proves a *reclaim* was real. A break is a continuation, not a reclaim — waiting there costs
+  entry price and widens the stop, since the stop is anchored to the level.
+
+**Honest caveat to state whenever this is flagged:** avg R of +0.025 is a thin edge. Positive, but
+most trades exit on the time stop rather than reaching target. A break setup is a flag worth
+watching, never a system to lean on hard.
 
 **Path A — trade the break itself.** Enter on the close through the level.
 - Stop off the LEVEL as always:
