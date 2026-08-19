@@ -182,11 +182,17 @@ Alpaca.**
 
 Short. Three buckets, in this order:
 
+**Five independent scans off ONE data pull** — the break and squeeze scans run across the WHOLE
+universe, not just trend hits, because a name can be forming a break or a squeeze without sitting
+in the 2–5% entry band. Every flag records its trend context so it's never misread as a pass.
+
 1. **Longs** — symbol, price, % from 50 SMA, sweep status, nearest support/resistance + distances
 2. **Shorts** — same
 3. **Fades** — clearly marked counter-trend, never mixed into the above
-4. **Flags** — any breakout/breakdown forming (which direction, which path) and any squeeze. These
-   are surfaced separately from graded hits, never merged into buckets 1–3.
+4. **Breaks** (own scan) — breakout (long bias) / breakdown (short bias), the level, bars held,
+   and the trend context. Flag only, never a graded pass.
+5. **Squeezes** (own scan) — flat level, touch count, how much the range contracted, trend
+   context. Flag only, never a graded pass.
 
 A hit whose entry sits within ~1% of the level it would trade *into* (a short resting on support,
 a long resting under resistance) gets called out explicitly — that's the VRT mistake and it is
