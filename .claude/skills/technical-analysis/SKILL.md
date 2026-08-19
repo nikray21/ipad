@@ -181,6 +181,72 @@ A 2026-08-18 backtest of squeeze breakouts alone returned 30.6% hit rate and -7.
 — no demonstrated edge on its own. That's why it's a flag, not a rule. Noticing more is not the
 same as loosening what counts as a pass.
 
+## ALWAYS state the nearest level on BOTH sides, with distances
+
+**Added 2026-08-18 — this is the fix for a real communication failure.** Saying price is "mid-air"
+or "not in a zone" was used on CVX, AMD, PLTR and VRT and it landed as stubbornness, because it
+carries no information. What actually explains a location verdict is the nearest level ABOVE and
+BELOW with the % distance to each.
+
+On VRT: "mid-air" meant nothing to him. **"You're 0.8% above support at $267.52 and 6.2% below
+resistance at $286.36"** made the SKIP obvious in one line — he wasn't floating, he was sitting on
+support about to short into it. Same facts, completely different clarity.
+
+Every location call must include this block, computed (never eyeballed from pixels):
+
+```
+$286.36  ← nearest resistance    +6.2%
+$269.59  ← price now
+$267.52  ← nearest support       -0.8%
+```
+
+With no chart, use confirmed 5-bar pivots for the levels. With a chart, use his LuxAlgo zone edges
+— ask him to hover/click for exact boundaries rather than estimating them off the image.
+
+## BREAKOUT / BREAKDOWN — flag it, never a silent pass (added 2026-08-18)
+
+**His call: keep the 6-step rejection playbook exactly as-is, and add this as a second pattern to
+watch for — treated like the squeeze flag, but with two defined paths out.** Check for it on every
+setup and every screener hit, and surface it. The 6 steps still govern what counts as a graded
+pass; this tells him when a *different* kind of setup is forming so he doesn't miss it.
+
+**BOTH DIRECTIONS, equal weight — his explicit instruction 2026-08-18.** A breakdown through
+support is a SHORT setup; a breakout through resistance is a LONG setup. Everything below is
+written for both and neither side gets less attention. Do not treat this as a short-only tool just
+because VRT was the example that produced it.
+
+**What counts as a real break** — reuse the sweep template, don't invent a new test:
+1. A **full 4H candle CLOSES through the level** — below support for a SHORT, above resistance
+   for a LONG. A wick through is not a break.
+2. The break **HOLDS 3+ more bars** without closing back through. One candle is noise.
+
+**Path A — trade the break itself.** Enter on the close through the level.
+- Stop off the LEVEL as always:
+  - **SHORT** (broke support): `Stop = broken support + 1.5×ATR`
+  - **LONG** (broke resistance): `Stop = broken resistance − 1.5×ATR`
+- **Flag it, don't grade it a pass.** It is outside the 6 steps. Present it as "breakdown setup
+  forming," give him the numbers, let him decide. Do not call it TAKE IT.
+- Caveat to state every time: breakdowns and breakouts fail often — that failure is exactly what
+  the sweep rule exists to catch. The only squeeze-breakout backtest run so far (2026-08-18) came
+  back 30.6% hit rate / -7.4R over 49 trades, so there is no evidence of a standalone edge here.
+
+**Path B — wait for the retest. This one IS gradeable.** A broken level flips sides. Once price
+breaks it and then comes back to it from the other side and gets rejected, that is a **standard
+6-step setup** — the flipped level is now the zone, and steps 2/3/4 apply normally. Grade it as a
+normal trade, no special handling.
+- **SHORT:** broke support → price rallies back UP into it → rejected → the flipped level is now
+  a red zone (resistance). Short it.
+- **LONG:** broke resistance → price pulls back DOWN into it → holds → the flipped level is now a
+  green zone (support). Long it.
+- Tighter and rule-compliant, but he may miss the move if there is no retest. Say that trade-off
+  out loud rather than steering him to B by omission.
+
+**Why this matters — the VRT numbers, 2026-08-18.** Shorting at $269.59 put the stop off the
+$300.30 pivot: risk/share $37.02, a 13.6% stop, 5 shares. Waiting for the break of $267.52 puts
+the stop off *that* level instead: `267.52 + 1.5×6.17 = $276.78`, risk/share ~$10.78, a ~4% stop,
+18 shares, target ~$244. **A 3.4× tighter stop on the same idea.** When a level is far above price,
+always show him what waiting for the nearer level would do to the numbers.
+
 ## Sweep vs stall — the distinction he keeps missing
 
 Raised 2026-08-17 on NBIS: *"it clearly went in the zone and got rejected."* It had not been

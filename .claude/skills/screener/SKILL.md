@@ -66,6 +66,48 @@ ticker every 9 months (~0.5%/ticker/day). Across ~100 tickers expect ~0-1 hits o
 zero is a normal result, not a broken run. Never treat "no sweep" as a reason to withhold an
 otherwise-valid trend hit — report the trend hit and note the sweep is absent.
 
+## ALWAYS report the nearest level BOTH sides, with distances
+
+**Added 2026-08-18.** Every hit reports the nearest level above and below price with % distance —
+computed from confirmed 5-bar pivots, never estimated. "No zone nearby" carries no information;
+this does:
+
+```
+$286.36  ← nearest resistance    +6.2%
+$269.59  ← price now
+$267.52  ← nearest support       -0.8%
+```
+
+This is what showed VRT was a bad short: not "mid-air," but **0.8% above support and 6.2% below
+resistance** — about to short straight into the level most likely to bounce it. A hit sitting
+right on top of the level it would trade into is worth calling out explicitly, in both directions.
+
+## BREAKOUT / BREAKDOWN — check and flag on every run (added 2026-08-18)
+
+**BOTH DIRECTIONS, equal weight.** Breakdown through support = SHORT setup. Breakout through
+resistance = LONG setup. His explicit instruction — do not treat this as short-only.
+
+**What counts as a real break** (same template as the sweep — don't invent a new test):
+1. A **full 4H candle CLOSES through the level** — below support (short) or above resistance
+   (long). A wick through is not a break.
+2. The break **HOLDS 3+ more bars** without closing back through.
+
+**Two paths, report which one applies:**
+- **Path A — the break itself.** Flag it, never grade it a pass. It sits outside the 6 steps, same
+  status as the squeeze flag. Give the numbers and let him decide.
+- **Path B — the retest.** Once price returns to the broken level from the other side and gets
+  rejected (short) or holds (long), that is a **standard 6-step setup** on the flipped level and
+  grades normally.
+
+**When a hit's level is far from price, show what waiting would do to the stop.** VRT on
+2026-08-18: shorting at $269.59 stopped off the $300.30 pivot — $37.02/share, 13.6% stop, 5
+shares. Waiting for the break of $267.52 stopped off *that* level — ~$10.78/share, ~4% stop, 18
+shares, on the same idea. Always surface that comparison rather than only pricing the far level.
+
+**Caveat to state:** breakouts and breakdowns fail often. The only backtest run so far
+(squeeze-breakout longs, 2026-08-18) returned 30.6% hit rate / -7.4R over 49 trades — no
+demonstrated standalone edge. That's why Path A is a flag, not a pass.
+
 ## SQUEEZE / VCP — flag only, never a pass
 
 A range visibly contracting into a flat multi-touch resistance with rising lows. **Not a graded
@@ -140,9 +182,15 @@ Alpaca.**
 
 Short. Three buckets, in this order:
 
-1. **Longs** — symbol, price, % from 50 SMA, sweep status
+1. **Longs** — symbol, price, % from 50 SMA, sweep status, nearest support/resistance + distances
 2. **Shorts** — same
 3. **Fades** — clearly marked counter-trend, never mixed into the above
+4. **Flags** — any breakout/breakdown forming (which direction, which path) and any squeeze. These
+   are surfaced separately from graded hits, never merged into buckets 1–3.
+
+A hit whose entry sits within ~1% of the level it would trade *into* (a short resting on support,
+a long resting under resistance) gets called out explicitly — that's the VRT mistake and it is
+invisible unless stated.
 
 Close with: this is a shortlist, run `/technical-analysis` on the real chart before sizing.
 
