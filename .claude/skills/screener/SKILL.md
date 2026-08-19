@@ -165,7 +165,21 @@ in a session, ask him to set the env var rather than paste them in chat.
 **Rate limit: 200 requests/minute.** Sleep ~0.3-0.4s between calls. A 100-ticker run is ~3000
 requests across pagination — pace it and run it in the background.
 
-## Three bugs that have already burned us — guard against all three
+## Four bugs that have already burned us — guard against all four
+
+0. **Verification silently fails pre-market.** The verification pass must request daily bars with
+   an explicit `start` date. With no `start`, Alpaca returns `bars:null` before today's daily bar
+   exists — so at 8am ET on 2026-08-19 all 101 NASDAQ-100 tickers came back "failed price
+   verification" and the run reported zero hits. **Nothing was wrong with the data or the market;
+   a missing parameter made a healthy run look empty.** Ask for ~7 days and take the last bar.
+   More generally: when a run returns almost nothing, suspect the pipeline before concluding the
+   market is quiet — a 99/101 failure rate is a bug signature, not a market signature.
+
+   **Also state the session when running outside regular hours.** Alpaca's 4H grid includes
+   extended hours (that's exactly why it matches his TradingView chart to the penny), so a
+   pre-market run computes off a thin pre-market bar — AAPL's 4am–8am ET bar on 2026-08-19 traded
+   306k shares against millions in a normal session. Don't strip those bars (that would break the
+   chart match), but tell him the numbers will move at the open.
 
 1. **Pagination cap too low.** 420 days of 4H bars needs ~30+ pages (~40-50 bars each). An 8-page
    cap silently stopped in Nov 2025 and treated a stale bar as "today," corrupting 85% of a run's
