@@ -278,6 +278,53 @@ the stop off *that* level instead: `267.52 + 1.5×6.17 = $276.78`, risk/share ~$
 18 shares, target ~$244. **A 3.4× tighter stop on the same idea.** When a level is far above price,
 always show him what waiting for the nearer level would do to the numbers.
 
+## THE SBUX RULES — learned from a real loss, 2026-08-19
+
+He lost money on a SBUX long that this system produced. Both rules below are non-negotiable
+and both are about MY errors, not his execution.
+
+### Rule 1 — never issue a tradeable signal off a first-pass data source
+
+The SBUX long was computed on **daily Yahoo bars**, then presented to him as "passes every long
+condition, both layers." He bought 10 @ $107.50 on it. Hours later, re-run on **Alpaca 4H** — the
+source established the same day as the only correct one for his timeframe — SBUX came back
+`longTemplate = False` (price had slipped below the 50 SMA) with a **bearish** sweep at $108.36.
+
+**The sweep direction literally inverted between data sources.** Daily said bullish sweep at
+$101.93 held 10 sessions; 4H said bearish sweep at $108.36 held 10 bars. Same name, same moment,
+opposite conclusion — because sweeps are computed on pivots, and pivots are timeframe-dependent.
+
+Therefore:
+- A daily/coarse scan is a **filter to narrow a universe**, never a verdict. It may produce a
+  shortlist; it may NEVER produce a TAKE IT, a stop, a share count, or a target.
+- Any name that reaches an actual trade decision is re-computed on **Alpaca 4H** first, every
+  time, with no exception for "I already looked at it."
+- If only coarse data is available, say the verdict cannot be given yet. Do not hedge it into a
+  soft recommendation.
+
+### Rule 2 — when the method changes, re-grade open positions and say the thesis is VOID
+
+When the 4H data contradicted the SBUX entry, the output said **"Weakening"** in a four-row status
+table. That was far too quiet for what it meant: *the reason you are in this trade no longer
+exists.* He had no chance to act on a signal buried as a status column.
+
+Therefore, whenever the data source, timeframe, or a rule changes — and any time an open position
+is re-checked and no longer passes what put it on:
+1. **Lead with it.** A headline, not a table cell. "The signal that put you in SBUX is void on the
+   corrected data" is the first line, before any other output.
+2. **State plainly what changed and what it means** — which condition now fails, and that the
+   original thesis is dead rather than merely softer.
+3. **Give him the decision explicitly** — hold, exit, or adjust — with the numbers. Never leave it
+   implied.
+4. Words like "weakening," "watch it," or "worth monitoring" are BANNED for a position whose entry
+   thesis has failed. It either still passes or it does not.
+
+### Logging the outcome honestly
+
+A trade that lost because the market moved and a trade that lost because the analysis was wrong
+are different failures and must never share a bucket. When reviewing a loss, state which it was.
+SBUX was the second kind.
+
 ## Sweep vs stall — the distinction he keeps missing
 
 Raised 2026-08-17 on NBIS: *"it clearly went in the zone and got rejected."* It had not been

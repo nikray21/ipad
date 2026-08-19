@@ -10,6 +10,21 @@ Finds candidates across many tickers. Produces a **shortlist, never a trade** �
 goes to `/technical-analysis` for the live 6-step grade (SWING CALL + LuxAlgo zone) before he
 sizes anything. Never present a screener hit as a TAKE IT.
 
+## A SCREENER HIT IS NEVER A TRADE — enforced after a real loss, 2026-08-19
+
+He lost money on a SBUX long that started as a screen result computed on **daily** bars and got
+presented as a verdict. Re-run on Alpaca 4H the same day it failed the trend template outright,
+and its sweep flipped from bullish to bearish — **opposite conclusion, same name, same moment**,
+because pivots are timeframe-dependent.
+
+**Hard consequences for this skill:**
+- A screen may produce a **shortlist only**. It may NEVER produce a stop, a share count, a target,
+  or the words TAKE IT. Those come only from `/technical-analysis` on Alpaca 4H.
+- If a coarse/daily pass is used to narrow a large universe, every survivor is **re-computed on 4H
+  before it is shown to him**, and the output says which timeframe produced it.
+- If he asks about a name that only has coarse data behind it, say the verdict is not available
+  yet rather than softening it into a recommendation.
+
 ## THE RULES (identical to /technical-analysis — keep them in sync)
 
 All on **Alpaca 4H bars**.
