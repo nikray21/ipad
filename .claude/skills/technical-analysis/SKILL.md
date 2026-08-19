@@ -198,10 +198,12 @@ had to exceed. On NBIS that was a ~286 high against a ~288 zone top — it never
 which is the authoritative statement of it. Note the one place this needs care: **step 4 (a
 confirmed close) is what triggers an entry, while the 3-bar hold is what confirms a SWEEP was
 real.** They are not the same test and they resolve at different times — the close happens on one
-candle, the hold takes three more. If he is deciding entry in real time off a fresh close-through,
-say plainly that the close has triggered but the hold is not yet confirmed, and let him choose;
-do not silently wait three bars and call it a SKIP, and do not silently ignore the hold and call
-it a clean pass.
+candle, the hold takes three more.
+
+**His decision, 2026-08-18: report it as TRIGGERED, flag the hold as not-yet-confirmed, let him
+choose.** Do NOT wait three bars and call it a SKIP — that costs him 12 hours on a 4H chart. Do
+NOT ignore the hold and present it as a clean pass either. The shape he wants: "close through the
+zone has TRIGGERED — 3-bar hold not confirmed yet (bar 1 of 3)", then the numbers, then his call.
 
 **Why step 1 is a gate and not a score.** The candles at a zone look *identical* in an uptrend and
 a downtrend — same touch, same stall, same pullback. The pattern alone cannot tell him what comes
