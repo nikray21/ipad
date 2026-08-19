@@ -35,6 +35,11 @@ the NASDAQ-100, S&P 500, or any broader universe, use `/screener`. **Both skills
 trend rules below — if you change one, change the other.** Anything `/screener` surfaces still
 needs the real grade below before he sizes it.
 
+**The math is already implemented** in `.claude/skills/screener/scripts/full_check.py`
+(`analyze(symbol)` returns trend, entry/fade signal, sweep, break, squeeze, levels both
+sides, ATR, verification). Use it for the numbers rather than re-deriving them; it
+carries every fix and tuned threshold, documented in that folder's `README.md`.
+
 ## THE TREND RULES (shared with /screener — keep identical)
 
 All on **Alpaca 4H bars**. Three conditions per side, nothing else:

@@ -100,6 +100,14 @@ statistically tied on per-trade edge, so take the earliest that works — 1 bar 
 sooner on a 4H chart with the stop still tight to the level, across 24% more trades. **The sweep
 rule keeps its 3 bars** — that number was earned on reclaims, which behave differently.
 
+**Noise filters, added 2026-08-19.** The first live run flagged **88 of 97** NASDAQ-100
+tickers (91%) — a signal that fires on nearly everything carries no information. Three
+filters brought it to ~10%: the level must be a **major pivot** (10-bar fractal, not
+5-bar), the close must clear it by **≥1× ATR** (no hairline breaks), and only breaks
+within the **last 5 bars** count (a 12-bar-old break still holding is just "price is
+trending," not an alert). If a future run flags a large share of the universe again,
+that is a broken filter, not a busy market.
+
 **Thin-edge caveat, state it whenever a break is flagged:** avg R ≈ +0.025. Positive but small;
 most trades exit on the time stop, not at target.
 
@@ -126,6 +134,22 @@ condition — it cannot make a name a hit, and its absence cannot disqualify one
 a hit also shows one, or when he asks about a specific name that has one but no zone nearby. A
 2026-08-18 backtest of squeeze breakouts alone returned 30.6% hit rate / -7.4R over 49 trades —
 no demonstrated standalone edge, which is exactly why it stays a flag.
+
+## The code lives in `scripts/` — use it, don't rewrite it
+
+`.claude/skills/screener/scripts/` holds the working engine, committed to the repo
+so it survives between cloud sessions:
+- **`full_check.py`** — `analyze(symbol)` returns trend, entry/fade signal, sweep,
+  break, squeeze, both-side levels, ATR, verification.
+- **`run_screener.py`** — runs all five scans over a ticker list.
+- **`README.md`** — every tuned parameter with the backtest or failure behind it.
+
+Credentials come from `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY` env vars. If they're
+missing the scripts exit with instructions — ask him to set them in the environment
+settings rather than pasting keys into chat.
+
+**Read `scripts/README.md` before changing any threshold.** Those numbers were each
+earned by a backtest or a failure.
 
 ## Run it in stages — cheap filters first
 
