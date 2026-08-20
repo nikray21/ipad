@@ -1,57 +1,79 @@
-# Webull Script Editor — what is actually known
+# WebullScript — working notes
 
-Running notes so no one re-walks this. Updated 2026-08-20.
+Updated 2026-08-20, against the official function reference.
 
-## The language is TypeScript, not a Pine-style DSL
+## What the language is
 
-The Script Editor type-checks real TypeScript against the browser
-standard library. Evidence, from errors on a pasted script:
+A Pine-style DSL, edited in a TypeScript-flavored editor. The editor's
+type checker reports DOM globals when the API is not in scope, which is
+misleading — `close` resolves to `window.close`, `name` to the readonly
+`window.name`, `atr` suggests the DOM `Attr` interface. Those errors mean
+the script is malformed, not that the names are wrong.
 
-- `close` never errors — it resolves to `window.close`.
-- `high`, `low`, `volume` always error — no DOM globals by those names.
-- `name=` gives "Cannot assign to 'name' because it is a constant"
-  (`window.name` is readonly).
-- `atr` gives "Did you mean 'Attr'?" — the DOM `Attr` interface.
+## Namespaces
 
-So at the point of that test, **no Webull trading API types were in
-scope at all**. Whether they load from a required import, a scaffold
-the "New Indicator" template provides, or a global that appears only at
-runtime is still unknown.
+| Namespace | Holds |
+|---|---|
+| `ind.` | ema, sma, wma, hma, rma, alma, swma, vwma, rsi, atr, macd, cci, cmo, mfi, tsi, bb, kc, dmi, cog, correlation, up_trend, down_trend |
+| `math.` | **highest, lowest**, abs, min, max, sum, avg, cumsum, std, dev, variance, diff, stoch, round/floor/ceil, pow, sqrt, exp, log, sign, trig |
+| `time.` | current, current_bar, utc, get_* extractors, monday..sunday |
+| `bar_check.` | is_first, is_last, is_new, is_historical, is_real_time, is_last_update, highest_offset, lowest_offset |
+| `plt.` | type_line, type_area, type_histogram, type_columns, type_circles, type_cross, type_linebr, type_stepline, fill_between |
+| `hline.` | type_solid, type_dashed, type_dotted |
+| `color.` | 17 named colors + sys_up / sys_down |
+| `define.` | bool, float, integer, source, string |
 
-## The define/plt/ind.sma dialect is a dead end
+**highest/lowest live under `math.`, not `ind.`** — the single easiest
+mistake to make.
 
-These public repos use `define()`, `plt()`, `ind.sma()`:
+## Prices
 
-- https://github.com/shishir1601/webull_indicators (`gmma.ws`)
-- https://github.com/Wyatt-Hajda/WeBull-Script (AVWAP)
+`open` `high` `low` `close` `volume`, plus `hl2` `hlc3` `hlcc4` `ohlc4`.
 
-None of it resolves in the current editor. Treat those repos as a
-different or older flavor.
+## Control flow
 
-Also note `gmma.ws` uses `color=#00FF00`. Under a TypeScript lexer a
-hex literal whose first character is a digit cannot tokenize (`#` is
-invalid, `00` is a numeric literal, `FF00` an identifier). That file
-was never run as written — it is not a trustworthy syntax reference.
+`iff(condition, if_true, if_false)` is the **only** conditional. No
+ternary `?:`, no if/else. Combine conditions by multiplying 1/0 results
+or by nesting `iff`.
 
-## Error ordering trap
+`none` is the null value — the Pine `na` equivalent. Plot
+`iff(cond, price, none)` to mark only qualifying bars rather than
+pinning non-signal bars to zero.
 
-TypeScript reports syntax errors first and stops before type-checking.
-A paste that returns only a couple of lexer complaints has **not**
-validated any function name. Fix the syntax, paste again, and the
-semantic errors arrive in a second wave. Do not read a short first
-error list as confirmation.
+## Hard limits
 
-## Still unknown
+No arrays. No loops. No `var` / cross-bar persistence. No custom
+functions. No text labels. No custom line drawing. No `strategy.*`.
 
-- The real API: how to read OHLCV, compute indicators, and plot.
-- Whether scripts can draw rectangles and text labels — this decides
-  whether real LuxAlgo-style zones with volume labels are possible, or
-  only step lines.
-- Whether persistent per-bar state exists. Vega generating a trailing
-  stop implies yes, unconfirmed.
+### What that rules out
 
-## How to resolve it
+**LuxAlgo-style zones are not expressible.** A shaded box is a custom
+line, its volume figure is a label, tracking several live zones needs
+arrays, and extend-until-mitigated needs persistent state — all four are
+absent. Swing levels must be plotted series. Any per-zone accumulated
+volume has to be approximated from a rolling window.
 
-Either read the **Docs** tab in the Script Editor panel (in-app, behind
-login), or have **Vega AI** generate any working indicator and read the
-real API off its output. Vega's generated code is ground truth.
+## Still unverified
+
+- Exact `define.*` signatures — assumed `define.integer(5, min=1, name="…")`
+  by analogy with the older public dialect.
+- Whether `[1]` history offset is supported. The official tips say to
+  "reference prior bars if needed" with "limited historical reference
+  capabilities", which implies yes. `math.diff` is the fallback for slope.
+- The `plt` style parameter's name — `style=plt.type_stepline` is a guess.
+
+## Dead end: the define/plt/ind.sma repos
+
+https://github.com/shishir1601/webull_indicators and
+https://github.com/Wyatt-Hajda/WeBull-Script use bare `define(...)` and
+`ind.sma`. Close to correct but not current — real inputs are typed
+(`define.integer`). `gmma.ws` also uses `color=#00FF00`, and a hex
+literal starting with a digit cannot tokenize, so that file was never
+run as written. Not a trustworthy reference.
+
+## Error-ordering trap
+
+Syntax errors are reported first and block type checking. A paste that
+returns only a couple of lexer complaints has **not** validated any
+function name — fix those and a second wave of semantic errors follows.
+Never read a short first error list as confirmation.

@@ -1,155 +1,122 @@
 // ============================================================
-// !! DOES NOT RUN. WRONG LANGUAGE. DO NOT PASTE THIS. !!
-//
-// Written against the define/plt/ind.sma dialect found in public
-// GitHub repos. Webull's actual Script Editor type-checks TypeScript
-// against the browser standard library and knows none of those names:
-// `name` resolves to window.name, `atr` suggests the DOM's Attr, and
-// `close` is window.close -- which is why `close` alone never errors
-// while high/low/volume always do.
-//
-// Kept only as the record of a wrong turn. The logic below is a
-// faithful encoding of the 6-step playbook and is worth porting once
-// the real API is known -- see webull/API-NOTES.md.
-// ============================================================
-//
-// 4H Swing Playbook -- all six steps  (overlay indicator)
+// 4H Swing Playbook -- all six steps
+// Paste into: Webull > Chart > Script Editor > New Indicator
 // ------------------------------------------------------------
-// Every one of the 6 steps, computed without persistent state so it
-// leans only on language features seen in real Webull scripts.
-//
-//   step 1  trend   EMA 5 vs SMA 50, SMA slope, price side of SMA
+//   step 1  trend     EMA 5 vs SMA 50, SMA slope, price side of SMA
 //   step 2  location  swing level, volume-gated
-//   step 3  trap    sweep flag: low printed BELOW the level
-//   step 4  trigger close back above the level
-//   step 5  stop    level -/+ 1.5x ATR, off the LEVEL not the entry
-//   step 6  exit    target at the opposing level, R:R must clear 2.0
+//   step 3  trap      sweep: low printed BELOW the level
+//   step 4  trigger   close back above the level
+//   step 5  stop      level -/+ 1.5x ATR, off the LEVEL not the entry
+//   step 6  exit      target at opposing level, R:R must clear 2.0
 //
-// The setup flag is the PRODUCT of all six. Any single zero and the
-// flag is zero -- all six or no trade, exactly as the playbook says.
-// 4 of 6 cannot pass here, by construction.
+// The setup flag is the PRODUCT of all six. One zero anywhere and the
+// flag is zero -- all six or no trade. 4 of 6 cannot pass, by
+// construction rather than by discipline.
 //
-// NOT in here, and not possible in an indicator: share sizing off the
-// $75-100 budget, and the 2-position / 4% portfolio gates. Those need
-// your open book. Run /technical-analysis for the actual verdict.
+// WHY LEVELS AND NOT ZONES: WebullScript has no labels, no custom
+// lines, no arrays and no persistent state. A LuxAlgo-style zone needs
+// all four -- a box is a line, its volume figure is a label, tracking
+// live zones needs arrays, extend-until-mitigated needs state. Plotted
+// series is the only shape available. Grade real trades on TradingView
+// with actual LuxAlgo loaded; this is a chart aid, not the grader.
 //
-// These are running swing levels, NOT LuxAlgo zones -- no boxes, no
-// per-zone accumulated volume. See the note at the bottom.
+// NOT here and not possible: share sizing off the $75-100 budget, and
+// the 2-position / 4% portfolio gates. Those need your open book.
+// Run /technical-analysis for the verdict.
 // ============================================================
 
 // ---------- Inputs ----------
-emaLen  = define(5,   min=1,   name="EMA length")
-smaLen  = define(50,  min=1,   name="SMA length")
-rsiLen  = define(14,  min=1,   name="RSI length")
-rsiOB   = define(80,  min=1,   name="RSI overbought")
-rsiOS   = define(20,  min=1,   name="RSI oversold")
-pivotLb = define(14,  min=1,   name="Pivot lookback")
-atrLen  = define(14,  min=1,   name="ATR length")
-atrMult = define(1.5, min=0.1, name="ATR stop multiple")
-volLb   = define(50,  min=1,   name="Volume average lookback")
-minRR   = define(2.0, min=0.1, name="Minimum reward:risk")
+emaLen  = define.integer(5,   min=1,   name="EMA length")
+smaLen  = define.integer(50,  min=1,   name="SMA length")
+rsiLen  = define.integer(14,  min=1,   name="RSI length")
+rsiOB   = define.float(80,    min=1,   name="RSI overbought")
+rsiOS   = define.float(20,    min=1,   name="RSI oversold")
+pivotLb = define.integer(14,  min=1,   name="Pivot lookback")
+atrLen  = define.integer(14,  min=1,   name="ATR length")
+atrMult = define.float(1.5,   min=0.1, name="ATR stop multiple")
+volLb   = define.integer(50,  min=1,   name="Volume average lookback")
+minRR   = define.float(2.0,   min=0.1, name="Minimum reward:risk")
 
 // ---------- Step 1: trend ----------
 emaFast = ind.ema(close, emaLen)
 smaSlow = ind.sma(close, smaLen)
 
-plt(emaFast, name="EMA 5")
-plt(smaSlow, name="SMA 50")
+plt(emaFast, color=color.white, name="EMA 5")
+plt(smaSlow, color=color.blue,  name="SMA 50")
 
-// Boolean logic as 1/0 ternaries multiplied together. Ternary syntax is
-// verified in real Webull scripts; the and/or keywords are not.
-// Both conditions are required: the right slope AND the right side of
+// iff() is the only conditional, so conditions are combined by
+// multiplying 1/0 results. Every factor must be 1 for the product to be 1.
+// Both trend conditions are required: correct slope AND correct side of
 // the 50 SMA. Price below the 50 fails the trade even on a green line.
-bullTrend = (emaFast > smaSlow ? 1 : 0) * (smaSlow > smaSlow[1] ? 1 : 0) * (close > smaSlow ? 1 : 0)
-bearTrend = (emaFast < smaSlow ? 1 : 0) * (smaSlow < smaSlow[1] ? 1 : 0) * (close < smaSlow ? 1 : 0)
+bullTrend = iff(emaFast > smaSlow, 1, 0) * iff(smaSlow > smaSlow[1], 1, 0) * iff(close > smaSlow, 1, 0)
+bearTrend = iff(emaFast < smaSlow, 1, 0) * iff(smaSlow < smaSlow[1], 1, 0) * iff(close < smaSlow, 1, 0)
 
 // ---------- Step 2: location ----------
 // Prior `pivotLb` bars offset by 1, so the current bar can print
 // through the level and the sweep stays visible.
-swingHigh = ind.highest(high, pivotLb)[1]
-swingLow  = ind.lowest(low,  pivotLb)[1]
+swingHigh = math.highest(high, pivotLb)[1]
+swingLow  = math.lowest(low,  pivotLb)[1]
 
-plt(swingHigh, name="Swing High")
-plt(swingLow,  name="Swing Low")
+plt(swingHigh, color=color.red,  name="Swing High", style=plt.type_stepline)
+plt(swingLow,  color=color.teal, name="Swing Low",  style=plt.type_stepline)
 
 // A level built on below-average volume is the weak K-volume zone the
 // playbook says to skip. Crude next to LuxAlgo's per-zone accumulated
-// volume: this compares peak volume in the window to a running average
-// rather than summing volume inside a box.
+// volume -- with no arrays or state there is no box to sum volume
+// inside, so this compares peak volume in the window to a running average.
 volAvg = ind.sma(volume, volLb)
-heavy  = ind.highest(volume, pivotLb)[1] > volAvg ? 1 : 0
+heavy  = iff(math.highest(volume, pivotLb)[1] > volAvg, 1, 0)
 
 // ---------- Step 3: the trap ----------
 // A SWEEP means the low printed strictly BELOW the level. A bar that
 // stalls at or inside the level swept nothing -- in a trend that is
 // consolidation before the level breaks, not a reversal.
-sweptLow  = low  < swingLow  ? 1 : 0
-sweptHigh = high > swingHigh ? 1 : 0
+sweptLow  = iff(low  < swingLow,  1, 0)
+sweptHigh = iff(high > swingHigh, 1, 0)
 
 // ---------- Step 4: the trigger ----------
 // A CLOSE back on the right side. A wick back across does not count.
-reclaimUp   = close > swingLow  ? 1 : 0
-reclaimDown = close < swingHigh ? 1 : 0
+reclaimUp   = iff(close > swingLow,  1, 0)
+reclaimDown = iff(close < swingHigh, 1, 0)
 
 // ---------- Step 5: the stop ----------
 // Off the LEVEL. Never Entry -/+ 1.5xATR -- that parks the stop on top
 // of support, so a normal dip stops you out at exactly the bounce spot.
-atr = ind.atr(atrLen)
+atrVal = ind.atr(atrLen)
 
-longStop  = swingLow  - atrMult * atr
-shortStop = swingHigh + atrMult * atr
+longStop  = swingLow  - atrMult * atrVal
+shortStop = swingHigh + atrMult * atrVal
 
-plt(longStop,  name="Long stop")
-plt(shortStop, name="Short stop")
+plt(longStop,  color=color.teal, name="Long stop",  style=plt.type_stepline)
+plt(shortStop, color=color.red,  name="Short stop", style=plt.type_stepline)
 
 // ---------- Step 6: the exit ----------
 // Target sits in FRONT of the opposing level. Reward must clear 2R or
 // the setup fails here no matter how good the first five steps looked.
-longRisk   = close - longStop
-shortRisk  = shortStop - close
+longRisk  = close - longStop
+shortRisk = shortStop - close
 
-longRR  = longRisk  <= 0 ? 0 : (swingHigh - close) / longRisk
-shortRR = shortRisk <= 0 ? 0 : (close - swingLow) / shortRisk
+longRR  = iff(longRisk  <= 0, 0, (swingHigh - close) / longRisk)
+shortRR = iff(shortRisk <= 0, 0, (close - swingLow) / shortRisk)
 
-longRRok  = longRR  >= minRR ? 1 : 0
-shortRRok = shortRR >= minRR ? 1 : 0
-
-plt(swingHigh, name="Long target",  display=1)
-plt(swingLow,  name="Short target", display=1)
+longRRok  = iff(longRR  >= minRR, 1, 0)
+shortRRok = iff(shortRR >= minRR, 1, 0)
 
 // ---------- RSI context ----------
-rsi = ind.rsi(close, rsiLen)
-rsiNotHot  = rsi < rsiOB ? 1 : 0
-rsiNotCold = rsi > rsiOS ? 1 : 0
+rsiVal     = ind.rsi(close, rsiLen)
+rsiNotHot  = iff(rsiVal < rsiOB, 1, 0)
+rsiNotCold = iff(rsiVal > rsiOS, 1, 0)
 
 // ---------- The six-step gate ----------
-// Product of every step. One zero anywhere and the setup is zero.
 longSetup  = bullTrend * heavy * sweptLow  * reclaimUp   * longRRok  * rsiNotHot
 shortSetup = bearTrend * heavy * sweptHigh * reclaimDown * shortRRok * rsiNotCold
 
-// These plot 0 or 1. Read them in the status line, not on the price
-// scale -- hide their chart display, keep "values in status line" on.
-plt(longSetup,  name="LONG setup",  display=1)
-plt(shortSetup, name="SHORT setup", display=1)
-plt(longRR,     name="Long R:R",    display=1)
-plt(shortRR,    name="Short R:R",   display=1)
+// Markers print at the bar only when the full gate passes. `none` keeps
+// non-signal bars off the chart entirely instead of pinning them to zero.
+plt(iff(longSetup  > 0, low,  none), color=color.lime, name="LONG",  style=plt.type_circles)
+plt(iff(shortSetup > 0, high, none), color=color.red,  name="SHORT", style=plt.type_circles)
 
-// ============================================================
-// COLORS: set them in the indicator's Style tab, not in code. The
-// editor lexes with TypeScript's tokenizer, where #name is a private
-// identifier -- so a hex colour starting with a LETTER (#EF5350) parses
-// but one starting with a DIGIT (#26A69A) does not: # is an invalid
-// character, then 26 is a numeric literal, then A69A an identifier.
-// Passing colours at all is a trap; the Style tab has no such problem.
-//
-// Confirmed by the editor accepting this file: ind.ema, ind.rsi,
-// ind.atr, ind.highest, ind.lowest and the [1] history offset all
-// exist, alongside define, plt, ind.sma, close/high/low/volume,
-// ternaries, arithmetic and name=/min=/display=.
-//
-// What is deliberately absent: shaded zone boxes and per-zone volume
-// labels. Those need rectangle and text drawing, which no Webull script
-// I could find uses, and I will not invent an API and hand it to you as
-// working code. Vega's version will answer that question -- if it draws
-// real boxes, its zone layer beats this one and we merge the two.
-// ============================================================
+// R:R reads in the status line. Hide these two from the chart -- they
+// are small ratios and will flatten against a price scale in the hundreds.
+plt(longRR,  color=color.yellow, name="Long R:R")
+plt(shortRR, color=color.yellow, name="Short R:R")
