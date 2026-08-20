@@ -34,6 +34,18 @@ reading a screenshot — the SWING CALL colour is the only input left that a hum
 has to supply. Self-checks: `python3 test_liquidity_swings.py`,
 `python3 test_trade_setup.py`.
 
+**Hard rule: these two tools get bars from Alpaca only, via `alpaca_data.py`.
+Never Yahoo, Nasdaq, or Webull for TA chart data** — a first pass on Yahoo's
+feed (through `marketdata.py`) reproduced zone shape and rough price levels
+but not exact edges, closely enough to look right and far enough to place a
+stop wrong. Requires `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY` exported (see
+`.env.example`) — free at https://alpaca.markets. Zone volume labels are not
+yet trustworthy off any feed; a different indicator is the plan for that
+number, so grade zones on price (`top`/`btm`/`level`), not `volume`. This
+rule is scoped to the TA tools only — `marketdata.py` (fundamentals, quotes,
+the deck charts) is untouched and still uses SEC/Yahoo/Nasdaq as documented
+in its own docstring.
+
 ## Invariants
 
 - Stdlib-only Python. No pip installs, no server.

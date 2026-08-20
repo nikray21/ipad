@@ -35,7 +35,10 @@ Only two things the tools cannot know. Ask for these and nothing else:
    many other trades are open, which the portfolio gate needs.
 
 A screenshot is still fine as context. Never read a number off it that the tool
-computes — if the two disagree, the tool is right.
+computes — if the two disagree, the tool is right, **except zone volume**: the
+`volume`/`vol_rank` fields are not yet trustworthy off any feed (a different
+indicator is the plan for that number) — grade location on price (in/out of
+the zone, which zone), not on the volume label, until that's wired up.
 
 ## The 6-Step Checklist (bullish)
 

@@ -2,9 +2,21 @@
 
 The `technical-analysis` skill grades a trade on where price sits relative to
 LuxAlgo's swing zones, and until now those zones were read off a TradingView
-screenshot by eye. This is the same algorithm in Python, run against
-`marketdata.py` bars, so a zone's edges and its volume label are numbers the
-pipeline derived rather than numbers someone squinted at.
+screenshot by eye. This is the same algorithm in Python, run against bars
+from `alpaca_data.py`, so a zone's edges are numbers the pipeline derived
+rather than numbers someone squinted at.
+
+Bars come from Alpaca and nowhere else — a hard rule, not a preference. A
+first pass ran on `marketdata.py`'s Yahoo-backed history, and it looked
+right without being right: zone sequence and rough price levels matched a
+real TradingView chart (checked against NBIS, then again against AMD), but
+Yahoo's own OHLCV disagrees with the feed Nikil trades against by enough to
+occasionally pick a different bar as the pivot extreme, which moves a zone
+edge exactly where a stop gets placed. Alpaca is the vendor whose bars are
+close enough to his chart's feed to trust the edges. Volume is a separate
+problem — the label each zone carries is deliberately not authoritative
+right now (see "What this doesn't do" below) — so this module answers
+*where the zones are*, not how much traded inside them.
 
 Ported from the published Pine v6 source (fetched via the LuxAlgo MCP server,
 `library_get_source_code` for slug `liquidity-swings`). The original is
@@ -27,14 +39,19 @@ What the indicator actually does, since the Pine is terse about it:
     always short by that many bars. Reproduced here rather than corrected:
     the point is to match the chart Nikil is looking at.
 
-Checked against a chart Nikil actually traded: the NBIS 4h numbers recorded in
-`playbook/figures.py` (17 Aug 2026 — price 270.30, red zone 280-290 labelled
-2.723M) come back here as 268.92 and 280.35-290.60 labelled 2.578M. Close
-enough to trust, and the residual is his TradingView feed against Yahoo's.
-Note the settings that reproduced it: **Pivot Lookback 7**, not the indicator
-default of 14 — at 14 that pivot does not exist and the nearest zone above is
-290-300 instead. If a computed zone disagrees with the screenshot, check the
-lookback on his chart before doubting the port.
+What this doesn't do: the volume label. `count`/`volume` on each zone still
+exist as fields — the accumulation logic is unchanged — but they're computed
+off whatever feed `alpaca_data.py` returns, which was never checked against
+his chart's own volume figures and probably won't match them; a different
+indicator is the plan for that number. Trust `top`/`btm`/`level`, not
+`volume`, until that's sorted.
+
+**Pivot Lookback 7** was the setting that reproduced the one Yahoo-backed
+chart this was checked against (NBIS, 17 Aug 2026) before the Alpaca switch;
+it's carried forward here as the default because there's no reason yet to
+think it's wrong, not because it's been re-proven on Alpaca bars. If a
+computed zone disagrees with the screenshot, check the actual Pivot Lookback
+on his chart before doubting the port.
 
 `broken` vs `taken` is the one place this reports more than the chart does.
 Pine only tracks a break while the zone is the most recent one on its side —
@@ -53,7 +70,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-import marketdata
+import alpaca_data
 
 _ET = ZoneInfo("America/New_York")
 
@@ -172,18 +189,13 @@ def _merge(bs):
 
 
 def load_bars(symbol, tf="4h"):
-    """Bars for one ticker at 1d, 1h or 4h."""
-    if tf == "1d":
-        h = marketdata.get("history", symbol)
-    else:
-        h = marketdata.build_history(symbol, "60m")
-    if h.get("error"):
-        raise RuntimeError(h["error"])
-    pts = h["points"]
-    # Yahoo appends a placeholder for the bar still forming: no volume, and
-    # o=h=l=c. It would seed a phantom pivot, so drop it.
-    while pts and pts[-1]["v"] == 0 and pts[-1]["o"] == pts[-1]["h"] == pts[-1]["l"] == pts[-1]["c"]:
-        pts = pts[:-1]
+    """Bars for one ticker at 1d, 1h or 4h, from Alpaca — never Yahoo,
+    Nasdaq, or Webull. Alpaca only returns completed bars for a real trade,
+    so there's no forming-bar placeholder to strip here the way Yahoo's feed
+    needed.
+    """
+    pts = alpaca_data.bars(symbol, "1Day" if tf == "1d" else "1Hour",
+                            days=800 if tf == "1d" else 400)
     return to_session_bars(pts, 4) if tf == "4h" else pts
 
 
