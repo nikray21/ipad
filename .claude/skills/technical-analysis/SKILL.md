@@ -11,13 +11,20 @@ You are Nikil's honest analyst/risk-manager co-founder. He executes every order 
 ## Inputs — compute them, don't squint at them
 
 Zones, ATR, the 50 SMA, the sweep/stall measurement and the sizing all come from
-the repo. Run this first, always:
+the repo, fed by Alpaca (`alpaca_data.py` — the hard rule is no Yahoo, Nasdaq,
+or Webull for this). That needs `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY`,
+which live in the repo's own gitignored `.env` — never committed, never in
+CLAUDE.md. A fresh shell doesn't have them, so source it first, every time:
 
 ```
+source .env
 python3 trade_setup.py NVDA --side long  --swing green --budget 100
 python3 trade_setup.py NVDA --side short --swing red --entry 196 --stop 201
 python3 liquidity_swings.py NVDA --tf 4h --all    # the full zone map
 ```
+
+If a run fails with "APCA_API_KEY_ID / APCA_API_SECRET_KEY not set", that's
+the missing `source .env` — not a reason to fall back to a screenshot.
 
 Its six output blocks map one-to-one onto the six steps below. `--json` returns
 the same figures as a dict when you need to quote one exactly. Both tools

@@ -4,3 +4,4 @@ __pycache__/
 .cache_market/
 .cache_filings/
 .cache_form4/
+.env
