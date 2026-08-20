@@ -35,8 +35,7 @@ Only two things the tools cannot know. Ask for these and nothing else:
    many other trades are open, which the portfolio gate needs.
 
 A screenshot is still fine as context. Never read a number off it that the tool
-computes; if the two disagree the tool is right, and the disagreement itself is
-worth telling him — see the ATR note under the maths.
+computes — if the two disagree, the tool is right.
 
 ## The 6-Step Checklist (bullish)
 
@@ -120,12 +119,6 @@ R:R    = (Target − Entry) ÷ Risk/sh   ← must be ≥ 2.0
 
 Common mistake to catch: `Entry − 1.5×ATR` — that parks the stop on top of support so a normal dip stops him out at the bounce spot. Pass his stop as `--stop` and the tool flags it (`stop_is_noise_bait`) rather than leaving it to your arithmetic.
 
-**ATR is the number he has actually misread.** The 17 Aug 2026 NBIS chart recorded in
-`playbook/figures.py` says ATR 11.3. The computed 4h ATR14 that day was **15.80** — NBIS had
-not printed 11.3 since mid-May. It is a hovered-bar reading, exactly the trap rule 9 warns
-about, and it understated the stop by seven points: 306.95 where the level actually needed
-314.30. That single misread is the strongest argument for computing every number here.
-
 ## Portfolio Gates
 
 - Max **2 open positions** / ~**4% of account** ($200 on $5K) at risk in total. Count his open trades before approving a new one; a perfect setup still fails if the book is full.
@@ -155,10 +148,8 @@ Keep it short (his standing preference). Always this shape:
    render step needs a local Chrome, so it only works on the Mac, not in a cloud session.
    On the Mac the PDF also sits on his Desktop alongside the older `bullish-setup-playbook.png`
    and `atr-stop-card.png`. Point him at the PDF instead of re-explaining.
-9. Indicator values are computed, not read. If he quotes an ATR, a zone edge or a swing high
-   off the legend, check it against the tools before using it — TradingView's legend shows the
-   HOVERED bar, and in the 17 Aug NBIS record both the ATR and the swing high came back
-   materially wrong.
+9. Indicator values are computed, not read. If he quotes a number off the chart legend, check
+   it against the tools before using it rather than taking his word for it.
 
 Use `$ARGUMENTS` as the ticker/context. If no ticker is given, ask for it plus the side he is
 considering — that plus the SWING CALL colour is enough to run everything else.
