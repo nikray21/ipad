@@ -1,79 +1,95 @@
-# WebullScript — working notes
+# Webull Script Editor — the real API
 
-Updated 2026-08-20, against the official function reference.
+Updated 2026-08-20, from code Vega AI generated in the editor itself.
 
-## What the language is
+## It is TypeScript, importing from `metrix`
 
-A Pine-style DSL, edited in a TypeScript-flavored editor. The editor's
-type checker reports DOM globals when the API is not in scope, which is
-misleading — `close` resolves to `window.close`, `name` to the readonly
-`window.name`, `atr` suggests the DOM `Attr` interface. Those errors mean
-the script is malformed, not that the names are wrong.
+Not a Pine-style DSL. An indicator is a **class** extending
+`CustomIndicator`, with an `onBar(bar)` hook called once per bar.
 
-## Namespaces
+```ts
+import {
+    CustomIndicator, CustomIndicatorOptions,
+    Bar, Color, PlotType, PlotHandle, SMA
+} from 'metrix';
 
-| Namespace | Holds |
-|---|---|
-| `ind.` | ema, sma, wma, hma, rma, alma, swma, vwma, rsi, atr, macd, cci, cmo, mfi, tsi, bb, kc, dmi, cog, correlation, up_trend, down_trend |
-| `math.` | **highest, lowest**, abs, min, max, sum, avg, cumsum, std, dev, variance, diff, stoch, round/floor/ceil, pow, sqrt, exp, log, sign, trig |
-| `time.` | current, current_bar, utc, get_* extractors, monday..sunday |
-| `bar_check.` | is_first, is_last, is_new, is_historical, is_real_time, is_last_update, highest_offset, lowest_offset |
-| `plt.` | type_line, type_area, type_histogram, type_columns, type_circles, type_cross, type_linebr, type_stepline, fill_between |
-| `hline.` | type_solid, type_dashed, type_dotted |
-| `color.` | 17 named colors + sys_up / sys_down |
-| `define.` | bool, float, integer, source, string |
+class Sma20Indicator extends CustomIndicator {
+    private readonly sma: SMA;
+    private readonly smaPlot: PlotHandle;
 
-**highest/lowest live under `math.`, not `ind.`** — the single easiest
-mistake to make.
+    constructor(options: CustomIndicatorOptions) {
+        super(options);
+        this.defineIndicator('SMA 20', 'SMA-20', true);   // name, short name, overlay
+        const period = this.defineInput('period', 20, {
+            type: 'Int', description: '…'
+        }) as number;
+        this.sma = new SMA(period);
+        this.smaPlot = this.definePlot('sma20', {
+            color: Color.Blue, type: PlotType.Line, lineWidth: 2
+        });
+    }
 
-## Prices
+    onBar(bar: Bar): void {
+        this.bar = bar;
+        const v = this.sma.step(this.bar.close);
+        this.smaPlot(Number.isFinite(v) ? v : NaN);
+    }
+}
 
-`open` `high` `low` `close` `volume`, plus `hl2` `hlc3` `hlcc4` `ohlc4`.
+export default Sma20Indicator;
+```
 
-## Control flow
+### Confirmed surface
 
-`iff(condition, if_true, if_false)` is the **only** conditional. No
-ternary `?:`, no if/else. Combine conditions by multiplying 1/0 results
-or by nesting `iff`.
+- `this.defineIndicator(name, shortName, overlay)`
+- `this.defineInput(key, default, { type: 'Int' | 'Float', description })` — cast the result
+- `this.definePlot(id, { color, type, lineWidth })` returns a `PlotHandle`
+- A `PlotHandle` is **called** with the bar's value: `this.smaPlot(v)`
+- `this.bar` is assigned inside `onBar`; `bar.close` confirmed
+- Built-in steppers exist, e.g. `new SMA(period)` with `.step(value)`
+- `NaN` is the blank value — plot it to leave a bar unmarked
+- `Color.Blue`, `PlotType.Line` confirmed members
 
-`none` is the null value — the Pine `na` equivalent. Plot
-`iff(cond, price, none)` to mark only qualifying bars rather than
-pinning non-signal bars to zero.
+### Consequences
 
-## Hard limits
+Because this is real TypeScript with class state, **everything the older
+DSL forbade is available**: arrays, loops, cross-bar persistence, helper
+classes. Pivot confirmation, zone tracking with mitigation, and per-zone
+accumulated volume are all straightforward.
 
-No arrays. No loops. No `var` / cross-bar persistence. No custom
-functions. No text labels. No custom line drawing. No `strategy.*`.
+Still unknown: whether any drawing API exists for boxes or text labels.
+Until one turns up, a zone renders as its two edge lines and its volume
+reads in the status line rather than as an on-chart label.
 
-### What that rules out
+Also unguessed: the rest of `Color` and `PlotType`, and which other
+indicator classes `metrix` exports (`SMA` is confirmed; `EMA`, `RSI`,
+`ATR` are likely but unverified — `swing-playbook.ts` implements its own
+so the only dependency is the plotting API).
 
-**LuxAlgo-style zones are not expressible.** A shaded box is a custom
-line, its volume figure is a label, tracking several live zones needs
-arrays, and extend-until-mitigated needs persistent state — all four are
-absent. Swing levels must be plotted series. Any per-zone accumulated
-volume has to be approximated from a rolling window.
+## Dead ends — do not revisit
 
-## Still unverified
+**The "WebullScript Complete Reference"** (`define.integer`, `plt`,
+`ind.ema`, `math.highest`, `iff`, `color.blue`) describes a different or
+older product. Every one of those names fails to resolve in this editor.
 
-- Exact `define.*` signatures — assumed `define.integer(5, min=1, name="…")`
-  by analogy with the older public dialect.
-- Whether `[1]` history offset is supported. The official tips say to
-  "reference prior bars if needed" with "limited historical reference
-  capabilities", which implies yes. `math.diff` is the fallback for slope.
-- The `plt` style parameter's name — `style=plt.type_stepline` is a guess.
+**These repos** use a third variant, bare `define(...)` and `ind.sma`:
+- https://github.com/shishir1601/webull_indicators
+- https://github.com/Wyatt-Hajda/WeBull-Script
 
-## Dead end: the define/plt/ind.sma repos
+`gmma.ws` there also uses `color=#00FF00`, which cannot even tokenize.
+Never run as written. Not a reference.
 
-https://github.com/shishir1601/webull_indicators and
-https://github.com/Wyatt-Hajda/WeBull-Script use bare `define(...)` and
-`ind.sma`. Close to correct but not current — real inputs are typed
-(`define.integer`). `gmma.ws` also uses `color=#00FF00`, and a hex
-literal starting with a digit cannot tokenize, so that file was never
-run as written. Not a trustworthy reference.
+## Editor diagnostics are authoritative
 
-## Error-ordering trap
+The editor type-checks against the browser standard library, so a script
+in the wrong language produces telltale noise: `close` resolves to
+`window.close` and never errors, `name` reports as a readonly constant
+(`window.name`), `math` suggests `Math`, `atr` suggests `Attr`. Those
+mean the language is wrong, not the trading names.
 
-Syntax errors are reported first and block type checking. A paste that
-returns only a couple of lexer complaints has **not** validated any
-function name — fix those and a second wave of semantic errors follows.
-Never read a short first error list as confirmation.
+Two traps:
+
+1. **Syntax errors block type checking.** A short first error list has
+   validated nothing; fix it and a second wave arrives.
+2. **Errors are not cosmetic.** "Add to chart" is gated on a clean
+   compile, so nothing runs until the diagnostics clear.
