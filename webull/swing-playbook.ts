@@ -224,7 +224,7 @@ class SwingPlaybookIndicator extends CustomIndicator {
         const atrVal = this.atr.step(bar.high, bar.low, bar.close);
         const volAvg = this.volSma.step(bar.volume);
 
-        this.detectPivot();
+        this.detectPivot(bar);
         this.updateZones(bar);
 
         // Nearest live zone on each side of price.
@@ -307,19 +307,23 @@ class SwingPlaybookIndicator extends CustomIndicator {
      * pivotLb bars on BOTH sides, so it can only be confirmed pivotLb bars
      * after the fact — the zone is created at its true bar, retrospectively.
      */
-    private detectPivot(): void {
+    private detectPivot(bar: Bar): void {
         const span = 2 * this.pivotLb + 1;
-        this.window.push(this.bar);
+        this.window.push(bar);
         if (this.window.length > span) this.window.shift();
         if (this.window.length < span) return;
 
         const centre = this.window[this.pivotLb];
+        if (!centre) return;
+
         let isHigh = true;
         let isLow = true;
         for (let i = 0; i < span; i++) {
             if (i === this.pivotLb) continue;
-            if (this.window[i].high >= centre.high) isHigh = false;
-            if (this.window[i].low <= centre.low) isLow = false;
+            const other = this.window[i];
+            if (!other) continue;
+            if (other.high >= centre.high) isHigh = false;
+            if (other.low <= centre.low) isLow = false;
         }
 
         // Wick-extremity geometry: high down to the body top for a swing
