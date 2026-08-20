@@ -1,1 +1,14 @@
-{}
+{
+  "MRNA": ["merck-moderna-phase3-melanoma-vaccine-data-aug19", "fda-clears-mflusiva-flu-vaccine"],
+  "TGT": ["q2-fy2026-beat-raises-guidance-aug19-52wk-high"],
+  "COIN": ["armstrong-trump-white-house-crypto-rules-meeting", "prediction-markets-injunction-rejected-michigan-judge"],
+  "META": ["ca-ag-29-state-youth-safety-trial-starts-aug17", "capex-guidance-raised-130-145b"],
+  "PYPL": ["stripe-advent-takeover-talks-wsj"],
+  "TSLA": ["cybercab-robotaxi-public-launch-austin"],
+  "AAPL": ["redburn-upgrade-buy-pt-260-to-400", "eu-app-store-fee-cut-antitrust-settlement", "texas-manufacturing-plant-opened"],
+  "PFE": ["merck-moderna-cancer-vaccine-sector-lift-aug19", "insider-buying-3m"],
+  "DIS": ["hearst-buys-remaining-ae-stake-1.2b", "abc-fcc-lawsuit-dei-license-renewal"],
+  "INTC": ["upsized-20b-stock-offering-95-per-share"],
+  "GS": ["acquires-lcn-capital-partners-410m", "acquires-neos-investments-2.25b"],
+  "TSM": ["raises-2026-revenue-growth-outlook-above-40pct", "capex-guidance-raised-18.75-20b"]
+}
