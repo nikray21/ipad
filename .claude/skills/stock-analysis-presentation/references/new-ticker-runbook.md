@@ -9,13 +9,16 @@ Phase 1 — the research is the product, the deck is the packaging.
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"   # repo root — everything runs from here
+source .env                           # APCA_API_KEY_ID / APCA_API_SECRET_KEY
 python3 marketdata.py quote <SYM>     # upstreams reachable? nothing to start
 ls decks/ episodes/                   # what already exists
 ```
 
-**Nothing to start.** `marketdata.py` fetches SEC XBRL, the Yahoo chart API and Nasdaq
-directly. A failing route means connectivity or an upstream shape change, not a
-service being down.
+**Nothing to start, but `.env` first.** `marketdata.py` fetches SEC XBRL and
+Nasdaq directly (key-free), plus Alpaca for `history`/`quote` — a hard rule,
+never Yahoo/Nasdaq/Webull for chart/price data — which needs the two Alpaca
+env vars sourced. A failing route after that means connectivity or an
+upstream shape change, not a service being down.
 
 Tell him up front if this is a heavy run (it is — many filings, long outputs) and
 offer to do it in chunks.

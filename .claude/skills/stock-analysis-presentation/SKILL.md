@@ -36,13 +36,17 @@ midpoint, the tax line. That work is Phase 1 and it is most of the value.
 ## This skill is standalone — no server, no Terminal
 
 `marketdata.py` owns the data layer. Nothing in the pipeline talks to
-`127.0.0.1` at all. Upstreams are public and key-free:
+`127.0.0.1` at all. Upstreams:
 
 | Route | Upstream |
 |---|---|
-| `fundamentals`, `filings` | SEC XBRL `companyfacts` + `submissions` |
-| `history`, `quote` | Yahoo chart API (Nasdaq for the live quote) |
-| `profile`, `street`, `estimates` | Nasdaq api |
+| `fundamentals`, `filings` | SEC XBRL `companyfacts` + `submissions` (public, key-free) |
+| `history`, `quote` | **Alpaca** — hard rule, never Yahoo/Nasdaq/Webull for chart/price data. Needs `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY`: `source .env` before running anything that touches these two routes. |
+| `profile`, `street`, `estimates` | Nasdaq api (public, key-free) |
+
+`build_fundamentals_yahoo` (the foreign-filer fallback for names like NIO with
+no SEC XBRL) still uses Yahoo — that's fundamentals, not chart/price data, so
+it's outside the Alpaca rule.
 
 **Its builders are lifted verbatim from the Terminal's `server.py`,** deliberately:
 each one encodes a data trap found the hard way — deriving a quarter from cumulative
@@ -280,9 +284,11 @@ Two engine truths found on NBIS, now generalizable:
   quarterly series when a deconsolidation reclassified history.
 * **Pre-market reporters** break the engine's next-session reaction assumption;
   derive the same-day move from the daily bars in the deck module and never
-  render the engine's `releases` moves. The quote route's `asOf` now
-  self-corrects against the last daily bar (Nasdaq's label can lag its own
-  price by a session).
+  render the engine's `releases` moves. (The quote route's `asOf` used to need
+  a self-correction against the last daily bar because Nasdaq's own timestamp
+  could lag its price by a session — moot now that `quote` is Alpaca, whose
+  trade timestamps are precise, but the underlying lesson about pre-market
+  reactions still applies regardless of vendor.)
 
 # HARD RULES
 

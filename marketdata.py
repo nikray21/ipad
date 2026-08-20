@@ -12,17 +12,26 @@ in which order, how splits are normalised, why the freshness ceilings are what
 they are. Reimplementing them would have meant rediscovering all of it, and the
 whole point of this pipeline is that its numbers are trustworthy.
 
-Upstreams, all public and key-free, exactly the ones the Terminal used:
+Upstreams, mostly public and key-free — the ones the Terminal used, minus one:
   * SEC XBRL companyfacts + submissions  — fundamentals and the filing index
-  * Yahoo chart API                      — daily bars and the live quote
+  * Alpaca                               — daily/hourly bars and the live quote
   * Nasdaq api                           — profile, analyst ratings, estimates
+  * Yahoo (fundamentals-timeseries only) — `build_fundamentals_yahoo`'s
+    foreign-filer fallback (NIO-style 20-F/6-K names with no SEC XBRL)
+
+`history` and `quote` need `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY` — see
+`alpaca_data.py` and CLAUDE.md's Market data section. This is a hard rule, not
+a preference: chart and price data comes from Alpaca only, everywhere in this
+repo, never Yahoo/Nasdaq/Webull. A first pass on Yahoo's own chart feed here
+reproduced a LuxAlgo zone's shape and rough price levels but not exact edges —
+closely enough to look right and far enough to place a stop wrong.
 
 Same on-disk cache contract as the Terminal: serve fast, refresh in the
 background, stamp every payload with `_fetchedAt` / `_ageS`, and never hand back
 a stale price — `max_stale=0` means block and refetch past TTL.
 
     from marketdata import get
-    snap = get("quote", "PLTR")
+    snap = get("quote", "PLTR")   # needs APCA_API_KEY_ID / APCA_API_SECRET_KEY
 """
 
 import gzip
@@ -38,6 +47,8 @@ import urllib.request
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime as _dt
+
+import alpaca_data
 
 BROWSER_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
               "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36")
@@ -872,79 +883,23 @@ def build_history(symbol, interval="1d"):
     chart. `c` is the field every existing caller reads; o/h/l/v are
     additive so nothing that came before this needs to change.
 
-    interval="60m" backs the chart's 4h view (aggregated client-side from
-    these hourly bars — Yahoo has no native 4h granularity). It has no
-    Nasdaq fallback: Nasdaq's chart endpoint is daily-only, and silently
-    substituting daily bars under an hourly request would mislabel the
-    data rather than degrade it honestly, so a failure here is a real error.
+    Alpaca only — hard rule, see CLAUDE.md's Market data section. No
+    fallback vendor: silently substituting a different feed under a chart
+    a deck cites would mislabel the data rather than degrade it honestly,
+    so a thin or empty response here is a real error, not a cue to reach
+    for Yahoo or Nasdaq.
+
+    interval="60m" backs a 4h view (aggregated client-side from hourly
+    bars). Nothing in this pipeline currently requests it — ROUTES only
+    ever calls the "1d" default — but it's kept working for parity with
+    direct callers.
     """
-    if interval == "60m":
-        j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}"
-                       "?range=1y&interval=60m", ua=YAHOO_UA)
-        res = ((j.get("chart") or {}).get("result") or [{}])[0]
-        ts = res.get("timestamp") or []
-        q = ((res.get("indicators") or {}).get("quote") or [{}])[0]
-        o, h, l, c, v = (q.get(k) or [] for k in ("open", "high", "low", "close", "volume"))
-        pts = []
-        for i, t in enumerate(ts):
-            cv = c[i] if i < len(c) else None
-            if cv is None:
-                continue
-            pts.append({
-                "t": t * 1000, "c": cv,
-                "o": o[i] if i < len(o) and o[i] is not None else cv,
-                "h": h[i] if i < len(h) and h[i] is not None else cv,
-                "l": l[i] if i < len(l) and l[i] is not None else cv,
-                "v": v[i] if i < len(v) and v[i] is not None else 0,
-            })
-        if len(pts) > 20:
-            return {"symbol": symbol, "points": pts, "source": "Yahoo hourly OHLCV"}
-        return {"error": f"no hourly history for {symbol}"}
-
-    try:
-        j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}"
-                       "?range=2y&interval=1d", ua=YAHOO_UA)
-        res = ((j.get("chart") or {}).get("result") or [{}])[0]
-        ts = res.get("timestamp") or []
-        q = ((res.get("indicators") or {}).get("quote") or [{}])[0]
-        o, h, l, c, v = (q.get(k) or [] for k in ("open", "high", "low", "close", "volume"))
-        pts = []
-        for i, t in enumerate(ts):
-            cv = c[i] if i < len(c) else None
-            if cv is None:
-                continue
-            pts.append({
-                "t": t * 1000, "c": cv,
-                "o": o[i] if i < len(o) and o[i] is not None else cv,
-                "h": h[i] if i < len(h) and h[i] is not None else cv,
-                "l": l[i] if i < len(l) and l[i] is not None else cv,
-                "v": v[i] if i < len(v) and v[i] is not None else 0,
-            })
-        if len(pts) > 20:
-            return {"symbol": symbol, "points": pts, "source": "Yahoo daily OHLCV"}
-        raise RuntimeError("thin history")
-    except Exception:
-        d = nasdaq(f"https://api.nasdaq.com/api/quote/{symbol}/chart?assetclass=stocks"
-                   "&fromdate=2024-07-01&todate=2026-12-31").get("data") or {}
-        rows = d.get("chart") or []
-        pts = []
-        for r in rows:
-            z = r.get("z") or {}
-            v = z.get("value") or z.get("close")
-            if v and r.get("x"):
-                try:
-                    cv = float(str(v).replace(",", ""))
-
-                    def num(k, fallback):
-                        raw = z.get(k)
-                        return float(str(raw).replace(",", "")) if raw not in (None, "") else fallback
-                    # "x" here is already epoch milliseconds — unlike Yahoo's
-                    # seconds, do not rescale it.
-                    pts.append({"t": int(r["x"]), "c": cv, "o": num("open", cv), "h": num("high", cv),
-                               "l": num("low", cv), "v": int(num("volume", 0))})
-                except ValueError:
-                    pass
-        return {"symbol": symbol, "points": pts, "source": "Nasdaq daily OHLCV"}
+    tf, days = ("1Hour", 400) if interval == "60m" else ("1Day", 800)
+    pts = alpaca_data.bars(symbol, tf, days=days)
+    if len(pts) <= 20:
+        raise RuntimeError(f"thin {interval} history for {symbol}: only {len(pts)} bars")
+    label = "hourly" if interval == "60m" else "daily"
+    return {"symbol": symbol, "points": pts, "source": f"Alpaca {label} OHLCV"}
 
 def build_filings(symbol):
     """Links straight to the company's most recent filings on EDGAR."""
@@ -1017,89 +972,43 @@ def build_street(symbol):
     }
 
 def build_quote(symbol):
-    """Real-time quote. Nasdaq first (higher rate limits, gives extended-hours),
-    Yahoo chart as fallback so a single provider hiccup never blanks the deck."""
-    def money(s):
-        if not s:
-            return None
-        try:
-            return float(re.sub(r"[^\d.\-]", "", str(s)))
-        except ValueError:
-            return None
-    def yday_close():
-        # The prior REGULAR session's close — the only honest baseline for "the
-        # day's move". Nasdaq's live block compares an after-hours print to
-        # TODAY's close, which showed MSFT +1.06% green on a day it fell 8%.
-        # Changes once a day; cached accordingly.
-        j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}"
-                       "?range=1d&interval=1d", ua=YAHOO_UA)
-        m = (((j.get("chart") or {}).get("result") or [{}])[0].get("meta") or {})
-        return m.get("chartPreviousClose") or m.get("previousClose")
+    """Real-time-ish quote. Alpaca only — hard rule, see CLAUDE.md's Market
+    data section. No fallback vendor: a single Alpaca hiccup now surfaces as
+    a real error rather than silently degrading to a different provider's
+    number in the deck.
 
-    try:
-        d = nasdaq(f"https://api.nasdaq.com/api/quote/{symbol}/info?assetclass=stocks").get("data") or {}
-        pri = d.get("primaryData") or {}
-        sec = d.get("secondaryData") or {}
-        # During extended hours Nasdaq puts the regular session in one block and
-        # the live after/pre-market print in the other; prefer whichever is live.
-        live, base = (pri, sec) if pri.get("isRealTime") else (sec or pri, pri)
-        price = money(live.get("lastSalePrice")) or money(pri.get("lastSalePrice"))
-        chg = money(live.get("netChange"))
-        if price is None:
-            raise RuntimeError("no nasdaq price")
-        try:
-            prev = cached(f"yc:{symbol}", 600, yday_close)
-        except Exception:
-            prev = None
-        if not prev:
-            prev = (price - chg) if chg is not None else None
-        in_session = live is pri and pri.get("isRealTime")
-        q = {
-            "symbol": symbol, "price": price,
-            # The headline change is ALWAYS against yesterday's close — the
-            # number a viewer means when they say "MSFT is down 8 today".
-            "change": round(price - prev, 3) if prev else chg,
-            "prevClose": prev,
-            "changePct": round((price / prev - 1) * 100, 2) if prev else money(live.get("percentageChange")),
-            # The extended-session-only move, for the session chip.
-            "sessionChange": chg if not in_session else None,
-            "sessionChangePct": money(live.get("percentageChange")) if not in_session else None,
-            "asOf": live.get("lastTradeTimestamp") or pri.get("lastTradeTimestamp"),
-            "session": "live" if in_session else "extended",
-            "regular": {"price": money(base.get("lastSalePrice")), "asOf": base.get("lastTradeTimestamp")},
-            "name": d.get("companyName"),
-            "source": "Nasdaq real-time",
-        }
-        # Nasdaq's lastTradeTimestamp can lag its own lastSalePrice by a session:
-        # observed 2026-08-15 on NBIS and SPCX, where the price was Friday's close
-        # and the label still said Thursday. That label ends up in the deck's
-        # footer stamp, so when the last daily bar matches the price but not the
-        # label, the bar's date is the truthful one.
-        try:
-            import datetime as _dt
-            bar = get("history", symbol)["points"][-1]
-            lab = _dt.datetime.fromtimestamp(bar["t"] / 1000, _dt.timezone.utc).strftime("%b %-d, %Y")
-            if q["asOf"] and abs((bar.get("c") or 0) - price) < 0.01 and lab not in str(q["asOf"]):
-                q["asOf"] = lab
-        except Exception:
-            pass
-        return q
-    except Exception:
-        j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}?range=1d&interval=1d", ua=YAHOO_UA)
-        m = (((j.get("chart") or {}).get("result") or [{}])[0].get("meta") or {})
-        price = m.get("regularMarketPrice")
-        prev = m.get("chartPreviousClose") or m.get("previousClose")
-        if price is None:
-            raise
-        return {
-            "symbol": symbol, "price": price,
-            "change": (price - prev) if prev else None,
-            "prevClose": prev,
-            "changePct": ((price - prev) / prev * 100) if prev else None,
-            "high52": m.get("fiftyTwoWeekHigh"), "low52": m.get("fiftyTwoWeekLow"),
-            "asOf": None, "session": "regular",
-            "source": "Yahoo Finance",
-        }
+    The free "iex" feed doesn't cover extended hours — IEX itself only
+    trades the 09:30-16:00 ET regular session — so unlike the old
+    Nasdaq-backed version this never claims a pre/post-market print;
+    `session` is always `"regular"`. A paid Alpaca subscription (feed=sip)
+    would restore that distinction; nothing here defaults to it since most
+    accounts don't have one.
+    """
+    snap = alpaca_data.snapshot(symbol)
+    trade = snap.get("latestTrade") or {}
+    prev = snap.get("prevDailyBar") or {}
+    today = snap.get("dailyBar") or {}
+    # latestTrade is the actual last print; latestQuote (bid/ask) is not used
+    # as a price source — on iex it can show a spread wide enough to be
+    # obviously stale outside continuous trading.
+    price = trade.get("p") or today.get("c")
+    if price is None:
+        raise RuntimeError(f"no Alpaca quote for {symbol}")
+    prevClose = prev.get("c")
+    return {
+        "symbol": symbol, "price": price,
+        # The headline change is ALWAYS against yesterday's REGULAR close —
+        # the number a viewer means when they say "MSFT is down 8 today".
+        "change": round(price - prevClose, 3) if prevClose else None,
+        "prevClose": prevClose,
+        "changePct": round((price / prevClose - 1) * 100, 2) if prevClose else None,
+        "sessionChange": None, "sessionChangePct": None,
+        "asOf": trade.get("t"),
+        "session": "regular",
+        "regular": {"price": today.get("c"), "asOf": today.get("t")},
+        "name": None,
+        "source": "Alpaca (feed=iex)",
+    }
 
 def build_estimates(symbol):
     """Consensus EPS by fiscal period, with how many analysts moved their number

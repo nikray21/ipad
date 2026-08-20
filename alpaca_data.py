@@ -1,10 +1,12 @@
 """alpaca_data.py — stdlib-only client for Alpaca's Market Data API.
 
-The TA tools (`liquidity_swings.py`, `trade_setup.py`) get their bars from
-here and nowhere else. That is a hard rule Nikil set: no Yahoo, no Nasdaq, no
-Webull chart data feeding a swing-trade decision, full stop. The rest of the
-pipeline (`marketdata.py` — fundamentals, quotes, the deck charts) is
-untouched; this module exists so the TA tools never have to import it.
+Chart and price data comes from here, repo-wide — a hard rule: no Yahoo, no
+Nasdaq, no Webull for chart/price data, full stop. Two consumers:
+`liquidity_swings.py` / `trade_setup.py` (the TA tools) call `bars()`
+directly; `marketdata.py`'s `history` and `quote` routes call `bars()` and
+`snapshot()` so every deck's price chart and live quote are Alpaca too.
+Fundamentals (SEC XBRL) and profile/street/estimates (Nasdaq) are untouched
+— they're not chart/price data, so they're out of scope for this rule.
 
 Auth: `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY` from the environment. Get a
 free key at https://alpaca.markets (a Paper or Live account both work for
@@ -94,6 +96,26 @@ def bars(symbol, timeframe="1Hour", days=400, feed="iex", adjustment="split"):
     if not out:
         raise RuntimeError(f"no Alpaca bars for {symbol} ({timeframe}, feed={feed})")
     return out
+
+
+def snapshot(symbol, feed="iex"):
+    """Latest trade, latest quote, and today's/yesterday's daily bars, raw —
+    everything `marketdata.build_quote` needs in one call: `latestTrade.p` is
+    the current price, `prevDailyBar.c` is yesterday's regular close (the
+    baseline "today's move" always compares against), `dailyBar` is today's
+    regular session so far. `latestQuote` (bid/ask) is included but not a
+    reliable price on the free iex feed — it can show a spread wide enough to
+    be obviously stale outside continuous trading, so callers should read
+    `latestTrade`, not the quote's midpoint.
+    """
+    url = f"{_BASE}/{symbol}/snapshot?{urllib.parse.urlencode({'feed': feed})}"
+    req = urllib.request.Request(url, headers=_headers())
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.load(resp)
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")
+        raise RuntimeError(f"Alpaca {e.code} for {symbol}: {body}") from None
 
 
 if __name__ == "__main__":
