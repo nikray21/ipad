@@ -13,12 +13,13 @@
 // flag is zero -- all six or no trade. 4 of 6 cannot pass, by
 // construction rather than by discipline.
 //
-// WHY LEVELS AND NOT ZONES: WebullScript has no labels, no custom
-// lines, no arrays and no persistent state. A LuxAlgo-style zone needs
-// all four -- a box is a line, its volume figure is a label, tracking
-// live zones needs arrays, extend-until-mitigated needs state. Plotted
-// series is the only shape available. Grade real trades on TradingView
-// with actual LuxAlgo loaded; this is a chart aid, not the grader.
+// HOW CLOSE THE ZONES GET: shaded bands via plt.fill_between, with
+// LuxAlgo's wick-extremity geometry (high to body top, low to body
+// bottom). What is missing is the volume figure on each zone (no
+// labels) and a chart of frozen historical zones (no arrays, no state)
+// -- you get ONE live band above and one below, re-forming as pivots
+// appear. Grade real trades on TradingView with actual LuxAlgo loaded;
+// this is a chart aid, not the grader.
 //
 // NOT here and not possible: share sizing off the $75-100 budget, and
 // the 2-position / 4% portfolio gates. Those need your open book.
@@ -52,17 +53,34 @@ bullTrend = iff(emaFast > smaSlow, 1, 0) * iff(smaSlow > smaSlow[1], 1, 0) * iff
 bearTrend = iff(emaFast < smaSlow, 1, 0) * iff(smaSlow < smaSlow[1], 1, 0) * iff(close < smaSlow, 1, 0)
 
 // ---------- Step 2: location ----------
-// Prior `pivotLb` bars offset by 1, so the current bar can print
-// through the level and the sweep stays visible.
-swingHigh = math.highest(high, pivotLb)[1]
-swingLow  = math.lowest(low,  pivotLb)[1]
+// Zone geometry follows LuxAlgo's "Wick Extremity": a swing-high zone
+// runs from the high down to the body top, a swing-low zone from the
+// low up to the body bottom. Computed over the window rather than at
+// one pivot bar, since without state there is no bar to anchor to.
+// max(open,close) <= high on every bar, so the band never inverts.
+// Offset by 1 so the current bar can print through and the sweep shows.
+zoneHighTop = math.highest(high, pivotLb)[1]
+zoneHighBot = math.highest(math.max(open, close), pivotLb)[1]
+zoneLowBot  = math.lowest(low, pivotLb)[1]
+zoneLowTop  = math.lowest(math.min(open, close), pivotLb)[1]
 
-plt(swingHigh, color=color.red,  name="Swing High", style=plt.type_stepline)
-plt(swingLow,  color=color.teal, name="Swing Low",  style=plt.type_stepline)
+pHighTop = plt(zoneHighTop, color=color.red,  name="Swing High",     style=plt.type_stepline)
+pHighBot = plt(zoneHighBot, color=color.red,  name="Swing High bot", style=plt.type_stepline)
+pLowBot  = plt(zoneLowBot,  color=color.teal, name="Swing Low",      style=plt.type_stepline)
+pLowTop  = plt(zoneLowTop,  color=color.teal, name="Swing Low top",  style=plt.type_stepline)
+
+// The shaded zone bodies.
+plt.fill_between(pHighTop, pHighBot, color=color.red)
+plt.fill_between(pLowTop,  pLowBot,  color=color.teal)
+
+// LOCATION: price has to pull back INTO the zone. Buying mid-range or
+// mid-air fails this step -- it is the leak the playbook grades loudest.
+inZoneLong  = iff(low  <= zoneLowTop,  1, 0)
+inZoneShort = iff(high >= zoneHighBot, 1, 0)
 
 // A level built on below-average volume is the weak K-volume zone the
 // playbook says to skip. Crude next to LuxAlgo's per-zone accumulated
-// volume -- with no arrays or state there is no box to sum volume
+// volume -- with no arrays or labels there is no box to sum volume
 // inside, so this compares peak volume in the window to a running average.
 volAvg = ind.sma(volume, volLb)
 heavy  = iff(math.highest(volume, pivotLb)[1] > volAvg, 1, 0)
@@ -71,21 +89,26 @@ heavy  = iff(math.highest(volume, pivotLb)[1] > volAvg, 1, 0)
 // A SWEEP means the low printed strictly BELOW the level. A bar that
 // stalls at or inside the level swept nothing -- in a trend that is
 // consolidation before the level breaks, not a reversal.
-sweptLow  = iff(low  < swingLow,  1, 0)
-sweptHigh = iff(high > swingHigh, 1, 0)
+// Measured against the zone BOTTOM, not the zone top -- stalling inside
+// the band is not a sweep no matter how deep it looks.
+sweptLow  = iff(low  < zoneLowBot,  1, 0)
+sweptHigh = iff(high > zoneHighTop, 1, 0)
 
 // ---------- Step 4: the trigger ----------
-// A CLOSE back on the right side. A wick back across does not count.
-reclaimUp   = iff(close > swingLow,  1, 0)
-reclaimDown = iff(close < swingHigh, 1, 0)
+// A CLOSE back above the whole zone, not merely back above its bottom.
+// A wick back across does not count.
+reclaimUp   = iff(close > zoneLowTop,  1, 0)
+reclaimDown = iff(close < zoneHighBot, 1, 0)
 
 // ---------- Step 5: the stop ----------
 // Off the LEVEL. Never Entry -/+ 1.5xATR -- that parks the stop on top
 // of support, so a normal dip stops you out at exactly the bounce spot.
 atrVal = ind.atr(atrLen)
 
-longStop  = swingLow  - atrMult * atrVal
-shortStop = swingHigh + atrMult * atrVal
+// Level = the far edge of the zone: its BOTTOM for a long, its TOP for
+// a short. Below the entire zone and below the bait wick, as required.
+longStop  = zoneLowBot  - atrMult * atrVal
+shortStop = zoneHighTop + atrMult * atrVal
 
 plt(longStop,  color=color.teal, name="Long stop",  style=plt.type_stepline)
 plt(shortStop, color=color.red,  name="Short stop", style=plt.type_stepline)
@@ -96,8 +119,10 @@ plt(shortStop, color=color.red,  name="Short stop", style=plt.type_stepline)
 longRisk  = close - longStop
 shortRisk = shortStop - close
 
-longRR  = iff(longRisk  <= 0, 0, (swingHigh - close) / longRisk)
-shortRR = iff(shortRisk <= 0, 0, (close - swingLow) / shortRisk)
+// Target sits in FRONT of the opposing zone -- at the near edge it would
+// have to reach, not the far side of it.
+longRR  = iff(longRisk  <= 0, 0, (zoneHighBot - close) / longRisk)
+shortRR = iff(shortRisk <= 0, 0, (close - zoneLowTop) / shortRisk)
 
 longRRok  = iff(longRR  >= minRR, 1, 0)
 shortRRok = iff(shortRR >= minRR, 1, 0)
@@ -108,8 +133,8 @@ rsiNotHot  = iff(rsiVal < rsiOB, 1, 0)
 rsiNotCold = iff(rsiVal > rsiOS, 1, 0)
 
 // ---------- The six-step gate ----------
-longSetup  = bullTrend * heavy * sweptLow  * reclaimUp   * longRRok  * rsiNotHot
-shortSetup = bearTrend * heavy * sweptHigh * reclaimDown * shortRRok * rsiNotCold
+longSetup  = bullTrend * inZoneLong  * heavy * sweptLow  * reclaimUp   * longRRok  * rsiNotHot
+shortSetup = bearTrend * inZoneShort * heavy * sweptHigh * reclaimDown * shortRRok * rsiNotCold
 
 // Markers print at the bar only when the full gate passes. `none` keeps
 // non-signal bars off the chart entirely instead of pinning them to zero.
