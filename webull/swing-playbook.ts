@@ -329,23 +329,39 @@ class SwingPlaybookIndicator extends CustomIndicator {
         // Wick-extremity geometry: high down to the body top for a swing
         // high, low up to the body bottom for a swing low.
         if (isHigh) {
+            const top = centre.high;
+            const bottom = Math.max(centre.open, centre.close);
             this.zones.push({
-                top: centre.high,
-                bottom: Math.max(centre.open, centre.close),
-                volume: centre.volume,
-                isHigh: true,
-                active: true
+                top, bottom, isHigh: true, active: true,
+                volume: this.volumeThrough(top, bottom)
             });
         }
         if (isLow) {
+            const top = Math.min(centre.open, centre.close);
+            const bottom = centre.low;
             this.zones.push({
-                top: Math.min(centre.open, centre.close),
-                bottom: centre.low,
-                volume: centre.volume,
-                isHigh: false,
-                active: true
+                top, bottom, isHigh: false, active: true,
+                volume: this.volumeThrough(top, bottom)
             });
         }
+    }
+
+    /**
+     * Volume traded through a price band across the confirmation window.
+     * A zone is only confirmed pivotLb bars after its pivot, so seeding it
+     * this way counts the bars that traded the zone while it was forming
+     * instead of starting the tally from the confirmation bar.
+     */
+    private volumeThrough(top: number, bottom: number): number {
+        let total = 0;
+        // Stops one short of the end: the final window bar is the current
+        // bar, which updateZones tallies immediately after this runs.
+        for (let i = this.pivotLb; i < this.window.length - 1; i++) {
+            const b = this.window[i];
+            if (!b) continue;
+            if (b.high >= bottom && b.low <= top) total += b.volume;
+        }
+        return total;
     }
 
     /**
@@ -359,8 +375,12 @@ class SwingPlaybookIndicator extends CustomIndicator {
             if (bar.high >= zone.bottom && bar.low <= zone.top) {
                 zone.volume += bar.volume;
             }
-            // Mitigated once a bar CLOSES beyond the far edge.
-            if (zone.isHigh ? bar.close < zone.bottom : bar.close > zone.top) {
+            // Mitigated once price CLOSES clean THROUGH the zone: a swing
+            // high is resistance, so it dies on a close above its top; a
+            // swing low is support, dying on a close below its bottom.
+            // Price merely falling away from a pivot high leaves that
+            // resistance perfectly intact — it is still overhead supply.
+            if (zone.isHigh ? bar.close > zone.top : bar.close < zone.bottom) {
                 zone.active = false;
             }
         }
@@ -376,10 +396,14 @@ class SwingPlaybookIndicator extends CustomIndicator {
         for (const zone of this.zones) {
             if (!zone.active || zone.isHigh !== isHigh) continue;
             if (isHigh) {
-                if (zone.bottom < price) continue;
+                // Resistance at or above price. Zones price is currently
+                // inside still count — that is the rally INTO the zone.
+                if (zone.top < price) continue;
                 if (!best || zone.bottom < best.bottom) best = zone;
             } else {
-                if (zone.top > price) continue;
+                // Support at or below price, likewise including one price
+                // has pulled back into.
+                if (zone.bottom > price) continue;
                 if (!best || zone.top > best.top) best = zone;
             }
         }
