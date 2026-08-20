@@ -28,6 +28,12 @@ import {
  * With no drawing API a zone shows as its two edge lines rather than a
  * shaded box.
  *
+ * Each zone claims one of ZONE_SLOTS display slots per side and plots
+ * the same two numbers every bar until mitigated, so its lines sit FLAT.
+ * Drawing only the nearest zone instead makes the lines hop from zone to
+ * zone as price moves, producing a staircase that chases the candles and
+ * looks nothing like a liquidity level.
+ *
  * EVERY plot here is a PRICE. Volume counts and reward:risk ratios were
  * plotted once and blew the Y axis out to 98,000,000, flattening the
  * candles to a line. Nothing that is not a price goes on this overlay —
@@ -129,6 +135,9 @@ interface Zone {
     active: boolean;
 }
 
+/** How many live zones to draw per side. Each needs two plots. */
+const ZONE_SLOTS = 3;
+
 class SwingPlaybookIndicator extends CustomIndicator {
     private readonly emaFast: Ema;
     private readonly smaSlow: Sma;
@@ -150,10 +159,16 @@ class SwingPlaybookIndicator extends CustomIndicator {
 
     private readonly plotEma: PlotHandle;
     private readonly plotSma: PlotHandle;
-    private readonly plotHighTop: PlotHandle;
-    private readonly plotHighBot: PlotHandle;
-    private readonly plotLowTop: PlotHandle;
-    private readonly plotLowBot: PlotHandle;
+    private readonly highTopPlots: PlotHandle[] = [];
+    private readonly highBotPlots: PlotHandle[] = [];
+    private readonly lowTopPlots: PlotHandle[] = [];
+    private readonly lowBotPlots: PlotHandle[] = [];
+
+    /** A zone holds its slot, and so its exact level, until mitigated. */
+    private readonly highSlots: (Zone | null)[] = [];
+    private readonly lowSlots: (Zone | null)[] = [];
+    private highNext = 0;
+    private lowNext = 0;
     private readonly plotLongStop: PlotHandle;
     private readonly plotShortStop: PlotHandle;
     private readonly plotLongSignal: PlotHandle;
@@ -203,10 +218,14 @@ class SwingPlaybookIndicator extends CustomIndicator {
         this.plotEma = this.definePlot('ema', { color: Color.White, type: PlotType.Line, lineWidth: 1 });
         this.plotSma = this.definePlot('sma', { color: Color.Blue, type: PlotType.Line, lineWidth: 2 });
 
-        this.plotHighTop = this.definePlot('zoneHighTop', { color: Color.Red, type: PlotType.Line, lineWidth: 1 });
-        this.plotHighBot = this.definePlot('zoneHighBottom', { color: Color.Red, type: PlotType.Line, lineWidth: 1 });
-        this.plotLowTop = this.definePlot('zoneLowTop', { color: Color.Green, type: PlotType.Line, lineWidth: 1 });
-        this.plotLowBot = this.definePlot('zoneLowBottom', { color: Color.Green, type: PlotType.Line, lineWidth: 1 });
+        for (let i = 0; i < ZONE_SLOTS; i++) {
+            this.highSlots.push(null);
+            this.lowSlots.push(null);
+            this.highTopPlots.push(this.definePlot(`resistance${i}Top`, { color: Color.Red, type: PlotType.Line, lineWidth: 1 }));
+            this.highBotPlots.push(this.definePlot(`resistance${i}Bottom`, { color: Color.Red, type: PlotType.Line, lineWidth: 1 }));
+            this.lowTopPlots.push(this.definePlot(`support${i}Top`, { color: Color.Green, type: PlotType.Line, lineWidth: 1 }));
+            this.lowBotPlots.push(this.definePlot(`support${i}Bottom`, { color: Color.Green, type: PlotType.Line, lineWidth: 1 }));
+        }
 
         this.plotLongStop = this.definePlot('longStop', { color: Color.Green, type: PlotType.Line, lineWidth: 1 });
         this.plotShortStop = this.definePlot('shortStop', { color: Color.Red, type: PlotType.Line, lineWidth: 1 });
@@ -286,10 +305,7 @@ class SwingPlaybookIndicator extends CustomIndicator {
         this.plotEma(ema);
         this.plotSma(sma);
 
-        this.plotHighTop(highZone ? highZone.top : NaN);
-        this.plotHighBot(highZone ? highZone.bottom : NaN);
-        this.plotLowTop(lowZone ? lowZone.top : NaN);
-        this.plotLowBot(lowZone ? lowZone.bottom : NaN);
+        this.drawSlots();
 
         this.plotLongStop(Number.isFinite(longStop) ? longStop : NaN);
         this.plotShortStop(Number.isFinite(shortStop) ? shortStop : NaN);
@@ -328,18 +344,70 @@ class SwingPlaybookIndicator extends CustomIndicator {
         if (isHigh) {
             const top = centre.high;
             const bottom = Math.max(centre.open, centre.close);
-            this.zones.push({
+            const zone: Zone = {
                 top, bottom, isHigh: true, active: true,
                 volume: this.volumeThrough(top, bottom)
-            });
+            };
+            this.zones.push(zone);
+            this.claimSlot(zone);
         }
         if (isLow) {
             const top = Math.min(centre.open, centre.close);
             const bottom = centre.low;
-            this.zones.push({
+            const zone: Zone = {
                 top, bottom, isHigh: false, active: true,
                 volume: this.volumeThrough(top, bottom)
-            });
+            };
+            this.zones.push(zone);
+            this.claimSlot(zone);
+        }
+    }
+
+    /**
+     * Give a freshly confirmed zone a display slot. It keeps that slot,
+     * and so plots its exact level as a flat line, until it is mitigated.
+     * Prefers an empty slot; otherwise evicts the oldest in round-robin,
+     * so the newest ZONE_SLOTS zones per side are the ones on screen.
+     */
+    private claimSlot(zone: Zone): void {
+        const slots = zone.isHigh ? this.highSlots : this.lowSlots;
+        let idx = slots.indexOf(null);
+        if (idx < 0) {
+            if (zone.isHigh) {
+                idx = this.highNext;
+                this.highNext = (this.highNext + 1) % ZONE_SLOTS;
+            } else {
+                idx = this.lowNext;
+                this.lowNext = (this.lowNext + 1) % ZONE_SLOTS;
+            }
+        }
+        slots[idx] = zone;
+    }
+
+    /**
+     * Free any slot whose zone has been mitigated, then plot what remains.
+     * A live zone plots the same two numbers every bar, which is what makes
+     * the lines sit flat instead of chasing price.
+     */
+    private drawSlots(): void {
+        for (let i = 0; i < ZONE_SLOTS; i++) {
+            const hz = this.highSlots[i];
+            if (hz && !hz.active) this.highSlots[i] = null;
+            const lz = this.lowSlots[i];
+            if (lz && !lz.active) this.lowSlots[i] = null;
+
+            const high = this.highSlots[i];
+            const low = this.lowSlots[i];
+
+            const hTop = this.highTopPlots[i];
+            const hBot = this.highBotPlots[i];
+            const lTop = this.lowTopPlots[i];
+            const lBot = this.lowBotPlots[i];
+
+            if (hTop) hTop(high ? high.top : NaN);
+            if (hBot) hBot(high ? high.bottom : NaN);
+            if (lTop) lTop(low ? low.top : NaN);
+            if (lBot) lBot(low ? low.bottom : NaN);
         }
     }
 
@@ -381,9 +449,12 @@ class SwingPlaybookIndicator extends CustomIndicator {
                 zone.active = false;
             }
         }
-        // Keep the list bounded — retired zones are never read again.
+        // Keep the list bounded by dropping retired zones only. Every live
+        // zone must survive: the display slots hold references into this
+        // list, and a zone dropped while still active would never be marked
+        // mitigated again, leaving its line frozen on the chart forever.
         if (this.zones.length > 200) {
-            this.zones = this.zones.filter(z => z.active).slice(-100);
+            this.zones = this.zones.filter(z => z.active);
         }
     }
 
