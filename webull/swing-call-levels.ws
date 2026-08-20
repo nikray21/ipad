@@ -1,6 +1,19 @@
 // ============================================================
+// !! DOES NOT RUN. WRONG LANGUAGE. DO NOT PASTE THIS. !!
+//
+// Written against the define/plt/ind.sma dialect found in public
+// GitHub repos. Webull's actual Script Editor type-checks TypeScript
+// against the browser standard library and knows none of those names:
+// `name` resolves to window.name, `atr` suggests the DOM's Attr, and
+// `close` is window.close -- which is why `close` alone never errors
+// while high/low/volume always do.
+//
+// Kept only as the record of a wrong turn. The logic below is a
+// faithful encoding of the 6-step playbook and is worth porting once
+// the real API is known -- see webull/API-NOTES.md.
+// ============================================================
+//
 // 4H Swing Playbook -- all six steps  (overlay indicator)
-// Paste into: Webull > Chart > Script Editor > New Indicator
 // ------------------------------------------------------------
 // Every one of the 6 steps, computed without persistent state so it
 // leans only on language features seen in real Webull scripts.
