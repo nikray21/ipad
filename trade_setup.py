@@ -24,9 +24,12 @@ Everything else in the checklist becomes arithmetic:
           has sits inside the wiggle zone
   step 6  target in front of the next opposing zone, and the R:R that implies
 
-Pivot lookback defaults to 7, not the indicator's 14: 7 is what reproduced his
-actual NBIS chart (see liquidity_swings.py). Override with --length if he
-changes the setting.
+Pivot lookback defaults to 14 and the zone filter to Count/0 (unfiltered) —
+confirmed from the Liquidity Swings settings panel itself (screenshot, 20 Aug
+2026), not guessed. An earlier pass here defaulted to 7, from trying to
+reproduce a Yahoo-sourced chart before the Alpaca switch; that guess was
+wrong. Override with --length / --area if he ever changes the indicator's
+own settings.
 
     python3 trade_setup.py NBIS --side short --swing red --budget 100
 """
@@ -80,14 +83,19 @@ def last_visit(bars, zone):
     return run
 
 
-def grade(bars, side, entry=None, budget=100.0, length=7, area="wick",
-          min_vol=1e6, stop=None, swing=None):
+def grade(bars, side, entry=None, budget=100.0, length=14, area="wick",
+          min_vol=0.0, stop=None, swing=None):
     """Every step-by-step number the grader needs, as a dict. No verdicts.
 
     Returning facts rather than pass/fail keeps the judgement in the skill,
     where the qualitative half of the checklist lives.
     """
-    zones = ls.swing_zones(bars, length, area, "volume", min_vol)
+    # min_vol=0 (the default, matching his chart's own Filter Areas By:
+    # Count, 0) means unfiltered — every zone counts, the same as
+    # liquidity_swings.py's own CLI. Passing a real floor switches to
+    # filtering by volume, which his chart can also do but doesn't right now.
+    filt_by, filt_val = ("volume", min_vol) if min_vol else ("count", 0.0)
+    zones = ls.swing_zones(bars, length, area, filt_by, filt_val)
     price = bars[-1]["c"]
     entry = price if entry is None else entry
     below, above = ls.nearest_zones(zones, price)
@@ -111,8 +119,9 @@ def grade(bars, side, entry=None, budget=100.0, length=7, area="wick",
     }
 
     if zone is None:
+        vol_note = f" over {min_vol:,.0f} volume" if min_vol else ""
         out["error"] = f"no live {'demand' if long_ else 'supply'} zone " \
-                       f"{'below' if long_ else 'above'} {price:.2f} over {min_vol:,.0f} volume"
+                       f"{'below' if long_ else 'above'} {price:.2f}{vol_note}"
         return out
 
     # step 2 — "heavy" is relative to the other zones on the chart, not absolute
@@ -229,10 +238,11 @@ def main():
     ap.add_argument("--stop", type=float, help="a stop he already has, to check against the level")
     ap.add_argument("--swing", choices=("green", "red", "flat"),
                     help="SWING CALL line colour, read off his chart — the one input left")
-    ap.add_argument("--length", type=int, default=7, help="pivot lookback (his chart runs 7)")
+    ap.add_argument("--length", type=int, default=14, help="pivot lookback (his chart runs 14)")
     ap.add_argument("--area", default="wick", choices=("wick", "full"))
-    ap.add_argument("--min-vol", type=float, default=1e6,
-                    help="zone volume floor, the chart's Volume filter (default 1M)")
+    ap.add_argument("--min-vol", type=float, default=0.0,
+                    help="zone volume floor; 0 (default) matches his chart's "
+                         "Filter Areas By: Count, 0 — unfiltered")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
 

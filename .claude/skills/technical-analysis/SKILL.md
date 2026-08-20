@@ -16,14 +16,15 @@ the repo. Run this first, always:
 ```
 python3 trade_setup.py NVDA --side long  --swing green --budget 100
 python3 trade_setup.py NVDA --side short --swing red --entry 196 --stop 201
-python3 liquidity_swings.py NVDA --tf 4h --length 7 --all    # the full zone map
+python3 liquidity_swings.py NVDA --tf 4h --all    # the full zone map
 ```
 
 Its six output blocks map one-to-one onto the six steps below. `--json` returns
 the same figures as a dict when you need to quote one exactly. Both tools
-default to **pivot lookback 7**, which is what reproduces his chart — the
-LuxAlgo default is 14 and gives different zones, so if his settings ever change,
-pass `--length`.
+default to **pivot lookback 14, Wick Extremity area, Filter Areas By: Count 0
+(unfiltered)** — confirmed straight from the Liquidity Swings settings panel
+(screenshot, 20 Aug 2026), not guessed. If his settings ever change, pass
+`--length` / `--area` / `--min-vol`.
 
 Only two things the tools cannot know. Ask for these and nothing else:
 

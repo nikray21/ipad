@@ -46,12 +46,14 @@ his chart's own volume figures and probably won't match them; a different
 indicator is the plan for that number. Trust `top`/`btm`/`level`, not
 `volume`, until that's sorted.
 
-**Pivot Lookback 7** was the setting that reproduced the one Yahoo-backed
-chart this was checked against (NBIS, 17 Aug 2026) before the Alpaca switch;
-it's carried forward here as the default because there's no reason yet to
-think it's wrong, not because it's been re-proven on Alpaca bars. If a
-computed zone disagrees with the screenshot, check the actual Pivot Lookback
-on his chart before doubting the port.
+**Settings confirmed from the indicator's own panel** (screenshot, 20 Aug
+2026): Pivot Lookback **14** — the Pine default, not the 7 an earlier pass
+here guessed from trying to reproduce one Yahoo-sourced chart; that guess
+was wrong and is superseded. Swing Area **Wick Extremity**, Intrabar
+Precision **off**, Filter Areas By **Count, 0** (unfiltered — every zone
+shows). All four are this module's defaults now, not guesses. If a computed
+zone still disagrees with the screenshot, re-check the panel before doubting
+the port — but don't start from "maybe the lookback is different" again.
 
 `broken` vs `taken` is the one place this reports more than the chart does.
 Pine only tracks a break while the zone is the most recent one on its side —
