@@ -7,42 +7,32 @@ import {
 } from 'metrix';
 
 /**
- * 4H Swing Playbook — the visual layer of the 6-step swing checklist.
+ * Swing Zones + Trend — EMA 5, SMA 50, and pivot-confirmed liquidity zones.
  *
- *   step 1  trend     EMA 5 vs SMA 50, SMA slope, price side of the SMA
- *   step 2  location  price pulled back INTO a heavy-volume swing zone
- *   step 3  trap      sweep: the low printed BELOW the zone, not inside it
- *   step 4  trigger   a close back above the whole zone
- *   step 5  stop      zone edge -/+ 1.5x ATR — off the LEVEL, not the entry
- *   step 6  exit      target at the opposing zone, R:R must clear 2.0
+ * Deliberately just two things:
+ *   1. the trend pair, EMA 5 against SMA 50
+ *   2. liquidity zones, confirmed at pivots and held until broken
  *
- * The setup value is the PRODUCT of all six gates, so one failing step
- * zeroes it. Four of six cannot pass, by construction.
+ * A marker prints when both line up: trend is right, price pulled back
+ * INTO a heavy-volume zone, swept below it, and closed back above it.
  *
- * NOT here and not possible in an indicator: share sizing off the risk
- * budget, and the 2-position / 4% portfolio caps. Those need the open
- * book. This draws; it does not grade.
+ * No ATR stops, no reward:risk gate — dropped on request. Position
+ * sizing and the portfolio caps were never possible here anyway; they
+ * need the open book. This draws, it does not grade.
  *
- * Zones are pivot-confirmed and frozen at their true bar, carrying
- * accumulated volume, extended until a close breaks clean through.
- * With no drawing API a zone shows as its two edge lines rather than a
- * shaded box.
+ * Zones are frozen at their true pivot bar with wick-extremity geometry,
+ * carry the volume of every bar that trades through them, and retire on
+ * a close clean through. Each holds one of ZONE_SLOTS display slots per
+ * side and plots the same two numbers every bar, so its lines sit FLAT.
+ * Drawing only the nearest zone makes the lines hop as price moves,
+ * producing a staircase that chases the candles.
  *
- * Each zone claims one of ZONE_SLOTS display slots per side and plots
- * the same two numbers every bar until mitigated, so its lines sit FLAT.
- * Drawing only the nearest zone instead makes the lines hop from zone to
- * zone as price moves, producing a staircase that chases the candles and
- * looks nothing like a liquidity level.
- *
- * EVERY plot here is a PRICE. Volume counts and reward:risk ratios were
- * plotted once and blew the Y axis out to 98,000,000, flattening the
- * candles to a line. Nothing that is not a price goes on this overlay —
- * both values are gates on the setup marker instead, so a marker only
- * prints when the zone was heavy and the ratio cleared.
+ * EVERY plot here is a PRICE. A volume count on this overlay once blew
+ * the Y axis to 98,000,000 and flattened the candles to a line.
  */
 
-/** Wilder-style helpers. Written out rather than imported so the only
- *  metrix surface this file depends on is the plotting API. */
+/** Written out rather than imported so the only metrix surface this file
+ *  depends on is the plotting API. */
 class Sma {
     private buf: number[] = [];
     private sum = 0;
@@ -69,63 +59,6 @@ class Ema {
     }
 }
 
-class Rsi {
-    private prev = NaN;
-    private avgGain = NaN;
-    private avgLoss = NaN;
-    private seedGain = 0;
-    private seedLoss = 0;
-    private count = 0;
-    constructor(private readonly n: number) {}
-    step(x: number): number {
-        if (!Number.isFinite(this.prev)) {
-            this.prev = x;
-            return NaN;
-        }
-        const change = x - this.prev;
-        this.prev = x;
-        const gain = change > 0 ? change : 0;
-        const loss = change < 0 ? -change : 0;
-        this.count++;
-
-        if (this.count <= this.n) {
-            this.seedGain += gain;
-            this.seedLoss += loss;
-            if (this.count < this.n) return NaN;
-            this.avgGain = this.seedGain / this.n;
-            this.avgLoss = this.seedLoss / this.n;
-        } else {
-            this.avgGain = (this.avgGain * (this.n - 1) + gain) / this.n;
-            this.avgLoss = (this.avgLoss * (this.n - 1) + loss) / this.n;
-        }
-        if (this.avgLoss === 0) return 100;
-        return 100 - 100 / (1 + this.avgGain / this.avgLoss);
-    }
-}
-
-class Atr {
-    private prevClose = NaN;
-    private v = NaN;
-    private seed = 0;
-    private count = 0;
-    constructor(private readonly n: number) {}
-    step(high: number, low: number, close: number): number {
-        const tr = Number.isFinite(this.prevClose)
-            ? Math.max(high - low, Math.abs(high - this.prevClose), Math.abs(low - this.prevClose))
-            : high - low;
-        this.prevClose = close;
-        this.count++;
-
-        if (this.count <= this.n) {
-            this.seed += tr;
-            if (this.count === this.n) this.v = this.seed / this.n;
-            return this.v;
-        }
-        this.v = (this.v * (this.n - 1) + tr) / this.n;
-        return this.v;
-    }
-}
-
 /** A confirmed swing zone, frozen at the pivot bar that formed it. */
 interface Zone {
     top: number;
@@ -138,24 +71,17 @@ interface Zone {
 /** How many live zones to draw per side. Each needs two plots. */
 const ZONE_SLOTS = 3;
 
-class SwingPlaybookIndicator extends CustomIndicator {
+class SwingZonesIndicator extends CustomIndicator {
     private readonly emaFast: Ema;
     private readonly smaSlow: Sma;
-    private readonly rsi: Rsi;
-    private readonly atr: Atr;
+    private readonly volSma: Sma;
 
     private readonly pivotLb: number;
-    private readonly atrMult: number;
-    private readonly rsiOB: number;
-    private readonly rsiOS: number;
-    private readonly minRR: number;
-    private readonly volLb: number;
 
     /** Rolling window of the last 2*pivotLb+1 bars, for pivot confirmation. */
     private window: Bar[] = [];
     private zones: Zone[] = [];
     private prevSma = NaN;
-    private volSma: Sma;
 
     private readonly plotEma: PlotHandle;
     private readonly plotSma: PlotHandle;
@@ -163,57 +89,35 @@ class SwingPlaybookIndicator extends CustomIndicator {
     private readonly highBotPlots: PlotHandle[] = [];
     private readonly lowTopPlots: PlotHandle[] = [];
     private readonly lowBotPlots: PlotHandle[] = [];
+    private readonly plotLongSignal: PlotHandle;
+    private readonly plotShortSignal: PlotHandle;
 
     /** A zone holds its slot, and so its exact level, until mitigated. */
     private readonly highSlots: (Zone | null)[] = [];
     private readonly lowSlots: (Zone | null)[] = [];
     private highNext = 0;
     private lowNext = 0;
-    private readonly plotLongStop: PlotHandle;
-    private readonly plotShortStop: PlotHandle;
-    private readonly plotLongSignal: PlotHandle;
-    private readonly plotShortSignal: PlotHandle;
 
     constructor(options: CustomIndicatorOptions) {
         super(options);
-        this.defineIndicator('4H Swing Playbook', 'SWING-PB', true);
+        this.defineIndicator('Swing Zones + Trend', 'SWING-Z', true);
 
         const emaLen = this.defineInput('emaLength', 5, {
-            type: 'Int', description: 'Fast EMA length. The SWING CALL fast line.'
+            type: 'Int', description: 'Fast EMA length.'
         }) as number;
         const smaLen = this.defineInput('smaLength', 50, {
             type: 'Int', description: 'Slow SMA length. Price must sit on the correct side of this.'
         }) as number;
-        const rsiLen = this.defineInput('rsiLength', 14, {
-            type: 'Int', description: 'RSI length.'
-        }) as number;
-        this.rsiOB = this.defineInput('rsiOverbought', 80, {
-            type: 'Float', description: 'RSI overbought. Longs are blocked at or above this.'
-        }) as number;
-        this.rsiOS = this.defineInput('rsiOversold', 20, {
-            type: 'Float', description: 'RSI oversold. Shorts are blocked at or below this.'
-        }) as number;
         this.pivotLb = this.defineInput('pivotLookback', 14, {
-            type: 'Int', description: 'Bars either side of a pivot. A zone confirms this many bars late.'
+            type: 'Int', description: 'Bars either side of a pivot. A zone confirms this many bars late. Lower for more zones closer to price.'
         }) as number;
-        const atrLen = this.defineInput('atrLength', 14, {
-            type: 'Int', description: 'ATR length for stop distance.'
-        }) as number;
-        this.atrMult = this.defineInput('atrMultiple', 1.5, {
-            type: 'Float', description: 'ATR multiple. The stop hangs this far off the ZONE EDGE, never off entry.'
-        }) as number;
-        this.minRR = this.defineInput('minRewardRisk', 2.0, {
-            type: 'Float', description: 'Minimum reward:risk. Below this the setup fails regardless of the other steps.'
-        }) as number;
-        this.volLb = this.defineInput('volumeLookback', 50, {
+        const volLb = this.defineInput('volumeLookback', 50, {
             type: 'Int', description: 'Baseline for judging whether a zone formed on heavy volume.'
         }) as number;
 
         this.emaFast = new Ema(emaLen);
         this.smaSlow = new Sma(smaLen);
-        this.rsi = new Rsi(rsiLen);
-        this.atr = new Atr(atrLen);
-        this.volSma = new Sma(this.volLb);
+        this.volSma = new Sma(volLb);
 
         this.plotEma = this.definePlot('ema', { color: Color.White, type: PlotType.Line, lineWidth: 1 });
         this.plotSma = this.definePlot('sma', { color: Color.Blue, type: PlotType.Line, lineWidth: 2 });
@@ -227,9 +131,6 @@ class SwingPlaybookIndicator extends CustomIndicator {
             this.lowBotPlots.push(this.definePlot(`support${i}Bottom`, { color: Color.Green, type: PlotType.Line, lineWidth: 1 }));
         }
 
-        this.plotLongStop = this.definePlot('longStop', { color: Color.Green, type: PlotType.Line, lineWidth: 1 });
-        this.plotShortStop = this.definePlot('shortStop', { color: Color.Red, type: PlotType.Line, lineWidth: 1 });
-
         this.plotLongSignal = this.definePlot('longSetup', { color: Color.Green, type: PlotType.Line, lineWidth: 4 });
         this.plotShortSignal = this.definePlot('shortSetup', { color: Color.Red, type: PlotType.Line, lineWidth: 4 });
     }
@@ -239,86 +140,55 @@ class SwingPlaybookIndicator extends CustomIndicator {
 
         const ema = this.emaFast.step(bar.close);
         const sma = this.smaSlow.step(bar.close);
-        const rsiVal = this.rsi.step(bar.close);
-        const atrVal = this.atr.step(bar.high, bar.low, bar.close);
         const volAvg = this.volSma.step(bar.volume);
 
         this.detectPivot(bar);
         this.updateZones(bar);
 
-        // Nearest live zone on each side of price.
         const lowZone = this.nearestZone(bar.close, false);
         const highZone = this.nearestZone(bar.close, true);
 
-        // ---- step 1: trend. Slope AND the correct side of the SMA, both. ----
+        // Trend: correct slope AND the correct side of the SMA, both required.
         const smaRising = Number.isFinite(this.prevSma) && sma > this.prevSma;
         const smaFalling = Number.isFinite(this.prevSma) && sma < this.prevSma;
         const bullTrend = ema > sma && smaRising && bar.close > sma;
         const bearTrend = ema < sma && smaFalling && bar.close < sma;
         this.prevSma = sma;
 
-        let longStop = NaN;
-        let longRR = NaN;
         let longFires = false;
-
-        if (lowZone && highZone && Number.isFinite(atrVal)) {
-            // ---- step 2: location. Into the zone, and the zone must be heavy. ----
+        if (lowZone) {
+            // Pulled back INTO the zone, on heavy volume.
             const inZone = bar.low <= lowZone.top;
             const heavy = Number.isFinite(volAvg) && lowZone.volume > volAvg;
-
-            // ---- step 3: the trap. Below the zone BOTTOM. Stalling inside is not a sweep. ----
+            // Swept BELOW the zone. Stalling inside it is not a sweep.
             const swept = bar.low < lowZone.bottom;
-
-            // ---- step 4: the trigger. A CLOSE clear of the whole zone, not a wick. ----
+            // Closed back above the whole zone. A wick does not count.
             const reclaimed = bar.close > lowZone.top;
-
-            // ---- step 5: the stop, off the zone edge. ----
-            longStop = lowZone.bottom - this.atrMult * atrVal;
-            const risk = bar.close - longStop;
-
-            // ---- step 6: the exit, in front of the opposing zone. ----
-            longRR = risk > 0 ? (highZone.bottom - bar.close) / risk : NaN;
-
-            longFires = bullTrend && inZone && heavy && swept && reclaimed
-                && Number.isFinite(longRR) && longRR >= this.minRR
-                && Number.isFinite(rsiVal) && rsiVal < this.rsiOB;
+            longFires = bullTrend && inZone && heavy && swept && reclaimed;
         }
 
-        let shortStop = NaN;
         let shortFires = false;
-
-        if (lowZone && highZone && Number.isFinite(atrVal)) {
+        if (highZone) {
             const inZone = bar.high >= highZone.bottom;
             const heavy = Number.isFinite(volAvg) && highZone.volume > volAvg;
             const swept = bar.high > highZone.top;
             const reclaimed = bar.close < highZone.bottom;
-
-            shortStop = highZone.top + this.atrMult * atrVal;
-            const risk = shortStop - bar.close;
-            const rr = risk > 0 ? (bar.close - lowZone.top) / risk : NaN;
-
-            shortFires = bearTrend && inZone && heavy && swept && reclaimed
-                && Number.isFinite(rr) && rr >= this.minRR
-                && Number.isFinite(rsiVal) && rsiVal > this.rsiOS;
+            shortFires = bearTrend && inZone && heavy && swept && reclaimed;
         }
 
         this.plotEma(ema);
         this.plotSma(sma);
-
         this.drawSlots();
 
-        this.plotLongStop(Number.isFinite(longStop) ? longStop : NaN);
-        this.plotShortStop(Number.isFinite(shortStop) ? shortStop : NaN);
-
-        // Signals print only on firing bars; NaN keeps every other bar blank.
+        // Markers print only on firing bars; NaN leaves every other bar blank.
         this.plotLongSignal(longFires ? bar.low : NaN);
         this.plotShortSignal(shortFires ? bar.high : NaN);
     }
 
     /**
      * Confirm the pivot at the centre of the rolling window. A pivot needs
-     * pivotLb bars on BOTH sides, so it can only be confirmed pivotLb bars
-     * after the fact — the zone is created at its true bar, retrospectively.
+     * pivotLb bars on BOTH sides, so it is only confirmed pivotLb bars after
+     * the fact — the zone is created at its true bar, retrospectively.
      */
     private detectPivot(bar: Bar): void {
         const span = 2 * this.pivotLb + 1;
@@ -364,54 +234,6 @@ class SwingPlaybookIndicator extends CustomIndicator {
     }
 
     /**
-     * Give a freshly confirmed zone a display slot. It keeps that slot,
-     * and so plots its exact level as a flat line, until it is mitigated.
-     * Prefers an empty slot; otherwise evicts the oldest in round-robin,
-     * so the newest ZONE_SLOTS zones per side are the ones on screen.
-     */
-    private claimSlot(zone: Zone): void {
-        const slots = zone.isHigh ? this.highSlots : this.lowSlots;
-        let idx = slots.indexOf(null);
-        if (idx < 0) {
-            if (zone.isHigh) {
-                idx = this.highNext;
-                this.highNext = (this.highNext + 1) % ZONE_SLOTS;
-            } else {
-                idx = this.lowNext;
-                this.lowNext = (this.lowNext + 1) % ZONE_SLOTS;
-            }
-        }
-        slots[idx] = zone;
-    }
-
-    /**
-     * Free any slot whose zone has been mitigated, then plot what remains.
-     * A live zone plots the same two numbers every bar, which is what makes
-     * the lines sit flat instead of chasing price.
-     */
-    private drawSlots(): void {
-        for (let i = 0; i < ZONE_SLOTS; i++) {
-            const hz = this.highSlots[i];
-            if (hz && !hz.active) this.highSlots[i] = null;
-            const lz = this.lowSlots[i];
-            if (lz && !lz.active) this.lowSlots[i] = null;
-
-            const high = this.highSlots[i];
-            const low = this.lowSlots[i];
-
-            const hTop = this.highTopPlots[i];
-            const hBot = this.highBotPlots[i];
-            const lTop = this.lowTopPlots[i];
-            const lBot = this.lowBotPlots[i];
-
-            if (hTop) hTop(high ? high.top : NaN);
-            if (hBot) hBot(high ? high.bottom : NaN);
-            if (lTop) lTop(low ? low.top : NaN);
-            if (lBot) lBot(low ? low.bottom : NaN);
-        }
-    }
-
-    /**
      * Volume traded through a price band across the confirmation window.
      * A zone is only confirmed pivotLb bars after its pivot, so seeding it
      * this way counts the bars that traded the zone while it was forming
@@ -431,7 +253,7 @@ class SwingPlaybookIndicator extends CustomIndicator {
 
     /**
      * Accumulate volume for every zone this bar trades through, and retire
-     * zones that price has closed clean through.
+     * zones price has closed clean through.
      */
     private updateZones(bar: Bar): void {
         for (const zone of this.zones) {
@@ -440,21 +262,63 @@ class SwingPlaybookIndicator extends CustomIndicator {
             if (bar.high >= zone.bottom && bar.low <= zone.top) {
                 zone.volume += bar.volume;
             }
-            // Mitigated once price CLOSES clean THROUGH the zone: a swing
-            // high is resistance, so it dies on a close above its top; a
-            // swing low is support, dying on a close below its bottom.
+            // A swing high is resistance and dies on a close ABOVE its top;
+            // a swing low is support, dying on a close below its bottom.
             // Price merely falling away from a pivot high leaves that
             // resistance perfectly intact — it is still overhead supply.
             if (zone.isHigh ? bar.close > zone.top : bar.close < zone.bottom) {
                 zone.active = false;
             }
         }
-        // Keep the list bounded by dropping retired zones only. Every live
-        // zone must survive: the display slots hold references into this
-        // list, and a zone dropped while still active would never be marked
-        // mitigated again, leaving its line frozen on the chart forever.
+        // Bounded by dropping retired zones ONLY. Every live zone must
+        // survive: the display slots hold references into this list, and a
+        // zone dropped while still active would never be marked mitigated,
+        // leaving its line frozen on the chart forever.
         if (this.zones.length > 200) {
             this.zones = this.zones.filter(z => z.active);
+        }
+    }
+
+    /**
+     * Give a freshly confirmed zone a display slot. It keeps that slot, and
+     * so plots its exact level as a flat line, until mitigated. Prefers an
+     * empty slot; otherwise evicts the oldest in round-robin.
+     */
+    private claimSlot(zone: Zone): void {
+        const slots = zone.isHigh ? this.highSlots : this.lowSlots;
+        let idx = slots.indexOf(null);
+        if (idx < 0) {
+            if (zone.isHigh) {
+                idx = this.highNext;
+                this.highNext = (this.highNext + 1) % ZONE_SLOTS;
+            } else {
+                idx = this.lowNext;
+                this.lowNext = (this.lowNext + 1) % ZONE_SLOTS;
+            }
+        }
+        slots[idx] = zone;
+    }
+
+    /** Free slots whose zone has been mitigated, then plot what remains. */
+    private drawSlots(): void {
+        for (let i = 0; i < ZONE_SLOTS; i++) {
+            const hz = this.highSlots[i];
+            if (hz && !hz.active) this.highSlots[i] = null;
+            const lz = this.lowSlots[i];
+            if (lz && !lz.active) this.lowSlots[i] = null;
+
+            const high = this.highSlots[i];
+            const low = this.lowSlots[i];
+
+            const hTop = this.highTopPlots[i];
+            const hBot = this.highBotPlots[i];
+            const lTop = this.lowTopPlots[i];
+            const lBot = this.lowBotPlots[i];
+
+            if (hTop) hTop(high ? high.top : NaN);
+            if (hBot) hBot(high ? high.bottom : NaN);
+            if (lTop) lTop(low ? low.top : NaN);
+            if (lBot) lBot(low ? low.bottom : NaN);
         }
     }
 
@@ -479,4 +343,4 @@ class SwingPlaybookIndicator extends CustomIndicator {
     }
 }
 
-export default SwingPlaybookIndicator;
+export default SwingZonesIndicator;
