@@ -24,10 +24,15 @@ import {
  * book. This draws; it does not grade.
  *
  * Zones are pivot-confirmed and frozen at their true bar, carrying
- * accumulated volume, extended until a close breaks the far edge.
- * Indicator classes have no drawing API, so a zone shows as its two
- * edge lines rather than a shaded box, and its volume reads in the
- * status line rather than as an on-chart label.
+ * accumulated volume, extended until a close breaks clean through.
+ * With no drawing API a zone shows as its two edge lines rather than a
+ * shaded box.
+ *
+ * EVERY plot here is a PRICE. Volume counts and reward:risk ratios were
+ * plotted once and blew the Y axis out to 98,000,000, flattening the
+ * candles to a line. Nothing that is not a price goes on this overlay —
+ * both values are gates on the setup marker instead, so a marker only
+ * prints when the zone was heavy and the ratio cleared.
  */
 
 /** Wilder-style helpers. Written out rather than imported so the only
@@ -153,8 +158,6 @@ class SwingPlaybookIndicator extends CustomIndicator {
     private readonly plotShortStop: PlotHandle;
     private readonly plotLongSignal: PlotHandle;
     private readonly plotShortSignal: PlotHandle;
-    private readonly plotLongRR: PlotHandle;
-    private readonly plotZoneVol: PlotHandle;
 
     constructor(options: CustomIndicatorOptions) {
         super(options);
@@ -210,9 +213,6 @@ class SwingPlaybookIndicator extends CustomIndicator {
 
         this.plotLongSignal = this.definePlot('longSetup', { color: Color.Green, type: PlotType.Line, lineWidth: 4 });
         this.plotShortSignal = this.definePlot('shortSetup', { color: Color.Red, type: PlotType.Line, lineWidth: 4 });
-
-        this.plotLongRR = this.definePlot('rewardRisk', { color: Color.Yellow, type: PlotType.Line, lineWidth: 1 });
-        this.plotZoneVol = this.definePlot('zoneVolume', { color: Color.Yellow, type: PlotType.Line, lineWidth: 1 });
     }
 
     onBar(bar: Bar): void {
@@ -297,9 +297,6 @@ class SwingPlaybookIndicator extends CustomIndicator {
         // Signals print only on firing bars; NaN keeps every other bar blank.
         this.plotLongSignal(longFires ? bar.low : NaN);
         this.plotShortSignal(shortFires ? bar.high : NaN);
-
-        this.plotLongRR(Number.isFinite(longRR) ? longRR : NaN);
-        this.plotZoneVol(lowZone ? lowZone.volume : NaN);
     }
 
     /**
