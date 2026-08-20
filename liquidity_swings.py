@@ -187,6 +187,21 @@ def load_bars(symbol, tf="4h"):
     return to_session_bars(pts, 4) if tf == "4h" else pts
 
 
+def nearest_zones(zones, price):
+    """The live zone bracketing price on each side, or None.
+
+    "Live" means it passed the volume filter and price has not closed through
+    it — a taken level is not where the next stop goes. Ties go to the zone
+    whose near edge is closest to price, which is the one the trade actually
+    has to clear.
+    """
+    live = [z for z in zones if z["shown"] and not z["taken"]]
+    below = [z for z in live if z["top"] < price]
+    above = [z for z in live if z["btm"] > price]
+    return (max(below, key=lambda z: z["top"]) if below else None,
+            min(above, key=lambda z: z["btm"]) if above else None)
+
+
 def fmt_vol(v):
     """Pine's format.volume, near enough for reading against the chart."""
     for cut, suf in ((1e9, "B"), (1e6, "M"), (1e3, "K")):
@@ -231,18 +246,14 @@ def main():
         print(f"{mark:2} {z['btm']:8.2f}-{z['top']:8.2f}  {fmt_vol(z['volume']):>9} "
               f"{z['count']:5}  {when:<16} {state}")
 
-    live = [z for z in zones if z["shown"] and not z["taken"]]
-    below = [z for z in live if z["top"] < price]
-    above = [z for z in live if z["btm"] > price]
+    below, above = nearest_zones(zones, price)
     print()
     if below:
-        z = max(below, key=lambda z: z["top"])
-        print(f"nearest zone below  {z['btm']:.2f}-{z['top']:.2f}  {fmt_vol(z['volume'])}"
-              f"   long stop keys off {z['btm']:.2f}")
+        print(f"nearest zone below  {below['btm']:.2f}-{below['top']:.2f}  {fmt_vol(below['volume'])}"
+              f"   long stop keys off {below['btm']:.2f}")
     if above:
-        z = min(above, key=lambda z: z["btm"])
-        print(f"nearest zone above  {z['btm']:.2f}-{z['top']:.2f}  {fmt_vol(z['volume'])}"
-              f"   short stop keys off {z['top']:.2f}")
+        print(f"nearest zone above  {above['btm']:.2f}-{above['top']:.2f}  {fmt_vol(above['volume'])}"
+              f"   short stop keys off {above['top']:.2f}")
 
 
 if __name__ == "__main__":

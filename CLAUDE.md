@@ -25,6 +25,15 @@ prove every number traces to a filing. The workflow lives in
     layout audit). This is also how Nikil opens the deck full-screen on the
     iPad to record.
 
+## Trade grading
+
+`liquidity_swings.py` is a port of LuxAlgo's Liquidity Swings (CC BY-NC-SA, see
+the module docstring) and `trade_setup.py` turns its zones plus ATR/50 SMA into
+the 6-step playbook numbers. The `technical-analysis` skill runs them instead of
+reading a screenshot — the SWING CALL colour is the only input left that a human
+has to supply. Self-checks: `python3 test_liquidity_swings.py`,
+`python3 test_trade_setup.py`.
+
 ## Invariants
 
 - Stdlib-only Python. No pip installs, no server.
