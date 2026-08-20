@@ -40,8 +40,8 @@ minRR   = define(2.0, min=0.1, name="Minimum reward:risk")
 emaFast = ind.ema(close, emaLen)
 smaSlow = ind.sma(close, smaLen)
 
-plt(emaFast, color=#FFFFFF, name="EMA 5")
-plt(smaSlow, color=#2962FF, name="SMA 50")
+plt(emaFast, name="EMA 5")
+plt(smaSlow, name="SMA 50")
 
 // Boolean logic as 1/0 ternaries multiplied together. Ternary syntax is
 // verified in real Webull scripts; the and/or keywords are not.
@@ -56,8 +56,8 @@ bearTrend = (emaFast < smaSlow ? 1 : 0) * (smaSlow < smaSlow[1] ? 1 : 0) * (clos
 swingHigh = ind.highest(high, pivotLb)[1]
 swingLow  = ind.lowest(low,  pivotLb)[1]
 
-plt(swingHigh, color=#EF5350, name="Swing High")
-plt(swingLow,  color=#26A69A, name="Swing Low")
+plt(swingHigh, name="Swing High")
+plt(swingLow,  name="Swing Low")
 
 // A level built on below-average volume is the weak K-volume zone the
 // playbook says to skip. Crude next to LuxAlgo's per-zone accumulated
@@ -86,8 +86,8 @@ atr = ind.atr(atrLen)
 longStop  = swingLow  - atrMult * atr
 shortStop = swingHigh + atrMult * atr
 
-plt(longStop,  color=#26A69A, name="Long stop")
-plt(shortStop, color=#EF5350, name="Short stop")
+plt(longStop,  name="Long stop")
+plt(shortStop, name="Short stop")
 
 // ---------- Step 6: the exit ----------
 // Target sits in FRONT of the opposing level. Reward must clear 2R or
@@ -101,8 +101,8 @@ shortRR = shortRisk <= 0 ? 0 : (close - swingLow) / shortRisk
 longRRok  = longRR  >= minRR ? 1 : 0
 shortRRok = shortRR >= minRR ? 1 : 0
 
-plt(swingHigh, color=#26A69A, name="Long target",  display=1)
-plt(swingLow,  color=#EF5350, name="Short target", display=1)
+plt(swingHigh, name="Long target",  display=1)
+plt(swingLow,  name="Short target", display=1)
 
 // ---------- RSI context ----------
 rsi = ind.rsi(close, rsiLen)
@@ -116,18 +116,23 @@ shortSetup = bearTrend * heavy * sweptHigh * reclaimDown * shortRRok * rsiNotCol
 
 // These plot 0 or 1. Read them in the status line, not on the price
 // scale -- hide their chart display, keep "values in status line" on.
-plt(longSetup,  color=#26A69A, name="LONG setup",  display=1)
-plt(shortSetup, color=#EF5350, name="SHORT setup", display=1)
-plt(longRR,     color=#FFD700, name="Long R:R",    display=1)
-plt(shortRR,    color=#FFD700, name="Short R:R",   display=1)
+plt(longSetup,  name="LONG setup",  display=1)
+plt(shortSetup, name="SHORT setup", display=1)
+plt(longRR,     name="Long R:R",    display=1)
+plt(shortRR,    name="Short R:R",   display=1)
 
 // ============================================================
-// If the editor errors it will be a function NAME, not the logic.
-// Verified in real scripts: define, plt, ind.sma, close/high/low/volume,
-// ternary, arithmetic, hex colors, name=/min=/display=.
-// Inferred: ind.ema, ind.rsi, ind.atr, ind.highest, ind.lowest, and the
-// [1] history offset. Each is a one-line fix -- paste the error into
-// Vega and the surrounding logic still holds.
+// COLORS: set them in the indicator's Style tab, not in code. The
+// editor lexes with TypeScript's tokenizer, where #name is a private
+// identifier -- so a hex colour starting with a LETTER (#EF5350) parses
+// but one starting with a DIGIT (#26A69A) does not: # is an invalid
+// character, then 26 is a numeric literal, then A69A an identifier.
+// Passing colours at all is a trap; the Style tab has no such problem.
+//
+// Confirmed by the editor accepting this file: ind.ema, ind.rsi,
+// ind.atr, ind.highest, ind.lowest and the [1] history offset all
+// exist, alongside define, plt, ind.sma, close/high/low/volume,
+// ternaries, arithmetic and name=/min=/display=.
 //
 // What is deliberately absent: shaded zone boxes and per-zone volume
 // labels. Those need rectangle and text drawing, which no Webull script
