@@ -1,29 +1,37 @@
 ---
 name: post-video
-description: Prep a finished YouTube video for posting — transcribe the final export locally, then produce the title options, full description, and linked chapters. Use when Nikil says /post-video, "get this ready to post", "make the chapters", "title and description for my video", or drops a final exported .mov/.mp4 and wants the YouTube metadata.
-argument-hint: [path to final exported video] [ticker or topic, if not obvious]
+description: Prep a finished YouTube video for posting — transcribe the final export (video locally on the Mac, or audio-only in a cloud session), then produce the title options, full description, and linked chapters. Use when Nikil says /post-video, "get this ready to post", "make the chapters", "title and description for my video", or drops a final exported .mov/.mp4/.m4a and wants the YouTube metadata.
+argument-hint: [path to final exported video, or path to extracted audio in a cloud session] [ticker or topic, if not obvious]
 ---
 
 # Post Video
 
-You prep Nikil's finished @NikRayani videos for YouTube upload. Input: the final exported video file (usually on `~/Desktop`, named like `NBIS 8.16.mov`). Output: chapters, 2–3 title options, and a paste-ready description — all grounded in what the video *actually says*, never guessed.
+You prep Nikil's finished @NikRayani videos for YouTube upload. Input: the final exported video (local Mac session) or its extracted audio (cloud session — see below). Output: chapters, 2–3 title options, and a paste-ready description — all grounded in what the video *actually says*, never guessed.
 
 ## Process
 
 ### 1. Locate inputs
-- Video path comes from the arguments. If missing, look for the newest video file on `~/Desktop` and confirm with Nikil before proceeding.
-- Identify the ticker/topic from the filename or arguments.
+- **Local Mac session**: video path comes from the arguments; usually on `~/Desktop`, named like `NBIS 8.16.mov`. If missing, look for the newest video file on `~/Desktop` and confirm with Nikil before proceeding.
+- **Cloud session (iPad workflow)**: there's no filesystem access to the iPad, so the input is audio-only, not video. Nikil runs his "Extract Audio" iOS Shortcut (Encode Media → Audio Only, M4A) on the *finished CapCut export* — not the raw take, chapters must land on the edited timeline, not pre-edit footage — then attaches the resulting M4A directly in this chat. It lands under `/root/.claude/uploads/<session>/...`; take the path from the message, don't guess it. No video file exists in this path and none is needed — everything downstream runs off the transcript.
+- Identify the ticker/topic from the filename when it's descriptive (`NBIS 8.16.mov`); cloud-session filenames are opaque (`IMG_2687.m4a`) and carry no topic info, so ask Nikil rather than guessing.
 - **Sunday stock episodes**: load the verified episode data at `episodes/<SYM>.json` — it has `verdict`, `findings` (the video's claims), `fairValue`, and `sources` (SEC URLs). This is the fact source of truth.
 - **Wednesday /learn-stock episodes**: no episode JSON — skip deck cross-checks and build from the transcript alone.
 
 ### 2. Transcribe (local, free)
+Cloud sessions may not have `ffmpeg` preinstalled — check first (`which ffmpeg`) and `apt-get install -y ffmpeg` if missing (this sandbox runs as root; one-time, no size concern).
+
 ```bash
 SP="<scratchpad dir>"
+# Local Mac session — input is the video, strip the audio track:
 ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 "$VIDEO"
 ffmpeg -y -v error -i "$VIDEO" -vn -ac 1 -acodec libmp3lame -q:a 4 "$SP/final.mp3"
+
+# Cloud session — input is already audio-only (the Shortcut's M4A), just transcode:
+ffmpeg -y -v error -i "$AUDIO" -ac 1 -acodec libmp3lame -q:a 4 "$SP/final.mp3"
+
 npx hyperframes transcribe "$SP/final.mp3" -d "$SP" --json --model small.en
 ```
-`transcript.json` is a flat word array `[{text, start, end}, …]`. Group words into sentences at terminal punctuation and print them with `M:SS` timestamps — that timestamped sentence list drives everything below.
+First run in a fresh cloud session downloads the whisper model — give it a minute or two. `transcript.json` is a flat word array `[{text, start, end}, …]`. Group words into sentences at terminal punctuation and print them with `M:SS` timestamps — that timestamped sentence list drives everything below.
 
 ### 3. Chapters
 Find the topic shifts in the timestamped transcript (new finding, numbers → chart, recap, trade plan, outro). YouTube rules for linked chapters:
