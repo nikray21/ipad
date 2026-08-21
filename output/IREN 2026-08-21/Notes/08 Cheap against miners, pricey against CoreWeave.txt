@@ -1,0 +1,10 @@
+SLIDE 08 — Cheap against miners, pricey against CoreWeave   (22s)   [CAN CUT]
+ON SCREEN: IREN costs 0.6× its direct peers, 5.5× CoreWeave.
+
+• So what are you paying for this?
+• Same yardstick for everyone: market value against the latest reported quarter, annualized.
+• Against its closest peers — the other Bitcoin miners pivoting to AI Cloud — IREN actually trades cheaper than Cipher Mining or TeraWulf.
+• But against CoreWeave, the biggest pure AI Cloud comparison, IREN costs several times as much per dollar of sales, and CoreWeave is growing faster.
+• Cheap for a miner.
+• Not cheap for an AI Cloud company.
+

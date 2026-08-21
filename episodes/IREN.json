@@ -1,0 +1,239 @@
+{
+  "symbol": "IREN",
+  "company": "IREN Limited",
+  "episodeDate": "2026-08-21",
+
+  "sources": {
+    "8k-jul20": {
+      "label": "8-K EX-99.1 — $2.8bn AI contract haul, ARR target raised to $4bn+, filed Jul 20 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126028871/ef20078253_ex99-1.htm"
+    },
+    "8k-q3fy26": {
+      "label": "8-K EX-99.1 — Q3 FY26 results (quarter ended Mar 31 2026), filed May 8 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000025/irenreportsq3fy26results.htm"
+    },
+    "10q-q3fy26": {
+      "label": "10-Q for the quarter ended March 31 2026, filed May 8 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000026/iren-20260331.htm"
+    },
+    "8k-q2fy26": {
+      "label": "8-K EX-99.1 — Q2 FY26 results (quarter ended Dec 31 2025), filed Feb 5 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000014/a991irenreportsq2fy26res.htm"
+    },
+    "8k-q1fy26": {
+      "label": "8-K EX-99.1 — Q1 FY26 results (quarter ended Sep 30 2025), $9.7bn Microsoft contract, filed Nov 6 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884825000079/q1fy26resultspressreleas.htm"
+    },
+    "8k-fy25": {
+      "label": "8-K EX-99.1 — FY2025/Q4 results (quarter ended Jun 30 2025), filed Aug 28 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884825000062/ex991fy25pr.htm"
+    },
+    "8k-q3fy25": {
+      "label": "6-K EX-99.1 — Q3 FY25 results (quarter ended Mar 31 2025), filed May 14 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884825000043/q3fy25resultspressreleas.htm"
+    }
+  },
+
+  "filings": {
+    "results": {
+      "revenueQ3":       { "v": 144.8,  "src": "8k-q3fy26", "unit": "USD millions" },
+      "btcRevQ3":        { "v": 111.2,  "src": "8k-q3fy26", "unit": "USD millions" },
+      "aiRevQ3":         { "v": 33.6,   "src": "8k-q3fy26", "unit": "USD millions" },
+      "costRevQ3":       { "v": -39.9,  "src": "8k-q3fy26", "unit": "USD millions" },
+      "opLossQ3":        { "v": -233.5, "src": "8k-q3fy26", "unit": "USD millions" },
+      "netLossQ3":       { "v": -247.8, "src": "8k-q3fy26", "unit": "USD millions" },
+      "impairmentQ3":    { "v": 140.4,  "src": "8k-q3fy26", "unit": "USD millions" },
+      "adjEbitdaQ3":     { "v": 59.5,   "src": "8k-q3fy26", "unit": "USD millions" },
+      "adjEbitdaQ2":     { "v": 75.3,   "src": "8k-q2fy26", "unit": "USD millions" },
+      "sgaQ3":           { "v": -81.8,  "src": "8k-q3fy26", "unit": "USD millions" },
+      "dnaQ3":           { "v": -121.2, "src": "8k-q3fy26", "unit": "USD millions" },
+      "financeExpQ3":    { "v": 14.8,   "src": "8k-q3fy26", "unit": "USD millions" },
+
+      "revenueQ1":       { "v": 240.3,  "src": "8k-q1fy26", "unit": "USD millions" },
+      "btcRevQ1":        { "v": 232.9,  "src": "8k-q1fy26", "unit": "USD millions" },
+      "aiRevQ1":         { "v": 7.3,    "src": "8k-q1fy26", "unit": "USD millions" },
+      "opLossQ1":        { "v": -76.4,  "src": "8k-q1fy26", "unit": "USD millions" },
+      "netIncomeQ1":     { "v": 384.6,  "src": "8k-q1fy26", "unit": "USD millions",
+                            "note": "the release's own headline: a 'record' quarter" },
+      "financeExpQ1":    { "v": -9.3,   "src": "8k-q1fy26", "unit": "USD millions" },
+      "interestIncQ1":   { "v": 7.1,    "src": "8k-q1fy26", "unit": "USD millions" },
+      "realizedLossQ1":  { "v": -5.8,   "src": "8k-q1fy26", "unit": "USD millions" },
+      "unrealizedGainQ1": { "v": 665.0, "src": "8k-q1fy26", "unit": "USD millions",
+                            "note": "unrealized gain on financial instruments — prepaid forward contracts tied to convertible notes" },
+      "fxLossQ1":        { "v": -5.4,   "src": "8k-q1fy26", "unit": "USD millions" },
+      "pretaxIncomeQ1":  { "v": 575.3,  "src": "8k-q1fy26", "unit": "USD millions" },
+      "taxExpenseQ1":    { "v": -190.7, "src": "8k-q1fy26", "unit": "USD millions" },
+
+      "revenueQ2":       { "v": 184.7,  "src": "8k-q2fy26", "unit": "USD millions" },
+      "btcRevQ2":        { "v": 167.4,  "src": "8k-q2fy26", "unit": "USD millions" },
+      "aiRevQ2":         { "v": 17.3,   "src": "8k-q2fy26", "unit": "USD millions" },
+
+      "revenueFY25Q4":   { "v": 187.3,  "src": "8k-q1fy26", "unit": "USD millions",
+                            "note": "quarter ended Jun 30 2025, shown as the prior-period column" },
+      "btcRevFY25Q4":    { "v": 180.3,  "src": "8k-q1fy26", "unit": "USD millions" },
+      "aiRevFY25Q4":     { "v": 7.0,    "src": "8k-q1fy26", "unit": "USD millions" },
+
+      "revenueQ3FY25":   { "v": 148.1,  "src": "8k-q3fy25", "unit": "USD millions",
+                            "note": "quarter ended Mar 31 2025 — the true year-over-year comparison for Q3 FY26" }
+    },
+
+    "balanceSheet": {
+      "cash":                 { "v": 2213.274,  "src": "10q-q3fy26", "unit": "USD millions" },
+      "convertibleNotes":     { "v": 3687.832,  "src": "10q-q3fy26", "unit": "USD millions" },
+      "financeLeaseCurrent":  { "v": 122.168,   "src": "10q-q3fy26", "unit": "USD millions" },
+      "financeLeaseNonCurrent": { "v": 152.088, "src": "10q-q3fy26", "unit": "USD millions" },
+      "sharesOutstanding":    { "v": 357378.674, "src": "10q-q3fy26", "unit": "thousands",
+                                "note": "357,378,674 shares as of Apr 30 2026 — Note 17, the most recent disclosed count" }
+    },
+
+    "impairment": {
+      "quote": { "v": "the Group estimates that additional impairment charges associated with the transition could total approximately $520 million, based on information currently available and preliminary management assessments",
+                 "src": "10q-q3fy26", "note": "Subsequent Events note — AI Cloud Expansion paragraph" },
+      "estimate":       { "v": 520,   "src": "10q-q3fy26", "unit": "USD millions" },
+      "nineMonthBooked": { "v": 188.4, "src": "10q-q3fy26", "unit": "USD millions",
+                           "note": "Note 9, Property plant and equipment — nine months ended Mar 31 2026" },
+      "transitionQuote": { "v": "the Group expects all Bitcoin mining operations at Childress to cease over time as existing data centers are redeployed to support AI Cloud Services",
+                 "src": "10q-q3fy26", "note": "Subsequent Events note — AI Cloud Expansion paragraph" }
+    },
+
+    "nvidia": {
+      "shares":       { "v": 30000000, "src": "10q-q3fy26", "searchAs": "30" },
+      "proceeds":     { "v": 2100,     "src": "10q-q3fy26", "unit": "USD millions", "searchAs": "2.1 billion" },
+      "strikePrice":  { "v": 70.00,    "src": "10q-q3fy26", "unit": "USD" },
+      "expiry":       { "v": "May 7, 2031", "src": "10q-q3fy26" },
+      "gpuMilestone": { "v": 600000,   "src": "10q-q3fy26", "searchAs": "600,000" },
+      "contractValue": { "v": 3400,    "src": "10q-q3fy26", "unit": "USD millions", "searchAs": "3.4" },
+      "quote": { "v": "The Investment Rights will be exercisable in tranches that vest based on achieving certain volumes of deliveries of up to 600,000 NVIDIA GPUs.",
+                 "src": "10q-q3fy26", "note": "Subsequent Events note — NVIDIA Private Placement paragraph" }
+    },
+
+    "arr": {
+      "target1":   { "v": 3400, "src": "8k-q1fy26", "unit": "USD millions", "searchAs": "$3.4bn" },
+      "target2":   { "v": 3400, "src": "8k-q2fy26", "unit": "USD millions", "searchAs": "$3.4bn" },
+      "target3":   { "v": 3700, "src": "8k-q3fy26", "unit": "USD millions", "searchAs": "$3.7bn" },
+      "target4":   { "v": 4000, "src": "8k-jul20",  "unit": "USD millions", "searchAs": "$4bn" },
+      "underContractJul": { "v": 85, "src": "8k-jul20", "unit": "%" },
+      "quote": { "v": "IREN today announced that it has raised its year-end AI Cloud annualized run-rate revenue (\"ARR\") target from $3.7bn to more than $4bn, of which approximately 85% is now under contract",
+                 "src": "8k-jul20", "note": "opening paragraph" }
+    },
+
+    "quarterly": {
+      "note": "Four consecutive quarters, one basis: GAAP, post the IFRS-to-GAAP transition completed in FY2025, each drawn from the release that reports it as either the current or prior-period column.",
+      "rows": [
+        { "q": "Q4'25", "end": "2025-06-30", "eps": null, "revenue": 187.3, "src": "8k-q1fy26" },
+        { "q": "Q1'26", "end": "2025-09-30", "eps": null, "revenue": 240.3, "src": "8k-q1fy26" },
+        { "q": "Q2'26", "end": "2025-12-31", "eps": null, "revenue": 184.7, "src": "8k-q2fy26" },
+        { "q": "Q3'26", "end": "2026-03-31", "eps": null, "revenue": 144.8, "src": "8k-q3fy26" }
+      ]
+    },
+
+    "earningsHistory": {
+      "releases": [
+        { "date": "2025-08-28", "q": "Q4'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-fy25" },
+        { "date": "2025-11-06", "q": "Q1'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q1fy26" },
+        { "date": "2026-02-05", "q": "Q2'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q2fy26" },
+        { "date": "2026-05-07", "q": "Q3'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q3fy26" }
+      ]
+    },
+
+    "peers": {
+      "tickers": ["NBIS", "CRWV", "APLD", "CIFR", "WULF"],
+      "names": { "NBIS": "Nebius", "CRWV": "CoreWeave", "APLD": "Applied Digital",
+                 "CIFR": "Cipher Mining", "WULF": "TeraWulf", "IREN": "IREN" },
+      "pure": ["APLD", "CIFR", "WULF"]
+    }
+  },
+
+  "fairValue": {
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": { "revGrowth": 25.0, "opMargin": 8.0,  "exitPE": 12.0, "shareChange": 8.0 },
+      "base": { "revGrowth": 40.0, "opMargin": 18.0, "exitPE": 18.0, "shareChange": 6.0 },
+      "bull": { "revGrowth": 60.0, "opMargin": 30.0, "exitPE": 22.0, "shareChange": 4.0 }
+    },
+    "constants": {
+      "netDebt": 1748.8, "interestRate": 1.49, "taxRate": 15.0,
+      "nciAnnualRunRate": 0.0, "startRevenueTTM": 757.1,
+      "_note": "startRevenueTTM is trailing GAAP revenue, the last four reported quarters (187.3+240.3+184.7+144.8) — deliberately NOT the ARR target, which is a forward run-rate metric, not trailing revenue. netDebt is convertible notes plus finance leases (3,962.1) less cash (2,213.3) at Mar 31 2026. interestRate is Q3 FY26 finance expense annualized over total debt. taxRate is an illustrative blended assumption (Australian incorporation, mostly US operations) — not a filed figure."
+    }
+  },
+
+  "findings": [
+    { "claim": "Total revenue and Adjusted EBITDA have now fallen for two straight quarters — Bitcoin-mining revenue is collapsing faster than AI Cloud can replace it.",
+      "where": "Q1–Q3 FY26 8-K EX-99.1 Consolidated Statements of Operations, the Total Revenue and Adjusted EBITDA lines, read across all three releases",
+      "src": "8k-q3fy26" },
+    { "claim": "The 'record' $384.6M net income quarter was 173% built from a one-time, non-cash $665M gain on convertible-note derivatives — the operating business actually lost $76.4M that quarter.",
+      "where": "8-K EX-99.1, Q1 FY26 Consolidated Statement of Operations — the Unrealized gain on financial instruments line, against Operating (loss) income",
+      "src": "8k-q1fy26" },
+    { "claim": "A ~$520M impairment charge is coming — disclosed only in the 10-Q's subsequent-events footnote, the real cost of fully exiting Bitcoin mining, never mentioned in any ARR press release.",
+      "where": "10-Q Subsequent Events note, the AI Cloud Expansion paragraph, three pages past the highlights",
+      "src": "10q-q3fy26" },
+    { "claim": "NVIDIA holds a right to buy 30 million IREN shares at $70 — 67% above today's price — vesting only as GPU deliveries hit volume milestones through May 2031.",
+      "where": "10-Q Subsequent Events note, the NVIDIA Private Placement paragraph",
+      "src": "10q-q3fy26" }
+  ],
+
+  "proseLiteralsOK": [
+    "$520 million",
+    "600,000 NVIDIA GPUs",
+    "85% is now under contract",
+    "$520M",
+    "$9.7B",
+    "$2.1B",
+    "$70"
+  ],
+
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "The contracts are real. So is the cash burn. The stock is pricing the contracts and skipping the burn.",
+    "tiles": [
+      { "dim": "Demand", "rating": "strong", "fact": "Microsoft, NVIDIA and others have signed $2.8B of new contracts since July; ARR target raised twice" },
+      { "dim": "Momentum", "rating": "strong", "fact": "Stock up roughly 50% off its July low, on contract headlines with no financials attached" },
+      { "dim": "Revenue trend", "rating": "weak", "fact": "Total revenue and Adjusted EBITDA have fallen for two straight quarters" },
+      { "dim": "Earnings quality", "rating": "weak", "fact": "The only profitable quarter this year ran on a one-time derivative gain, not operations" },
+      { "dim": "Balance sheet", "rating": "risk", "fact": "$520M more in impairments coming; funded by convertible notes, ATM share sales and a GPU-supplier warrant" },
+      { "dim": "Valuation", "rating": "risk", "fact": "Priced above my base case, inside my bull-case range" }
+    ],
+    "scored": [
+      { "dim": "Demand", "score": 5, "tone": "", "fact": "$2.8B of new contracts since July; ARR target raised twice" },
+      { "dim": "Momentum", "score": 4, "tone": "", "fact": "Up ~50% off the July low on contract headlines alone" },
+      { "dim": "Revenue", "score": 2, "tone": "warn", "fact": "Down for two straight quarters" },
+      { "dim": "Earnings quality", "score": 1, "tone": "bad", "fact": "The 'record' quarter was a one-time gain" },
+      { "dim": "Balance sheet", "score": 2, "tone": "warn", "fact": "$520M more in impairments still to book" },
+      { "dim": "Price", "score": 2, "tone": "warn", "fact": "Above my base case" }
+    ],
+    "working": [
+      "The demand is real and the counterparties are real: Microsoft, NVIDIA, and a widening customer list, with a 5-year, $9.7B Microsoft contract as the anchor.",
+      "IREN has a genuine track record of delivering data-center capacity on schedule — Horizon 1 was built and handed to Microsoft on the timeline management set.",
+      "NVIDIA is not just a customer — it is a $2.1B potential investor, vesting its right to buy shares only as IREN actually delivers GPUs. That aligns its incentives with execution, not promises.",
+      "The company is diversifying its funding — customer prepayments, GPU-specific financing and convertible notes — rather than relying on one source.",
+      "Every dollar of Bitcoin-mining capacity retired is capacity that can be re-let at AI Cloud pricing, which is why AI Cloud revenue has grown every single quarter even as total revenue fell."
+    ],
+    "watch": [
+      "The Aug 27 earnings print has to show the AI Cloud ramp finally outrunning the Bitcoin-mining decline, or the two-quarter revenue slide becomes three.",
+      "The disclosed $520M of additional impairments has not been booked yet — expect it to land across the next few quarters and to keep pressuring GAAP net income.",
+      "NVIDIA's $70 strike is {wd.nvPremium|%0} above today's price — not a near-term dilution risk, but a marker of where NVIDIA itself expects the stock to trade if the buildout goes well.",
+      "IREN keeps issuing shares through its ATM program — 357.4 million shares outstanding as of Apr 30 2026, and rising — which dilutes every existing holder a little more with each raise.",
+      "Almost none of this stock's biggest moves this year have come from a quarterly earnings release — they have come from standalone contract-announcement press releases with no financial statements attached."
+    ],
+    "why": [
+      "<b>The demand is real.</b> Microsoft, NVIDIA and a widening customer base are paying real money, and IREN has a track record of building on schedule.",
+      "<b>The price already needs a lot to go right.</b> At {price|$} the stock sits above my base case and inside my bull-case range — you are already paying for meaningful execution, not just potential.",
+      "<b>The fine print.</b> Revenue has fallen two straight quarters, the one profitable quarter was a paper gain, and a $520M impairment charge is disclosed but not yet booked.",
+      "<b>A decent price for me: {fair.mid|$} or lower.</b> Between my base and bull cases — that is where the risk of the transition and the size of the opportunity feel balanced."
+    ]
+  },
+
+  "notes": {
+    "findings": "COLD OPEN, to camera before the deck: IREN just had one of its best weeks of the year — up double digits on contract headlines with Microsoft and NVIDIA's names attached. But the actual numbers filed with the SEC tell a very different story from the press releases. Four things buried in the filings never made a headline. THEN the slide: here they are, and we take each one in turn. TARGET 24s.",
+    "scoreboard": "First, the quarter as IREN actually reported it, back in May. Revenue a hundred forty-four million eight, down from the quarter before. A net loss of two hundred forty-seven million eight. Adjusted EBITDA still positive but shrinking. And thirty-three million six of that revenue is the AI Cloud business everyone is excited about — the rest is what is left of Bitcoin mining. That is the real picture, and it is not what moved this stock this month. TARGET 24s.",
+    "revenuemix": "Finding one. Here is the trap in this story. Each dot is a quarter — total revenue across the bottom, the AI Cloud share of that revenue up the side. Watch the path: revenue peaks in September at two hundred forty million, then falls two quarters running to a hundred forty-five million — down forty percent from the peak. And over that same stretch, AI Cloud's share of revenue climbs from three percent to twenty-three percent. Both things are true at once: the AI pivot is real, and Bitcoin-mining revenue is disappearing faster than AI Cloud can replace it. That is not a growth story. Not yet. TARGET 30s.",
+    "arrpath": "So what is actually moving this stock? Not that chart — this one. This is the number IREN talks about instead: its year-end AI Cloud run-rate target. November: three point four billion. February: unchanged. May: raised to three point seven. Three weeks ago: raised again, past four billion, on eighty-five percent of it under contract. Three upward revisions in ten months, each one its own press release, each one moving the stock — while actual reported AI Cloud revenue last quarter, annualized, comes to about a hundred thirty-four million. That target is roughly thirty times the run-rate the company has actually delivered so far. TARGET 30s.",
+    "bridge": "Finding two, and it explains the one quarter that looked great. Back in September, IREN reported net income of three hundred eighty-four million six — a record, and the headline everywhere. Walk it. Running the business that quarter actually lost seventy-six million four. Add back a six hundred sixty-five million dollar unrealized gain — a paper markup on derivatives tied to their convertible notes, nothing to do with operations — and the picture flips to five hundred seventy-five million of pretax income. Subtract tax, and you get your record quarter. Every dollar of this company's only profitable quarter came from an accounting mark, not from selling anything. TARGET 30s.",
+    "impairment": "Finding three, and it is sitting in plain sight in the most recent 10-Q, in the notes nobody reads. IREN is retiring its remaining Bitcoin-mining hardware at Childress to make room for AI Cloud. The company's own estimate of what that costs: about five hundred twenty million dollars of additional impairment charges, not yet booked. That is on top of the hundred forty million already written off last quarter alone, and a hundred eighty-eight million over nine months. None of that number appears in a single press release. It is only in the filing. TARGET 26s.",
+    "nvidia": "Finding four. NVIDIA is not just selling GPUs to IREN — it bought itself an option. The right to purchase thirty million IREN shares at seventy dollars each, worth up to two point one billion dollars if it is ever fully exercised. But it only vests as NVIDIA actually delivers GPUs — up to six hundred thousand of them — through May of twenty thirty-one. Seventy dollars is sixty-seven percent above where the stock trades today. Read it as a signal: NVIDIA is betting the stock gets there if the buildout works, and structured the deal so it only pays off if it actually does. TARGET 26s.",
+    "peers": "So what are you paying for this? Same yardstick for everyone: market value against the latest reported quarter, annualized. Against its closest peers — the other Bitcoin miners pivoting to AI Cloud — IREN actually trades cheaper than Cipher Mining or TeraWulf. But against CoreWeave, the biggest pure AI Cloud comparison, IREN costs several times as much per dollar of sales, and CoreWeave is growing faster. Cheap for a miner. Not cheap for an AI Cloud company. TARGET 22s.",
+    "call": "So here is the whole story on one ruler. The bracket is my model: the left tick is a rough transition — real growth, thin margins, heavy dilution. The middle of the shaded zone is a base case where the pivot broadly works. The right tick needs IREN to get close to its own promised numbers with real margins. Today's price sits inside that band, above my base case. Everything genuinely working here — the contracts, the delivery record, NVIDIA's own money — is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and five hundred twenty million dollars that has not hit the income statement yet. My call is WATCH. My line is marked on the ruler, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals — now let's look at the chart."
+  }
+}

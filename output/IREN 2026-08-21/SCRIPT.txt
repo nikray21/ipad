@@ -1,0 +1,210 @@
+IREN Limited (IREN) — SPOKEN SCRIPT
+9 slides · 3:54 · price 41.63 as of Aug 21, 2026 7:15 PM ET
+==============================================================================
+
+------------------------------------------------------------------------------
+SLIDE 01  (24s)
+HEADLINE: What the filings say. The headlines don’t.
+ON SCREEN: Four things they filed. None made the press release.
+------------------------------------------------------------------------------
+
+COLD OPEN, to camera before the deck: IREN just had one of its best weeks of
+the year — up double digits on contract headlines with Microsoft and NVIDIA's
+names attached. But the actual numbers filed with the SEC tell a very
+different story from the press releases. Four things buried in the filings
+never made a headline. THEN the slide: here they are, and we take each one in
+turn.
+
+IREN rose +20% on 2026-07-20 — 2 times normal volume — on a press release
+announcing new contracts. No financial statements were attached. These four
+things are in the documents the company actually filed with the SEC, and none
+of them made that release. We take each one in turn.
+
+------------------------------------------------------------------------------
+SLIDE 02  (26s)
+HEADLINE: Revenue down. AI Cloud growing. Still a loss.
+ON SCREEN: AI Cloud is 23% of revenue. The rest is Bitcoin mining.
+------------------------------------------------------------------------------
+
+First, the quarter as IREN actually reported it, back in May. Revenue a
+hundred forty-four million eight, down from the quarter before. A net loss of
+two hundred forty-seven million eight. Adjusted EBITDA still positive but
+shrinking. And thirty-three million six of that revenue is the AI Cloud
+business everyone is excited about — the rest is what is left of Bitcoin
+mining. That is the real picture, and it is not what moved this stock this
+month.
+
+This is the quarter IREN actually reported, back in May: revenue of $145M,
+down from $185M the quarter before. A net loss of $248M. Adjusted EBITDA is
+still positive but shrinking. And of that revenue, $33.6M is the AI Cloud
+business everyone is excited about — the rest, $111M, is what remains of
+Bitcoin mining, and it is falling fast. That is the real picture, and it is
+not what has moved this stock this month.
+
+------------------------------------------------------------------------------
+SLIDE 03  (28s)
+HEADLINE: Revenue is down 40% since the peak
+ON SCREEN: AI Cloud’s share went 4% to 23% as revenue shrank.
+------------------------------------------------------------------------------
+
+Finding one. Here is the trap in this story. Each dot is a quarter — total
+revenue across the bottom, the AI Cloud share of that revenue up the side.
+Watch the path: revenue peaks in September at two hundred forty million, then
+falls two quarters running to a hundred forty-five million — down forty
+percent from the peak. And over that same stretch, AI Cloud's share of revenue
+climbs from three percent to twenty-three percent. Both things are true at
+once: the AI pivot is real, and Bitcoin-mining revenue is disappearing faster
+than AI Cloud can replace it. That is not a growth story. Not yet.
+
+Watch the path, not just the endpoints. Revenue peaks in Q1'26 at $240M, then
+falls for two quarters straight to $145M — down 40% from the peak. Over that
+same stretch, AI Cloud's share of what is left climbs from 4% to 23%. Both
+things are true at once: the pivot to AI Cloud is real, and Bitcoin-mining
+revenue is disappearing faster than AI Cloud can replace it. That is not a
+growth story yet — it is a shrinking pie with a growing slice.
+
+------------------------------------------------------------------------------
+SLIDE 04  (28s)
+HEADLINE: A target raised twice in ten months
+ON SCREEN: The target is 30× the run-rate IREN has actually delivered.
+------------------------------------------------------------------------------
+
+So what is actually moving this stock? Not that chart — this one. This is the
+number IREN talks about instead: its year-end AI Cloud run-rate target.
+November: three point four billion. February: unchanged. May: raised to three
+point seven. Three weeks ago: raised again, past four billion, on eighty-five
+percent of it under contract. Three upward revisions in ten months, each one
+its own press release, each one moving the stock — while actual reported AI
+Cloud revenue last quarter, annualized, comes to about a hundred thirty-four
+million. That target is roughly thirty times the run-rate the company has
+actually delivered so far.
+
+This is the number that moves the stock: not quarterly revenue, but a year-end
+run-rate target. November: $3B. February: unchanged. May: raised to $4B. Three
+weeks ago: raised again, past $4B, with 85% of it under contract. Three
+headline-worthy revisions in ten months. Meanwhile, the AI Cloud revenue IREN
+actually reported last quarter, annualized, comes to about $134M — roughly 30×
+smaller than the target. Getting there is not impossible. It is also not what
+is happening yet.
+
+------------------------------------------------------------------------------
+SLIDE 05  (28s)
+HEADLINE: The ‘record’ quarter, walked line by line
+ON SCREEN: 173% of the ‘record’ profit is a paper gain.
+------------------------------------------------------------------------------
+
+Finding two, and it explains the one quarter that looked great. Back in
+September, IREN reported net income of three hundred eighty-four million six —
+a record, and the headline everywhere. Walk it. Running the business that
+quarter actually lost seventy-six million four. Add back a six hundred
+sixty-five million dollar unrealized gain — a paper markup on derivatives tied
+to their convertible notes, nothing to do with operations — and the picture
+flips to five hundred seventy-five million of pretax income. Subtract tax, and
+you get your record quarter. Every dollar of this company's only profitable
+quarter came from an accounting mark, not from selling anything.
+
+Back in September, IREN reported net income of $385M — a record, and the
+headline everywhere. Walk it. Running the business that quarter actually lost
+$76.4M. Add a $665M unrealized gain — a paper markup on derivatives tied to
+its convertible notes, nothing to do with selling compute — and a little more
+from interest and FX, and the picture flips to $575M of income before tax.
+Subtract tax, and you get the record quarter. 173% of this company's only
+profitable quarter this year came from an accounting mark, not from a
+customer.
+
+------------------------------------------------------------------------------
+SLIDE 06  (24s)
+HEADLINE: A charge not yet on the income statement
+ON SCREEN: $520M more, and it is only in the filing.
+------------------------------------------------------------------------------
+
+Finding three, and it is sitting in plain sight in the most recent 10-Q, in
+the notes nobody reads. IREN is retiring its remaining Bitcoin-mining hardware
+at Childress to make room for AI Cloud. The company's own estimate of what
+that costs: about five hundred twenty million dollars of additional impairment
+charges, not yet booked. That is on top of the hundred forty million already
+written off last quarter alone, and a hundred eighty-eight million over nine
+months. None of that number appears in a single press release. It is only in
+the filing.
+
+IREN is retiring its remaining Bitcoin-mining hardware at Childress to make
+room for AI Cloud. The company's own estimate of what that costs: about $520M
+of additional impairment charges, not yet booked. That is on top of $140M
+already written off last quarter alone, and $188M over nine months. None of
+this number appears in a single press release. It is only in the notes to the
+10-Q.
+
+------------------------------------------------------------------------------
+SLIDE 07  (24s)
+HEADLINE: NVIDIA bought an option, not just a contract
+ON SCREEN: NVIDIA is betting on execution, not the stock price today.
+------------------------------------------------------------------------------
+
+Finding four. NVIDIA is not just selling GPUs to IREN — it bought itself an
+option. The right to purchase thirty million IREN shares at seventy dollars
+each, worth up to two point one billion dollars if it is ever fully exercised.
+But it only vests as NVIDIA actually delivers GPUs — up to six hundred
+thousand of them — through May of twenty thirty-one. Seventy dollars is
+sixty-seven percent above where the stock trades today. Read it as a signal:
+NVIDIA is betting the stock gets there if the buildout works, and structured
+the deal so it only pays off if it actually does.
+
+NVIDIA is not just selling IREN GPUs — it bought itself an option. The right
+to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised.
+But it only vests as NVIDIA actually delivers GPUs — up to 600K of them —
+through May 7, 2031. $70.00 is 68% above where the stock trades today. Read it
+as a signal, not a threat: NVIDIA structured its own money so it only pays off
+if the build-out actually happens.
+
+------------------------------------------------------------------------------
+SLIDE 08  (22s)   [CUT FOR TIME]
+HEADLINE: Cheap against miners, pricey against CoreWeave
+ON SCREEN: IREN costs 0.6× its direct peers, 5.5× CoreWeave.
+------------------------------------------------------------------------------
+
+So what are you paying for this? Same yardstick for everyone: market value
+against the latest reported quarter, annualized. Against its closest peers —
+the other Bitcoin miners pivoting to AI Cloud — IREN actually trades cheaper
+than Cipher Mining or TeraWulf. But against CoreWeave, the biggest pure AI
+Cloud comparison, IREN costs several times as much per dollar of sales, and
+CoreWeave is growing faster. Cheap for a miner. Not cheap for an AI Cloud
+company.
+
+Same yardstick for everyone here: market value against the latest reported
+quarter, annualized. Against its closest peers — the other Bitcoin miners
+pivoting to AI Cloud — IREN actually trades 0.6× their average price per
+dollar of sales, cheaper than Cipher Mining or TeraWulf. But against
+CoreWeave, the biggest pure AI Cloud comparison, IREN costs 5.5× as much per
+dollar of sales — and CoreWeave is growing revenue faster. Cheap for a miner.
+Not cheap for an AI Cloud company.
+
+------------------------------------------------------------------------------
+SLIDE 09  (30s)
+HEADLINE: Real demand, priced for a lot to land.
+ON SCREEN: My call: WATCH. Interesting at $38.47 or lower.
+------------------------------------------------------------------------------
+
+So here is the whole story on one ruler. The bracket is my model: the left
+tick is a rough transition — real growth, thin margins, heavy dilution. The
+middle of the shaded zone is a base case where the pivot broadly works. The
+right tick needs IREN to get close to its own promised numbers with real
+margins. Today's price sits inside that band, above my base case. Everything
+genuinely working here — the contracts, the delivery record, NVIDIA's own
+money — is already reflected in the price. What is not yet reflected: the
+revenue slide, the paper profit, and five hundred twenty million dollars that
+has not hit the income statement yet. My call is WATCH. My line is marked on
+the ruler, halfway between base and bull. Near it or below, the odds start
+working for you. That is the fundamentals — now let's look at the chart.
+
+That ruler is the whole episode. The bracket is my model: $1.92 if the
+transition goes roughly, $14.04 in my base case, and $62.90 in a bull case
+that needs IREN to get close to its own promised numbers with real margins.
+Today's price today sits 34% below my bull case. Everything genuinely working
+here — the contracts, the delivery record, NVIDIA's own money — is already
+reflected in the price. What is not yet reflected: the revenue slide, the
+paper profit, and $520M that has not hit the income statement. My line is
+$38.47, halfway between base and bull. Near it or below, the odds start
+working for you. That is the fundamentals — now let's go to the chart.
+
+==============================================================================
+END — cut to the chart.
