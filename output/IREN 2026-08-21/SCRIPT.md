@@ -1,6 +1,6 @@
 # IREN Limited (IREN) — spoken script
 
-Built 2026-08-21T23:15:47+00:00 · price 41.63 as of Aug 21, 2026 7:15 PM ET
+Built 2026-08-22T12:22:06+00:00 · price 41.88 as of Aug 21, 2026
 
 - **Full cut:** 9 slides, 3:54
 - **Core cut:** 3:32 — drop the 1 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
@@ -85,7 +85,7 @@ IREN is retiring its remaining Bitcoin-mining hardware at Childress to make room
 
 Finding four. NVIDIA is not just selling GPUs to IREN — it bought itself an option. The right to purchase thirty million IREN shares at seventy dollars each, worth up to two point one billion dollars if it is ever fully exercised. But it only vests as NVIDIA actually delivers GPUs — up to six hundred thousand of them — through May of twenty thirty-one. Seventy dollars is sixty-seven percent above where the stock trades today. Read it as a signal: NVIDIA is betting the stock gets there if the buildout works, and structured the deal so it only pays off if it actually does.
 
-NVIDIA is not just selling IREN GPUs — it bought itself an option. The right to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised. But it only vests as NVIDIA actually delivers GPUs — up to 600K of them — through May 7, 2031. $70.00 is 68% above where the stock trades today. Read it as a signal, not a threat: NVIDIA structured its own money so it only pays off if the build-out actually happens.
+NVIDIA is not just selling IREN GPUs — it bought itself an option. The right to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised. But it only vests as NVIDIA actually delivers GPUs — up to 600K of them — through May 7, 2031. $70.00 is 67% above where the stock trades today. Read it as a signal, not a threat: NVIDIA structured its own money so it only pays off if the build-out actually happens.
 
 ---
 
@@ -109,6 +109,6 @@ Same yardstick for everyone here: market value against the latest reported quart
 
 So here is the whole story on one ruler. The bracket is my model: the left tick is a rough transition — real growth, thin margins, heavy dilution. The middle of the shaded zone is a base case where the pivot broadly works. The right tick needs IREN to get close to its own promised numbers with real margins. Today's price sits inside that band, above my base case. Everything genuinely working here — the contracts, the delivery record, NVIDIA's own money — is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and five hundred twenty million dollars that has not hit the income statement yet. My call is WATCH. My line is marked on the ruler, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals — now let's look at the chart.
 
-That ruler is the whole episode. The bracket is my model: $1.92 if the transition goes roughly, $14.04 in my base case, and $62.90 in a bull case that needs IREN to get close to its own promised numbers with real margins. Today's price today sits 34% below my bull case. Everything genuinely working here — the contracts, the delivery record, NVIDIA's own money — is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and $520M that has not hit the income statement. My line is $38.47, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals — now let's go to the chart.
+That ruler is the whole episode. The bracket is my model: $1.92 if the transition goes roughly, $14.04 in my base case, and $62.90 in a bull case that needs IREN to get close to its own promised numbers with real margins. Today's price today sits 33% below my bull case. Everything genuinely working here — the contracts, the delivery record, NVIDIA's own money — is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and $520M that has not hit the income statement. My line is $38.47, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals — now let's go to the chart.
 
 ---

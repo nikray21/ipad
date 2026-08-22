@@ -1,5 +1,5 @@
 IREN Limited (IREN) — SPOKEN SCRIPT
-9 slides · 3:54 · price 41.63 as of Aug 21, 2026 7:15 PM ET
+9 slides · 3:54 · price 41.88 as of Aug 21, 2026
 ==============================================================================
 
 ------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ the deal so it only pays off if it actually does.
 NVIDIA is not just selling IREN GPUs — it bought itself an option. The right
 to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised.
 But it only vests as NVIDIA actually delivers GPUs — up to 600K of them —
-through May 7, 2031. $70.00 is 68% above where the stock trades today. Read it
+through May 7, 2031. $70.00 is 67% above where the stock trades today. Read it
 as a signal, not a threat: NVIDIA structured its own money so it only pays off
 if the build-out actually happens.
 
@@ -199,7 +199,7 @@ working for you. That is the fundamentals — now let's look at the chart.
 That ruler is the whole episode. The bracket is my model: $1.92 if the
 transition goes roughly, $14.04 in my base case, and $62.90 in a bull case
 that needs IREN to get close to its own promised numbers with real margins.
-Today's price today sits 34% below my bull case. Everything genuinely working
+Today's price today sits 33% below my bull case. Everything genuinely working
 here — the contracts, the delivery record, NVIDIA's own money — is already
 reflected in the price. What is not yet reflected: the revenue slide, the
 paper profit, and $520M that has not hit the income statement. My line is

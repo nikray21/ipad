@@ -4,11 +4,11 @@
   "company": "IREN Limited",
   "exchange": "NASDAQ-GS",
   "sector": "Finance",
-  "price": 41.6262,
-  "changePct": -2.29,
-  "asOf": "Aug 21, 2026 7:15 PM ET",
+  "price": 41.88,
+  "changePct": -1.69,
+  "asOf": "Aug 21, 2026",
   "quoteSource": "Nasdaq real-time",
-  "marketCap": 14876.316159658798,
+  "marketCap": 14967.018867120001,
   "sharesNow": 357.378674,
   "sharesThen": 378.5,
   "sharesLabelThen": "Q3'24",
@@ -85,7 +85,7 @@
    {
     "period": "Jun 2027",
     "eps": 0.35,
-    "pe": 118.932,
+    "pe": 119.65714285714287,
     "low": -1.79,
     "high": 2.89,
     "analysts": 4
@@ -93,7 +93,7 @@
    {
     "period": "Jun 2028",
     "eps": 3.62,
-    "pe": 11.498950276243093,
+    "pe": 11.569060773480663,
     "low": -0.2,
     "high": 8.47,
     "analysts": 4
@@ -101,7 +101,7 @@
    {
     "period": "Jun 2029",
     "eps": 1.28,
-    "pe": 32.52046875,
+    "pe": 32.71875,
     "low": 1.28,
     "high": 1.28,
     "analysts": 1
@@ -1137,7 +1137,7 @@
    "volX": 1.757771848127726
   },
   "runUp": 307.36618615701616,
-  "drawdown": -45.848577451949055,
+  "drawdown": -45.51840964795313,
   "peakToTrough": {
    "pct": -61.641148984165284,
    "peak": 76.41000366210938,
@@ -1222,42 +1222,42 @@
    "target": 77.89,
    "targetLow": 50.0,
    "targetHigh": 100.0,
-   "upside": 87.11772873815052,
+   "upside": 85.98376313276026,
    "nasdaqTarget": 80.5
   },
   "provenance": {
    "quote": {
-    "fetchedAt": 1787354136.635,
+    "fetchedAt": 1787401317.508,
     "ageS": 0.0,
     "source": "Nasdaq real-time"
    },
    "profile": {
-    "fetchedAt": 1787354141.788,
+    "fetchedAt": 1787401322.6,
     "ageS": 0.0,
     "source": "Nasdaq quote summary"
    },
    "fundamentals": {
-    "fetchedAt": 1787354142.447,
+    "fetchedAt": 1787401323.166,
     "ageS": 0.0,
     "source": "SEC EDGAR XBRL companyfacts"
    },
    "street": {
-    "fetchedAt": 1787354145.911,
+    "fetchedAt": 1787401324.378,
     "ageS": 0.0,
     "source": "Nasdaq analyst consensus"
    },
    "estimates": {
-    "fetchedAt": 1787354147.107,
+    "fetchedAt": 1787401326.573,
     "ageS": 0.0,
     "source": "Nasdaq analyst estimates"
    },
    "history": {
-    "fetchedAt": 1787354136.635,
-    "ageS": 10.5,
+    "fetchedAt": 1787401317.508,
+    "ageS": 9.1,
     "source": "Yahoo daily OHLCV"
    }
   },
-  "builtAt": "2026-08-21T23:15:47+00:00",
+  "builtAt": "2026-08-22T12:22:06+00:00",
   "mix": {
    "series": [
     {
@@ -1326,7 +1326,7 @@
    "strike": 70.0,
    "expiry": "May 7, 2031",
    "gpuMilestone": 600000,
-   "premiumToPrice": 68.16332021659437
+   "premiumToPrice": 67.14422158548233
   },
   "react": {
    "date": "2026-07-20",
@@ -1364,7 +1364,7 @@
     },
     {
      "sym": "IREN",
-     "ps": 25.68424751322306,
+     "ps": 25.840847491574586,
      "growth": -2.2282241728561636,
      "lastQ": "Q3'26"
     },
@@ -1384,17 +1384,17 @@
     }
    ],
    "avgPs": 33.28521909162241,
-   "selfPs": 25.68424751322306,
-   "psPremium": 0.7716412333812024,
+   "selfPs": 25.840847491574586,
+   "psPremium": 0.7763460237543846,
    "avgPurePs": 41.46546166843395,
-   "psRatioPure": 0.619413036290284,
+   "psRatioPure": 0.6231896728463587,
    "crwvPs": 4.704125289902913,
-   "psRatioCrwv": 5.459941206998156,
+   "psRatioCrwv": 5.493231132053438,
    "avgGrowth": 175.84094734475144
   },
   "netDebt": 1748.8140000000003,
   "totalDebt": 3962.088,
-  "ev": 16625.1301596588,
+  "ev": 16715.83286712,
   "ttmRevFiled": 757.0999999999999,
   "wd": {
    "declineFromPeak": -39.741989180191425,
@@ -1402,15 +1402,15 @@
    "targetVsRunRate": 29.76190476190476,
    "gainShareOfNet": 172.90691627665103,
    "impEstimate": 520,
-   "nvPremium": 68.16332021659437
+   "nvPremium": 67.14422158548233
   }
  },
  "payload": {
   "symbol": "IREN",
   "company": "IREN Limited",
-  "price": 41.6262,
+  "price": 41.88,
   "sharesOutstanding": 357.378674,
-  "stamp": "IREN \u00b7 41.63 as of Aug 21, 2026 7:15 PM ET \u00b7 built 2026-08-21 23:15",
+  "stamp": "IREN \u00b7 41.88 as of Aug 21, 2026 \u00b7 built 2026-08-22 12:22",
   "totalTarget": 234,
   "coreTarget": 212,
   "optionalCount": 1,
@@ -1701,10 +1701,10 @@
     "head": "NVIDIA bought an option, not just a contract",
     "value": "$70.00",
     "tone": "warn",
-    "caption": "the price NVIDIA can pay for up to 30.0M IREN shares \u2014 68% above today&rsquo;s stock \u2014 but only as GPU deliveries hit volume milestones through May 7, 2031.",
-    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.1B</div><div class=\"tl\">Max proceeds if fully exercised</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">600K</div><div class=\"tl\">GPUs delivered to fully vest</div></div><div class=\"tile\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$41.63</div><div class=\"tl\">IREN&rsquo;s price today</div></div></div>",
+    "caption": "the price NVIDIA can pay for up to 30.0M IREN shares \u2014 67% above today&rsquo;s stock \u2014 but only as GPU deliveries hit volume milestones through May 7, 2031.",
+    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.1B</div><div class=\"tl\">Max proceeds if fully exercised</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">600K</div><div class=\"tl\">GPUs delivered to fully vest</div></div><div class=\"tile\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$41.88</div><div class=\"tl\">IREN&rsquo;s price today</div></div></div>",
     "punch": "NVIDIA is betting on <b>execution, not the stock price today</b>.",
-    "why": "NVIDIA is not just selling IREN GPUs \u2014 it bought itself an option. The right to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised. But it only vests as NVIDIA actually delivers GPUs \u2014 up to 600K of them \u2014 through May 7, 2031. $70.00 is 68% above where the stock trades today. Read it as a signal, not a threat: NVIDIA structured its own money so it only pays off if the build-out actually happens.",
+    "why": "NVIDIA is not just selling IREN GPUs \u2014 it bought itself an option. The right to buy 30.0M IREN shares at $70.00 each, worth up to $2.1B if fully exercised. But it only vests as NVIDIA actually delivers GPUs \u2014 up to 600K of them \u2014 through May 7, 2031. $70.00 is 67% above where the stock trades today. Read it as a signal, not a threat: NVIDIA structured its own money so it only pays off if the build-out actually happens.",
     "notes": "Finding four. NVIDIA is not just selling GPUs to IREN \u2014 it bought itself an option. The right to purchase thirty million IREN shares at seventy dollars each, worth up to two point one billion dollars if it is ever fully exercised. But it only vests as NVIDIA actually delivers GPUs \u2014 up to six hundred thousand of them \u2014 through May of twenty thirty-one. Seventy dollars is sixty-seven percent above where the stock trades today. Read it as a signal: NVIDIA is betting the stock gets there if the buildout works, and structured the deal so it only pays off if it actually does.",
     "target": 24
    },
@@ -1744,8 +1744,8 @@
       },
       {
        "name": "IREN",
-       "v": 25.68424751322306,
-       "lab": "25.7\u00d7",
+       "v": 25.840847491574586,
+       "lab": "25.8\u00d7",
        "right": "\u22122%",
        "here": true
       },
@@ -1781,8 +1781,8 @@
      "kind": "fvband",
      "height": 430,
      "band": 0.6350272786175406,
-     "price": 41.6262,
-     "priceLab": "$41.63",
+     "price": 41.88,
+     "priceLab": "$41.88",
      "fairValue": 38.47286399642229,
      "fairLab": "$38.47",
      "fairName": "where I\u2019d get interested",
@@ -1795,11 +1795,11 @@
       "my base-to-bull range",
       "above even the bull case"
      ],
-     "verdict": "today sits 34% below my bull case"
+     "verdict": "today sits 33% below my bull case"
     },
     "extra": "<div class=\"whylist\" style=\"margin-top:16px;gap:13px\"><p style=\"animation-delay:900ms;font-size:23px\"><b style=\"color:var(--good)\">\u2713</b>&ensp;<b>The demand is real</b> \u2014 Microsoft and NVIDIA are paying, and IREN delivers on schedule.</p><p style=\"animation-delay:1100ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>Revenue is shrinking</b> \u2014 down 40% from its peak, two quarters running.</p><p style=\"animation-delay:1300ms;font-size:23px\"><b style=\"color:var(--warn)\">\u2715</b>&ensp;<b>The profit was paper</b> \u2014 173% of it a one-time gain, with $520M of impairments still to book.</p><p style=\"animation-delay:1500ms;font-size:23px\"><b style=\"color:var(--crit)\">\u2715</b>&ensp;<b>The target is 30\u00d7</b> the run-rate actually delivered so far.</p></div>",
     "punch": "My call: <b>WATCH</b>. Interesting <b>at $38.47 or lower</b>.",
-    "why": "That ruler is the whole episode. The bracket is my model: $1.92 if the transition goes roughly, $14.04 in my base case, and $62.90 in a bull case that needs IREN to get close to its own promised numbers with real margins. Today's price today sits 34% below my bull case. Everything genuinely working here \u2014 the contracts, the delivery record, NVIDIA's own money \u2014 is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and $520M that has not hit the income statement. My line is $38.47, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals \u2014 now let's go to the chart.",
+    "why": "That ruler is the whole episode. The bracket is my model: $1.92 if the transition goes roughly, $14.04 in my base case, and $62.90 in a bull case that needs IREN to get close to its own promised numbers with real margins. Today's price today sits 33% below my bull case. Everything genuinely working here \u2014 the contracts, the delivery record, NVIDIA's own money \u2014 is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and $520M that has not hit the income statement. My line is $38.47, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals \u2014 now let's go to the chart.",
     "notes": "So here is the whole story on one ruler. The bracket is my model: the left tick is a rough transition \u2014 real growth, thin margins, heavy dilution. The middle of the shaded zone is a base case where the pivot broadly works. The right tick needs IREN to get close to its own promised numbers with real margins. Today's price sits inside that band, above my base case. Everything genuinely working here \u2014 the contracts, the delivery record, NVIDIA's own money \u2014 is already reflected in the price. What is not yet reflected: the revenue slide, the paper profit, and five hundred twenty million dollars that has not hit the income statement yet. My call is WATCH. My line is marked on the ruler, halfway between base and bull. Near it or below, the odds start working for you. That is the fundamentals \u2014 now let's look at the chart.",
     "target": 30
    }
@@ -2364,13 +2364,13 @@
    "watch": [
     "The Aug 27 earnings print has to show the AI Cloud ramp finally outrunning the Bitcoin-mining decline, or the two-quarter revenue slide becomes three.",
     "The disclosed $520M of additional impairments has not been booked yet \u2014 expect it to land across the next few quarters and to keep pressuring GAAP net income.",
-    "NVIDIA's $70 strike is 68% above today's price \u2014 not a near-term dilution risk, but a marker of where NVIDIA itself expects the stock to trade if the buildout goes well.",
+    "NVIDIA's $70 strike is 67% above today's price \u2014 not a near-term dilution risk, but a marker of where NVIDIA itself expects the stock to trade if the buildout goes well.",
     "IREN keeps issuing shares through its ATM program \u2014 357.4 million shares outstanding as of Apr 30 2026, and rising \u2014 which dilutes every existing holder a little more with each raise.",
     "Almost none of this stock's biggest moves this year have come from a quarterly earnings release \u2014 they have come from standalone contract-announcement press releases with no financial statements attached."
    ],
    "why": [
     "<b>The demand is real.</b> Microsoft, NVIDIA and a widening customer base are paying real money, and IREN has a track record of building on schedule.",
-    "<b>The price already needs a lot to go right.</b> At $41.63 the stock sits above my base case and inside my bull-case range \u2014 you are already paying for meaningful execution, not just potential.",
+    "<b>The price already needs a lot to go right.</b> At $41.88 the stock sits above my base case and inside my bull-case range \u2014 you are already paying for meaningful execution, not just potential.",
     "<b>The fine print.</b> Revenue has fallen two straight quarters, the one profitable quarter was a paper gain, and a $520M impairment charge is disclosed but not yet booked.",
     "<b>A decent price for me: $38.47 or lower.</b> Between my base and bull cases \u2014 that is where the risk of the transition and the size of the opportunity feel balanced."
    ]

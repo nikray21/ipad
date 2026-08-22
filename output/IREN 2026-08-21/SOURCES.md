@@ -1,6 +1,6 @@
 # IREN Limited (IREN) — where every number came from
 
-Deck built 2026-08-21T23:15:47+00:00.
+Deck built 2026-08-22T12:22:06+00:00.
 
 Two checks stand behind this file:
 
@@ -28,12 +28,12 @@ Two checks stand behind this file:
 
 | Route | Source | Fetched | Age at build |
 |---|---|---|---|
-| `/api/quote/IREN` | Nasdaq real-time | 2026-08-21 23:15:36 | 0s |
-| `/api/profile/IREN` | Nasdaq quote summary | 2026-08-21 23:15:41 | 0s |
-| `/api/fundamentals/IREN` | SEC EDGAR XBRL companyfacts | 2026-08-21 23:15:42 | 0s |
-| `/api/street/IREN` | Nasdaq analyst consensus | 2026-08-21 23:15:45 | 0s |
-| `/api/estimates/IREN` | Nasdaq analyst estimates | 2026-08-21 23:15:47 | 0s |
-| `/api/history/IREN` | Yahoo daily OHLCV | 2026-08-21 23:15:36 | 10s |
+| `/api/quote/IREN` | Nasdaq real-time | 2026-08-22 12:21:57 | 0s |
+| `/api/profile/IREN` | Nasdaq quote summary | 2026-08-22 12:22:02 | 0s |
+| `/api/fundamentals/IREN` | SEC EDGAR XBRL companyfacts | 2026-08-22 12:22:03 | 0s |
+| `/api/street/IREN` | Nasdaq analyst consensus | 2026-08-22 12:22:04 | 0s |
+| `/api/estimates/IREN` | Nasdaq analyst estimates | 2026-08-22 12:22:06 | 0s |
+| `/api/history/IREN` | Yahoo daily OHLCV | 2026-08-22 12:21:57 | 9s |
 
 ## Deliberately not used
 

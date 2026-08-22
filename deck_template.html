@@ -64,8 +64,8 @@ body.camzone .slide{padding-left:var(--cam-l,96px);padding-right:var(--cam-r,96p
 /* The frame the camera fills. Designed to be ON CAMERA: a soft filled slot with
    a hairline border, so it reads as part of the slide before the feed lands on
    it and still frames the feed cleanly if alignment is a pixel or two out. */
-#camguide .cg-box{position:absolute;border-radius:28px;background:var(--surface-2);
-  border:2px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#camguide .cg-box{position:absolute;border-radius:28px;background:var(--bg);
+  border:none;box-shadow:none}
 #camguide .cg-lab{position:absolute;text-align:center;font-size:19px;font-weight:700;
   color:var(--accent);letter-spacing:.02em}
 #camguide .cg-lab span{display:block;font-size:16px;font-weight:600;color:var(--muted);
@@ -438,13 +438,40 @@ svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tab
 #hud b{color:var(--ink);font-weight:700}
 #hud .over{color:var(--crit)}
 
+/* ---------- On-screen nav + theme controls ----------
+   Inside #stage (not position:fixed on the viewport) so they sit in the same
+   1920x1080 coordinate space as the footer and scale/move with it exactly —
+   a viewport-fixed overlay would drift out of alignment whenever the stage is
+   letterboxed or scaled, and could land on top of the footer's page counter.
+
+   Stacked VERTICALLY in the empty 96px margin strip outside the slide's own
+   content box (.slide's right padding), not overlapping it — a horizontal row
+   there doesn't fit, and sitting even a little inside that padding put the
+   buttons on top of the punch line, which runs right up to the content edge
+   on some slides (e.g. the findings slide). */
+#navbtns{
+  position:absolute; right:24px; bottom:40px; z-index:61;
+  display:flex; flex-direction:column; gap:10px;
+}
+#navbtns button{
+  width:48px; height:48px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border); color:var(--ink);
+  font-size:19px; line-height:1; cursor:pointer; display:flex;
+  align-items:center; justify-content:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.08); transition:border-color .15s,transform .15s;
+}
+#navbtns button:hover{border-color:var(--accent); color:var(--accent)}
+#navbtns button:active{transform:scale(.92)}
+#navbtns button:disabled{opacity:.35; cursor:default}
+#navbtns button:disabled:hover{border-color:var(--border); color:var(--ink)}
+
 /* ---------- Print → PDF ---------- */
 @media print{
   @page{size:1920px 1080px;margin:0}
   html,body{overflow:visible;height:auto}
   #stage{transform:none!important;width:1920px;height:auto}
   .slide{display:flex!important;position:relative;page-break-after:always;height:1080px}
-  #notes,#grid,#hud{display:none!important}
+  #notes,#grid,#hud,#navbtns{display:none!important}
   /* A PDF is a handout, not a recording: drop the reserved camera column and its
      frame so the page is full-bleed. Camera mode is the default now, so without
      this every exported PDF carried an empty slot down the left. */
@@ -2339,6 +2366,24 @@ const slides = DECK.slides.map((sl, i) => render(sl, i + 1, DECK.slides.length))
 slides.forEach(s => stage.appendChild(s));
 
 /*
+   On-screen prev / next / theme controls. Built once, appended to #stage
+   (not the page body) so they live in the same 1920x1080 coordinate space as
+   the footer and never need separate alignment logic — see #navbtns in <style>
+   for why viewport-fixed positioning was rejected. Persists across show().
+*/
+const navBtns = document.createElement("div");
+navBtns.id = "navbtns";
+navBtns.innerHTML =
+  `<button id="navPrev" title="Previous slide (←)" aria-label="Previous slide">↑</button>` +
+  `<button id="navTheme" title="Toggle theme (T)" aria-label="Toggle theme">☾</button>` +
+  `<button id="navNext" title="Next slide (→)" aria-label="Next slide">↓</button>`;
+stage.appendChild(navBtns);
+document.getElementById("navPrev").addEventListener("click", () => show(cur - 1));
+document.getElementById("navNext").addEventListener("click", () => show(cur + 1));
+document.getElementById("navTheme").addEventListener("click", () =>
+  setTheme(document.documentElement.getAttribute("data-theme") === "cream" ? "dark" : "cream"));
+
+/*
    THE LAYOUT AUDIT LIVES IN THE DECK, NOT IN A CONSOLE PASTE.
 
    Every layout bug this deck has shipped was found by hand-pasting a geometry
@@ -2683,11 +2728,15 @@ function show(i){
   location.hash = "s" + (cur + 1);
   if (n.type === "verdict") renderCalc(slides[cur]);
   buildGrid();
+  document.getElementById("navPrev").disabled = cur === 0;
+  document.getElementById("navNext").disabled = cur === slides.length - 1;
 }
 
 function setTheme(t){
   document.documentElement.setAttribute("data-theme", t);
   try { localStorage.setItem("nr_deck_theme", t); } catch(e){}
+  const b = document.getElementById("navTheme");
+  if (b) b.textContent = t === "dark" ? "☀" : "☾";
 }
 function startClock(){
   t0 = Date.now();
