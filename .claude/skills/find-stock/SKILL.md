@@ -52,9 +52,44 @@ From the daily averages, compute early-week vs last-2-days interest for every ca
 3. **Low saturation**: Breakout/rising queries exist but this week's dedicated FA videos are thin or small-channel. If 300K+-view videos already cover it, you can't rank — demote it no matter how big the demand.
 4. **Verify the catalyst before asserting it** — WebSearch the specific claim (who's short, what the filing actually was, is the listing real). Never state direction/mechanism of a catalyst from an agent's summary alone; post-cutoff facts need multi-source confirmation.
 
+## Phase 3.5 — Deep-verify the leading candidate (before you commit to it)
+
+Trends and the Phase 1 sweep tell you WHO's rising. They don't tell you whether the
+story holds up under a straight face. Once Phase 3 has a leader, spawn one more
+`general-purpose` agent — not a broad sweep like Phase 1, a narrow forensic pass on
+that single ticker — with a numbered checklist, e.g.:
+
+1. Verify each specific catalyst claim against a primary source (company press
+   release, SEC filing, exchange announcement) — not just a news aggregator
+   repeating it. Name the source URL for each.
+2. Pull the current price, the recent move, and (if there was a big single-day
+   pop) the price action in the 1–2 sessions *immediately after* it — see rule 9
+   below.
+3. Run a saturation check scoped to this ticker specifically, even though Phase 1
+   agent #3 already looked broadly: `site:youtube.com "<TICKER> stock analysis
+   2026"`, plus the company-name form. Note channel size/view counts where
+   findable, and upload recency relative to the catalyst date.
+4. If there's a dated forward catalyst (earnings, an FDA date, a lockup expiry),
+   confirm the date and pull anything markets are already pricing for it
+   (options-implied move, short interest) if easily available — it's what turns
+   "rising this week" into "still rising after upload."
+
+This is the pass that turns a Trends line into an actual argument — the specific,
+sourced details from it (deal terms, financing structure, insider activity) are
+what should carry the "why it passes all four tests" writeup, not just the
+momentum numbers.
+
 ## Deliverable
 
 Lead with **one ticker** and why it passes all four tests, with the daily momentum numbers. Then: 2–3 runner-ups with the reason each lost, the tickers to skip despite buzz (and why), the literal search phrases to build the title around, and honest caveats (Trends values are relative 0–100 per comparison set; absolute volumes unknown). Close by offering to run the `stock-analysis-presentation` skill for the winner (new `episodes/<SYM>.json`).
+
+If Nikil pushes back on the pick (e.g. "are you sure it's X over Y"), don't just
+restate the same evidence more firmly — that's a signal you under-weighted
+something. Go do fresh, targeted research at the specific tension he's pointing
+at (re-check the challenger's post-spike price action, compare autocomplete/demand
+depth head-to-head between the two names) before answering again. Say plainly
+which parts of the original call get stronger and which get weaker once you've
+actually looked, rather than defending the first answer by default.
 
 ## Critical Rules
 
@@ -66,3 +101,12 @@ Lead with **one ticker** and why it passes all four tests, with the daily moment
 6. Verify every catalyst with a targeted WebSearch before it appears in the answer.
 7. All numbers in the final answer come from this run's pulled data — never typed from recall.
 8. If Trends blocks every approach in trends-api.md after retries, say so and fall back to agent #3's autocomplete + view-velocity evidence — don't fabricate Trends numbers.
+9. For any candidate with a large single-day move, pull the price action for the
+   1–2 sessions immediately after it before ranking that candidate. A violent
+   same-week reversal (e.g. +177% then −25% the next session) is faster and more
+   reliable evidence of "peaked and decaying" than waiting for Google Trends to
+   show fading — Trends lags the tape by a day or more.
+10. Before ranking the leader against a big, obvious mover the field would expect
+    (the name with the loudest headline that week), run Phase 3.5 on both, not
+    just the pick — a pick that only wins because the obvious name wasn't checked
+    as hard is not a real win.
