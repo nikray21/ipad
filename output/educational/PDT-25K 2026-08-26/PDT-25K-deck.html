@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDT-25K — What I'd Actually Start Trading With</title>
+<style>
+/* ============================================================
+   PDT-25K — "The $25K rule is gone: what I'd actually start with."
+   Wednesday educational episode. Built on the verified SWING-9TO5
+   engine — each slide's animation is a pure function of
+   time-since-flip, so every flip replays identically.
+   Shortcuts match the episode-deck template:
+   →/Space next · ← back · T theme · N notes · H HUD · G grid ·
+   F fullscreen · R restart timer · C camera frame · ⇧C OBS numbers ·
+   [ ] resize camera bubble · Esc close grid
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#1b1a19; --surface:#262624; --surface-2:#30302e;
+  --border:rgba(240,238,230,0.10); --ink:#f0eee6; --ink-2:#c2c0b6; --muted:#8f8d84;
+  --grid:#34322f; --accent:#d97757; --s1:#d67350; --s2:#4d90da;
+  --good:#2f9e44; --warn:#e8a33d; --crit:#e05252;
+  --accent-wash:rgba(217,119,87,0.12);
+}
+:root[data-theme="cream"] {
+  color-scheme: light;
+  --bg:#faf9f5; --surface:#ffffff; --surface-2:#f2f0e9;
+  --border:rgba(25,25,25,0.11); --ink:#1f1e1d; --ink-2:#40403c; --muted:#6f6e66;
+  --grid:#e6e3da; --accent:#c2603f; --s1:#c2603f; --s2:#2a78d6;
+  --good:#257a33; --warn:#a9741a; --crit:#b8352f;
+  --accent-wash:rgba(194,96,63,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink); -webkit-font-smoothing:antialiased;
+  font-feature-settings:"kern","liga"; text-rendering:optimizeLegibility;
+  display:flex; align-items:center; justify-content:center;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important; animation-iteration-count:1!important;
+    transition-duration:.01ms!important; scroll-behavior:auto!important;
+  }
+}
+#stage{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none;overflow:hidden;background:var(--bg)}
+
+/* ---------- Camera alignment guide (never on during a take) ---------- */
+#camguide{position:absolute;inset:0;pointer-events:none;z-index:60}
+#camguide .cg-col{position:absolute;top:0;bottom:0;background:var(--accent-wash);
+  border-right:2px dashed var(--accent);opacity:.85}
+#camguide .cg-box{position:absolute;border-radius:28px;background:var(--surface-2);
+  border:2px solid var(--border);opacity:.55}
+#camguide .cg-lab{position:absolute;text-align:center;font-size:19px;font-weight:700;
+  color:var(--accent);letter-spacing:.02em}
+#camguide .cg-lab span{display:block;font-size:16px;font-weight:600;color:var(--muted);
+  margin-top:4px;letter-spacing:.04em}
+
+/* ---------- Presenter notes drawer ---------- */
+#notes{
+  position:fixed; left:0; right:0; bottom:0; max-height:42vh; overflow:auto;
+  background:var(--surface); border-top:2px solid var(--accent);
+  padding:20px 30px 24px; display:none; z-index:80;
+  box-shadow:0 -14px 40px rgba(0,0,0,.22);
+}
+#notes.on{display:block}
+#notes .nh{font-size:12px;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:9px}
+#notes p{font-size:17.5px;line-height:1.5;color:var(--ink);max-width:1500px}
+
+/* ---------- Grid overview ---------- */
+#grid{position:fixed;inset:0;background:var(--bg);z-index:90;display:none;overflow:auto;padding:34px}
+#grid.on{display:block}
+#grid .gg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+#grid .gc{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 14px;cursor:pointer}
+#grid .gc:hover{border-color:var(--accent)}
+#grid .gc.cur{border-color:var(--accent);background:var(--accent-wash)}
+#grid .gc .gn{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em}
+#grid .gc .gt{font-size:14px;margin-top:4px;line-height:1.28;color:var(--ink)}
+#grid .tot{font-size:13px;color:var(--muted);margin-bottom:15px;letter-spacing:.04em}
+#grid h3{font-size:13px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);margin-bottom:15px;font-weight:800}
+
+/* ---------- Presenter HUD ---------- */
+#hud{
+  position:fixed; top:12px; right:14px; z-index:85;
+  display:none; gap:9px; align-items:center;
+  font-size:12.5px; color:var(--muted); letter-spacing:.06em;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:6px 11px; font-variant-numeric:tabular-nums;
+}
+#hud.on{display:flex}
+#hud b{color:var(--ink);font-weight:700}
+#hud .over{color:var(--crit)}
+
+/* ---------- Episode-deck signature chrome ---------- */
+.kick{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:700;
+  letter-spacing:.17em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+.kick .no{color:var(--accent)}
+/* The punch line — lifted verbatim from deck_template.html. One line, 40px,
+   bold words in accent; the explanation lives in the presenter notes. */
+.punch{margin-top:auto;display:flex;gap:20px;align-items:center;
+  border-left:5px solid var(--accent);padding:6px 0 6px 26px}
+.punch p{font-size:40px;line-height:1.22;font-weight:680;letter-spacing:-.012em;
+  color:var(--ink);max-width:1180px;text-wrap:balance;margin:0}
+.punch p b{font-weight:800;color:var(--accent)}
+
+/* ---------- Progress rail ticks ---------- */
+#rail-ticks{display:flex;justify-content:space-between;margin-top:8px}
+#rail-ticks span{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);opacity:.7;cursor:pointer;font-variant-numeric:tabular-nums;
+  transition:color .2s cubic-bezier(.25,1,.5,1),opacity .2s cubic-bezier(.25,1,.5,1)}
+#rail-ticks span:hover{color:var(--ink);opacity:1}
+#rail-ticks span.cur{color:var(--accent);opacity:1}
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<div id="hud"><span id="hud-slide"></span><span>·</span><span id="hud-target"></span><span>·</span><b id="hud-clock">0:00</b></div>
+<div id="notes"><div class="nh" id="notes-head">Presenter notes</div><p id="notes-body"></p></div>
+<div id="grid"><h3>All slides — click to jump · Esc to close</h3>
+<div class="tot" id="grid-total"></div><div class="gg" id="grid-cells"></div></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ============================================================
+   Tokens — two palettes, JS-side (all slide paint is inline).
+   Kept literally in sync with the CSS vars above.
+   ============================================================ */
+const TOK = {
+  dark: {
+    bg:'#1b1a19', surface:'#262624', surface2:'#30302e', ink:'#f0eee6', ink2:'#c2c0b6',
+    muted:'#8f8d84', grid:'#34322f', accent:'#d97757', s1:'#d67350', s2:'#4d90da',
+    good:'#2f9e44', warn:'#e8a33d', crit:'#e05252',
+    bgRGB:'27,26,25', accentRGB:'217,119,87',
+    accentWash:'rgba(217,119,87,.12)', goodWash:'rgba(47,158,68,.12)',
+    critWash:'rgba(224,82,82,.14)', warnWash:'rgba(232,163,61,.14)',
+    s2Wash:'rgba(77,144,218,.16)',
+    // dark elevation = a hairline light edge on top, never a drop shadow
+    cardShadow:'inset 0 1px 0 rgba(240,238,230,.055)',
+    vignette:'radial-gradient(ellipse at 55% 45%, transparent 55%, rgba(0,0,0,.16) 100%)',
+    grainOp:'.05', glow2RGB:'232,163,61'
+  },
+  cream: {
+    bg:'#faf9f5', surface:'#ffffff', surface2:'#f2f0e9', ink:'#1f1e1d', ink2:'#40403c',
+    muted:'#6f6e66', grid:'#e6e3da', accent:'#c2603f', s1:'#c2603f', s2:'#2a78d6',
+    good:'#257a33', warn:'#a9741a', crit:'#b8352f',
+    bgRGB:'250,249,245', accentRGB:'194,96,63',
+    accentWash:'rgba(194,96,63,.10)', goodWash:'rgba(37,122,51,.10)',
+    critWash:'rgba(184,53,47,.10)', warnWash:'rgba(169,116,26,.11)',
+    s2Wash:'rgba(42,120,214,.13)',
+    cardShadow:'0 1px 2px rgba(25,25,25,.06)',
+    vignette:'radial-gradient(ellipse at 55% 45%, transparent 60%, rgba(31,30,29,.055) 100%)',
+    grainOp:'.033', glow2RGB:'169,116,26'
+  }
+};
+let C = TOK.dark;
+
+const FONT = 'system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
+/* The content column's left edge is DYNAMIC — colLeft(), defined with the camera
+   state below. Camera mode on (default): 96 + reserved column = 792, the exact
+   video-build geometry. Camera mode off (press c): 96, full-bleed like the
+   episode deck. */
+const COL_RIGHT = 96;
+const SLIDE_TARGET = 15;
+const TOTAL_TARGET = () => DEFS.length * SLIDE_TARGET;   // fn: DEFS defined later
+
+/* ============================================================
+   Motion system — verbatim from the video deck
+   ============================================================ */
+const clamp01 = x => Math.min(1, Math.max(0, x));
+const easeOutCubic  = x => 1 - Math.pow(1 - x, 3);
+const easeInCubic   = x => x * x * x;
+const easeInOutCubic= x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2;
+const easeOutBack   = x => { const c1=1.70158,c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); };
+const easeOutExpo   = x => x >= 1 ? 1 : 1 - Math.pow(2, -10*x);   // dramatic settle
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const draw = (t,s,d=1) => easeInOutCubic(clamp01((t-s)/d));
+const prog = (t,s,d) => clamp01((t-s)/d);
+const breathe = (T,sp=.5,amt=.02,ph=0) => 1 + amt*Math.sin(T*sp+ph);
+const floatY  = (T,sp=.6,amt=4,ph=0) => amt*Math.sin(T*sp+ph);
+
+/* Style appliers — each sets an element to its state at time t */
+function stEnter(el,t,start,dy=26,dur=.7){
+  const e = easeOutCubic(clamp01((t-start)/dur));
+  el.style.opacity = e; el.style.transform = `translateY(${(1-e)*dy}px)`;
+}
+const stRise = stEnter;
+function stPop(el,t,start,dur=.55){
+  const p = clamp01((t-start)/dur), e = easeOutBack(p);
+  el.style.opacity = clamp01(p*2); el.style.transform = `scale(${.6+.4*e})`;
+}
+function stFocus(el,t,start,dur=.85,dy=30){
+  const p = easeOutCubic(clamp01((t-start)/dur));
+  el.style.opacity = p; el.style.transform = `translateY(${(1-p)*dy}px)`;
+  el.style.filter = `blur(${(1-p)*7}px)`;
+}
+/* SVG group pop about a point */
+function svPop(g,t,start,cx,cy,dur=.55){
+  const p = clamp01((t-start)/dur), e = easeOutBack(p), s = .6+.4*e;
+  g.setAttribute('opacity', clamp01(p*2));
+  g.setAttribute('transform', `translate(${cx},${cy}) scale(${s}) translate(${-cx},${-cy})`);
+}
+
+/* ============================================================
+   DOM helpers
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+function H(tag, style, html){
+  const e = document.createElement(tag);
+  if (style) Object.assign(e.style, style);
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+function S(tag, attrs){
+  const e = document.createElementNS(NS, tag);
+  for (const k in (attrs||{})) e.setAttribute(k, attrs[k]);
+  return e;
+}
+/* a stroke that draws in via dash: pathLength=1 */
+function drawablePath(d, stroke, width, extra){
+  const p = S('path', Object.assign({d, fill:'none', stroke, 'stroke-width':width,
+    'stroke-linecap':'round', pathLength:'1', 'stroke-dasharray':'1', 'stroke-dashoffset':'1'}, extra||{}));
+  return p;
+}
+function setDraw(p, v){ p.setAttribute('stroke-dashoffset', String(1 - v)); }
+
+/* ============================================================
+   Stage + persistent furniture
+   ============================================================ */
+const stage = document.getElementById('stage');
+
+const fadeLayer = H('div', {position:'absolute', inset:'0', zIndex:'0', pointerEvents:'none'});
+const glowLayer = H('div', {position:'absolute', top:'-200px', right:'-100px', width:'1100px',
+  height:'900px', borderRadius:'50%', zIndex:'0', pointerEvents:'none'});
+/* Second ambient glow — adjacent warm hue, very low alpha, slow counter-phase
+   drift. Two close hues at low chroma = calm depth, not a rave. */
+const glow2Layer = H('div', {position:'absolute', bottom:'-260px', left:'620px', width:'900px',
+  height:'700px', borderRadius:'50%', zIndex:'0', pointerEvents:'none'});
+const dotLayer  = H('div', {position:'absolute', left:'720px', right:'0', top:'0', bottom:'0',
+  opacity:'.5', zIndex:'0', pointerEvents:'none',
+  webkitMaskImage:'linear-gradient(90deg, transparent 0%, #000 14%)',
+  maskImage:'linear-gradient(90deg, transparent 0%, #000 14%)'});
+stage.append(fadeLayer, glowLayer, glow2Layer, dotLayer);
+
+/* Vignette (implied light) + film grain (kills banding on the glows, adds
+   warmth). Both static, painted per theme, over the slide but under chrome. */
+const vignetteLayer = H('div', {position:'absolute', inset:'0', zIndex:'5', pointerEvents:'none'});
+const grainLayer = H('div', {position:'absolute', inset:'0', zIndex:'5', pointerEvents:'none',
+  mixBlendMode:'overlay',
+  backgroundImage:'url("data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22240%22 height=%22240%22 filter=%22url(%23n)%22 opacity=%220.5%22/></svg>")',
+  backgroundSize:'240px 240px'});
+stage.append(vignetteLayer, grainLayer);
+
+function paintFurnitureStatic(){
+  // Camera mode keeps the baked left-gutter fade; full-bleed paints solid.
+  fadeLayer.style.background = (typeof CAM !== 'undefined' && !CAM) ? C.bg :
+    `linear-gradient(90deg, rgba(${C.bgRGB},0) 0%, rgba(${C.bgRGB},0) 25%, ` +
+    `rgba(${C.bgRGB},.55) 33%, rgba(${C.bgRGB},.94) 40%, ${C.bg} 48%)`;
+  dotLayer.style.backgroundImage = `radial-gradient(${C.grid} 1.4px, transparent 1.4px)`;
+  dotLayer.style.backgroundSize = '46px 46px';
+  vignetteLayer.style.background = C.vignette;
+  grainLayer.style.opacity = C.grainOp;
+}
+function furnitureUpdate(G){
+  const A = 0.05 + 0.045*(0.5 + 0.5*Math.sin(G*0.5));
+  glowLayer.style.background =
+    `radial-gradient(circle, rgba(${C.accentRGB},${A.toFixed(4)}) 0%, transparent 62%)`;
+  const A2 = 0.028 + 0.018*(0.5 + 0.5*Math.sin(G*0.35 + 2.2));
+  glow2Layer.style.background =
+    `radial-gradient(circle, rgba(${C.glow2RGB},${A2.toFixed(4)}) 0%, transparent 60%)`;
+  const D = (G*6) % 40;
+  dotLayer.style.backgroundPosition = `${D}px ${D}px`;
+}
+
+/* slide mount point */
+const slideHost = H('div', {position:'absolute', inset:'0', zIndex:'1'});
+stage.appendChild(slideHost);
+
+/* Footer */
+const footer = H('div', {position:'absolute', left:'792px', bottom:'44px', zIndex:'2',
+  fontSize:'15px', letterSpacing:'.08em'});
+footer.innerHTML = `<b style="font-weight:700;letter-spacing:.08em">NIKRAYANI</b>` +
+  `<span>&nbsp;&nbsp;·&nbsp;&nbsp;Educational — not financial advice</span>`;
+stage.appendChild(footer);
+function paintFooter(){
+  footer.style.color = C.muted;
+  footer.querySelector('b').style.color = C.ink2;
+}
+
+/* Progress rail */
+const rail = H('div', {position:'absolute', left:'792px', right:COL_RIGHT+'px',
+  bottom:'82px', zIndex:'3'});
+const railTrack = H('div', {height:'3px', borderRadius:'2px'});
+const railFill  = H('div', {height:'3px', borderRadius:'2px', width:'0%'});
+railTrack.appendChild(railFill);
+const railTicks = H('div'); railTicks.id = 'rail-ticks';
+rail.append(railTrack, railTicks);
+stage.appendChild(rail);
+/* Ticks derive from DEFS.length — built at boot so any slide count works. */
+function buildRailTicks(){
+  railTicks.innerHTML = '';
+  for (let i = 0; i < DEFS.length; i++){
+    const s = document.createElement('span');
+    s.textContent = String(i+1).padStart(2,'0');
+    s.onclick = () => show(i);
+    railTicks.appendChild(s);
+  }
+}
+function paintRail(){
+  railTrack.style.background = C.grid;
+  railFill.style.background = C.accent;
+  railFill.style.boxShadow = `0 0 10px rgba(${C.accentRGB},.5)`;
+}
+function railUpdate(t){
+  const p = (cur + clamp01(t/SLIDE_TARGET)) / DEFS.length;
+  railFill.style.width = (p*100).toFixed(3) + '%';
+}
+function railMark(){
+  [...railTicks.children].forEach((s,i) => s.classList.toggle('cur', i === cur));
+}
+
+/* Boundary sweep — plays for 0.5s on every flip */
+const sweep = H('div', {position:'absolute', left:'744px', right:'0', top:'0',
+  bottom:'0', zIndex:'4', pointerEvents:'none', overflow:'hidden'});
+const sweepBand = H('div', {position:'absolute', top:'0', bottom:'0', width:'200px',
+  filter:'blur(3px)', opacity:'0'});
+sweep.appendChild(sweepBand);
+stage.appendChild(sweep);
+function sweepUpdate(t){
+  if (cur === 0 && !flipped) { sweepBand.style.opacity = '0'; return; }
+  if (t >= 0.5){ sweepBand.style.opacity = '0'; return; }
+  const x = t/0.5, p = easeInOutCubic(x), glow = 0.55*(1 - Math.abs(x-0.5)*2);
+  sweepBand.style.opacity = '1';
+  sweepBand.style.left = `calc(${(p*100).toFixed(2)}% - 100px)`;
+  sweepBand.style.background =
+    `linear-gradient(90deg, transparent, rgba(${C.accentRGB},${glow.toFixed(3)}), transparent)`;
+}
+
+/* ============================================================
+   Camera guide — the transparent gutter IS the camera zone in
+   this deck's design (baked in), so C toggles the slot frame,
+   ⇧C the OBS pixel numbers, [ ] the bubble width.
+   ============================================================ */
+function _stored(k,d){ try { return localStorage.getItem(k) ?? d; } catch(e){ return d; } }
+const _q = new URLSearchParams(location.search);
+let CAM = (_q.get('cam') || _stored('nr_swing_cam', 'left')) !== 'off';
+/* 36.25% = 696px reserved → column starts at 96+696 = 792, the video build's
+   exact geometry. Stored with decimals so the default round-trips. */
+let CAMW = Math.min(45, Math.max(15, parseFloat(_q.get('camw') || _stored('nr_swing_camw','36.25')))) / 100;
+let camGuideOn = false;
+function camPx(){ return Math.round(1920 * CAMW); }
+function colLeft(){ return CAM ? COL_RIGHT + camPx() : COL_RIGHT; }
+/* Reflow everything that hangs off the column's left edge, then rebuild the
+   current slide at the new width — same behavior as the episode deck's setCam. */
+function relayout(){
+  footer.style.left = colLeft() + 'px';
+  rail.style.left = colLeft() + 'px';
+  sweep.style.left = (colLeft() - 48) + 'px';
+  paintFurnitureStatic();
+  drawCamGuide();
+}
+function setCam(on, w){
+  CAM = on;
+  if (w != null) CAMW = Math.min(0.45, Math.max(0.15, w));
+  try {
+    localStorage.setItem('nr_swing_cam', on ? 'left' : 'off');
+    localStorage.setItem('nr_swing_camw', (CAMW*100).toFixed(2));
+  } catch(e){}
+  if (!on) camGuideOn = false;
+  relayout();
+  mountSlide(cur);      // rebuild at the new column width, clock untouched
+}
+function camBubbleBox(){
+  if (!CAM) return null;
+  const px = camPx(), M = 44;
+  const w = px - M*2;
+  const h = Math.min(1080 - M*2, Math.round(w*4/3));
+  return {x: M, y: Math.round((1080-h)/2), w, h, colX: 0, colW: px};
+}
+function drawCamGuide(){
+  let g = document.getElementById('camguide');
+  const box = camBubbleBox();
+  if (!box){ if (g) g.remove(); return; }
+  if (!g){ g = H('div'); g.id = 'camguide'; stage.appendChild(g); }
+  g.innerHTML =
+    `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px"></div>` +
+    (camGuideOn
+      ? `<div class="cg-col" style="left:${box.colX}px;width:${box.colW}px"></div>` +
+        `<div class="cg-lab" style="left:${box.x}px;top:${box.y+box.h+16}px;width:${box.w}px">` +
+          `<b>put the camera here</b> ${box.w} &times; ${box.h} at ${box.x}, ${box.y}` +
+          `<span>reserved column ${box.colW}px &middot; ${(CAMW*100).toFixed(0)}% &middot; ` +
+          `⇧C hides these numbers</span></div>`
+      : '');
+}
+
+/* ============================================================
+   Slide chrome — SlideFrame
+   ============================================================ */
+function buildFrame(def){
+  const root = H('div', {position:'absolute', inset:'0', transformOrigin:'62% 45%'});
+  const ups = [];
+
+  // Ghost numeral
+  const ghost = H('div', {position:'absolute', top:'300px', right:(COL_RIGHT-24)+'px',
+    zIndex:'0', fontSize:'360px', fontWeight:'800', letterSpacing:'-.05em',
+    lineHeight:'1', textAlign:'right', fontFamily:FONT,
+    background:`linear-gradient(180deg, ${C.ink}, transparent)`,
+    webkitBackgroundClip:'text', backgroundClip:'text', color:'transparent',
+    fontVariantNumeric:'tabular-nums'});
+  ghost.textContent = String(def.num).padStart(2,'0');
+  root.appendChild(ghost);
+  ups.push(t => {
+    const p = easeOutCubic(prog(t, .1, 1.4));
+    ghost.style.opacity = (0.09*p).toFixed(4);
+    ghost.style.transform = `translateY(${(1-p)*24}px) scale(${breathe(t,.35,.014)})`;
+  });
+
+  // Content column
+  // bottom 132 (was 104): the editorial why-band needs clear air above the
+  // progress rail now that its box is gone — the fill read as an underline.
+  const col = H('div', {position:'absolute', left:colLeft()+'px', right:COL_RIGHT+'px',
+    top:'116px', bottom:'132px', display:'flex', flexDirection:'column', zIndex:'1'});
+  root.appendChild(col);
+
+  if (def.kicker){
+    // Episode-deck kicker: slide number in accent, label in muted small caps.
+    const kRow = H('div');
+    kRow.className = 'kick';
+    const no = H('span', {fontVariantNumeric:'tabular-nums'});
+    no.className = 'no';
+    no.textContent = String(def.num).padStart(2,'0');
+    const k = H('span');
+    k.textContent = def.kicker;
+    kRow.append(no, k);
+    col.appendChild(kRow);
+    ups.push(t => stEnter(kRow, t, .15));
+  }
+
+  // Headline: masked word-by-word rise — each word in an overflow-hidden
+  // wrapper, staggered 70ms, easeOutExpo settle. Padding/negative-margin on the
+  // mask keeps descenders from clipping at this tight line-height.
+  const head = H('div', {fontSize:(def.headSize||64)+'px', fontWeight:'760',
+    letterSpacing:'-.022em', lineHeight:'1.06', color:C.ink});
+  const headWords = def.head.split(' ').map(w => {
+    const wrap = H('span', {display:'inline-block', overflow:'hidden',
+      verticalAlign:'top', padding:'0.06em 0 0.14em', margin:'-0.06em 0 -0.14em'});
+    const inner = H('span', {display:'inline-block', transform:'translateY(112%)'});
+    inner.textContent = w;
+    wrap.appendChild(inner);
+    head.appendChild(wrap);
+    head.appendChild(document.createTextNode(' '));
+    return inner;
+  });
+  col.appendChild(head);
+  ups.push(t => {
+    headWords.forEach((w, i) => {
+      const p = easeOutExpo(clamp01((t - (0.32 + i*0.07)) / 0.9));
+      w.style.transform = `translateY(${((1-p)*112).toFixed(2)}%)`;
+    });
+  });
+
+  // No sub line — executive style: the speaker carries the words. The long
+  // form lives in def.notes and lands in the presenter-notes drawer (N).
+
+  // Visual block, with the gentle 5px bob
+  const visWrap = H('div', {flex:'1', display:'flex', alignItems:'center',
+    justifyContent:'center', minHeight:'0', marginTop:'18px'});
+  const vis = H('div', {width:'100%'});
+  visWrap.appendChild(vis);
+  col.appendChild(visWrap);
+  ups.push(t => { vis.style.transform = `translateY(${floatY(t,.5,5).toFixed(2)}px)`; });
+
+  if (def.punch){
+    const band = H('div');
+    band.className = 'punch';
+    band.innerHTML = `<p>${def.punch}</p>`;
+    col.appendChild(band);
+    ups.push(t => stEnter(band, t, 1.2, 16));
+  }
+
+  // entrance envelope on the whole slide
+  ups.push(t => {
+    const inP = easeOutCubic(clamp01(t/0.8));
+    root.style.opacity = inP;
+    root.style.transform = `translateY(${(1-inP)*46}px) scale(${0.985 + 0.015*inP})`;
+  });
+
+  return {root, vis, ups};
+}
+
+/* small shared bits */
+function card(styles){
+  return H('div', Object.assign({background:C.surface, border:`1px solid ${C.grid}`,
+    borderRadius:'14px', boxShadow:C.cardShadow}, styles));
+}
+const NUMS = {fontVariantNumeric:'tabular-nums'};
+
+/* ============================================================
+   THE NUMBERS — sourced inputs at the top, everything else
+   computed from them. No figure below is typed twice.
+   ============================================================ */
+const PDT_OLD     = 25000;   // repealed pattern-day-trader minimum equity
+const MARGIN_MIN  = 2000;    // margin-account minimum equity — unchanged
+const GFV_STRIKES = 3;       // good-faith violations before the restriction
+const FREEZE_DAYS = 90;      // cash-account restriction AND the new deficit freeze
+const DEFICIT_DAYS= 5;       // business days to satisfy an intraday deficit
+const RULE_DATE   = 'June 4, 2026';
+const RISK_PCT    = 0.02;    // 2% of the account at risk per trade
+const STOP_PCT    = 0.05;    // stop sits 5% below entry — the worked example
+const RR          = 2;       // target at twice the risk
+const SHARE_PX    = 180;     // illustrative share price for the sizing example
+/* Sourced: Chague, De-Losso & Giovannetti — share of Brazilian day traders who
+   persisted 300+ days and lost money. Lives here, not inside the slide, so the
+   chart and the punch line can never disagree about it. */
+const LOST_PCT    = 97;
+const POS_FRAC    = RISK_PCT / STOP_PCT;   // position as a fraction of the account
+const SIZES       = [500, 2000, 5000, 25000];
+
+function plan(acct){
+  const risk   = acct * RISK_PCT;
+  const pos    = risk / STOP_PCT;
+  const shares = Math.floor(pos / SHARE_PX);
+  return {acct, risk, pos, shares, win: risk * RR,
+          gran: shares > 0 ? 100 / shares : 100};
+}
+const PLANS   = SIZES.map(plan);
+const P_TINY  = PLANS[0];                  // $500
+const MY_WORK = SIZES[2];                  // the number the math actually wants
+const P_WORK  = PLANS[2];
+const money   = n => '$' + Math.round(n).toLocaleString('en-US');
+
+/* ============================================================
+   SLIDE VISUALS — one mount function per slide.
+   Each receives the visual container and returns updaters.
+   ============================================================ */
+
+/* ---- 1 · Changed — the number counts up, then gets struck ---- */
+function vChanged(vis){
+  const ups = [];
+  const wrap = H('div', {textAlign:'center'});
+  /* verticalAlign:top + lineHeight >= 1 keeps the 150px glyph box from
+     bleeding into the caption below it (a 6px collision, caught by audit). */
+  const big = H('div', {position:'relative', display:'inline-block',
+    verticalAlign:'top', fontSize:'150px', fontWeight:'800', letterSpacing:'-.04em',
+    lineHeight:'1.04', color:C.ink, fontVariantNumeric:'tabular-nums'});
+  const num = H('span', {position:'relative', zIndex:'1'});
+  const strike = H('div', {position:'absolute', left:'-3%', top:'50%', height:'7px',
+    width:'0%', background:C.crit, borderRadius:'4px', zIndex:'2'});
+  big.append(num, strike);
+  const lab = H('div', {fontSize:'21px', fontWeight:'680', color:C.muted,
+    marginTop:'22px', lineHeight:'1.3', letterSpacing:'.02em', opacity:'0'},
+    'minimum equity to day trade — FINRA Rule 4210');
+  const stampRow = H('div', {display:'flex', gap:'16px', alignItems:'center',
+    justifyContent:'center', marginTop:'26px'});
+  const stamp = H('div', {padding:'11px 20px', background:C.crit, color:'#fff',
+    fontSize:'20px', fontWeight:'800', letterSpacing:'.05em', borderRadius:'6px',
+    transformOrigin:'center', opacity:'0'});
+  stamp.textContent = RULE_DATE.toUpperCase();
+  const gone = H('div', {fontSize:'23px', fontWeight:'760', color:C.good, opacity:'0'},
+    'repealed — day trades are no longer counted');
+  stampRow.append(stamp, gone);
+  wrap.append(big, lab, stampRow);
+  vis.appendChild(wrap);
+
+  ups.push(t => {
+    const p = easeOutCubic(prog(t, .55, 1.5));
+    num.textContent = money(PDT_OLD * p);
+    big.style.color = t > 3.0 ? C.muted : C.ink;
+    lab.style.opacity = draw(t, 2.0, .6);
+    strike.style.width = (draw(t, 3.0, .7) * 106).toFixed(2) + '%';
+    stPop(stamp, t, 3.5);
+    stEnter(gone, t, 4.0, 12);
+  });
+  return ups;
+}
+
+/* ---- 2 · Floors — the gate that opened, and three that did not ---- */
+function vFloors(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 320',
+    style:'width:100%;max-width:960px;display:block;margin:0 auto;overflow:visible'});
+
+  /* The repealed gate — dashed, muted, struck through. */
+  const ghostY = 42;
+  const ghost = S('line', {x1:0, x2:0, y1:ghostY, y2:ghostY, stroke:C.muted,
+    'stroke-width':3, 'stroke-dasharray':'10 8', opacity:.75});
+  svg.appendChild(ghost);
+  const gLab = S('text', {x:0, y:ghostY-16, fill:C.muted, 'font-size':18,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  gLab.textContent = money(PDT_OLD) + ' pattern-day-trader gate';
+  const gTag = S('text', {x:960, y:ghostY-16, fill:C.good, 'font-size':18,
+    'font-weight':800, 'text-anchor':'end', 'font-family':FONT, opacity:0});
+  gTag.textContent = 'OPENED ' + RULE_DATE.toUpperCase();
+  svg.append(gLab, gTag);
+
+  /* The three that are still standing. */
+  const floors = [
+    {y:140, col:C.warn, lab:money(MARGIN_MIN) + ' minimum equity',
+     note:'to open a margin account at all'},
+    {y:215, col:C.crit, lab:GFV_STRIKES + ' strikes → ' + FREEZE_DAYS + ' days',
+     note:'cash-account good-faith violations'},
+    {y:290, col:C.crit, lab:FREEZE_DAYS + '-day freeze',
+     note:'the new intraday-margin rule’s own penalty'}
+  ];
+  const built = floors.map(f => {
+    const bar = S('rect', {x:0, y:f.y, width:0, height:9, rx:4, fill:f.col});
+    const lab = S('text', {x:0, y:f.y-14, fill:C.ink, 'font-size':23, 'font-weight':760,
+      'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+    lab.textContent = f.lab;
+    const note = S('text', {x:960, y:f.y-14, fill:C.muted, 'font-size':17,
+      'text-anchor':'end', 'font-family':FONT, opacity:0});
+    note.textContent = f.note;
+    svg.append(bar, lab, note);
+    return {bar, lab, note};
+  });
+  vis.appendChild(svg);
+
+  ups.push(t => {
+    const gp = draw(t, .6, .8);
+    ghost.setAttribute('x2', 960 * gp);
+    gLab.setAttribute('opacity', draw(t, .9, .5));
+    gTag.setAttribute('opacity', draw(t, 1.2, .5));
+    built.forEach((b, i) => {
+      const at = 1.9 + i * .55;
+      const p = draw(t, at, .75);
+      b.bar.setAttribute('width', 960 * p);
+      b.lab.setAttribute('opacity', draw(t, at + .12, .45));
+      b.note.setAttribute('opacity', draw(t, at + .3, .45));
+    });
+  });
+  return ups;
+}
+
+/* ---- 3 · Moved — the floor did not vanish, it dropped ---- */
+function vMoved(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', alignItems:'center', gap:'34px',
+    justifyContent:'center'});
+
+  function block(val, tag, col, struck){
+    const c = card({padding:'30px 40px', textAlign:'center', opacity:'0',
+      borderColor:col, minWidth:'300px'});
+    const v = H('div', {position:'relative', display:'inline-block', fontSize:'82px',
+      fontWeight:'800', letterSpacing:'-.03em', color:col, lineHeight:'1',
+      fontVariantNumeric:'tabular-nums'});
+    const vn = H('span', {position:'relative', zIndex:'1'});
+    vn.textContent = money(val);
+    v.appendChild(vn);
+    let st = null;
+    if (struck){
+      st = H('div', {position:'absolute', left:'-4%', top:'50%', height:'5px',
+        width:'0%', background:col, borderRadius:'3px', zIndex:'2'});
+      v.appendChild(st);
+    }
+    const g = H('div', {fontSize:'18px', fontWeight:'680', color:C.ink2,
+      marginTop:'12px'});
+    g.textContent = tag;
+    c.append(v, g);
+    return {c, st};
+  }
+
+  const a = block(PDT_OLD, 'repealed ' + RULE_DATE, C.muted, true);
+  const arrowWrap = H('div', {flex:'none'});
+  const asvg = S('svg', {viewBox:'0 0 150 40', width:'150',
+    style:'display:block;overflow:visible'});
+  const shaft = drawablePath('M6,20 H120', C.accent, 4);
+  const head1 = drawablePath('M104,7 L124,20 L104,33', C.accent, 4);
+  asvg.append(shaft, head1);
+  arrowWrap.appendChild(asvg);
+  const b = block(MARGIN_MIN, 'still standing today', C.accent, false);
+
+  row.append(a.c, arrowWrap, b.c);
+  const cap = H('div', {textAlign:'center', marginTop:'24px', fontSize:'18px',
+    color:C.muted, opacity:'0'},
+    'FINRA Rule 4210 — the margin-account minimum was never part of the repeal');
+  vis.append(row, cap);
+
+  ups.push(t => {
+    stEnter(a.c, t, .7, 22);
+    if (a.st) a.st.style.width = (draw(t, 1.6, .6) * 108).toFixed(2) + '%';
+    setDraw(shaft, draw(t, 2.1, .55));
+    setDraw(head1, draw(t, 2.5, .35));
+    stEnter(b.c, t, 2.8, 22);
+    stEnter(cap, t, 3.6, 12);
+  });
+  return ups;
+}
+
+/* ---- 4 · CashTrap — under the minimum you are in a cash account ---- */
+function vCashTrap(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 310',
+    style:'width:100%;max-width:960px;display:block;margin:0 auto;overflow:visible'});
+  /* X1 pulled in from 900: the right marker's caption is centre-anchored and
+     ran past the viewBox edge at the old position. Labels stay inside. */
+  const LY = 116, X0 = 110, X1 = 850;
+
+  svg.appendChild(S('line', {x1:X0, x2:X1, y1:LY, y2:LY, stroke:C.surface2,
+    'stroke-width':12, 'stroke-linecap':'round'}));
+
+  /* the unsettled window: money you sold but cannot spend yet */
+  const band = S('rect', {x:X0, y:LY-26, width:0, height:52, rx:8,
+    fill:C.warnWash, stroke:C.warn, 'stroke-width':1.5});
+  svg.appendChild(band);
+  const bandLab = S('text', {x:(X0+X1)/2, y:LY-44, fill:C.warn, 'font-size':19,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  bandLab.textContent = 'UNSETTLED — the cash is not yours to use yet';
+  svg.appendChild(bandLab);
+
+  function marker(x, top, bot, col){
+    const g = S('g', {opacity:0});
+    g.appendChild(S('circle', {cx:x, cy:LY, r:11, fill:col}));
+    const t1 = S('text', {x, y:LY+42, fill:col, 'font-size':20, 'font-weight':800,
+      'text-anchor':'middle', 'font-family':FONT});
+    t1.textContent = top;
+    const t2 = S('text', {x, y:LY+66, fill:C.muted, 'font-size':17,
+      'text-anchor':'middle', 'font-family':FONT});
+    t2.textContent = bot;
+    g.append(t1, t2);
+    svg.appendChild(g);
+    return {g, x};
+  }
+  const m1 = marker(X0, 'You sell', 'trade date', C.s2);
+  const m2 = marker(X1, 'Cash lands', 'one business day later', C.good);
+
+  /* The trap itself — what slide 5 then counts. Sits centred UNDER the band,
+     where the end markers leave the space clear. */
+  const CX = (X0 + X1) / 2, CY = 246;
+  const trap = S('g', {opacity:0});
+  trap.appendChild(S('line', {x1:CX, x2:CX, y1:LY+28, y2:CY-30, stroke:C.crit,
+    'stroke-width':2, 'stroke-dasharray':'5 5'}));
+  trap.appendChild(S('rect', {x:CX-250, y:CY-30, width:500, height:62, rx:11,
+    fill:C.critWash, stroke:C.crit, 'stroke-width':1.5}));
+  const tl1 = S('text', {x:CX, y:CY-4, fill:C.crit, 'font-size':21, 'font-weight':800,
+    'text-anchor':'middle', 'font-family':FONT});
+  tl1.textContent = 'Buy and sell inside this window';
+  const tl2 = S('text', {x:CX, y:CY+21, fill:C.ink2, 'font-size':17,
+    'text-anchor':'middle', 'font-family':FONT});
+  tl2.textContent = '= one good-faith violation';
+  trap.append(tl1, tl2);
+  svg.appendChild(trap);
+  vis.appendChild(svg);
+
+  ups.push(t => {
+    svPop(m1.g, t, .8, m1.x, LY);
+    const p = draw(t, 1.4, 1.2);
+    band.setAttribute('width', (X1 - X0) * p);
+    bandLab.setAttribute('opacity', p > .5 ? draw(t, 2.0, .5) : 0);
+    svPop(m2.g, t, 2.7, m2.x, LY);
+    svPop(trap, t, 3.5, CX, CY);
+  });
+  return ups;
+}
+
+/* ---- 5 · Strikes — three, then the freeze ---- */
+function vStrikes(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'18px', justifyContent:'center'});
+  const marks = [];
+  for (let i = 0; i < GFV_STRIKES; i++){
+    const c = card({flex:'none', width:'190px', padding:'22px 18px', textAlign:'center',
+      opacity:'0', borderColor:C.crit});
+    c.innerHTML =
+      `<div style="font-size:56px;font-weight:900;color:${C.crit};line-height:1">&#10005;</div>` +
+      `<div style="font-size:17px;color:${C.ink2};margin-top:8px"></div>`;
+    c.children[1].textContent = 'violation ' + (i+1);
+    row.appendChild(c);
+    marks.push(c);
+  }
+  vis.appendChild(row);
+
+  const freeze = H('div', {marginTop:'26px', padding:'22px 28px', borderRadius:'14px',
+    background:C.critWash, border:`1px solid ${C.crit}`, textAlign:'center',
+    opacity:'0'});
+  freeze.innerHTML =
+    `<div style="font-size:46px;font-weight:850;color:${C.crit};letter-spacing:-.02em;` +
+    `font-variant-numeric:tabular-nums"></div>` +
+    `<div style="font-size:19px;color:${C.ink};margin-top:6px"></div>`;
+  freeze.children[0].textContent = FREEZE_DAYS + ' DAYS';
+  freeze.children[1].textContent = 'settled cash only — no buying with money that has not landed';
+  vis.appendChild(freeze);
+
+  ups.push(t => {
+    marks.forEach((c, i) => stPop(c, t, .8 + i*.5));
+    stPop(freeze, t, 2.6);
+    if (t > 2.6 && t < 3.05){
+      const sh = Math.sin((t-2.6)*70) * 4;
+      freeze.style.transform += ` translateX(${sh.toFixed(2)}px)`;
+    }
+  });
+  return ups;
+}
+
+/* ---- 6 · Odds — one hundred traders, coloured in ---- */
+function vOdds(vis){
+  const ups = [];
+  const LOST = LOST_PCT, COLS = 25, ROWS = 4, R = 8, SP = 36;
+  const svg = S('svg', {viewBox:'0 0 920 190',
+    style:'width:100%;max-width:920px;display:block;margin:0 auto;overflow:visible'});
+  const dots = [];
+  for (let i = 0; i < COLS*ROWS; i++){
+    const cx = 14 + (i % COLS) * SP, cy = 22 + Math.floor(i / COLS) * SP;
+    const d = S('circle', {cx, cy, r:R, fill:i < LOST ? C.crit : C.good, opacity:0});
+    svg.appendChild(d);
+    dots.push(d);
+  }
+  const cap = S('text', {x:460, y:182, fill:C.muted, 'font-size':16,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  cap.textContent = 'Brazil · everyone who persisted 300+ days · Chague, De-Losso & Giovannetti';
+  svg.appendChild(cap);
+
+  const tally = H('div', {display:'flex', gap:'40px', justifyContent:'center',
+    marginTop:'18px'});
+  function pill(col, txt){
+    const p = H('div', {display:'flex', gap:'11px', alignItems:'center', opacity:'0',
+      fontSize:'22px', fontWeight:'760', color:C.ink});
+    p.innerHTML = `<span style="width:15px;height:15px;border-radius:50%;background:${col};` +
+      `display:inline-block"></span><span></span>`;
+    p.children[1].textContent = txt;
+    tally.appendChild(p);
+    return p;
+  }
+  const pLost = pill(C.crit, LOST + ' lost money');
+  const pWon  = pill(C.good, (100-LOST) + ' did not');
+  vis.append(svg, tally);
+
+  ups.push(t => {
+    dots.forEach((d, i) => {
+      const at = .7 + (i / dots.length) * 2.2;
+      d.setAttribute('opacity', draw(t, at, .3));
+    });
+    cap.setAttribute('opacity', draw(t, 3.1, .5));
+    stEnter(pLost, t, 3.2, 12);
+    stEnter(pWon,  t, 3.4, 12);
+  });
+  return ups;
+}
+
+/* ---- 7 · Real — who actually sets the number ---- */
+function vReal(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'22px'});
+
+  function panel(title, body, col, cross){
+    const c = card({flex:'1', padding:'30px 30px', opacity:'0', borderColor:col});
+    const h = H('div', {fontSize:'30px', fontWeight:'800', color:col,
+      letterSpacing:'-.01em', position:'relative', display:'inline-block'});
+    const hn = H('span', {position:'relative', zIndex:'1'});
+    hn.textContent = title;
+    h.appendChild(hn);
+    let st = null;
+    if (cross){
+      st = H('div', {position:'absolute', left:'-4%', top:'52%', height:'4px',
+        width:'0%', background:col, borderRadius:'2px', zIndex:'2'});
+      h.appendChild(st);
+    }
+    const b = H('div', {fontSize:'20px', color:C.ink2, marginTop:'14px',
+      lineHeight:'1.45'});
+    b.textContent = body;
+    c.append(h, b);
+    row.appendChild(c);
+    return {c, st};
+  }
+  const left  = panel('The regulator', 'Set a number for margin lending risk — never for whether your plan survives.', C.muted, true);
+  const right = panel('Your stop loss', 'Decides how many shares you can hold. That is the only number that binds you.', C.accent, false);
+  vis.appendChild(row);
+
+  ups.push(t => {
+    stEnter(left.c, t, .8, 22);
+    if (left.st) left.st.style.width = (draw(t, 1.7, .6) * 108).toFixed(2) + '%';
+    stEnter(right.c, t, 2.2, 22);
+  });
+  return ups;
+}
+
+/* ---- 8 · Math — the formula, then one worked line ---- */
+function vMath2(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'14px', alignItems:'center',
+    justifyContent:'center', flexWrap:'nowrap'});
+  function chip(top, bot, col){
+    const c = card({padding:'22px 26px', textAlign:'center', opacity:'0',
+      borderColor:col, flex:'none'});
+    c.innerHTML = `<div style="font-size:36px;font-weight:800;color:${col};` +
+      `letter-spacing:-.02em;font-variant-numeric:tabular-nums"></div>` +
+      `<div style="font-size:16px;color:${C.muted};margin-top:7px"></div>`;
+    c.children[0].textContent = top; c.children[1].textContent = bot;
+    return c;
+  }
+  function op(sym){
+    const o = H('div', {fontSize:'34px', fontWeight:'800', color:C.ink2, opacity:'0'});
+    o.textContent = sym;
+    return o;
+  }
+  const c1 = chip((RISK_PCT*100) + '% of account', 'what you risk', C.warn);
+  const o1 = op('÷');
+  const c2 = chip((STOP_PCT*100) + '% stop', 'how far the stop sits', C.s2);
+  const o2 = op('=');
+  const c3 = chip(Math.round(POS_FRAC*100) + '% of account', 'the position you may hold', C.good);
+  row.append(c1, o1, c2, o2, c3);
+  vis.appendChild(row);
+
+  const worked = H('div', {marginTop:'26px', textAlign:'center', fontSize:'22px',
+    color:C.ink2, opacity:'0', fontVariantNumeric:'tabular-nums'});
+  worked.innerHTML = `On ${money(P_WORK.acct)}: risk <b style="color:${C.warn}">` +
+    `${money(P_WORK.risk)}</b>, hold <b style="color:${C.good}">${money(P_WORK.pos)}</b>, ` +
+    `a ${RR}R win pays <b style="color:${C.accent}">${money(P_WORK.win)}</b>.`;
+  vis.appendChild(worked);
+
+  ups.push(t => {
+    stEnter(c1, t, .8, 18);
+    o1.style.opacity = draw(t, 1.2, .4);
+    stEnter(c2, t, 1.4, 18);
+    o2.style.opacity = draw(t, 1.8, .4);
+    stEnter(c3, t, 2.0, 18);
+    stEnter(worked, t, 2.9, 14);
+  });
+  return ups;
+}
+
+/* ---- 9 · Sizes — the same math at four account sizes ---- */
+function vSizes(vis){
+  const ups = [];
+  const tbl = H('div', {width:'100%'});
+  const cols = ['Account', 'Risk per trade', 'Position you hold', 'A ' + RR + 'R win pays'];
+  const head = H('div', {display:'grid', gridTemplateColumns:'repeat(4,1fr)',
+    gap:'10px', padding:'0 20px 12px', opacity:'0'});
+  cols.forEach(cN => {
+    const h = H('div', {fontSize:'16px', fontWeight:'800', color:C.muted,
+      letterSpacing:'.11em', textTransform:'uppercase'});
+    h.textContent = cN;
+    head.appendChild(h);
+  });
+  tbl.appendChild(head);
+
+  const rows = PLANS.map((p, i) => {
+    const last = i === PLANS.length - 1;
+    const hero = p.acct === MY_WORK;
+    const r = H('div', {display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'10px',
+      padding:'16px 20px', borderRadius:'11px', opacity:'0',
+      background: hero ? C.accentWash : 'transparent',
+      border: hero ? `1px solid ${C.accent}` : `1px solid transparent`,
+      borderBottom: hero ? `1px solid ${C.accent}` : (last ? '1px solid transparent' : `1px solid ${C.grid}`)});
+    const cells = [money(p.acct), money(p.risk), money(p.pos), money(p.win)];
+    cells.forEach((txt, ci) => {
+      const c = H('div', {fontSize: ci === 0 ? '28px' : '25px',
+        fontWeight: ci === 0 ? '800' : '700',
+        color: ci === 0 ? C.ink : (ci === 3 ? C.good : C.ink2),
+        fontVariantNumeric:'tabular-nums'});
+      c.textContent = txt;
+      r.appendChild(c);
+    });
+    tbl.appendChild(r);
+    return r;
+  });
+  vis.appendChild(tbl);
+
+  ups.push(t => {
+    stEnter(head, t, .7, 12);
+    rows.forEach((r, i) => stEnter(r, t, 1.0 + i*.32, 18));
+  });
+  return ups;
+}
+
+/* ---- 10 · Blocks — how many whole shares that actually buys ---- */
+function vBlocks(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'18px', alignItems:'flex-end'});
+  const COLS = 11, B = 13, GAP = 3;
+
+  const panels = PLANS.map(p => {
+    const c = card({flex:'1', padding:'20px 18px', opacity:'0', textAlign:'center'});
+    const acct = H('div', {fontSize:'24px', fontWeight:'800', color:C.ink,
+      fontVariantNumeric:'tabular-nums'});
+    acct.textContent = money(p.acct);
+    /* Only as many columns as there are blocks (up to COLS) so a 1-share or
+       4-share cluster sits CENTRED under its label instead of hugging the
+       left edge of a fixed 11-wide grid. */
+    const holder = H('div', {display:'flex', justifyContent:'center', margin:'16px 0 12px'});
+    const g = H('div', {display:'grid',
+      gridTemplateColumns:`repeat(${Math.min(p.shares, COLS)}, ${B}px)`,
+      gap:GAP + 'px', justifyContent:'center'});
+    const blocks = [];
+    for (let i = 0; i < p.shares; i++){
+      const b = H('div', {width:B + 'px', height:B + 'px', borderRadius:'3px',
+        background: p.acct === MY_WORK ? C.accent : C.s2, opacity:'0'});
+      g.appendChild(b);
+      blocks.push(b);
+    }
+    holder.appendChild(g);
+    const n = H('div', {fontSize:'19px', fontWeight:'760', color:C.ink2,
+      fontVariantNumeric:'tabular-nums'});
+    n.textContent = p.shares + (p.shares === 1 ? ' share' : ' shares');
+    const gr = H('div', {fontSize:'16px', color: p.gran >= 50 ? C.crit : C.muted,
+      marginTop:'5px', fontVariantNumeric:'tabular-nums'});
+    gr.textContent = '±' + p.gran.toFixed(p.gran >= 10 ? 0 : 1) + '% per share';
+    c.append(acct, holder, n, gr);
+    row.appendChild(c);
+    return {c, blocks};
+  });
+  vis.appendChild(row);
+
+  const cap = H('div', {textAlign:'center', marginTop:'18px', fontSize:'16px',
+    color:C.muted, opacity:'0'});
+  cap.textContent = 'the same ' + (RISK_PCT*100) + '% risk on a ' + money(SHARE_PX) +
+    ' stock — one share is the smallest step you can take';
+  vis.appendChild(cap);
+
+  ups.push(t => {
+    panels.forEach((pn, i) => {
+      stEnter(pn.c, t, .7 + i*.3, 20);
+      pn.blocks.forEach((b, bi) => {
+        const at = 1.5 + i*.3 + (bi / Math.max(1, pn.blocks.length)) * .8;
+        b.style.opacity = draw(t, at, .3);
+      });
+    });
+    stEnter(cap, t, 3.4, 12);
+  });
+  return ups;
+}
+
+/* ---- 11 · Number — the answer, counted up ---- */
+function vNumber(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'24px', justifyContent:'center'});
+
+  function big(val, tag, sub, col, hero){
+    const c = card({flex:'1', padding: hero ? '34px 30px' : '30px 28px',
+      textAlign:'center', opacity:'0', borderColor:col,
+      background: hero ? C.accentWash : C.surface});
+    const v = H('div', {fontSize: hero ? '108px' : '86px', fontWeight:'800',
+      letterSpacing:'-.035em', color:col, lineHeight:'.98',
+      fontVariantNumeric:'tabular-nums'});
+    const tg = H('div', {fontSize:'22px', fontWeight:'760', color:C.ink,
+      marginTop:'12px'});
+    tg.textContent = tag;
+    const sb = H('div', {fontSize:'17px', color:C.muted, marginTop:'6px',
+      lineHeight:'1.4'});
+    sb.textContent = sub;
+    c.append(v, tg, sb);
+    row.appendChild(c);
+    return {c, v, val};
+  }
+  /* "only settled cash" would be wrong here — that is the RESTRICTED state
+     after three violations, not how a cash account works day to day. */
+  const a = big(MARGIN_MIN, 'the legal floor',
+    'below this there is no margin account — settlement sets your pace', C.warn, false);
+  const b = big(MY_WORK, 'where the system works',
+    'enough shares to size a trade instead of guessing', C.accent, true);
+  vis.appendChild(row);
+
+  ups.push(t => {
+    stEnter(a.c, t, .8, 22);
+    a.v.textContent = money(a.val * easeOutCubic(prog(t, 1.0, 1.2)));
+    stEnter(b.c, t, 1.6, 22);
+    b.v.textContent = money(b.val * easeOutCubic(prog(t, 1.8, 1.4)));
+  });
+  return ups;
+}
+
+/* ---- 12 · First90 — what the money does first ---- */
+function vFirst90(vis){
+  const ups = [];
+  const list = H('div', {display:'flex', flexDirection:'column', gap:'12px'});
+  const steps = [
+    ['One position at a time', 'Not two. You are learning the process, not building a book.'],
+    ['Log every trade', 'Date, setup, plan, result — the review is the learning.'],
+    ['Twenty trades before you judge it', 'Four wins in a row proves nothing at this sample size.'],
+    ['Do not add money to fix a loss', 'Topping up after a drawdown is the oldest way to lose more.']
+  ];
+  const rows = steps.map(([t1, t2], i) => {
+    const r = H('div', {display:'flex', gap:'20px', alignItems:'center', opacity:'0',
+      padding:'14px 18px', borderRadius:'12px', background:C.surface,
+      border:`1px solid ${C.grid}`});
+    const n = H('div', {flex:'none', width:'44px', height:'44px', borderRadius:'50%',
+      background:C.accentWash, border:`1px solid ${C.accent}`, color:C.accent,
+      fontSize:'21px', fontWeight:'800', display:'flex', alignItems:'center',
+      justifyContent:'center', fontVariantNumeric:'tabular-nums'});
+    n.textContent = String(i+1);
+    const txt = H('div');
+    const h = H('div', {fontSize:'23px', fontWeight:'760', color:C.ink});
+    h.textContent = t1;
+    const s = H('div', {fontSize:'17px', color:C.muted, marginTop:'3px'});
+    s.textContent = t2;
+    txt.append(h, s);
+    r.append(n, txt);
+    list.appendChild(r);
+    return r;
+  });
+  vis.appendChild(list);
+  ups.push(t => rows.forEach((r, i) => stEnter(r, t, .8 + i*.35, 20)));
+  return ups;
+}
+
+/* ---- 13 · Never — the four ways it disappears ---- */
+function vNever(vis){
+  const ups = [];
+  const grid = H('div', {display:'grid', gridTemplateColumns:'1fr 1fr', gap:'13px'});
+  const items = [
+    ['Borrowing to feel bigger', 'Margin multiplies the loss you already could not size.'],
+    ['Skipping the stop', 'Without it there is no position size — only a guess.'],
+    ['Trading the news at the open', 'The gate is gone; the spread at 9:30 is not.'],
+    ['Adding after a loss', 'Doubling down turns one bad trade into the whole account.']
+  ];
+  const cards = items.map(([h1, s1]) => {
+    const c = card({padding:'20px 22px', opacity:'0', borderColor:C.grid});
+    const top = H('div', {display:'flex', gap:'13px', alignItems:'center'});
+    const x = H('div', {flex:'none', fontSize:'25px', fontWeight:'900', color:C.crit,
+      lineHeight:'1'});
+    x.innerHTML = '&#10005;';
+    const h = H('div', {fontSize:'22px', fontWeight:'760', color:C.ink});
+    h.textContent = h1;
+    top.append(x, h);
+    const s = H('div', {fontSize:'17px', color:C.muted, marginTop:'9px',
+      lineHeight:'1.42'});
+    s.textContent = s1;
+    c.append(top, s);
+    grid.appendChild(c);
+    return c;
+  });
+  vis.appendChild(grid);
+  ups.push(t => cards.forEach((c, i) => stEnter(c, t, .8 + i*.28, 20)));
+  return ups;
+}
+
+/* ---- 14 · Recap — the three that stayed, then the CTA ---- */
+function vRecap2(vis){
+  const ups = [];
+  const wrap = H('div', {textAlign:'center'});
+  const chips = H('div', {display:'flex', gap:'12px', justifyContent:'center',
+    flexWrap:'wrap'});
+  const labels = [
+    money(PDT_OLD) + ' gate — gone',
+    money(MARGIN_MIN) + ' minimum — standing',
+    GFV_STRIKES + ' strikes → ' + FREEZE_DAYS + ' days',
+    'the stop still sets the size'
+  ];
+  const cs = labels.map((l, i) => {
+    const c = H('div', {padding:'13px 22px', borderRadius:'999px', opacity:'0',
+      fontSize:'20px', fontWeight:'760', fontVariantNumeric:'tabular-nums',
+      background: i === 0 ? C.goodWash : (i === 3 ? C.accentWash : C.critWash),
+      border:`1px solid ${i === 0 ? C.good : (i === 3 ? C.accent : C.crit)}`,
+      color:C.ink});
+    c.textContent = l;
+    chips.appendChild(c);
+    return c;
+  });
+  wrap.appendChild(chips);
+
+  const line = H('div', {marginTop:'34px', fontSize:'40px', fontWeight:'780',
+    color:C.ink, letterSpacing:'-.02em'});
+  const words = 'Start at the number your stop can carry.'.split(' ').map(w => {
+    const s = H('span', {display:'inline-block', opacity:'0', marginRight:'12px'});
+    s.textContent = w;
+    line.appendChild(s);
+    return s;
+  });
+  wrap.appendChild(line);
+
+  const cta = H('div', {marginTop:'30px', display:'inline-flex', gap:'14px',
+    alignItems:'center', padding:'15px 28px', borderRadius:'12px',
+    background:C.accent, color:'#fff', fontSize:'23px', fontWeight:'800',
+    opacity:'0', position:'relative'});
+  cta.textContent = 'Subscribe';
+  /* A drawn pointer, tucked into the button's lower-right corner. The bare
+     "▶" glyph read as a stray triangle floating beside the button. */
+  const cursor = H('div', {position:'absolute', right:'-16px', bottom:'-20px',
+    width:'30px', height:'34px', opacity:'0'});
+  const csvg = S('svg', {viewBox:'0 0 30 34',
+    style:'width:30px;height:34px;display:block;overflow:visible'});
+  csvg.appendChild(S('path', {d:'M3,2 L3,26 L10,20 L15,31 L20,28 L15,18 L24,17 Z',
+    fill:'#fff', stroke:C.ink, 'stroke-width':1.6, 'stroke-linejoin':'round'}));
+  cursor.appendChild(csvg);
+  cta.appendChild(cursor);
+  wrap.appendChild(cta);
+  vis.appendChild(wrap);
+
+  ups.push(t => {
+    cs.forEach((c, i) => stPop(c, t, .7 + i*.28));
+    words.forEach((w, i) => stEnter(w, t, 2.2 + i*.09, 14));
+    /* rise, settle and click in ONE transform — two appliers on the same
+       element would overwrite each other. */
+    const cp = clamp01((t - 3.6) / .55);
+    cta.style.opacity = clamp01(cp * 2);
+    const lift  = (1 - easeOutCubic(cp)) * 16;
+    const press = (t > 4.7 && t < 5.0) ? .93 : 1;
+    const scale = (.94 + .06 * easeOutBack(cp)) * press;
+    cta.style.transform = `translateY(${lift.toFixed(2)}px) scale(${scale.toFixed(3)})`;
+    cursor.style.opacity = draw(t, 4.2, .5);
+  });
+  return ups;
+}
+
+/* ============================================================
+   Slide definitions
+   ============================================================ */
+const DEFS = [
+  {id:'Changed', kicker:'What changed',
+   head:`The ${money(PDT_OLD)} gate is gone`,
+   punch:`Since <b>${RULE_DATE}</b>, day trades are no longer counted.`,
+   notes:`On ${RULE_DATE} FINRA's amended Rule 4210 took effect and the pattern-day-trader framework was deleted outright — the designation, the day-trade count, the day-trading buying-power formula and the ${money(PDT_OLD)} minimum equity requirement that had stood since 2001. The SEC approved the amendments on April 14, 2026 (Securities Exchange Act Release No. 105226); FINRA published Regulatory Notice 26-10. Brokers moved fast: Webull, Robinhood, Fidelity and tastytrade were live day one, Schwab on June 8, E*TRADE on June 9 — though firms have until October 20, 2027 to finish implementing the full framework, so a smaller broker may still be running the old rules.`,
+   mount:vChanged},
+
+  {id:'Floors', kicker:'The fine print',
+   head:'Three floors are still standing',
+   punch:'One gate opened. <b>Three others</b> nobody mentioned stayed shut.',
+   notes:`This is the part the headlines skipped. The repeal removed one specific gate and left three things in place that bind a beginner much harder: (1) the ${money(MARGIN_MIN)} minimum equity to open a margin account at all, which was never part of the repeal; (2) the cash-account regime you land in below that number, where ${GFV_STRIKES} good-faith violations in a rolling twelve months restricts you to settled cash for ${FREEZE_DAYS} days; and (3) the new intraday-margin standard's own penalty — repeatedly failing to satisfy an intraday margin deficit within ${DEFICIT_DAYS} business days freezes the account for ${FREEZE_DAYS} days. The ${FREEZE_DAYS}-day punishment did not leave a beginner's life. It just changed which rule delivers it.`,
+   mount:vFloors},
+
+  {id:'Moved', kicker:'The real floor',
+   head:'The floor moved. It did not vanish.',
+   punch:`Margin accounts still start at <b>${money(MARGIN_MIN)}</b> — that never changed.`,
+   notes:`FINRA Rule 4210's ${money(MARGIN_MIN)} minimum equity requirement to open and maintain a margin account is a separate provision from the pattern-day-trader rule, and the June 2026 amendments left it completely untouched — FINRA's own interpretations of Rule 4210, valid from ${RULE_DATE}, still state it. So the honest headline is not "the floor is gone", it is "the floor dropped from ${money(PDT_OLD)} to ${money(MARGIN_MIN)}". That is a real and large change. It is not the same as no floor.`,
+   mount:vMoved},
+
+  {id:'CashTrap', kicker:'Below the minimum',
+   head:'Under that, you are in a cash account',
+   punch:'Every dollar has to <b>settle overnight</b> before you can use it again.',
+   notes:`If you start with less than ${money(MARGIN_MIN)} you are not in a margin account, you are in a cash account — and cash accounts run on settlement. Stocks, ETFs and options settle one business day after the trade (T+1, since the industry moved off T+2 in May 2024). Sell on Monday and the proceeds are usable Tuesday. Buy something with those proceeds before they settle, then sell that position before settlement lands, and you have committed a good-faith violation. Nothing in the pattern-day-trader repeal touched any of this.`,
+   mount:vCashTrap},
+
+  {id:'Strikes', kicker:'The other 90 days',
+   head:'Three strikes and you are frozen',
+   punch:`<b>${GFV_STRIKES} good-faith violations</b> in a year — then ${FREEZE_DAYS} days of settled cash only.`,
+   notes:`Most brokers treat the first two good-faith violations as warnings. The third inside a rolling twelve-month window restricts the account to settled-cash status for ${FREEZE_DAYS} calendar days, meaning you must have fully settled cash before opening any position. That is the same ${FREEZE_DAYS}-day length as the old pattern-day-trader restriction everybody celebrated losing — it is simply a different rule, in a different account type, aimed at the exact traders who start small. Sources: Fidelity, Schwab, E*TRADE and tastytrade all publish the same mechanics.`,
+   mount:vStrikes},
+
+  {id:'Odds', kicker:'What did not change',
+   head:'We already know what no gate looks like',
+   punch:`That rule never applied there. <b>${LOST_PCT}% still lost money</b>.`,
+   notes:`The pattern-day-trader rule was a FINRA rule, so it governed US brokerage accounts and nowhere else. Brazil is the cleanest natural experiment we have: Chague, De-Losso and Giovannetti tracked everyone who began day trading Brazilian equity futures between 2013 and 2015 and found that of those who persisted more than 300 days, ${LOST_PCT}% lost money — only 1.1% earned more than the Brazilian minimum wage. Barber, Lee, Liu and Odean's fifteen-year Taiwan study found fewer than 1% of day traders were predictably profitable net of fees. Removing a capital gate does not change any of that. It only changes who is allowed to find out.`,
+   mount:vOdds},
+
+  {id:'Real', kicker:'The real question',
+   head:'The regulator never set your number',
+   punch:'Your <b>stop loss</b> sets your minimum — not FINRA.',
+   notes:`The ${money(PDT_OLD)} figure existed to manage the broker's credit risk on intraday margin lending. It was never an estimate of what a person needs to trade competently, and treating its removal as permission is the mistake this whole video exists to prevent. The number that actually binds you is arithmetic: how much you are willing to lose on one trade, divided by how far away your stop sits. That ratio decides the size of every position you are allowed to hold, and it does not care what the rulebook says.`,
+   mount:vReal},
+
+  {id:'Math', kicker:'The math',
+   head:'Two percent risk, one honest formula',
+   punch:'Risk ÷ stop distance = <b>position size</b>. Nothing else.',
+   notes:`Risk ${RISK_PCT*100}% of the account on any one trade — the same rule this channel uses everywhere. If the stop sits ${STOP_PCT*100}% below your entry, then the position you are allowed to hold is ${RISK_PCT*100} ÷ ${STOP_PCT*100} = ${Math.round(POS_FRAC*100)}% of the account. On ${money(P_WORK.acct)} that means risking ${money(P_WORK.risk)}, holding ${money(P_WORK.pos)} of stock, and a target at twice the risk paying ${money(P_WORK.win)}. Every figure on this slide is computed from those two percentages — change either one and the whole deck updates.`,
+   mount:vMath2},
+
+  {id:'Sizes', kicker:'Run the numbers',
+   head:'The same math, four account sizes',
+   punch:`At ${money(P_TINY.acct)} a good win pays <b>${money(P_TINY.win)}</b>. That is the problem.`,
+   notes:`The formula does not break at small size — it just stops being worth doing. At ${money(P_TINY.acct)} you risk ${money(P_TINY.risk)} to make ${money(P_TINY.win)}, and the temptation is to fix that by risking far more than ${RISK_PCT*100}%, which is exactly how small accounts die. At ${money(P_WORK.acct)} the same discipline risks ${money(P_WORK.risk)} to make ${money(P_WORK.win)} — small enough to survive a losing streak, large enough that following the rule feels worth it. That second condition is not greed, it is what keeps you obeying the system on trade number thirty.`,
+   mount:vSizes},
+
+  {id:'Blocks', kicker:'Where it breaks',
+   head:'Small accounts cannot size precisely',
+   punch:'One share is <b>all or nothing</b> — no risk system survives that.',
+   notes:`Here is the mechanical reason the tiny account fails, and it has nothing to do with regulation. Shares come in whole numbers. On a ${money(SHARE_PX)} stock, a ${money(P_TINY.acct)} account can hold exactly ${P_TINY.shares} share — so your only position sizes are zero and one, and the risk you actually take is whatever that single share happens to imply. At ${money(P_WORK.acct)} you hold ${P_WORK.shares} shares and can size to within about ${P_WORK.gran.toFixed(0)}%. Fractional shares help, but order-type support for them varies by broker — several restrict fractional orders to plain market orders, which breaks the bracket-order workflow the system depends on. Check yours before you rely on it.`,
+   mount:vBlocks},
+
+  {id:'Number', kicker:'My answer',
+   head:'What I would actually start with',
+   punch:`<b>${money(MARGIN_MIN)}</b> opens a margin account. <b>${money(MY_WORK)}</b> makes the system work.`,
+   notes:`So here is the number, and it is not the one either headline gives you. ${money(MARGIN_MIN)} is the legal floor — below it you are in a cash account, dodging settlement violations, and the system's bracket orders get awkward. ${money(MY_WORK)} is where the arithmetic actually starts working: ${money(P_WORK.risk)} of risk per trade, ${P_WORK.shares} shares of a ${money(SHARE_PX)} stock, roughly ${P_WORK.gran.toFixed(0)}% sizing precision, and a ${RR}R win that pays ${money(P_WORK.win)}. That is my opinion, not a rule — and it is money you have already decided you can lose without changing anything about your life.`,
+   mount:vNumber},
+
+  {id:'First90', kicker:'The first 90 days',
+   head:'What I would do with it',
+   punch:'One position at a time, until <b>twenty trades</b> are logged.',
+   notes:`Whatever you start with, the first ninety days are for evidence, not profit. One position at a time so you are learning the process rather than managing a book. Log every trade — date, setup, plan, result, one honest note — because the Brazil data found no evidence that screen time alone teaches anyone anything; the review is where the learning happens. Twenty trades before you judge the system, because four wins in a row is noise at this sample size. And never top the account up to erase a drawdown: that converts a bounded loss into an unbounded one.`,
+   mount:vFirst90},
+
+  {id:'Never', kicker:'What I would not do',
+   head:'The four ways this money disappears',
+   punch:'Every one of these <b>ignores the stop</b> you already set.',
+   notes:`Borrowing on margin to feel bigger multiplies a position you could not size properly in the first place. Skipping the stop does not remove the risk, it removes your ability to measure it — without a stop there is no position size, only a guess. Trading the open because the gate is gone ignores that the spread and the volatility at 9:30 never went anywhere. And adding to a loser is the single fastest way a small account becomes no account. Each one breaks a rule the system already gave you.`,
+   mount:vNever},
+
+  {id:'Recap', kicker:'Recap',
+   head:'The gate moved. The math did not.',
+   punch:'Next video: <b>the first trade</b>, sized on a real chart.',
+   notes:`Recap: the ${money(PDT_OLD)} pattern-day-trader gate is genuinely gone as of ${RULE_DATE}. The ${money(MARGIN_MIN)} margin minimum is still there, the cash-account ${FREEZE_DAYS}-day restriction is still there, and the new intraday-margin rule brought its own ${FREEZE_DAYS}-day freeze. None of that decides your starting number — your stop does. Next video I take one real chart and size a single trade end to end, so you can see the formula do the work.`,
+   mount:vRecap2},
+];
+
+/* ============================================================
+   Show / navigation / clock
+   ============================================================ */
+let cur = 0, curUps = null, slideStart = performance.now(), G0 = performance.now();
+let flipped = false;
+let notesOn = false, hudOn = false, t0 = null, tick = null;
+
+function mountSlide(i){
+  slideHost.innerHTML = '';
+  const def = DEFS[i];
+  const frame = buildFrame({
+    num: i+1, kicker: def.kicker, head: def.head, punch: def.punch,
+    headSize: def.headSize
+  });
+  const visUps = def.mount(frame.vis);
+  slideHost.appendChild(frame.root);
+  curUps = frame.ups.concat(visUps);
+}
+
+function show(i, keepTime){
+  const prev = cur;
+  cur = Math.max(0, Math.min(DEFS.length-1, i));
+  if (!keepTime){ slideStart = performance.now(); if (prev !== cur || flipped) flipped = true; }
+  mountSlide(cur);
+  railMark();
+  const d = DEFS[cur];
+  document.getElementById('notes-body').textContent = d.notes || '—';
+  document.getElementById('notes-head').textContent =
+    `Slide ${cur+1} of ${DEFS.length} — ${d.head}`;
+  document.getElementById('hud-slide').textContent = `${cur+1}/${DEFS.length}`;
+  document.getElementById('hud-target').textContent = `target ${SLIDE_TARGET}s`;
+  location.hash = 's' + (cur+1);
+  buildGrid();
+}
+
+function startClock(){
+  t0 = Date.now();
+  clearInterval(tick);
+  tick = setInterval(() => {
+    const s = Math.floor((Date.now()-t0)/1000);
+    const cEl = document.getElementById('hud-clock');
+    cEl.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+    cEl.classList.toggle('over', s > TOTAL_TARGET());
+  }, 500);
+}
+
+function buildGrid(){
+  const g = document.getElementById('grid-cells');
+  g.innerHTML = DEFS.map((s, i) =>
+    `<div class="gc${i===cur?' cur':''}" data-i="${i}">
+     <div class="gn">${String(i+1).padStart(2,'0')} · ${SLIDE_TARGET}s</div>
+     <div class="gt"></div></div>`).join('');
+  [...g.children].forEach((cEl, i) => {
+    cEl.querySelector('.gt').textContent = DEFS[i].head;
+    cEl.onclick = () => { show(i); document.getElementById('grid').classList.remove('on'); };
+  });
+  const m = TOTAL_TARGET();
+  document.getElementById('grid-total').textContent =
+    `${DEFS.length} slides · ${SLIDE_TARGET}s each · full run ${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;
+}
+
+/* ============================================================
+   Theme
+   ============================================================ */
+function setTheme(name){
+  document.documentElement.setAttribute('data-theme', name);
+  C = TOK[name] || TOK.dark;
+  try { localStorage.setItem('nr_swing_theme', name); } catch(e){}
+  paintFurnitureStatic(); paintFooter(); paintRail(); drawCamGuide();
+  mountSlide(cur);           // repaint with the new tokens, clock untouched
+}
+
+/* ============================================================
+   Fit + rAF loop
+   ============================================================ */
+function fit(){
+  const W = window.innerWidth, Hh = window.innerHeight;
+  stage.style.transform = `scale(${Math.min(W/1920, Hh/1080)})`;
+}
+window.addEventListener('resize', fit);
+
+function loop(now){
+  // Reduced motion: everything is a pure function of t, so t=99 IS the settled
+  // final frame of every animation; G=0 freezes the ambient drift.
+  const G = REDUCED ? 0 : (now - G0)/1000;
+  const t = REDUCED ? 99 : (now - slideStart)/1000;
+  furnitureUpdate(G);
+  railUpdate(t);
+  sweepUpdate(t);
+  if (curUps) curUps.forEach(u => u(t));
+  requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   Keys — identical map to the episode deck template
+   ============================================================ */
+addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'Escape'){ document.getElementById('grid').classList.remove('on'); return; }
+  if (k === 'ArrowRight' || k === ' ' || k === 'PageDown'){ e.preventDefault(); show(cur+1); }
+  else if (k === 'ArrowLeft' || k === 'PageUp'){ e.preventDefault(); show(cur-1); }
+  else if (k === 'Home') show(0);
+  else if (k === 'End') show(DEFS.length-1);
+  else if (k === 't' || k === 'T')
+    setTheme(document.documentElement.getAttribute('data-theme') === 'cream' ? 'dark' : 'cream');
+  else if (k === 'n' || k === 'N'){
+    notesOn = !notesOn; document.getElementById('notes').classList.toggle('on', notesOn);
+  }
+  else if (k === 'h' || k === 'H'){
+    hudOn = !hudOn; document.getElementById('hud').classList.toggle('on', hudOn);
+    if (hudOn && !t0) startClock();
+  }
+  else if (k === 'r' || k === 'R') startClock();
+  else if (k === 'C' && e.shiftKey){
+    if (!CAM) return;
+    camGuideOn = !camGuideOn; drawCamGuide();
+  }
+  else if (k === 'c') setCam(!CAM);
+  else if ((k === '[' || k === ']') && CAM)
+    setCam(CAM, CAMW + (k === ']' ? 0.02 : -0.02));
+  else if (k === 'g' || k === 'G'){
+    document.getElementById('grid').classList.toggle('on'); buildGrid();
+  }
+  else if (k === 'f' || k === 'F'){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  }
+});
+
+/* ============================================================
+   Boot — stored theme, deep link, go
+   ============================================================ */
+setTheme(_q.get('theme') === 'cream' ? 'cream'
+       : _q.get('theme') === 'dark' ? 'dark'
+       : _stored('nr_swing_theme', 'dark'));
+relayout(); paintFooter(); paintRail(); buildRailTicks();
+fit();
+show(location.hash.startsWith('#s') ? (+location.hash.slice(2)-1) || 0 : 0, false);
+flipped = false;
+requestAnimationFrame(loop);
+console.log(`[pdt-deck] ${DEFS.length} slides · →/Space ← T N H G F R C ⇧C [ ] · SWING-9TO5 engine`);
+})();
+</script>
+</body>
+</html>
