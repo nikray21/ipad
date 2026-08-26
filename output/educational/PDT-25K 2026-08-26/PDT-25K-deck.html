@@ -386,8 +386,12 @@ function drawCamGuide(){
   const box = camBubbleBox();
   if (!box){ if (g) g.remove(); return; }
   if (!g){ g = H('div'); g.id = 'camguide'; stage.appendChild(g); }
+  /* The camera-slot box is a GUIDE, not part of the slide — it appears only
+     with the rest of the alignment overlay (⇧C). Default: a clean gutter. */
   g.innerHTML =
-    `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px"></div>` +
+    (camGuideOn
+      ? `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px"></div>`
+      : '') +
     (camGuideOn
       ? `<div class="cg-col" style="left:${box.colX}px;width:${box.colW}px"></div>` +
         `<div class="cg-lab" style="left:${box.x}px;top:${box.y+box.h+16}px;width:${box.w}px">` +
