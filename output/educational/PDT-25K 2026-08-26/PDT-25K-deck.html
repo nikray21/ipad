@@ -111,6 +111,23 @@ body{
   transition:color .2s cubic-bezier(.25,1,.5,1),opacity .2s cubic-bezier(.25,1,.5,1)}
 #rail-ticks span:hover{color:var(--ink);opacity:1}
 #rail-ticks span.cur{color:var(--accent);opacity:1}
+
+/* ---------- Touch slide navigation (bottom-right, auto-fading) ---------- */
+#navbtns{position:fixed;right:22px;bottom:22px;z-index:86;display:flex;gap:10px;
+  transition:opacity .4s cubic-bezier(.25,1,.5,1)}
+#navbtns.idle{opacity:0;pointer-events:none}
+#navbtns button{
+  width:56px;height:56px;border-radius:50%;padding:0;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 4px 18px rgba(0,0,0,.20);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:transform .12s cubic-bezier(.25,1,.5,1),border-color .2s,color .2s}
+#navbtns button:hover{border-color:var(--accent);color:var(--accent)}
+#navbtns button:active{transform:scale(.9)}
+#navbtns button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#navbtns button:disabled{opacity:.3;pointer-events:none}
+@media print{#navbtns{display:none}}
 </style>
 </head>
 <body>
@@ -1313,6 +1330,7 @@ function show(i, keepTime){
   if (!keepTime){ slideStart = performance.now(); if (prev !== cur || flipped) flipped = true; }
   mountSlide(cur);
   railMark();
+  syncNav();
   const d = DEFS[cur];
   document.getElementById('notes-body').textContent = d.notes || '—';
   document.getElementById('notes-head').textContent =
@@ -1416,6 +1434,55 @@ addEventListener('keydown', e => {
     else document.documentElement.requestFullscreen();
   }
 });
+
+/* ============================================================
+   Touch navigation — fixed chrome, so it stays a real 56px target
+   however far the stage is scaled down. Auto-fades while idle so it
+   is not in frame during a take; any touch or pointer move wakes it.
+   `var` (not const/let): show() is defined above and calls syncNav()
+   on the very first boot render, before this block has run.
+   ============================================================ */
+var NAV = null;
+function syncNav(){
+  if (!NAV) return;
+  NAV.prev.disabled = cur === 0;
+  NAV.next.disabled = cur === DEFS.length - 1;
+}
+(function buildNav(){
+  let idle = null;
+  /* function declaration: hoisted, so the click handlers below close over it
+     even though it is written after them. No globals. */
+  function wake(){
+    NAV.wrap.classList.remove('idle');
+    clearTimeout(idle);
+    idle = setTimeout(() => NAV.wrap.classList.add('idle'), 2800);
+  }
+  const chev = back =>
+    `<svg viewBox="0 0 24 24" width="21" height="21" fill="none" ` +
+    `stroke="currentColor" stroke-width="2.4" stroke-linecap="round" ` +
+    `stroke-linejoin="round" aria-hidden="true">` +
+    `<path d="${back ? 'M15 5 L8 12 L15 19' : 'M9 5 L16 12 L9 19'}"/></svg>`;
+  const wrap = document.createElement('div');
+  wrap.id = 'navbtns';
+  const mk = (back, label, go) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = chev(back);
+    b.setAttribute('aria-label', label);
+    b.addEventListener('click', e => { e.preventDefault(); go(); wake(); b.blur(); });
+    wrap.appendChild(b);
+    return b;
+  };
+  const prev = mk(true,  'Previous slide', () => show(cur - 1));
+  const next = mk(false, 'Next slide',     () => show(cur + 1));
+  document.body.appendChild(wrap);
+  NAV = {wrap, prev, next};
+
+  ['pointermove','pointerdown','touchstart','keydown'].forEach(ev =>
+    addEventListener(ev, wake, {passive:true}));
+  wake();
+  syncNav();
+})();
 
 /* ============================================================
    Boot — stored theme, deep link, go
