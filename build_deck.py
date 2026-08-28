@@ -429,8 +429,13 @@ def build_snapshot(sym, ep):
         "worst": {"pct": worst_pct, "when": dstr(pts[worst_i]["t"]),
                   "i": nearest(pts[worst_i]["t"]), "close": pts[worst_i]["c"],
                   "volume": pts[worst_i]["v"],
-                  "volX": pts[worst_i]["v"] / (sum(p["v"] for p in pts[max(0, worst_i - 31):worst_i - 1])
-                                               / 30)},
+                  # The worst single day can fall inside the first ~31 sessions of the
+                  # window (MRVL's did — index 1), leaving no prior baseline to divide
+                  # by. Same "no base, no multiple" idiom as the releases loop above,
+                  # rather than a ZeroDivisionError on an empty slice.
+                  "volX": (lambda base: pts[worst_i]["v"] / (sum(base) / len(base))
+                           if base else None)
+                          ([p["v"] for p in pts[max(0, worst_i - 31):worst_i - 1]])},
         "runUp": (hi_bar["h"] / lo_bar["l"] - 1) * 100,
         "drawdown": (price / hi_bar["h"] - 1) * 100,
         "peakToTrough": peak_to_trough,

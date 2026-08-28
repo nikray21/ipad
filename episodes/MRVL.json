@@ -1,0 +1,320 @@
+{
+  "symbol": "MRVL",
+  "company": "Marvell Technology, Inc.",
+  "episodeDate": "2026-08-28",
+
+  "sources": {
+    "8k-q2fy27": {
+      "label": "8-K EX-99.1 — Q2 FY2027 results (quarter ended Aug 1 2026), filed Aug 27 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000022/q227_8kx812026ex-991.htm"
+    },
+    "8k-q1fy27": {
+      "label": "8-K EX-99.1 — Q1 FY2027 results (quarter ended May 2 2026), filed May 27 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000014/q127_8kx522026ex-991.htm"
+    },
+    "10q-q1fy27": {
+      "label": "10-Q for the quarter ended May 2 2026, filed May 28 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000019/mrvl-20260502.htm"
+    },
+    "10k-fy26": {
+      "label": "10-K for fiscal year ended Jan 31 2026, filed Mar 11 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000011/mrvl-20260131.htm"
+    },
+    "8k-q4fy26": {
+      "label": "8-K EX-99.1 — Q4 & FY2026 results (quarter ended Jan 31 2026), filed Mar 5 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000006/q426_8kx1312026ex-991.htm"
+    },
+    "8k-q3fy26": {
+      "label": "8-K EX-99.1 — Q3 FY2026 results (quarter ended Nov 1 2025), filed Dec 2 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563225000193/q326_8kx1112025ex-991.htm"
+    },
+    "8k-q2fy26": {
+      "label": "8-K EX-99.1 — Q2 FY2026 results (quarter ended Aug 2 2025), filed Aug 28 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563225000187/q226_8kx822025ex-991.htm"
+    },
+    "8k-q1fy26": {
+      "label": "8-K EX-99.1 — Q1 FY2026 results (quarter ended May 3 2025), filed May 29 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563225000115/q126_8kx532025ex-991.htm"
+    },
+    "8k-q4fy25": {
+      "label": "8-K EX-99.1 — Q4 & FY2025 results (quarter ended Feb 1 2025), filed Mar 5 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563225000051/q425_8kx212025ex-991.htm"
+    },
+    "8k-q3fy25": {
+      "label": "8-K EX-99.1 — Q3 FY2025 results (quarter ended Nov 2 2024), filed Dec 3 2024",
+      "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563224000197/q325_8kx1122024ex-991.htm"
+    }
+  },
+
+  "filings": {
+    "results": {
+      "revenueQ2FY27":     { "v": 2739.3, "src": "8k-q2fy27", "unit": "USD millions" },
+      "gaapEpsQ2FY27":     { "v": 0.33,   "src": "8k-q2fy27", "unit": "USD" },
+      "nonGaapEpsQ2FY27":  { "v": 0.94,   "src": "8k-q2fy27", "unit": "USD" },
+      "gaapNetIncomeQ2FY27": { "v": 308.0, "src": "8k-q2fy27", "unit": "USD millions" },
+      "nonGaapNetIncomeQ2FY27": { "v": 865.9, "src": "8k-q2fy27", "unit": "USD millions" },
+      "gaapGmQ2FY27":      { "v": 53.1,   "src": "8k-q2fy27", "unit": "%" },
+      "nonGaapGmQ2FY27":   { "v": 58.9,   "src": "8k-q2fy27", "unit": "%" },
+      "nonGaapOpMarginQ2FY27": { "v": 36.6, "src": "8k-q2fy27", "unit": "%" },
+      "interestExpQ2FY27": { "v": -61.6,  "src": "8k-q2fy27", "unit": "USD millions" },
+      "nonGaapTaxRateQ2FY27": { "v": 11.0, "src": "8k-q2fy27", "unit": "%",
+        "note": "the non-GAAP tax rate the company itself applies to its non-GAAP results this quarter" },
+      "sixMonthGaapNetIncomeFY27": { "v": 342.5, "src": "8k-q2fy27", "unit": "USD millions" },
+      "sixMonthContingentNetFwd": { "v": 302.7, "src": "8k-q2fy27", "unit": "USD millions",
+        "note": "GAAP-to-non-GAAP reconciliation, six months ended Aug 1 2026 — 'Change in fair value of contingent consideration liability, net of forward stock purchase contract' special item" },
+
+      "revenueQ3FY27guideMid": { "v": 3150, "src": "8k-q2fy27", "unit": "USD millions",
+        "note": "Q3 FY27 outlook, net revenue $3.150 billion +/- 5%" },
+      "nonGaapGmQ3FY27guideLow": { "v": 57.5, "src": "8k-q2fy27", "unit": "%" },
+      "nonGaapGmQ3FY27guideHigh": { "v": 58.5, "src": "8k-q2fy27", "unit": "%" },
+      "investorDayDate": { "v": "October 6, 2026", "src": "8k-q2fy27",
+        "note": "CEO Matt Murphy's quote in the Q2 FY27 release" },
+
+      "revenueQ3FY25": { "v": 1516.1, "src": "8k-q3fy25", "unit": "USD millions" },
+      "revenueQ4FY25": { "v": 1817.4, "src": "8k-q4fy25", "unit": "USD millions" },
+      "revenueQ1FY26": { "v": 1895.3, "src": "8k-q1fy26", "unit": "USD millions" },
+      "revenueQ2FY26": { "v": 2006.1, "src": "8k-q2fy26", "unit": "USD millions" },
+      "revenueQ3FY26": { "v": 2074.5, "src": "8k-q3fy26", "unit": "USD millions" },
+      "revenueQ4FY26": { "v": 2218.7, "src": "8k-q4fy26", "unit": "USD millions" },
+      "revenueQ1FY27": { "v": 2417.8, "src": "8k-q1fy27", "unit": "USD millions" },
+
+      "gaapEpsQ3FY25": { "v": -0.78, "src": "8k-q3fy25", "unit": "USD" },
+      "gaapEpsQ4FY25": { "v": 0.23,  "src": "8k-q4fy25", "unit": "USD" },
+      "gaapEpsQ1FY26": { "v": 0.20,  "src": "8k-q1fy26", "unit": "USD" },
+      "gaapEpsQ2FY26": { "v": 0.22,  "src": "8k-q2fy26", "unit": "USD" },
+      "gaapEpsQ3FY26": { "v": 2.20,  "src": "8k-q3fy26", "unit": "USD",
+        "note": "includes a $1.8B pre-tax gain on the automotive ethernet business sale to Infineon" },
+      "gaapEpsQ4FY26": { "v": 0.46,  "src": "8k-q4fy26", "unit": "USD" },
+      "gaapEpsQ1FY27": { "v": 0.04,  "src": "8k-q1fy27", "unit": "USD" },
+
+      "nonGaapEpsQ3FY25": { "v": 0.43, "src": "8k-q3fy25", "unit": "USD" },
+      "nonGaapEpsQ4FY25": { "v": 0.60, "src": "8k-q4fy25", "unit": "USD" },
+      "nonGaapEpsQ1FY26": { "v": 0.62, "src": "8k-q1fy26", "unit": "USD" },
+      "nonGaapEpsQ2FY26": { "v": 0.67, "src": "8k-q2fy26", "unit": "USD" },
+      "nonGaapEpsQ3FY26": { "v": 0.76, "src": "8k-q3fy26", "unit": "USD" },
+      "nonGaapEpsQ4FY26": { "v": 0.80, "src": "8k-q4fy26", "unit": "USD" },
+      "nonGaapEpsQ1FY27": { "v": 0.80, "src": "8k-q1fy27", "unit": "USD" },
+
+      "beatQ3FY25": { "v": 66.0, "src": "8k-q3fy25", "unit": "USD millions", "searchAs": "66.0 million" },
+      "beatQ4FY25": { "v": 17.0, "src": "8k-q4fy25", "unit": "USD millions", "searchAs": "17.0 million" },
+      "beatQ1FY26": { "v": 20.0, "src": "8k-q1fy26", "unit": "USD millions", "searchAs": "20.0 million" },
+      "beatQ2FY26": { "v": 6.0,  "src": "8k-q2fy26", "unit": "USD millions", "searchAs": "6.0 million" },
+      "beatQ3FY26": { "v": 15.0, "src": "8k-q3fy26", "unit": "USD millions", "searchAs": "15.0 million" },
+      "beatQ4FY26": { "v": 19.0, "src": "8k-q4fy26", "unit": "USD millions", "searchAs": "19.0 million" },
+      "beatQ1FY27": { "v": 18.0, "src": "8k-q1fy27", "unit": "USD millions", "searchAs": "18.0 million" },
+      "beatQ2FY27": { "v": 39.0, "src": "8k-q2fy27", "unit": "USD millions", "searchAs": "39.0 million" }
+    },
+
+    "segments": {
+      "src": "8k-q2fy27",
+      "note": "Quarterly Revenue Trend table, three quarters shown side by side in the Q2 FY27 release",
+      "aug25":  { "dataCenter": 1490.5, "comms": 515.6, "total": 2006.1, "dcSharePct": 74 },
+      "may26":  { "dataCenter": 1832.7, "comms": 585.1, "total": 2417.8, "dcSharePct": 76 },
+      "aug26":  { "dataCenter": 2171.5, "comms": 567.8, "total": 2739.3, "dcSharePct": 79 },
+      "dcYoY": { "v": 46, "unit": "%", "src": "8k-q2fy27" },
+      "dcQoQ": { "v": 18, "unit": "%", "src": "8k-q2fy27" },
+      "commsYoY": { "v": 10, "unit": "%", "src": "8k-q2fy27" },
+      "commsQoQ": { "v": -3, "unit": "%", "src": "8k-q2fy27" }
+    },
+
+    "celestial": {
+      "quote": { "v": "On February 2, 2026, the Company completed the acquisition of Celestial AI, Inc. (“Celestial”), a provider of a Photonic Fabric technology platform purpose-built for next-generation scale-up interconnect, for a total purchase consideration of $3.5 billion.",
+                 "src": "10q-q1fy27", "note": "Note 4, Business Combinations" },
+      "totalConsideration": { "v": 3537.4, "src": "10q-q1fy27", "unit": "USD millions" },
+      "cashConsideration":  { "v": 1279.7, "src": "10q-q1fy27", "unit": "USD millions" },
+      "stockConsideration": { "v": 1929.0, "src": "10q-q1fy27", "unit": "USD millions",
+        "note": "24.5 million common shares issued" },
+      "replacementAwards": { "v": 12.9, "src": "10q-q1fy27", "unit": "USD millions",
+        "note": "stock consideration for replacement equity awards attributable to pre-combination service" },
+      "newShares": { "v": 24.5, "src": "10q-q1fy27", "unit": "millions", "searchAs": "24.5 million" },
+      "contingentInitial": { "v": 315.8, "src": "10q-q1fy27", "unit": "USD millions" },
+      "goodwillRecorded": { "v": 2404.4, "src": "10q-q1fy27", "unit": "USD millions" },
+      "notMaterialQuote": { "v": "Revenue and earnings of Celestial since the acquisition date were not material.",
+                 "src": "10q-q1fy27", "note": "Note 4, Business Combinations" },
+      "contingentBalanceMay2026": { "v": 647.6, "src": "10q-q1fy27", "unit": "USD millions",
+        "note": "Note 6, Fair Value Measurements — balance after one quarter's remeasurement" },
+      "contingentChangeQ1": { "v": 331.8, "src": "10q-q1fy27", "unit": "USD millions",
+        "note": "the single-quarter fair-value change, Note 6" },
+      "maxSettlementCash": { "v": 233.0, "src": "10q-q1fy27", "unit": "USD millions" },
+      "maxSettlementShares": { "v": 22.4, "src": "10q-q1fy27", "unit": "millions" },
+      "monteCarloQuote": { "v": "Critical estimates and inputs used for the valuation of contingent consideration include forecasted revenue, probability of achievement, stock price volatility, the Company’s stock price and other relevant assumptions and inputs.",
+                 "src": "10q-q1fy27", "note": "Note 6, Fair Value Measurements" },
+      "forwardContractQuote": { "v": "In April 2026, the Company entered into a cash-settled forward stock purchase contract to manage its exposure to changes in the Company’s stock price related to the contingent consideration arrangement associated with the Celestial acquisition.",
+                 "src": "10q-q1fy27", "note": "Note 6, Fair Value Measurements" },
+      "forwardNotional": { "v": 300.0, "src": "10q-q1fy27", "unit": "USD millions" },
+      "forwardTermMonths": { "v": 12, "src": "10q-q1fy27", "unit": "months", "searchAs": "twelve months" }
+    },
+
+    "nvidiaPreferred": {
+      "quote": { "v": "On March 31, 2026, the Company completed the issuance and sale of 2.0 million shares of Series A Convertible Preferred Stock, par value $0.002 per share (the “Series A Preferred Stock”), to NVIDIA Corporation (“NVIDIA”), for an aggregate purchase price of $2.0 billion.",
+                 "src": "10q-q1fy27", "note": "Note 10, Stockholders' Equity" },
+      "purchasePrice": { "v": 2000.0, "src": "10q-q1fy27", "unit": "USD millions" },
+      "shares": { "v": 2.0, "src": "10q-q1fy27", "unit": "millions of preferred shares" },
+      "conversionPrice": { "v": 91.84, "src": "10q-q1fy27", "unit": "USD" },
+      "maxCommonShares": { "v": 21.8, "src": "10q-q1fy27", "unit": "millions", "searchAs": "21.8 million" },
+      "purchaseDate": { "v": "March 31, 2026", "src": "10q-q1fy27" }
+    },
+
+    "balanceSheet": {
+      "cash":         { "v": 3932.8, "src": "8k-q2fy27", "unit": "USD millions" },
+      "longTermDebt": { "v": 4962.9, "src": "8k-q2fy27", "unit": "USD millions" },
+      "goodwillPriorQ": { "v": 11062.2, "src": "8k-q2fy27", "unit": "USD millions",
+        "note": "balance sheet's own Jan 31 2026 comparative column" },
+      "goodwillLatestQ": { "v": 13873.9, "src": "8k-q2fy27", "unit": "USD millions" },
+      "totalStockholdersEquity": { "v": 18531.6, "src": "8k-q2fy27", "unit": "USD millions" },
+      "dilutedWeightedAvgQ2": { "v": 921.2, "src": "8k-q2fy27", "unit": "millions of shares" },
+      "sharesOutstanding": { "v": 874800.0, "src": "10q-q1fy27", "unit": "thousands",
+        "searchAs": "874.8 million",
+        "note": "cover page: 'the number of shares of common stock of the registrant outstanding as of May 21, 2026 was 874.8 million' — the most recent disclosed point-in-time count (the Q2 FY27 10-Q has not yet been filed)" }
+    },
+
+    "customerConcentration": {
+      "note": "Item 1, table of customers whose revenue is 10%+ of total net revenue, three fiscal years shown",
+      "distributorAFY26": { "v": 37, "src": "10k-fy26", "unit": "%", "searchAs": "37%" },
+      "distributorAFY25": { "v": 34, "src": "10k-fy26", "unit": "%", "searchAs": "34%" },
+      "distributorAFY24": { "v": 24, "src": "10k-fy26", "unit": "%", "searchAs": "24%" }
+    },
+
+    "quarterly": {
+      "note": "Eight consecutive quarters, GAAP diluted EPS as filed in each release's own income statement.",
+      "rows": [
+        { "q": "Q3'25", "end": "2024-11-02", "eps": -0.78, "revenue": 1516.1, "src": "8k-q3fy25" },
+        { "q": "Q4'25", "end": "2025-02-01", "eps": 0.23,  "revenue": 1817.4, "src": "8k-q4fy25" },
+        { "q": "Q1'26", "end": "2025-05-03", "eps": 0.20,  "revenue": 1895.3, "src": "8k-q1fy26" },
+        { "q": "Q2'26", "end": "2025-08-02", "eps": 0.22,  "revenue": 2006.1, "src": "8k-q2fy26" },
+        { "q": "Q3'26", "end": "2025-11-01", "eps": 2.20,  "revenue": 2074.5, "src": "8k-q3fy26" },
+        { "q": "Q4'26", "end": "2026-01-31", "eps": 0.46,  "revenue": 2218.7, "src": "8k-q4fy26" },
+        { "q": "Q1'27", "end": "2026-05-02", "eps": 0.04,  "revenue": 2417.8, "src": "8k-q1fy27" },
+        { "q": "Q2'27", "end": "2026-08-01", "eps": 0.33,  "revenue": 2739.3, "src": "8k-q2fy27" }
+      ]
+    },
+
+    "earningsHistory": {
+      "note": "guideLow/guideHigh left null throughout — Marvell's guide is a rolling one-quarter-ahead revenue range, not a revised full-year target, so the engine's within-year RAISED/CUT comparison does not fit; the reaction move is computed live from the daily bars for each release date instead.",
+      "releases": [
+        { "date": "2024-12-03", "q": "Q3'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q3fy25" },
+        { "date": "2025-03-05", "q": "Q4'25", "fy": "2025", "guideLow": null, "guideHigh": null, "src": "8k-q4fy25" },
+        { "date": "2025-05-29", "q": "Q1'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q1fy26" },
+        { "date": "2025-08-28", "q": "Q2'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q2fy26" },
+        { "date": "2025-12-02", "q": "Q3'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q3fy26" },
+        { "date": "2026-03-05", "q": "Q4'26", "fy": "2026", "guideLow": null, "guideHigh": null, "src": "8k-q4fy26" },
+        { "date": "2026-05-27", "q": "Q1'27", "fy": "2027", "guideLow": null, "guideHigh": null, "src": "8k-q1fy27" },
+        { "date": "2026-08-27", "q": "Q2'27", "fy": "2027", "guideLow": null, "guideHigh": null, "src": "8k-q2fy27" }
+      ]
+    },
+
+    "peers": {
+      "tickers": ["AVGO", "NVDA", "QCOM", "TXN", "ADI"],
+      "names": { "AVGO": "Broadcom", "NVDA": "NVIDIA", "QCOM": "Qualcomm",
+                 "TXN": "Texas Instruments", "ADI": "Analog Devices", "MRVL": "Marvell" },
+      "pure": ["AVGO"]
+    }
+  },
+
+  "fairValue": {
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": { "revGrowth": 12.0, "opMargin": 30.0, "exitPE": 15.0, "shareChange": 2.0 },
+      "base": { "revGrowth": 24.0, "opMargin": 37.0, "exitPE": 20.0, "shareChange": 1.0 },
+      "bull": { "revGrowth": 34.0, "opMargin": 43.0, "exitPE": 27.0, "shareChange": 0.0 }
+    },
+    "constants": {
+      "netDebt": 1030.1, "interestRate": 4.96, "taxRate": 11.0,
+      "nciAnnualRunRate": 0.0, "startRevenueTTM": 9450.3,
+      "_note": "startRevenueTTM is the trailing four reported GAAP quarters (2074.5+2218.7+2417.8+2739.3). netDebt is long-term debt (4962.9) less cash (3932.8) at Aug 1 2026. interestRate is Q2 FY27 interest expense annualized over long-term debt. taxRate is the company's own stated non-GAAP tax rate for Q2 FY27 (11.0%) — a filed figure, not a derived one. nciAnnualRunRate is 0 — Marvell has no noncontrolling interest line."
+    }
+  },
+
+  "findings": [
+    { "claim": "Today's beat — $39M above the midpoint — was the biggest in six quarters, and the stock fell 10% anyway. Beat size has never predicted the reaction.",
+      "where": "the highlights section's 'above the mid-point of guidance' line, cross-referenced across all eight 8-K releases against the next session's close",
+      "src": "8k-q2fy27" },
+    { "claim": "The entire growth acceleration is one segment: Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications and other actually shrank 3% quarter-over-quarter.",
+      "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market, three quarters shown side by side",
+      "src": "8k-q2fy27" },
+    { "claim": "Marvell financed 55% of its $3.5B Celestial AI acquisition in stock, with the rest an earnout pegged to Marvell's own stock price — already a $302.7M swing to GAAP earnings in two quarters.",
+      "where": "10-Q Notes 4 and 6, cross-checked against the Q2 FY27 reconciliation table",
+      "src": "10q-q1fy27" },
+    { "claim": "NVIDIA is not just a customer relationship here — it holds $2.0B of Marvell preferred stock convertible at $91.84 a share, less than half of where Marvell trades today.",
+      "where": "10-Q Note 10, Stockholders' Equity — the Series A Convertible Preferred Stock paragraph",
+      "src": "10q-q1fy27" }
+  ],
+
+  "proseLiteralsOK": [
+    "$3.5 billion",
+    "$3.5B",
+    "$2.0 billion",
+    "$2.0B",
+    "$91.84",
+    "$300 million",
+    "$300M",
+    "$302.7M",
+    "$302.7 million",
+    "$1.0B",
+    "$18.5B",
+    "$2.8B",
+    "$3.15B",
+    "46%",
+    "18%",
+    "57.5%",
+    "58.5%",
+    "58.9%",
+    "37%",
+    "24%",
+    "3%",
+    "79%"
+  ],
+
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "The Data Center growth is real. So is the earnout tax on every AI headline this stock trades on.",
+    "tiles": [
+      { "dim": "Growth", "rating": "strong", "fact": "Data Center revenue up 46% YoY, guided to accelerate further into Q3" },
+      { "dim": "Momentum", "rating": "mixed", "fact": "Three of the last four earnings prints moved the stock more than 10% in a single session, in both directions" },
+      { "dim": "Earnings quality", "rating": "weak", "fact": "GAAP EPS ran 65% below non-GAAP EPS this quarter, largely stock comp and an earnout tied to Marvell's own share price" },
+      { "dim": "Segment concentration", "rating": "weak", "fact": "79% of revenue is now Data Center; Communications and other shrank sequentially" },
+      { "dim": "Balance sheet", "rating": "mixed", "fact": "Net debt is a modest $1.0B against $18.5B of equity, but goodwill jumped $2.8B in one quarter on a stock-funded deal" },
+      { "dim": "Valuation", "rating": "mixed", "fact": "Priced between my base and bull cases after today's drop" }
+    ],
+    "scored": [
+      { "dim": "Growth", "score": 5, "tone": "", "fact": "Data Center +46% YoY, guided to accelerate" },
+      { "dim": "Momentum", "score": 2, "tone": "warn", "fact": "Violent, unpredictable earnings reactions" },
+      { "dim": "Earnings quality", "score": 2, "tone": "warn", "fact": "GAAP EPS diluted by a self-referential earnout" },
+      { "dim": "Concentration", "score": 2, "tone": "warn", "fact": "One segment carries the whole story" },
+      { "dim": "Balance sheet", "score": 3, "tone": "", "fact": "Low net leverage, but goodwill-heavy after Celestial" },
+      { "dim": "Price", "score": 3, "tone": "", "fact": "Between base and bull after today's selloff" }
+    ],
+    "working": [
+      "Data Center revenue is genuinely accelerating — 46% year-over-year, 18% sequentially, and management guided Q3 revenue to $3.15B, another double-digit sequential step up.",
+      "NVIDIA put $2.0B of real money into Marvell as a strategic investor, not just a customer, via convertible preferred stock struck well below today's price.",
+      "Net leverage is low — about $1.0B of net debt against $18.5B of stockholders' equity — and every senior note is laddered years out with no near-term maturity wall.",
+      "There is a real, dated catalyst ahead: management's own Investor Day on {wd.investorDayDate}, where it plans to lay out the long-term AI infrastructure strategy in detail.",
+      "Every quarter for at least two years has beaten its own guidance midpoint — the execution track record on the number the company controls is intact."
+    ],
+    "watch": [
+      "Q3 FY27's guided non-GAAP gross margin (57.5%-58.5%) sits below Q2's actual 58.9% — margin, not revenue, is what actually moved the stock today.",
+      "The Celestial earnout is a bet on Marvell's own stock price, not on Celestial's business — 'not material' revenue so far, and a liability that grows precisely when the stock does.",
+      "Communications and other revenue fell 3% sequentially even as Data Center masked it — a second data point here and this becomes a real crack, not a rounding error.",
+      "Distributor A now accounts for 37% of net revenue, up from 24% two fiscal years ago — a concentration that keeps climbing.",
+      "GAAP and non-GAAP EPS have diverged further every quarter this year; if that gap ever needs explaining to a skeptical market, this is where it starts."
+    ],
+    "why": [
+      "<b>The growth is concentrated but real.</b> Data Center is 79% of Marvell now and it is the only segment actually accelerating — that is a legitimate AI-infrastructure story, not a headline.",
+      "<b>The earnings quality has a self-inflicted wound.</b> A $3.5B acquisition structured with a stock-price-linked earnout has already cost $302.7M of GAAP earnings in two quarters — money spent managing an accounting exposure the company created by how it wrote the deal.",
+      "<b>The price already needs a lot to go right.</b> At {price|$} the stock sits between my base and bull cases — today's drop bought you a slightly better entry, not a cheap one.",
+      "<b>A decent price for me: {fair.mid|$} or lower.</b> That is roughly the midpoint of a model that already assumes Data Center keeps compounding — near it or below, the odds start working for you."
+    ]
+  },
+
+  "notes": {
+    "findings": "COLD OPEN, to camera before the deck: Marvell just beat every single number on its earnings report and raised its outlook again — and the stock fell double digits today anyway. That does not make sense until you read what is actually in the filings. Four things buried in the 10-Q and the fine print explain what the headline beat does not. THEN the slide: here they are. TARGET 24s.",
+    "scoreboard": "First, the quarter as reported yesterday after the close. Revenue two point seven three nine billion, a record, up thirty seven percent year over year. Non-GAAP earnings ninety four cents a share, comfortably ahead of estimates. But look at the GAAP number right next to it: thirty three cents. Less than half. That gap is not just stock comp — there's something else in there, and we're about to find it. TARGET 24s.",
+    "reaction": "Finding one. Marvell's stock does not trade on whether it beats guidance — it always beats guidance, by a little, like clockwork. Every single quarter for the last eight has landed above the midpoint the company set three months earlier. Today's beat, thirty nine million dollars, was the biggest of the last seven quarters. And the stock still fell more than ten percent. Look at the pattern across two years: reactions ranging from plus twenty three percent to minus twenty percent, with no relationship at all to how big the beat was. What actually moved it today was three lines down in the outlook: next quarter's margin guide, which came in below what the company just delivered. TARGET 30s.",
+    "segments": "Finding two. Marvell reports one blended growth number, thirty seven percent. That hides what's actually happening underneath. Data Center revenue: up forty six percent year over year, now seventy nine percent of the entire company. Everything else — enterprise networking, carrier infrastructure, consumer — actually shrank three percent from the quarter before. This is not a broad-based beat. It is one segment, growing very fast, carrying every other part of the business on its back. TARGET 28s.",
+    "celestial": "Finding three, and this is the one that explains the GAAP-to-non-GAAP gap from the scoreboard slide. In February, Marvell paid three and a half billion dollars for a company called Celestial AI — fifty five percent of it in stock, twenty four and a half million new shares. Celestial's revenue so far: the filing's own words, 'not material.' But here's the part nobody flagged: part of that deal is an earnout, and its accounting value is modeled off Marvell's OWN stock price. As the stock ran up on AI headlines this year, that liability swelled — three hundred two million dollars of GAAP earnings drag in just two quarters, net of a hedge Marvell had to go buy specifically to manage the exposure it created. That's real money spent managing an accounting mechanism, not the business. TARGET 32s.",
+    "nvidia": "Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell — it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.",
+    "peers": "So what are you paying for this? Same yardstick for everyone: market value against the latest reported quarter, annualized, growth right beside it. Against Broadcom — the closest direct comparison in custom AI silicon — Marvell trades at a real discount per dollar of sales. But check growth before you call that cheap: Marvell is growing meaningfully slower than Broadcom right now. A real discount, against a real growth gap — on a growth-adjusted basis the two are closer than the sticker price alone suggests. TARGET 24s.",
+    "call": "So here's the whole story on one ruler. My model: a rough case if Data Center growth cools and margins keep compressing, a base case if the current trajectory holds, and a bull case that needs Marvell to keep compounding Data Center at close to today's pace with real margin expansion. Today's price sits between my base and bull cases — the ten percent drop bought you a better entry, not a cheap stock. Everything genuinely working here — the Data Center growth, NVIDIA's own money, the low leverage — is mostly already in the price. What's not fully priced: three hundred two million dollars a year of accounting noise from one earnout, and a second segment that just went negative. My call is WATCH. My line is on the ruler, halfway between base and bull. That's the fundamentals — now let's go to the chart."
+  }
+}
