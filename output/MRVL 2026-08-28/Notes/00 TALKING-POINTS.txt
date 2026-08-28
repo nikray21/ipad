@@ -1,5 +1,5 @@
 Marvell Technology, Inc. (MRVL) — TALKING POINTS
-8 slides · short bullets per slide · read, glance, talk
+9 slides · short bullets per slide · read, glance, talk
 ========================================================================
 
 SLIDE 01 — It beat. It still fell.   (24s)
@@ -72,7 +72,20 @@ ON SCREEN: NVIDIA's stake is already worth 136% more than it paid.
 
 ------------------------------------------------------------------------
 
-SLIDE 07 — Cheaper than Broadcom. Growing slower too.   (22s)   [CAN CUT]
+SLIDE 07 — Seven sellers. Zero real buyers.   (32s)
+ON SCREEN: $48.1M sold. The only buying was a payroll-deduction plan.
+
+• One more thing, and it took the most digging of anything in this episode: every Form 4 Marvell's executives and directors have filed in the last sixteen months, re-parsed by hand because no single filing adds this up.
+• Seven people sold stock — the CEO, the COO, the Data Center president, the general counsel, and both the outgoing and incoming CFO — forty eight million dollars combined.
+• Most of it, about eighty percent, was on a pre-set trading plan scheduled months ahead, which is the fair, boring explanation for most insider selling.
+• But one sale wasn't on any plan: the brand new CFO, eight days into the job, sold shares with no 10b5-1 plan cited anywhere in the filing.
+• And here's the part that actually surprised me: in sixteen months, the only shares anyone bought were twenty seven thousand two hundred shares, picked up by four executives on the exact same day, at the exact same price — a routine paycheck stock-purchase plan, not a single person deciding this was a good time to buy.
+• Seven sellers.
+• Zero real buyers.
+
+------------------------------------------------------------------------
+
+SLIDE 08 — Cheaper than Broadcom. Growing slower too.   (22s)   [CAN CUT]
 ON SCREEN: 0.9× Broadcom's multiple, but growing 11 points slower.
 
 • So what are you paying for this?
@@ -83,7 +96,7 @@ ON SCREEN: 0.9× Broadcom's multiple, but growing 11 points slower.
 
 ------------------------------------------------------------------------
 
-SLIDE 08 — Real growth, taxed by its own accounting.   (30s)
+SLIDE 09 — Real growth, taxed by its own accounting.   (30s)
 ON SCREEN: My call: WATCH. Interesting at $210.59 or lower.
 
 • So here's the whole story on one ruler.

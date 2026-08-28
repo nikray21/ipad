@@ -1,9 +1,9 @@
 # Marvell Technology, Inc. (MRVL) — spoken script
 
-Built 2026-08-28T20:29:49+00:00 · price 216.79 as of Aug 28, 2026 4:29 PM ET
+Built 2026-08-28T21:09:19+00:00 · price 216.70 as of Aug 28, 2026 5:09 PM ET
 
-- **Full cut:** 8 slides, 3:38
-- **Core cut:** 3:16 — drop the 1 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
+- **Full cut:** 9 slides, 4:10
+- **Core cut:** 3:48 — drop the 1 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
 
 Keys: → next · ← back · T theme · N notes · H presenter HUD + timer · G grid · F fullscreen
 
@@ -75,11 +75,23 @@ Marvell paid $3.5B for a company called Celestial AI — more than half in stock
 
 Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell — it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.
 
-Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79 today — 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.
+Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.70 today — 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.
 
 ---
 
-## 07 — Cheaper than Broadcom. Growing slower too.   `22s`  `CUT FOR TIME`
+## 07 — Seven sellers. Zero real buyers.   `32s`
+
+> Shares sold vs. bought, by how recent the filing is.
+
+**On screen:** $48.1M sold. The only buying was a payroll-deduction plan.
+
+One more thing, and it took the most digging of anything in this episode: every Form 4 Marvell's executives and directors have filed in the last sixteen months, re-parsed by hand because no single filing adds this up. Seven people sold stock — the CEO, the COO, the Data Center president, the general counsel, and both the outgoing and incoming CFO — forty eight million dollars combined. Most of it, about eighty percent, was on a pre-set trading plan scheduled months ahead, which is the fair, boring explanation for most insider selling. But one sale wasn't on any plan: the brand new CFO, eight days into the job, sold shares with no 10b5-1 plan cited anywhere in the filing. And here's the part that actually surprised me: in sixteen months, the only shares anyone bought were twenty seven thousand two hundred shares, picked up by four executives on the exact same day, at the exact same price — a routine paycheck stock-purchase plan, not a single person deciding this was a good time to buy. Seven sellers. Zero real buyers. TARGET 32s.
+
+Recomputed from every Form 4 Marvell's executives filed over 16 months — no single filing adds this up. Seven people sold a combined $48.1M, led by the Data Center president, the CEO, and the COO. Most of it — 79% of the sale filings — was set up months in advance, not a same-day call. The exception: the brand-new CFO sold shares just eight days into the job, with no such plan on file. And the only buying in that whole window was one routine payroll-deduction purchase, not a person deciding to buy.
+
+---
+
+## 08 — Cheaper than Broadcom. Growing slower too.   `22s`  `CUT FOR TIME`
 
 > Market value against the latest quarter annualized, growth beside.
 
@@ -91,7 +103,7 @@ Same yardstick for everyone here: what the market pays for each dollar of a comp
 
 ---
 
-## 08 — Real growth, taxed by its own accounting.   `30s`
+## 09 — Real growth, taxed by its own accounting.   `30s`
 
 > My model’s range, against today’s price.
 

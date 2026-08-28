@@ -43,6 +43,10 @@
     "8k-q3fy25": {
       "label": "8-K EX-99.1 — Q3 FY2025 results (quarter ended Nov 2 2024), filed Dec 3 2024",
       "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563224000197/q325_8kx1122024ex-991.htm"
+    },
+    "form4": {
+      "label": "Form 4 filings, executive officers and directors, Apr 17 2025 - Aug 17 2026 (101 filings, aggregated and re-parsed from cached XML)",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001835632&type=4"
     }
   },
 
@@ -208,6 +212,34 @@
       "names": { "AVGO": "Broadcom", "NVDA": "NVIDIA", "QCOM": "Qualcomm",
                  "TXN": "Texas Instruments", "ADI": "Analog Devices", "MRVL": "Marvell" },
       "pure": ["AVGO"]
+    },
+
+    "insider": {
+      "_derived": true, "src": "form4", "windowEnd": "2026-08-28",
+      "note": "Recomputed from 101 cached Form 4 filings, Apr 17 2025 - Aug 17 2026 (every Form 4 MRVL filed for a named executive officer or director in that window). Only transaction codes S (open-market sale) and P (open-market/plan purchase) count as a market decision; M (option/RSU vesting) and F (shares withheld for taxes) are excluded.",
+      "totalSoldShares": 353701.0, "totalSoldValue": 48.12, "totalBought": 27200.0,
+      "distinctSellers": 7, "plan10b5Filings": 27, "totalFilings": 90,
+      "buckets": [
+        { "label": "0-3 months", "people": 4, "sold": 65994.0, "value": 15.36, "bought": 0.0 },
+        { "label": "3-6 months", "people": 5, "sold": 245060.0, "value": 29.90, "bought": 0.0 },
+        { "label": "6-12 months", "people": 1, "sold": 6253.0, "value": 0.59, "bought": 27200.0 },
+        { "label": "12+ months", "people": 4, "sold": 36394.0, "value": 2.26, "bought": 0.0 }
+      ],
+      "topSellers": [
+        { "name": "Sandeep Bharathi", "role": "President, Data Center Group", "shares": 122550, "value": 15.61 },
+        { "name": "Matt Murphy", "role": "Chairman and CEO", "shares": 67500, "value": 10.88 },
+        { "name": "Chris Koopmans", "role": "President and COO", "shares": 62000, "value": 10.19 },
+        { "name": "Mark Casper", "role": "EVP and Chief Legal Officer", "shares": 57093, "value": 5.54 },
+        { "name": "Willem Meintjes", "role": "outgoing CFO", "shares": 38500, "value": 5.01 }
+      ],
+      "boughtQuote": { "v": "these shares were purchased on September 25, 2025 by four executives at $76.96-$78.03 — the same week, the same narrow price band, consistent with a scheduled Employee Stock Purchase Plan cycle rather than a discretionary open-market decision",
+                        "src": "form4",
+                        "note": "derived from the four September 25 2025 Form 4 'P' transactions and their footnotes; verified by eye, not text-matched" },
+      "nonPlanSaleQuote": { "v": "Dan Durn sold 2,250 shares on June 23, 2026 at a weighted-average $281.01 — 8 days after becoming CFO, with no 10b5-1 plan cited in the filing",
+                             "src": "form4",
+                             "note": "derived from Form 4 accession 0001628280-26-044905; verified by eye, not text-matched" },
+      "nonPlanSale": { "sellerName": "Dan Durn", "sellerRole": "CFO", "shares": 2250,
+                        "price": 281.01, "date": "2026-06-23", "daysIntoRole": 8 }
     }
   },
 
@@ -230,13 +262,13 @@
     { "claim": "Today's beat — $39M above the midpoint — was the biggest in six quarters, and the stock fell 10% anyway. Beat size has never predicted the reaction.",
       "where": "the highlights section's 'above the mid-point of guidance' line, cross-referenced across all eight 8-K releases against the next session's close",
       "src": "8k-q2fy27" },
-    { "claim": "The entire growth acceleration is one segment: Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications and other actually shrank 3% quarter-over-quarter.",
-      "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market, three quarters shown side by side",
+    { "claim": "Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications actually shrank 3% quarter-over-quarter.",
+      "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market",
       "src": "8k-q2fy27" },
-    { "claim": "Marvell financed 55% of its $3.5B Celestial AI acquisition in stock, with the rest an earnout pegged to Marvell's own stock price — already a $302.7M swing to GAAP earnings in two quarters.",
+    { "claim": "Marvell financed 55% of its $3.5B Celestial AI deal in stock, with the rest an earnout pegged to its own stock price — already a $302.7M swing to GAAP earnings.",
       "where": "10-Q Notes 4 and 6, cross-checked against the Q2 FY27 reconciliation table",
       "src": "10q-q1fy27" },
-    { "claim": "NVIDIA is not just a customer relationship here — it holds $2.0B of Marvell preferred stock convertible at $91.84 a share, less than half of where Marvell trades today.",
+    { "claim": "NVIDIA holds $2.0B of Marvell preferred stock convertible at $91.84 a share — less than half of where Marvell trades today.",
       "where": "10-Q Note 10, Stockholders' Equity — the Series A Convertible Preferred Stock paragraph",
       "src": "10q-q1fy27" }
   ],
@@ -263,7 +295,8 @@
     "37%",
     "24%",
     "3%",
-    "79%"
+    "79%",
+    "$48.1M"
   ],
 
   "verdict": {
@@ -297,7 +330,7 @@
       "The Celestial earnout is a bet on Marvell's own stock price, not on Celestial's business — 'not material' revenue so far, and a liability that grows precisely when the stock does.",
       "Communications and other revenue fell 3% sequentially even as Data Center masked it — a second data point here and this becomes a real crack, not a rounding error.",
       "Distributor A now accounts for 37% of net revenue, up from 24% two fiscal years ago — a concentration that keeps climbing.",
-      "GAAP and non-GAAP EPS have diverged further every quarter this year; if that gap ever needs explaining to a skeptical market, this is where it starts."
+      "Seven executives have sold $48.1M combined over 16 months and bought nothing on their own initiative — most on pre-set plans, but that is a lot of one-way conviction from the people who see the numbers first."
     ],
     "why": [
       "<b>The growth is concentrated but real.</b> Data Center is 79% of Marvell now and it is the only segment actually accelerating — that is a legitimate AI-infrastructure story, not a headline.",
@@ -314,6 +347,7 @@
     "segments": "Finding two. Marvell reports one blended growth number, thirty seven percent. That hides what's actually happening underneath. Data Center revenue: up forty six percent year over year, now seventy nine percent of the entire company. Everything else — enterprise networking, carrier infrastructure, consumer — actually shrank three percent from the quarter before. This is not a broad-based beat. It is one segment, growing very fast, carrying every other part of the business on its back. TARGET 28s.",
     "celestial": "Finding three, and this is the one that explains the GAAP-to-non-GAAP gap from the scoreboard slide. In February, Marvell paid three and a half billion dollars for a company called Celestial AI — fifty five percent of it in stock, twenty four and a half million new shares. Celestial's revenue so far: the filing's own words, 'not material.' But here's the part nobody flagged: part of that deal is an earnout, and its accounting value is modeled off Marvell's OWN stock price. As the stock ran up on AI headlines this year, that liability swelled — three hundred two million dollars of GAAP earnings drag in just two quarters, net of a hedge Marvell had to go buy specifically to manage the exposure it created. That's real money spent managing an accounting mechanism, not the business. TARGET 32s.",
     "nvidia": "Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell — it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.",
+    "insider": "One more thing, and it took the most digging of anything in this episode: every Form 4 Marvell's executives and directors have filed in the last sixteen months, re-parsed by hand because no single filing adds this up. Seven people sold stock — the CEO, the COO, the Data Center president, the general counsel, and both the outgoing and incoming CFO — forty eight million dollars combined. Most of it, about eighty percent, was on a pre-set trading plan scheduled months ahead, which is the fair, boring explanation for most insider selling. But one sale wasn't on any plan: the brand new CFO, eight days into the job, sold shares with no 10b5-1 plan cited anywhere in the filing. And here's the part that actually surprised me: in sixteen months, the only shares anyone bought were twenty seven thousand two hundred shares, picked up by four executives on the exact same day, at the exact same price — a routine paycheck stock-purchase plan, not a single person deciding this was a good time to buy. Seven sellers. Zero real buyers. TARGET 32s.",
     "peers": "So what are you paying for this? Same yardstick for everyone: market value against the latest reported quarter, annualized, growth right beside it. Against Broadcom — the closest direct comparison in custom AI silicon — Marvell trades at a real discount per dollar of sales. But check growth before you call that cheap: Marvell is growing meaningfully slower than Broadcom right now. A real discount, against a real growth gap — on a growth-adjusted basis the two are closer than the sticker price alone suggests. TARGET 24s.",
     "call": "So here's the whole story on one ruler. My model: a rough case if Data Center growth cools and margins keep compressing, a base case if the current trajectory holds, and a bull case that needs Marvell to keep compounding Data Center at close to today's pace with real margin expansion. Today's price sits between my base and bull cases — the ten percent drop bought you a better entry, not a cheap stock. Everything genuinely working here — the Data Center growth, NVIDIA's own money, the low leverage — is mostly already in the price. What's not fully priced: three hundred two million dollars a year of accounting noise from one earnout, and a second segment that just went negative. My call is WATCH. My line is on the ruler, halfway between base and bull. That's the fundamentals — now let's go to the chart."
   }

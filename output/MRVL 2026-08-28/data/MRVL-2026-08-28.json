@@ -4,11 +4,11 @@
   "company": "Marvell Technology, Inc.",
   "exchange": "NASDAQ-GS",
   "sector": "Technology",
-  "price": 216.79,
-  "changePct": -10.21,
-  "asOf": "Aug 28, 2026 4:29 PM ET",
+  "price": 216.6987,
+  "changePct": -10.25,
+  "asOf": "Aug 28, 2026 5:09 PM ET",
   "quoteSource": "Nasdaq real-time",
-  "marketCap": 189647.892,
+  "marketCap": 189568.02276,
   "sharesNow": 874.8,
   "sharesThen": 865.7,
   "sharesLabelThen": "Q4'24",
@@ -85,7 +85,7 @@
    {
     "period": "Jan 2027",
     "eps": 3.07,
-    "pe": 70.6156351791531,
+    "pe": 70.58589576547232,
     "low": 2.82,
     "high": 3.23,
     "analysts": 13
@@ -93,7 +93,7 @@
    {
     "period": "Jan 2028",
     "eps": 5.11,
-    "pe": 42.42465753424657,
+    "pe": 42.406790606653615,
     "low": 4.66,
     "high": 5.75,
     "analysts": 12
@@ -101,7 +101,7 @@
    {
     "period": "Jan 2029",
     "eps": 7.25,
-    "pe": 29.90206896551724,
+    "pe": 29.889475862068966,
     "low": 6.63,
     "high": 8.07,
     "analysts": 4
@@ -1137,7 +1137,7 @@
    "volX": null
   },
   "runUp": 436.9140824482509,
-  "drawdown": -34.282164183605765,
+  "drawdown": -34.309840914128564,
   "peakToTrough": {
    "pct": -48.36140767986353,
    "peak": 316.42999267578125,
@@ -1248,7 +1248,7 @@
     "kind": "none",
     "reactDate": "2026-08-28",
     "move": -10.283703518280563,
-    "volX": 2.0491420463358985
+    "volX": 2.0751063510015193
    }
   ],
   "earningsStats": {
@@ -2315,51 +2315,51 @@
   "tapeDays": 252,
   "quartersAvailable": 8,
   "street": {
-   "strongBuy": 21,
+   "strongBuy": 22,
    "buy": 0,
    "hold": 5,
    "sell": 0,
-   "analysts": 26,
+   "analysts": 27,
    "rec": "Buy",
-   "target": 300.43,
+   "target": 299.17,
    "targetLow": 220.0,
    "targetHigh": 400.0,
-   "upside": 38.58111536509987,
+   "upside": 38.05805018673394,
    "nasdaqTarget": 275.0
   },
   "provenance": {
    "quote": {
-    "fetchedAt": 1787948977.986,
+    "fetchedAt": 1787951347.595,
     "ageS": 0.0,
     "source": "Nasdaq real-time"
    },
    "profile": {
-    "fetchedAt": 1787948983.587,
+    "fetchedAt": 1787951353.114,
     "ageS": 0.0,
     "source": "Nasdaq quote summary"
    },
    "fundamentals": {
-    "fetchedAt": 1787948984.393,
+    "fetchedAt": 1787951353.832,
     "ageS": 0.0,
     "source": "SEC EDGAR XBRL companyfacts"
    },
    "street": {
-    "fetchedAt": 1787948986.86,
+    "fetchedAt": 1787951356.34,
     "ageS": 0.0,
     "source": "Nasdaq analyst consensus"
    },
    "estimates": {
-    "fetchedAt": 1787948989.072,
+    "fetchedAt": 1787951359.593,
     "ageS": 0.0,
     "source": "Nasdaq analyst estimates"
    },
    "history": {
-    "fetchedAt": 1787948977.986,
-    "ageS": 11.1,
+    "fetchedAt": 1787951347.595,
+    "ageS": 12.0,
     "source": "Yahoo daily OHLCV"
    }
   },
-  "builtAt": "2026-08-28T20:29:49+00:00",
+  "builtAt": "2026-08-28T21:09:19+00:00",
   "reactions": [
    {
     "q": "Q3'25",
@@ -2458,8 +2458,8 @@
    "conversionPrice": 91.84,
    "maxCommonShares": 21.8,
    "purchaseDate": "March 31, 2026",
-   "impliedValueToday": 4726.022,
-   "gainPct": 136.05182926829266
+   "impliedValueToday": 4724.031660000001,
+   "gainPct": 135.95241724738676
   },
   "fair": {
    "bear": 42.44252654705665,
@@ -2478,7 +2478,7 @@
     },
     {
      "sym": "MRVL",
-     "ps": 17.3080615485708,
+     "ps": 17.300772346949948,
      "growth": 36.54852699267237,
      "lastQ": "Q2'27"
     },
@@ -2512,18 +2512,97 @@
     }
    ],
    "avgPs": 11.886394892192746,
-   "selfPs": 17.3080615485708,
+   "selfPs": 17.300772346949948,
    "selfGrowth": 36.54852699267237,
-   "psPremium": 1.4561237200641155,
+   "psPremium": 1.455510481004925,
    "avgPurePs": 19.77000046446117,
-   "psRatioPure": 0.8754709732902645,
+   "psRatioPure": 0.8751022731663592,
    "avgPureGrowth": 47.87390029325513,
    "avgGrowth": 42.43285269213515
   },
   "revYoY": 36.54852699267237,
+  "insider": {
+   "totalSoldShares": 353701.0,
+   "totalSoldValue": 48.12,
+   "totalBought": 27200.0,
+   "distinctSellers": 7,
+   "buckets": [
+    {
+     "label": "0-3 months",
+     "people": 4,
+     "sold": 65994.0,
+     "value": 15.36,
+     "bought": 0.0
+    },
+    {
+     "label": "3-6 months",
+     "people": 5,
+     "sold": 245060.0,
+     "value": 29.9,
+     "bought": 0.0
+    },
+    {
+     "label": "6-12 months",
+     "people": 1,
+     "sold": 6253.0,
+     "value": 0.59,
+     "bought": 27200.0
+    },
+    {
+     "label": "12+ months",
+     "people": 4,
+     "sold": 36394.0,
+     "value": 2.26,
+     "bought": 0.0
+    }
+   ],
+   "topSellers": [
+    {
+     "name": "Sandeep Bharathi",
+     "role": "President, Data Center Group",
+     "shares": 122550,
+     "value": 15.61
+    },
+    {
+     "name": "Matt Murphy",
+     "role": "Chairman and CEO",
+     "shares": 67500,
+     "value": 10.88
+    },
+    {
+     "name": "Chris Koopmans",
+     "role": "President and COO",
+     "shares": 62000,
+     "value": 10.19
+    },
+    {
+     "name": "Mark Casper",
+     "role": "EVP and Chief Legal Officer",
+     "shares": 57093,
+     "value": 5.54
+    },
+    {
+     "name": "Willem Meintjes",
+     "role": "outgoing CFO",
+     "shares": 38500,
+     "value": 5.01
+    }
+   ],
+   "planSaleFilings": 27,
+   "saleFilings": 34,
+   "planSalePct": 79.41176470588235,
+   "nonPlanSale": {
+    "sellerName": "Dan Durn",
+    "sellerRole": "CFO",
+    "shares": 2250,
+    "price": 281.01,
+    "date": "2026-06-23",
+    "daysIntoRole": 8
+   }
+  },
   "netDebt": 1030.0999999999995,
   "totalDebt": 4962.9,
-  "ev": 190677.992,
+  "ev": 190598.12276,
   "ttmRevFiled": 9450.3,
   "wd": {
    "todayMove": -10.283703518280563,
@@ -2531,7 +2610,7 @@
    "dcShareLast": 79.27207680794362,
    "stockPct": 54.53157686436365,
    "sixMonthDrag": 302.7,
-   "nvGainPct": 136.05182926829266,
+   "nvGainPct": 135.95241724738676,
    "investorDayDate": "October 6, 2026",
    "revYoY": 36.54852699267237
   }
@@ -2539,11 +2618,11 @@
  "payload": {
   "symbol": "MRVL",
   "company": "Marvell Technology, Inc.",
-  "price": 216.79,
+  "price": 216.6987,
   "sharesOutstanding": 874.8,
-  "stamp": "MRVL \u00b7 216.79 as of Aug 28, 2026 4:29 PM ET \u00b7 built 2026-08-28 20:29",
-  "totalTarget": 218,
-  "coreTarget": 196,
+  "stamp": "MRVL \u00b7 216.70 as of Aug 28, 2026 5:09 PM ET \u00b7 built 2026-08-28 21:09",
+  "totalTarget": 250,
+  "coreTarget": 228,
   "optionalCount": 1,
   "fairValue": {
    "horizonYears": 5,
@@ -2591,17 +2670,17 @@
       "src": "8k-q2fy27"
      },
      {
-      "claim": "The entire growth acceleration is one segment: Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications and other actually shrank 3% quarter-over-quarter.",
-      "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market, three quarters shown side by side",
+      "claim": "Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications actually shrank 3% quarter-over-quarter.",
+      "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market",
       "src": "8k-q2fy27"
      },
      {
-      "claim": "Marvell financed 55% of its $3.5B Celestial AI acquisition in stock, with the rest an earnout pegged to Marvell's own stock price \u2014 already a $302.7M swing to GAAP earnings in two quarters.",
+      "claim": "Marvell financed 55% of its $3.5B Celestial AI deal in stock, with the rest an earnout pegged to its own stock price \u2014 already a $302.7M swing to GAAP earnings.",
       "where": "10-Q Notes 4 and 6, cross-checked against the Q2 FY27 reconciliation table",
       "src": "10q-q1fy27"
      },
      {
-      "claim": "NVIDIA is not just a customer relationship here \u2014 it holds $2.0B of Marvell preferred stock convertible at $91.84 a share, less than half of where Marvell trades today.",
+      "claim": "NVIDIA holds $2.0B of Marvell preferred stock convertible at $91.84 a share \u2014 less than half of where Marvell trades today.",
       "where": "10-Q Note 10, Stockholders' Equity \u2014 the Series A Convertible Preferred Stock paragraph",
       "src": "10q-q1fy27"
      }
@@ -2850,11 +2929,61 @@
     "value": "$91.84",
     "tone": "warn",
     "caption": "the price NVIDIA can convert its $2.0B Marvell preferred stake into common shares at \u2014 less than half of where Marvell trades today.",
-    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.0B</div><div class=\"tl\">NVIDIA paid, March 31 2026</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">21.8M</div><div class=\"tl\">Common shares if converted</div></div><div class=\"tile good\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$216.79</div><div class=\"tl\">Marvell&rsquo;s price today</div></div></div>",
+    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.0B</div><div class=\"tl\">NVIDIA paid, March 31 2026</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">21.8M</div><div class=\"tl\">Common shares if converted</div></div><div class=\"tile good\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$216.70</div><div class=\"tl\">Marvell&rsquo;s price today</div></div></div>",
     "punch": "NVIDIA's stake is already worth <b>136% more</b> than it paid.",
-    "why": "Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79 today \u2014 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.",
+    "why": "Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.70 today \u2014 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.",
     "notes": "Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell \u2014 it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.",
     "target": 26
+   },
+   {
+    "type": "chart",
+    "kicker": "What the insiders are doing",
+    "src": "101 Form 4 filings, re-parsed from cached SEC XML",
+    "head": "Seven sellers. Zero real buyers.",
+    "sub": "Shares sold vs. bought, by how recent the filing is.",
+    "chart": {
+     "kind": "insider",
+     "height": 420,
+     "rows": [
+      {
+       "label": "0-3 months",
+       "sold": 65994.0,
+       "bought": 0.0,
+       "soldLab": "66.0K",
+       "boughtLab": "none",
+       "sub": "4 sellers"
+      },
+      {
+       "label": "3-6 months",
+       "sold": 245060.0,
+       "bought": 0.0,
+       "soldLab": "245K",
+       "boughtLab": "none",
+       "sub": "5 sellers"
+      },
+      {
+       "label": "6-12 months",
+       "sold": 6253.0,
+       "bought": 27200.0,
+       "soldLab": "6.3K",
+       "boughtLab": "27.2K",
+       "sub": "1 seller"
+      },
+      {
+       "label": "12+ months",
+       "sold": 36394.0,
+       "bought": 0.0,
+       "soldLab": "36.4K",
+       "boughtLab": "none",
+       "sub": "4 sellers"
+      }
+     ]
+    },
+    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:20px\"><div class=\"tile bad\" style=\"animation-delay:700ms\"><div class=\"tv num\">$48.1M</div><div class=\"tl\">Sold, seven executives</div><div class=\"tn\">across the last 16 months</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">79%</div><div class=\"tl\">Of sale filings, on a 10b5-1 plan</div><div class=\"tn\">27 of 34 \u2014 set months ahead</div></div><div class=\"tile warn\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$281.01</div><div class=\"tl\">One sale, no 10b5-1 cited</div><div class=\"tn\">the new CFO, 8 days into the job</div></div></div>",
+    "punch": "<b>$48.1M</b> sold. The only buying was a payroll-deduction plan.",
+    "why": "Recomputed from every Form 4 Marvell's executives filed over 16 months \u2014 no single filing adds this up. Seven people sold a combined $48.1M, led by the Data Center president, the CEO, and the COO. Most of it \u2014 79% of the sale filings \u2014 was set up months in advance, not a same-day call. The exception: the brand-new CFO sold shares just eight days into the job, with no such plan on file. And the only buying in that whole window was one routine payroll-deduction purchase, not a person deciding to buy.",
+    "notes": "One more thing, and it took the most digging of anything in this episode: every Form 4 Marvell's executives and directors have filed in the last sixteen months, re-parsed by hand because no single filing adds this up. Seven people sold stock \u2014 the CEO, the COO, the Data Center president, the general counsel, and both the outgoing and incoming CFO \u2014 forty eight million dollars combined. Most of it, about eighty percent, was on a pre-set trading plan scheduled months ahead, which is the fair, boring explanation for most insider selling. But one sale wasn't on any plan: the brand new CFO, eight days into the job, sold shares with no 10b5-1 plan cited anywhere in the filing. And here's the part that actually surprised me: in sixteen months, the only shares anyone bought were twenty seven thousand two hundred shares, picked up by four executives on the exact same day, at the exact same price \u2014 a routine paycheck stock-purchase plan, not a single person deciding this was a good time to buy. Seven sellers. Zero real buyers. TARGET 32s.",
+    "target": 32
    },
    {
     "type": "chart",
@@ -2878,7 +3007,7 @@
       },
       {
        "name": "Marvell",
-       "v": 17.3080615485708,
+       "v": 17.300772346949948,
        "lab": "17.3\u00d7",
        "right": "+37%",
        "here": true
@@ -2929,8 +3058,8 @@
      "kind": "fvband",
      "height": 430,
      "band": 0.41778527874339705,
-     "price": 216.79,
-     "priceLab": "$216.79",
+     "price": 216.6987,
+     "priceLab": "$216.70",
      "fairValue": 210.59275389207886,
      "fairLab": "$210.59",
      "fairName": "where I\u2019d get interested",
@@ -2997,6 +3126,10 @@
    "8k-q3fy25": {
     "label": "8-K EX-99.1 \u2014 Q3 FY2025 results (quarter ended Nov 2 2024), filed Dec 3 2024",
     "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563224000197/q325_8kx1122024ex-991.htm"
+   },
+   "form4": {
+    "label": "Form 4 filings, executive officers and directors, Apr 17 2025 - Aug 17 2026 (101 filings, aggregated and re-parsed from cached XML)",
+    "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001835632&type=4"
    }
   },
   "filings": {
@@ -3616,6 +3749,98 @@
     "pure": [
      "AVGO"
     ]
+   },
+   "insider": {
+    "_derived": true,
+    "src": "form4",
+    "windowEnd": "2026-08-28",
+    "note": "Recomputed from 101 cached Form 4 filings, Apr 17 2025 - Aug 17 2026 (every Form 4 MRVL filed for a named executive officer or director in that window). Only transaction codes S (open-market sale) and P (open-market/plan purchase) count as a market decision; M (option/RSU vesting) and F (shares withheld for taxes) are excluded.",
+    "totalSoldShares": 353701.0,
+    "totalSoldValue": 48.12,
+    "totalBought": 27200.0,
+    "distinctSellers": 7,
+    "plan10b5Filings": 27,
+    "totalFilings": 90,
+    "buckets": [
+     {
+      "label": "0-3 months",
+      "people": 4,
+      "sold": 65994.0,
+      "value": 15.36,
+      "bought": 0.0
+     },
+     {
+      "label": "3-6 months",
+      "people": 5,
+      "sold": 245060.0,
+      "value": 29.9,
+      "bought": 0.0
+     },
+     {
+      "label": "6-12 months",
+      "people": 1,
+      "sold": 6253.0,
+      "value": 0.59,
+      "bought": 27200.0
+     },
+     {
+      "label": "12+ months",
+      "people": 4,
+      "sold": 36394.0,
+      "value": 2.26,
+      "bought": 0.0
+     }
+    ],
+    "topSellers": [
+     {
+      "name": "Sandeep Bharathi",
+      "role": "President, Data Center Group",
+      "shares": 122550,
+      "value": 15.61
+     },
+     {
+      "name": "Matt Murphy",
+      "role": "Chairman and CEO",
+      "shares": 67500,
+      "value": 10.88
+     },
+     {
+      "name": "Chris Koopmans",
+      "role": "President and COO",
+      "shares": 62000,
+      "value": 10.19
+     },
+     {
+      "name": "Mark Casper",
+      "role": "EVP and Chief Legal Officer",
+      "shares": 57093,
+      "value": 5.54
+     },
+     {
+      "name": "Willem Meintjes",
+      "role": "outgoing CFO",
+      "shares": 38500,
+      "value": 5.01
+     }
+    ],
+    "boughtQuote": {
+     "v": "these shares were purchased on September 25, 2025 by four executives at $76.96-$78.03 \u2014 the same week, the same narrow price band, consistent with a scheduled Employee Stock Purchase Plan cycle rather than a discretionary open-market decision",
+     "src": "form4",
+     "note": "derived from the four September 25 2025 Form 4 'P' transactions and their footnotes; verified by eye, not text-matched"
+    },
+    "nonPlanSaleQuote": {
+     "v": "Dan Durn sold 2,250 shares on June 23, 2026 at a weighted-average $281.01 \u2014 8 days after becoming CFO, with no 10b5-1 plan cited in the filing",
+     "src": "form4",
+     "note": "derived from Form 4 accession 0001628280-26-044905; verified by eye, not text-matched"
+    },
+    "nonPlanSale": {
+     "sellerName": "Dan Durn",
+     "sellerRole": "CFO",
+     "shares": 2250,
+     "price": 281.01,
+     "date": "2026-06-23",
+     "daysIntoRole": 8
+    }
    }
   },
   "fairValue": {
@@ -3657,17 +3882,17 @@
     "src": "8k-q2fy27"
    },
    {
-    "claim": "The entire growth acceleration is one segment: Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications and other actually shrank 3% quarter-over-quarter.",
-    "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market, three quarters shown side by side",
+    "claim": "Data Center revenue grew 46% year-over-year and now makes up 79% of total revenue, while Communications actually shrank 3% quarter-over-quarter.",
+    "where": "8-K EX-99.1, the 'Quarterly Revenue Trend' table by end market",
     "src": "8k-q2fy27"
    },
    {
-    "claim": "Marvell financed 55% of its $3.5B Celestial AI acquisition in stock, with the rest an earnout pegged to Marvell's own stock price \u2014 already a $302.7M swing to GAAP earnings in two quarters.",
+    "claim": "Marvell financed 55% of its $3.5B Celestial AI deal in stock, with the rest an earnout pegged to its own stock price \u2014 already a $302.7M swing to GAAP earnings.",
     "where": "10-Q Notes 4 and 6, cross-checked against the Q2 FY27 reconciliation table",
     "src": "10q-q1fy27"
    },
    {
-    "claim": "NVIDIA is not just a customer relationship here \u2014 it holds $2.0B of Marvell preferred stock convertible at $91.84 a share, less than half of where Marvell trades today.",
+    "claim": "NVIDIA holds $2.0B of Marvell preferred stock convertible at $91.84 a share \u2014 less than half of where Marvell trades today.",
     "where": "10-Q Note 10, Stockholders' Equity \u2014 the Series A Convertible Preferred Stock paragraph",
     "src": "10q-q1fy27"
    }
@@ -3694,7 +3919,8 @@
    "37%",
    "24%",
    "3%",
-   "79%"
+   "79%",
+   "$48.1M"
   ],
   "verdict": {
    "call": "WATCH",
@@ -3781,12 +4007,12 @@
     "The Celestial earnout is a bet on Marvell's own stock price, not on Celestial's business \u2014 'not material' revenue so far, and a liability that grows precisely when the stock does.",
     "Communications and other revenue fell 3% sequentially even as Data Center masked it \u2014 a second data point here and this becomes a real crack, not a rounding error.",
     "Distributor A now accounts for 37% of net revenue, up from 24% two fiscal years ago \u2014 a concentration that keeps climbing.",
-    "GAAP and non-GAAP EPS have diverged further every quarter this year; if that gap ever needs explaining to a skeptical market, this is where it starts."
+    "Seven executives have sold $48.1M combined over 16 months and bought nothing on their own initiative \u2014 most on pre-set plans, but that is a lot of one-way conviction from the people who see the numbers first."
    ],
    "why": [
     "<b>The growth is concentrated but real.</b> Data Center is 79% of Marvell now and it is the only segment actually accelerating \u2014 that is a legitimate AI-infrastructure story, not a headline.",
     "<b>The earnings quality has a self-inflicted wound.</b> A $3.5B acquisition structured with a stock-price-linked earnout has already cost $302.7M of GAAP earnings in two quarters \u2014 money spent managing an accounting exposure the company created by how it wrote the deal.",
-    "<b>The price already needs a lot to go right.</b> At $216.79 the stock sits between my base and bull cases \u2014 today's drop bought you a slightly better entry, not a cheap one.",
+    "<b>The price already needs a lot to go right.</b> At $216.70 the stock sits between my base and bull cases \u2014 today's drop bought you a slightly better entry, not a cheap one.",
     "<b>A decent price for me: $210.59 or lower.</b> That is roughly the midpoint of a model that already assumes Data Center keeps compounding \u2014 near it or below, the odds start working for you."
    ]
   },
@@ -3797,6 +4023,7 @@
    "segments": "Finding two. Marvell reports one blended growth number, thirty seven percent. That hides what's actually happening underneath. Data Center revenue: up forty six percent year over year, now seventy nine percent of the entire company. Everything else \u2014 enterprise networking, carrier infrastructure, consumer \u2014 actually shrank three percent from the quarter before. This is not a broad-based beat. It is one segment, growing very fast, carrying every other part of the business on its back. TARGET 28s.",
    "celestial": "Finding three, and this is the one that explains the GAAP-to-non-GAAP gap from the scoreboard slide. In February, Marvell paid three and a half billion dollars for a company called Celestial AI \u2014 fifty five percent of it in stock, twenty four and a half million new shares. Celestial's revenue so far: the filing's own words, 'not material.' But here's the part nobody flagged: part of that deal is an earnout, and its accounting value is modeled off Marvell's OWN stock price. As the stock ran up on AI headlines this year, that liability swelled \u2014 three hundred two million dollars of GAAP earnings drag in just two quarters, net of a hedge Marvell had to go buy specifically to manage the exposure it created. That's real money spent managing an accounting mechanism, not the business. TARGET 32s.",
    "nvidia": "Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell \u2014 it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.",
+   "insider": "One more thing, and it took the most digging of anything in this episode: every Form 4 Marvell's executives and directors have filed in the last sixteen months, re-parsed by hand because no single filing adds this up. Seven people sold stock \u2014 the CEO, the COO, the Data Center president, the general counsel, and both the outgoing and incoming CFO \u2014 forty eight million dollars combined. Most of it, about eighty percent, was on a pre-set trading plan scheduled months ahead, which is the fair, boring explanation for most insider selling. But one sale wasn't on any plan: the brand new CFO, eight days into the job, sold shares with no 10b5-1 plan cited anywhere in the filing. And here's the part that actually surprised me: in sixteen months, the only shares anyone bought were twenty seven thousand two hundred shares, picked up by four executives on the exact same day, at the exact same price \u2014 a routine paycheck stock-purchase plan, not a single person deciding this was a good time to buy. Seven sellers. Zero real buyers. TARGET 32s.",
    "peers": "So what are you paying for this? Same yardstick for everyone: market value against the latest reported quarter, annualized, growth right beside it. Against Broadcom \u2014 the closest direct comparison in custom AI silicon \u2014 Marvell trades at a real discount per dollar of sales. But check growth before you call that cheap: Marvell is growing meaningfully slower than Broadcom right now. A real discount, against a real growth gap \u2014 on a growth-adjusted basis the two are closer than the sticker price alone suggests. TARGET 24s.",
    "call": "So here's the whole story on one ruler. My model: a rough case if Data Center growth cools and margins keep compressing, a base case if the current trajectory holds, and a bull case that needs Marvell to keep compounding Data Center at close to today's pace with real margin expansion. Today's price sits between my base and bull cases \u2014 the ten percent drop bought you a better entry, not a cheap stock. Everything genuinely working here \u2014 the Data Center growth, NVIDIA's own money, the low leverage \u2014 is mostly already in the price. What's not fully priced: three hundred two million dollars a year of accounting noise from one earnout, and a second segment that just went negative. My call is WATCH. My line is on the ruler, halfway between base and bull. That's the fundamentals \u2014 now let's go to the chart."
   }

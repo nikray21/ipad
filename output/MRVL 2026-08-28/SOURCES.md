@@ -1,6 +1,6 @@
 # Marvell Technology, Inc. (MRVL) — where every number came from
 
-Deck built 2026-08-28T20:29:49+00:00.
+Deck built 2026-08-28T21:09:19+00:00.
 
 Two checks stand behind this file:
 
@@ -29,17 +29,19 @@ Two checks stand behind this file:
   https://www.sec.gov/Archives/edgar/data/1835632/000183563225000051/q425_8kx212025ex-991.htm
 - **8k-q3fy25** — 8-K EX-99.1 — Q3 FY2025 results (quarter ended Nov 2 2024), filed Dec 3 2024  
   https://www.sec.gov/Archives/edgar/data/1835632/000183563224000197/q325_8kx1122024ex-991.htm
+- **form4** — Form 4 filings, executive officers and directors, Apr 17 2025 - Aug 17 2026 (101 filings, aggregated and re-parsed from cached XML)  
+  https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001835632&type=4
 
 ## Live Terminal API
 
 | Route | Source | Fetched | Age at build |
 |---|---|---|---|
-| `/api/quote/MRVL` | Nasdaq real-time | 2026-08-28 20:29:37 | 0s |
-| `/api/profile/MRVL` | Nasdaq quote summary | 2026-08-28 20:29:43 | 0s |
-| `/api/fundamentals/MRVL` | SEC EDGAR XBRL companyfacts | 2026-08-28 20:29:44 | 0s |
-| `/api/street/MRVL` | Nasdaq analyst consensus | 2026-08-28 20:29:46 | 0s |
-| `/api/estimates/MRVL` | Nasdaq analyst estimates | 2026-08-28 20:29:49 | 0s |
-| `/api/history/MRVL` | Yahoo daily OHLCV | 2026-08-28 20:29:37 | 11s |
+| `/api/quote/MRVL` | Nasdaq real-time | 2026-08-28 21:09:07 | 0s |
+| `/api/profile/MRVL` | Nasdaq quote summary | 2026-08-28 21:09:13 | 0s |
+| `/api/fundamentals/MRVL` | SEC EDGAR XBRL companyfacts | 2026-08-28 21:09:13 | 0s |
+| `/api/street/MRVL` | Nasdaq analyst consensus | 2026-08-28 21:09:16 | 0s |
+| `/api/estimates/MRVL` | Nasdaq analyst estimates | 2026-08-28 21:09:19 | 0s |
+| `/api/history/MRVL` | Yahoo daily OHLCV | 2026-08-28 21:09:07 | 12s |
 
 ## Deliberately not used
 
@@ -48,6 +50,6 @@ Two checks stand behind this file:
 
 ## Flagged disagreements
 
-- Nasdaq's one-year target (`/api/profile`) is $275.0, while the analyst consensus mean (`/api/street`) is $300.43. The deck shows the consensus mean and names its source.
+- Nasdaq's one-year target (`/api/profile`) is $275.0, while the analyst consensus mean (`/api/street`) is $299.17. The deck shows the consensus mean and names its source.
 - `/api/fundamentals` reports $181M of Q2 repurchases; the 8-K reports $348M / 2.238M shares. The deck uses the filing figure. The XBRL gap is an open item.
-- Coverage is thin: 26 analysts rate the stock, and the 2028 consensus rests on 2 estimates. The deck says so on the valuation slide.
+- Coverage is thin: 27 analysts rate the stock, and the 2028 consensus rests on 2 estimates. The deck says so on the valuation slide.

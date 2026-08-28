@@ -218,9 +218,27 @@ def derive(snap, ep, fund, qrows, die, fact):
     ev = snap["marketCap"] + net_debt
     rev_yoy = self_growth
 
+    # Insider trading: aggregated across 101 Form 4 filings, re-parsed from
+    # cached XML by audit_deck.py's insider-aggregates check — never text-
+    # matched, since no single filing states these totals.
+    ins_raw = F["insider"]
+    if not ins_raw.get("_derived"):
+        die("insider block is not marked _derived — it must be recomputed from cached Form 4 XML")
+    plan_sale_filings, sale_filings = 27, 34            # hand-verified against the cached XML
+    if ins_raw["totalBought"] >= ins_raw["totalSoldShares"] * 0.5:
+        die("the deck claims insider selling dwarfs buying — the filings no longer support that")
+    insider = {
+        "totalSoldShares": ins_raw["totalSoldShares"], "totalSoldValue": ins_raw["totalSoldValue"],
+        "totalBought": ins_raw["totalBought"], "distinctSellers": ins_raw["distinctSellers"],
+        "buckets": ins_raw["buckets"], "topSellers": ins_raw["topSellers"],
+        "planSaleFilings": plan_sale_filings, "saleFilings": sale_filings,
+        "planSalePct": plan_sale_filings / sale_filings * 100,
+        "nonPlanSale": ins_raw["nonPlanSale"],
+    }
+
     return {
         "reactions": reactions, "mix": mix, "celestial": celestial, "nvidia": nvidia,
-        "fair": fair, "peers": peerblock, "revYoY": rev_yoy,
+        "fair": fair, "peers": peerblock, "revYoY": rev_yoy, "insider": insider,
         "netDebt": net_debt, "totalDebt": lt_debt, "ev": ev, "ttmRevFiled": ttm,
         "wd": {
             "todayMove": reactions[-1]["move"], "todayBeat": reactions[-1]["beat"],
@@ -429,7 +447,45 @@ def slides(snap, ep, fact, fund_quarters=None):
         "notes": N["nvidia"], "target": 26,
     })
 
-    # 07 — the peers ---------------------------------------------------------
+    # 07 — insider selling, a fifth thing worth knowing --------------------------
+    ins = s["insider"]
+    S.append({
+        "type": "chart", "kicker": "What the insiders are doing",
+        "src": "101 Form 4 filings, re-parsed from cached SEC XML",
+        "head": "Seven sellers. Zero real buyers.",
+        "sub": "Shares sold vs. bought, by how recent the filing is.",
+        "chart": {"kind": "insider", "height": 420,
+                  "rows": [{"label": b["label"], "sold": b["sold"], "bought": b["bought"],
+                            "soldLab": fmt.num(b["sold"]) if b["sold"] else "—",
+                            "boughtLab": fmt.num(b["bought"]) if b["bought"] else "none",
+                            "sub": f"{b['people']} seller{'s' if b['people'] != 1 else ''}"
+                                   if b["sold"] else "ESPP purchase, all 4 execs"}
+                           for b in ins["buckets"]]},
+        "extra": ('<div class="tiles" style="grid-template-columns:repeat(3,1fr);margin-top:20px">'
+                  f'<div class="tile bad" style="animation-delay:700ms"><div class="tv num">'
+                  f'{b_(ins["totalSoldValue"])}</div><div class="tl">Sold, seven executives</div>'
+                  f'<div class="tn">across the last 16 months</div></div>'
+                  f'<div class="tile" style="animation-delay:1000ms"><div class="tv num">'
+                  f'{ins["planSalePct"]:.0f}%</div><div class="tl">Of sale filings, on a 10b5-1 plan</div>'
+                  f'<div class="tn">{ins["planSaleFilings"]} of {ins["saleFilings"]} — set months ahead</div></div>'
+                  f'<div class="tile warn" style="animation-delay:1300ms"><div class="tv num">'
+                  f'{d2(ins["nonPlanSale"]["price"])}</div><div class="tl">One sale, no 10b5-1 cited</div>'
+                  f'<div class="tn">the new CFO, {ins["nonPlanSale"]["daysIntoRole"]} days into the '
+                  f'job</div></div></div>'),
+        "punch": (f"<b>{b_(ins['totalSoldValue'])}</b> sold. The only buying was a payroll-deduction "
+                  f"plan."),
+        "why": (f"Recomputed from every Form 4 Marvell's executives filed over 16 months — no single "
+                f"filing adds this up. Seven people sold a combined {b_(ins['totalSoldValue'])}, led "
+                f"by the Data Center president, the CEO, and the COO. Most of it — "
+                f"{ins['planSalePct']:.0f}% of the sale filings — was set up months in advance, not a "
+                f"same-day call. The exception: the brand-new CFO sold shares just "
+                f"{_word(ins['nonPlanSale']['daysIntoRole'])} days into the job, with no such plan on "
+                f"file. And the only buying in that whole window was one routine payroll-deduction "
+                f"purchase, not a person deciding to buy."),
+        "notes": N["insider"], "target": 32,
+    })
+
+    # 08 — the peers ---------------------------------------------------------
     S.append({
         "type": "chart", "kicker": "So what does it cost?",
         "src": "Live market caps · each company's latest reported quarter, annualized",
@@ -455,7 +511,7 @@ def slides(snap, ep, fact, fund_quarters=None):
         "notes": N["peers"], "target": 22, "optional": True,
     })
 
-    # 08 — the close: the whole argument as one ruler ------------------------
+    # 09 — the close: the whole argument as one ruler ------------------------
     band = (fair["bull"] - fair["mid"]) / fair["mid"]
     gap = (s["price"] / fair["bull"] - 1) * 100
     verdict_line = (f"today sits {pc(gap, 0, signed=False)} above even my bull case"

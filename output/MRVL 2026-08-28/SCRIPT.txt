@@ -1,5 +1,5 @@
 Marvell Technology, Inc. (MRVL) — SPOKEN SCRIPT
-8 slides · 3:38 · price 216.79 as of Aug 28, 2026 4:29 PM ET
+9 slides · 4:10 · price 216.70 as of Aug 28, 2026 5:09 PM ET
 ==============================================================================
 
 ------------------------------------------------------------------------------
@@ -126,14 +126,43 @@ money, and almost nobody covering this earnings report mentioned it. TARGET
 
 Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA
 bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into
-up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79
+up to 21.8 million common shares at $91.84 each. Marvell trades at $216.70
 today — 136% above that conversion price. NVIDIA is not just designing chips
 alongside Marvell. It is sitting on a strategic equity stake that is already
 deeply in the money, and almost nothing written about this earnings report
 mentioned it.
 
 ------------------------------------------------------------------------------
-SLIDE 07  (22s)   [CUT FOR TIME]
+SLIDE 07  (32s)
+HEADLINE: Seven sellers. Zero real buyers.
+ON SCREEN: $48.1M sold. The only buying was a payroll-deduction plan.
+------------------------------------------------------------------------------
+
+One more thing, and it took the most digging of anything in this episode:
+every Form 4 Marvell's executives and directors have filed in the last sixteen
+months, re-parsed by hand because no single filing adds this up. Seven people
+sold stock — the CEO, the COO, the Data Center president, the general counsel,
+and both the outgoing and incoming CFO — forty eight million dollars combined.
+Most of it, about eighty percent, was on a pre-set trading plan scheduled
+months ahead, which is the fair, boring explanation for most insider selling.
+But one sale wasn't on any plan: the brand new CFO, eight days into the job,
+sold shares with no 10b5-1 plan cited anywhere in the filing. And here's the
+part that actually surprised me: in sixteen months, the only shares anyone
+bought were twenty seven thousand two hundred shares, picked up by four
+executives on the exact same day, at the exact same price — a routine paycheck
+stock-purchase plan, not a single person deciding this was a good time to buy.
+Seven sellers. Zero real buyers. TARGET 32s.
+
+Recomputed from every Form 4 Marvell's executives filed over 16 months — no
+single filing adds this up. Seven people sold a combined $48.1M, led by the
+Data Center president, the CEO, and the COO. Most of it — 79% of the sale
+filings — was set up months in advance, not a same-day call. The exception:
+the brand-new CFO sold shares just eight days into the job, with no such plan
+on file. And the only buying in that whole window was one routine
+payroll-deduction purchase, not a person deciding to buy.
+
+------------------------------------------------------------------------------
+SLIDE 08  (22s)   [CUT FOR TIME]
 HEADLINE: Cheaper than Broadcom. Growing slower too.
 ON SCREEN: 0.9× Broadcom’s multiple, but growing 11 points slower.
 ------------------------------------------------------------------------------
@@ -154,7 +183,7 @@ you check growth: Marvell's revenue grew 37% against Broadcom's 48%. An
 bargain — the two look closer once you weigh in how fast each one is growing.
 
 ------------------------------------------------------------------------------
-SLIDE 08  (30s)
+SLIDE 09  (30s)
 HEADLINE: Real growth, taxed by its own accounting.
 ON SCREEN: My call: WATCH. Interesting at $210.59 or lower.
 ------------------------------------------------------------------------------
