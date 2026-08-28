@@ -1,5 +1,5 @@
 Marvell Technology, Inc. (MRVL) — SPOKEN SCRIPT
-8 slides · 3:38 · price 216.51 as of Aug 28, 2026 3:23 PM ET
+8 slides · 3:38 · price 216.79 as of Aug 28, 2026 4:29 PM ET
 ==============================================================================
 
 ------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ money, and almost nobody covering this earnings report mentioned it. TARGET
 
 Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA
 bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into
-up to 21.8 million common shares at $91.84 each. Marvell trades at $216.51
+up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79
 today — 136% above that conversion price. NVIDIA is not just designing chips
 alongside Marvell. It is sitting on a strategic equity stake that is already
 deeply in the money, and almost nothing written about this earnings report

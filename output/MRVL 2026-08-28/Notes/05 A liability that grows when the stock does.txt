@@ -1,0 +1,9 @@
+SLIDE 05 — A liability that grows when the stock does   (32s)
+ON SCREEN: $303M of GAAP earnings, spent managing Marvell's own earnout exposure.
+
+• Finding three, and this is the one that explains the GAAP-to-non-GAAP gap from the scoreboard slide.
+• In February, Marvell paid three and a half billion dollars for a company called Celestial AI — fifty five percent of it in stock, twenty four and a half million new shares.
+• Celestial's revenue so far: the filing's own words, 'not material.' But here's the part nobody flagged: part of that deal is an earnout, and its accounting value is modeled off Marvell's OWN stock price.
+• As the stock ran up on AI headlines this year, that liability swelled — three hundred two million dollars of GAAP earnings drag in just two quarters, net of a hedge Marvell had to go buy specifically to manage the exposure it created.
+• That's real money spent managing an accounting mechanism, not the business.
+

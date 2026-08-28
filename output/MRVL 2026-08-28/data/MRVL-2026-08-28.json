@@ -4,33 +4,26 @@
   "company": "Marvell Technology, Inc.",
   "exchange": "NASDAQ-GS",
   "sector": "Technology",
-  "price": 216.51,
-  "changePct": -10.33,
-  "asOf": "Aug 28, 2026 3:23 PM ET",
+  "price": 216.79,
+  "changePct": -10.21,
+  "asOf": "Aug 28, 2026 4:29 PM ET",
   "quoteSource": "Nasdaq real-time",
-  "marketCap": 189402.94799999997,
+  "marketCap": 189647.892,
   "sharesNow": 874.8,
   "sharesThen": 865.7,
-  "sharesLabelThen": "Q3'24",
-  "sharesLabelNow": "Q2'26",
-  "sharesNowWA": 893.3,
-  "shareReductionWA": 3.1881714219706536,
+  "sharesLabelThen": "Q4'24",
+  "sharesLabelNow": "Q3'26",
+  "sharesNowWA": 921.2,
+  "shareReductionWA": 6.410996881136644,
   "shareReduction": 1.051172461591765,
   "quartersMissingShares": [
    "Q1'25",
    "Q1'26"
   ],
-  "ttmRev": 8718.0,
-  "ttmRevPrior": 6500.999999999999,
-  "ttmRevGrowth": 34.10244577757271,
+  "ttmRev": 9451.0,
+  "ttmRevPrior": 7234.0,
+  "ttmRevGrowth": 30.64694498202931,
   "quarters": [
-   {
-    "label": "Q3'24",
-    "revenue": 1.273,
-    "netInc": -0.193,
-    "opInc": -0.1,
-    "shares": 865.7
-   },
    {
     "label": "Q4'24",
     "revenue": 1.516,
@@ -79,13 +72,20 @@
     "netInc": 0.035,
     "opInc": 0.339,
     "shares": 893.3
+   },
+   {
+    "label": "Q3'26",
+    "revenue": 2.739,
+    "netInc": 0.308,
+    "opInc": 0.46,
+    "shares": 921.2
    }
   ],
   "fwd": [
    {
     "period": "Jan 2027",
     "eps": 3.07,
-    "pe": 70.52442996742671,
+    "pe": 70.6156351791531,
     "low": 2.82,
     "high": 3.23,
     "analysts": 13
@@ -93,7 +93,7 @@
    {
     "period": "Jan 2028",
     "eps": 5.11,
-    "pe": 42.36986301369863,
+    "pe": 42.42465753424657,
     "low": 4.66,
     "high": 5.75,
     "analysts": 12
@@ -101,7 +101,7 @@
    {
     "period": "Jan 2029",
     "eps": 7.25,
-    "pe": 29.86344827586207,
+    "pe": 29.90206896551724,
     "low": 6.63,
     "high": 8.07,
     "analysts": 4
@@ -1115,7 +1115,7 @@
    },
    {
     "t": 1787923800000,
-    "v": 216.55
+    "v": 216.62
    }
   ],
   "low": {
@@ -1137,7 +1137,7 @@
    "volX": null
   },
   "runUp": 436.9140824482509,
-  "drawdown": -34.3670435324161,
+  "drawdown": -34.282164183605765,
   "peakToTrough": {
    "pct": -48.36140767986353,
    "peak": 316.42999267578125,
@@ -1247,8 +1247,8 @@
     "action": "no guidance given",
     "kind": "none",
     "reactDate": "2026-08-28",
-    "move": -10.312691742059531,
-    "volX": 1.7276499973106234
+    "move": -10.283703518280563,
+    "volX": 2.0491420463358985
    }
   ],
   "earningsStats": {
@@ -2268,7 +2268,7 @@
     },
     {
      "t": 1787923800000,
-     "v": 280.4
+     "v": 280.49
     }
    ],
    "earn": [
@@ -2306,9 +2306,9 @@
    "baseDate": "2025-08-28",
    "basePrice": 77.2300033569336,
    "baseEps": -0.13,
-   "endPrice": 216.5500030517578,
+   "endPrice": 216.6199951171875,
    "endEps": 3.03,
-   "priceGain": 180.39621084946683,
+   "priceGain": 180.48683892455077,
    "earnGain": -2430.7692307692305
   },
   "newlyListed": false,
@@ -2324,42 +2324,42 @@
    "target": 300.43,
    "targetLow": 220.0,
    "targetHigh": 400.0,
-   "upside": 38.76033439563993,
+   "upside": 38.58111536509987,
    "nasdaqTarget": 275.0
   },
   "provenance": {
    "quote": {
-    "fetchedAt": 1787945009.047,
+    "fetchedAt": 1787948977.986,
     "ageS": 0.0,
     "source": "Nasdaq real-time"
    },
    "profile": {
-    "fetchedAt": 1787945014.837,
+    "fetchedAt": 1787948983.587,
     "ageS": 0.0,
     "source": "Nasdaq quote summary"
    },
    "fundamentals": {
-    "fetchedAt": 1787945015.576,
+    "fetchedAt": 1787948984.393,
     "ageS": 0.0,
     "source": "SEC EDGAR XBRL companyfacts"
    },
    "street": {
-    "fetchedAt": 1787945018.836,
+    "fetchedAt": 1787948986.86,
     "ageS": 0.0,
     "source": "Nasdaq analyst consensus"
    },
    "estimates": {
-    "fetchedAt": 1787945021.09,
+    "fetchedAt": 1787948989.072,
     "ageS": 0.0,
     "source": "Nasdaq analyst estimates"
    },
    "history": {
-    "fetchedAt": 1787945009.046,
-    "ageS": 12.0,
+    "fetchedAt": 1787948977.986,
+    "ageS": 11.1,
     "source": "Yahoo daily OHLCV"
    }
   },
-  "builtAt": "2026-08-28T19:23:41+00:00",
+  "builtAt": "2026-08-28T20:29:49+00:00",
   "reactions": [
    {
     "q": "Q3'25",
@@ -2406,7 +2406,7 @@
    {
     "q": "Q2'27",
     "beat": 39.0,
-    "move": -10.312691742059531,
+    "move": -10.283703518280563,
     "date": "2026-08-27"
    }
   ],
@@ -2458,8 +2458,8 @@
    "conversionPrice": 91.84,
    "maxCommonShares": 21.8,
    "purchaseDate": "March 31, 2026",
-   "impliedValueToday": 4719.918,
-   "gainPct": 135.7469512195122
+   "impliedValueToday": 4726.022,
+   "gainPct": 136.05182926829266
   },
   "fair": {
    "bear": 42.44252654705665,
@@ -2471,67 +2471,67 @@
    "rows": [
     {
      "sym": "AVGO",
-     "mcap": 1749837.996824,
-     "ps": 19.716928796412315,
+     "mcap": 1754548.00122,
+     "ps": 19.77000046446117,
      "growth": 47.87390029325513,
      "lastQ": "Q2'26"
     },
     {
      "sym": "MRVL",
-     "ps": 17.28570693242799,
+     "ps": 17.3080615485708,
      "growth": 36.54852699267237,
      "lastQ": "Q2'27"
     },
     {
      "sym": "NVDA",
-     "mcap": 5238496.5,
-     "ps": 13.610585267249354,
+     "mcap": 5242955.0,
+     "ps": 13.62216927697696,
      "growth": 105.85114348672526,
      "lastQ": "Q3'26"
     },
     {
      "sym": "ADI",
-     "mcap": 175336.815378,
-     "ps": 10.898608613749378,
+     "mcap": 175306.093928,
+     "ps": 10.89669902585778,
      "growth": 39.65277777777778,
      "lastQ": "Q3'26"
     },
     {
      "sym": "TXN",
-     "mcap": 236302.838753,
-     "ps": 10.813785408795534,
+     "mcap": 236202.381507,
+     "ps": 10.809188243959364,
      "growth": 22.819244604316545,
      "lastQ": "Q2'26"
     },
     {
      "sym": "QCOM",
-     "mcap": 171818.269476,
-     "ps": 4.318343959887403,
+     "mcap": 172437.907489,
+     "ps": 4.333917449708455,
      "growth": -4.032802701398952,
      "lastQ": "Q2'26"
     }
    ],
-   "avgPs": 11.871650409218796,
-   "selfPs": 17.28570693242799,
+   "avgPs": 11.886394892192746,
+   "selfPs": 17.3080615485708,
    "selfGrowth": 36.54852699267237,
-   "psPremium": 1.4560491874832304,
-   "avgPurePs": 19.716928796412315,
-   "psRatioPure": 0.8766936834286935,
+   "psPremium": 1.4561237200641155,
+   "avgPurePs": 19.77000046446117,
+   "psRatioPure": 0.8754709732902645,
    "avgPureGrowth": 47.87390029325513,
    "avgGrowth": 42.43285269213515
   },
   "revYoY": 36.54852699267237,
   "netDebt": 1030.0999999999995,
   "totalDebt": 4962.9,
-  "ev": 190433.04799999998,
+  "ev": 190677.992,
   "ttmRevFiled": 9450.3,
   "wd": {
-   "todayMove": -10.312691742059531,
+   "todayMove": -10.283703518280563,
    "todayBeat": 39.0,
    "dcShareLast": 79.27207680794362,
    "stockPct": 54.53157686436365,
    "sixMonthDrag": 302.7,
-   "nvGainPct": 135.7469512195122,
+   "nvGainPct": 136.05182926829266,
    "investorDayDate": "October 6, 2026",
    "revYoY": 36.54852699267237
   }
@@ -2539,9 +2539,9 @@
  "payload": {
   "symbol": "MRVL",
   "company": "Marvell Technology, Inc.",
-  "price": 216.51,
+  "price": 216.79,
   "sharesOutstanding": 874.8,
-  "stamp": "MRVL \u00b7 216.51 as of Aug 28, 2026 3:23 PM ET \u00b7 built 2026-08-28 19:23",
+  "stamp": "MRVL \u00b7 216.79 as of Aug 28, 2026 4:29 PM ET \u00b7 built 2026-08-28 20:29",
   "totalTarget": 218,
   "coreTarget": 196,
   "optionalCount": 1,
@@ -2723,7 +2723,7 @@
       },
       {
        "name": "Q2'27",
-       "v": -10.312691742059531,
+       "v": -10.283703518280563,
        "lab": "\u221210%",
        "sub": "+$39.0M beat",
        "cls": "bad"
@@ -2850,9 +2850,9 @@
     "value": "$91.84",
     "tone": "warn",
     "caption": "the price NVIDIA can convert its $2.0B Marvell preferred stake into common shares at \u2014 less than half of where Marvell trades today.",
-    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.0B</div><div class=\"tl\">NVIDIA paid, March 31 2026</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">21.8M</div><div class=\"tl\">Common shares if converted</div></div><div class=\"tile good\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$216.51</div><div class=\"tl\">Marvell&rsquo;s price today</div></div></div>",
+    "extra": "<div class=\"tiles\" style=\"grid-template-columns:repeat(3,1fr);margin-top:22px\"><div class=\"tile\" style=\"animation-delay:700ms\"><div class=\"tv num\">$2.0B</div><div class=\"tl\">NVIDIA paid, March 31 2026</div></div><div class=\"tile\" style=\"animation-delay:1000ms\"><div class=\"tv num\">21.8M</div><div class=\"tl\">Common shares if converted</div></div><div class=\"tile good\" style=\"animation-delay:1300ms\"><div class=\"tv num\">$216.79</div><div class=\"tl\">Marvell&rsquo;s price today</div></div></div>",
     "punch": "NVIDIA's stake is already worth <b>136% more</b> than it paid.",
-    "why": "Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.51 today \u2014 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.",
+    "why": "Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79 today \u2014 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.",
     "notes": "Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell \u2014 it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.",
     "target": 26
    },
@@ -2865,48 +2865,48 @@
     "chart": {
      "kind": "peers",
      "height": 470,
-     "avg": 11.871650409218796,
+     "avg": 11.886394892192746,
      "avgLab": "peer average 11.9\u00d7",
      "rightHead": "revenue growth",
      "rows": [
       {
        "name": "Broadcom",
-       "v": 19.716928796412315,
-       "lab": "19.7\u00d7",
+       "v": 19.77000046446117,
+       "lab": "19.8\u00d7",
        "right": "+48%",
        "here": false
       },
       {
        "name": "Marvell",
-       "v": 17.28570693242799,
+       "v": 17.3080615485708,
        "lab": "17.3\u00d7",
        "right": "+37%",
        "here": true
       },
       {
        "name": "NVIDIA",
-       "v": 13.610585267249354,
+       "v": 13.62216927697696,
        "lab": "13.6\u00d7",
        "right": "+106%",
        "here": false
       },
       {
        "name": "Analog Devices",
-       "v": 10.898608613749378,
+       "v": 10.89669902585778,
        "lab": "10.9\u00d7",
        "right": "+40%",
        "here": false
       },
       {
        "name": "Texas Instruments",
-       "v": 10.813785408795534,
+       "v": 10.809188243959364,
        "lab": "10.8\u00d7",
        "right": "+23%",
        "here": false
       },
       {
        "name": "Qualcomm",
-       "v": 4.318343959887403,
+       "v": 4.333917449708455,
        "lab": "4.3\u00d7",
        "right": "\u22124%",
        "here": false
@@ -2929,8 +2929,8 @@
      "kind": "fvband",
      "height": 430,
      "band": 0.41778527874339705,
-     "price": 216.51,
-     "priceLab": "$216.51",
+     "price": 216.79,
+     "priceLab": "$216.79",
      "fairValue": 210.59275389207886,
      "fairLab": "$210.59",
      "fairName": "where I\u2019d get interested",
@@ -3786,7 +3786,7 @@
    "why": [
     "<b>The growth is concentrated but real.</b> Data Center is 79% of Marvell now and it is the only segment actually accelerating \u2014 that is a legitimate AI-infrastructure story, not a headline.",
     "<b>The earnings quality has a self-inflicted wound.</b> A $3.5B acquisition structured with a stock-price-linked earnout has already cost $302.7M of GAAP earnings in two quarters \u2014 money spent managing an accounting exposure the company created by how it wrote the deal.",
-    "<b>The price already needs a lot to go right.</b> At $216.51 the stock sits between my base and bull cases \u2014 today's drop bought you a slightly better entry, not a cheap one.",
+    "<b>The price already needs a lot to go right.</b> At $216.79 the stock sits between my base and bull cases \u2014 today's drop bought you a slightly better entry, not a cheap one.",
     "<b>A decent price for me: $210.59 or lower.</b> That is roughly the midpoint of a model that already assumes Data Center keeps compounding \u2014 near it or below, the odds start working for you."
    ]
   },

@@ -1,0 +1,9 @@
+SLIDE 07 — Cheaper than Broadcom. Growing slower too.   (22s)   [CAN CUT]
+ON SCREEN: 0.9× Broadcom's multiple, but growing 11 points slower.
+
+• So what are you paying for this?
+• Same yardstick for everyone: market value against the latest reported quarter, annualized, growth right beside it.
+• Against Broadcom — the closest direct comparison in custom AI silicon — Marvell trades at a real discount per dollar of sales.
+• But check growth before you call that cheap: Marvell is growing meaningfully slower than Broadcom right now.
+• A real discount, against a real growth gap — on a growth-adjusted basis the two are closer than the sticker price alone suggests.
+

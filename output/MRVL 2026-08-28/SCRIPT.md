@@ -1,6 +1,6 @@
 # Marvell Technology, Inc. (MRVL) — spoken script
 
-Built 2026-08-28T19:23:41+00:00 · price 216.51 as of Aug 28, 2026 3:23 PM ET
+Built 2026-08-28T20:29:49+00:00 · price 216.79 as of Aug 28, 2026 4:29 PM ET
 
 - **Full cut:** 8 slides, 3:38
 - **Core cut:** 3:16 — drop the 1 slides marked `CUT FOR TIME`. They are support, not argument; the case still stands without them.
@@ -75,7 +75,7 @@ Marvell paid $3.5B for a company called Celestial AI — more than half in stock
 
 Finding four. Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock. Convertible into common shares at ninety one dollars and eighty four cents each. Marvell trades today well over double that. NVIDIA is not just designing chips with Marvell — it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it. TARGET 26s.
 
-Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.51 today — 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.
+Buried in the same note as the Celestial earnout: on March 31, 2026, NVIDIA bought $2.0B of Marvell Series A Convertible Preferred Stock, convertible into up to 21.8 million common shares at $91.84 each. Marvell trades at $216.79 today — 136% above that conversion price. NVIDIA is not just designing chips alongside Marvell. It is sitting on a strategic equity stake that is already deeply in the money, and almost nothing written about this earnings report mentioned it.
 
 ---
 

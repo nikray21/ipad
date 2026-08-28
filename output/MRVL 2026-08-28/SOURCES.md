@@ -1,6 +1,6 @@
 # Marvell Technology, Inc. (MRVL) — where every number came from
 
-Deck built 2026-08-28T19:23:41+00:00.
+Deck built 2026-08-28T20:29:49+00:00.
 
 Two checks stand behind this file:
 
@@ -34,12 +34,12 @@ Two checks stand behind this file:
 
 | Route | Source | Fetched | Age at build |
 |---|---|---|---|
-| `/api/quote/MRVL` | Nasdaq real-time | 2026-08-28 19:23:29 | 0s |
-| `/api/profile/MRVL` | Nasdaq quote summary | 2026-08-28 19:23:34 | 0s |
-| `/api/fundamentals/MRVL` | SEC EDGAR XBRL companyfacts | 2026-08-28 19:23:35 | 0s |
-| `/api/street/MRVL` | Nasdaq analyst consensus | 2026-08-28 19:23:38 | 0s |
-| `/api/estimates/MRVL` | Nasdaq analyst estimates | 2026-08-28 19:23:41 | 0s |
-| `/api/history/MRVL` | Yahoo daily OHLCV | 2026-08-28 19:23:29 | 12s |
+| `/api/quote/MRVL` | Nasdaq real-time | 2026-08-28 20:29:37 | 0s |
+| `/api/profile/MRVL` | Nasdaq quote summary | 2026-08-28 20:29:43 | 0s |
+| `/api/fundamentals/MRVL` | SEC EDGAR XBRL companyfacts | 2026-08-28 20:29:44 | 0s |
+| `/api/street/MRVL` | Nasdaq analyst consensus | 2026-08-28 20:29:46 | 0s |
+| `/api/estimates/MRVL` | Nasdaq analyst estimates | 2026-08-28 20:29:49 | 0s |
+| `/api/history/MRVL` | Yahoo daily OHLCV | 2026-08-28 20:29:37 | 11s |
 
 ## Deliberately not used
 

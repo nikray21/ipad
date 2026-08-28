@@ -1,0 +1,99 @@
+Marvell Technology, Inc. (MRVL) — TALKING POINTS
+8 slides · short bullets per slide · read, glance, talk
+========================================================================
+
+SLIDE 01 — It beat. It still fell.   (24s)
+ON SCREEN: Four things they filed. None made the headline.
+
+• COLD OPEN, to camera before the deck: Marvell just beat every single number on its earnings report and raised its outlook again — and the stock fell double digits today anyway.
+• That does not make sense until you read what is actually in the filings.
+• Four things buried in the 10-Q and the fine print explain what the headline beat does not.
+• THEN the slide: here they are.
+
+------------------------------------------------------------------------
+
+SLIDE 02 — A record quarter. A GAAP number that lags.   (26s)
+ON SCREEN: GAAP EPS is 35% of non-GAAP. That gap is not just stock comp.
+
+• First, the quarter as reported yesterday after the close.
+• Revenue two point seven three nine billion, a record, up thirty seven percent year over year.
+• Non-GAAP earnings ninety four cents a share, comfortably ahead of estimates.
+• But look at the GAAP number right next to it: thirty three cents.
+• Less than half.
+• That gap is not just stock comp — there's something else in there, and we're about to find it.
+
+------------------------------------------------------------------------
+
+SLIDE 03 — The biggest beat. The worst reaction.   (30s)
+ON SCREEN: This was the biggest beat in six quarters. The stock fell anyway.
+
+• Finding one.
+• Marvell's stock does not trade on whether it beats guidance — it always beats guidance, by a little, like clockwork.
+• Every single quarter for the last eight has landed above the midpoint the company set three months earlier.
+• Today's beat, thirty nine million dollars, was the biggest of the last seven quarters.
+• And the stock still fell more than ten percent.
+• Look at the pattern across two years: reactions ranging from plus twenty three percent to minus twenty percent, with no relationship at all to how big the beat was.
+• What actually moved it today was three lines down in the outlook: next quarter's margin guide, which came in below what the company just delivered.
+
+------------------------------------------------------------------------
+
+SLIDE 04 — One segment is 79% of the revenue   (28s)
+ON SCREEN: Data Center: +46% year over year. Everything else: -3% quarter over quarter.
+
+• Finding two.
+• Marvell reports one blended growth number, thirty seven percent.
+• That hides what's actually happening underneath.
+• Data Center revenue: up forty six percent year over year, now seventy nine percent of the entire company.
+• Everything else — enterprise networking, carrier infrastructure, consumer — actually shrank three percent from the quarter before.
+• This is not a broad-based beat.
+• It is one segment, growing very fast, carrying every other part of the business on its back.
+
+------------------------------------------------------------------------
+
+SLIDE 05 — A liability that grows when the stock does   (32s)
+ON SCREEN: $303M of GAAP earnings, spent managing Marvell's own earnout exposure.
+
+• Finding three, and this is the one that explains the GAAP-to-non-GAAP gap from the scoreboard slide.
+• In February, Marvell paid three and a half billion dollars for a company called Celestial AI — fifty five percent of it in stock, twenty four and a half million new shares.
+• Celestial's revenue so far: the filing's own words, 'not material.' But here's the part nobody flagged: part of that deal is an earnout, and its accounting value is modeled off Marvell's OWN stock price.
+• As the stock ran up on AI headlines this year, that liability swelled — three hundred two million dollars of GAAP earnings drag in just two quarters, net of a hedge Marvell had to go buy specifically to manage the exposure it created.
+• That's real money spent managing an accounting mechanism, not the business.
+
+------------------------------------------------------------------------
+
+SLIDE 06 — NVIDIA isn't just a customer here   (26s)
+ON SCREEN: NVIDIA's stake is already worth 136% more than it paid.
+
+• Finding four.
+• Buried in the same note as the Celestial earnout: on March thirty first, NVIDIA bought two billion dollars of Marvell preferred stock.
+• Convertible into common shares at ninety one dollars and eighty four cents each.
+• Marvell trades today well over double that.
+• NVIDIA is not just designing chips with Marvell — it is sitting on a stake that is already deeply in the money, and almost nobody covering this earnings report mentioned it.
+
+------------------------------------------------------------------------
+
+SLIDE 07 — Cheaper than Broadcom. Growing slower too.   (22s)   [CAN CUT]
+ON SCREEN: 0.9× Broadcom's multiple, but growing 11 points slower.
+
+• So what are you paying for this?
+• Same yardstick for everyone: market value against the latest reported quarter, annualized, growth right beside it.
+• Against Broadcom — the closest direct comparison in custom AI silicon — Marvell trades at a real discount per dollar of sales.
+• But check growth before you call that cheap: Marvell is growing meaningfully slower than Broadcom right now.
+• A real discount, against a real growth gap — on a growth-adjusted basis the two are closer than the sticker price alone suggests.
+
+------------------------------------------------------------------------
+
+SLIDE 08 — Real growth, taxed by its own accounting.   (30s)
+ON SCREEN: My call: WATCH. Interesting at $210.59 or lower.
+
+• So here's the whole story on one ruler.
+• My model: a rough case if Data Center growth cools and margins keep compressing, a base case if the current trajectory holds, and a bull case that needs Marvell to keep compounding Data Center at close to today's pace with real margin expansion.
+• Today's price sits between my base and bull cases — the ten percent drop bought you a better entry, not a cheap stock.
+• Everything genuinely working here — the Data Center growth, NVIDIA's own money, the low leverage — is mostly already in the price.
+• What's not fully priced: three hundred two million dollars a year of accounting noise from one earnout, and a second segment that just went negative.
+• My call is WATCH.
+• My line is on the ruler, halfway between base and bull.
+• That's the fundamentals — now let's go to the chart.
+
+------------------------------------------------------------------------
+
