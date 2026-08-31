@@ -37,7 +37,7 @@ import urllib.parse
 import urllib.request
 from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime as _dt
+from datetime import date, datetime as _dt, timedelta
 
 BROWSER_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
               "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36")
@@ -49,7 +49,7 @@ _pool = ThreadPoolExecutor(max_workers=12)
 _fanout = ThreadPoolExecutor(max_workers=6)    # small parallel fetches (street)
 _inflight = set()
 _inflight_lock = threading.Lock()
-SCHEMA = "v16"          # bump when a payload shape changes; invalidates old cache
+SCHEMA = "v17"          # bump when a payload shape changes; invalidates old cache
 CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache_market")
 _ET = ZoneInfo("America/New_York")
 QFRAME = re.compile(r"^CY(\d{4})Q(\d)$")
@@ -867,6 +867,102 @@ def build_fundamentals_yahoo(symbol):
                   + (f", reported in {currency}" if currency != "USD" else "") + ")",
     }
 
+# ---------------------------------------------------------------- Alpaca
+# Alpaca is the price source for this repo: charts, quotes, and the trade grader
+# in .claude/skills/technical-analysis all read the same tape. The Yahoo and
+# Nasdaq paths below are kept as a fallback for when no key is configured — a
+# missing key should degrade the deck, not blank it — and every payload says
+# which one answered, because the one price bug that cost real money (journal
+# #15, SBUX) was two feeds disagreeing with nothing to show which was which.
+ALPACA = "https://data.alpaca.markets"
+
+
+def alpaca_headers():
+    k = os.environ.get("APCA_API_KEY_ID") or os.environ.get("ALPACA_API_KEY_ID")
+    sec = os.environ.get("APCA_API_SECRET_KEY") or os.environ.get("ALPACA_API_SECRET_KEY")
+    if not k or not sec:
+        return None
+    return {"APCA-API-KEY-ID": k, "APCA-API-SECRET-KEY": sec, "Accept": "application/json"}
+
+
+def alpaca_json(path, hdr, timeout=30):
+    req = urllib.request.Request(ALPACA + path, headers=hdr)
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.load(r)
+
+
+def _epoch_ms(iso):
+    """Alpaca RFC3339 (nanosecond precision) -> epoch ms, the `t` every chart reads."""
+    iso = iso.replace("Z", "+00:00")
+    if "." in iso:
+        head, rest = iso.split(".", 1)
+        iso = f"{head}.{rest[:-6][:6]}{rest[-6:]}"
+    return int(_dt.fromisoformat(iso).timestamp() * 1000)
+
+
+def alpaca_bars(symbol, timeframe, days):
+    """OHLCV in the existing chart point shape. Returns [] when unavailable so the
+    caller falls through to Yahoo rather than raising into a half-built deck.
+
+    `adjustment=all` — splits AND dividends. A chart that is not adjusted end to
+    end draws a gap that looks like a selloff and isn't one.
+    """
+    hdr = alpaca_headers()
+    if not hdr:
+        return [], None
+    start = (_dt.now(tz=_ET) - timedelta(days=days)).strftime("%Y-%m-%d")
+    for feed in ("sip", "iex"):
+        pts, token = [], None
+        try:
+            while True:
+                q = (f"/v2/stocks/bars?symbols={symbol}&timeframe={timeframe}"
+                     f"&start={start}&limit=10000&adjustment=all&sort=asc&feed={feed}")
+                page = alpaca_json(q + (f"&page_token={token}" if token else ""), hdr)
+                for b in ((page.get("bars") or {}).get(symbol) or []):
+                    pts.append({"t": _epoch_ms(b["t"]), "c": b["c"], "o": b["o"],
+                                "h": b["h"], "l": b["l"], "v": int(b["v"])})
+                token = page.get("next_page_token")
+                if not token:
+                    break
+            if pts:
+                return pts, feed
+        except Exception:
+            continue          # try the next feed, then fall through to Yahoo
+    return [], None
+
+
+def alpaca_hourly_rth(symbol, days):
+    """Regular-hours hourly bars ANCHORED AT 09:30, built from 30Min bars.
+
+    Alpaca's own 1Hour bars are aligned to the clock hour, so the 09:00 bar
+    straddles the open: keep it and premarket leaks into the session, drop it and
+    the first thirty minutes of trading — the most informative half hour on the
+    chart — disappears. Neither is acceptable, so the session is rebuilt from
+    30Min bars into 09:30/10:30/…/15:30 buckets, which is also the grid the
+    client-side 4h aggregation and the trade grader both assume.
+    """
+    raw, feed = alpaca_bars(symbol, "30Min", days)
+    if not raw:
+        return [], None
+    OPEN_M, CLOSE_M = 9 * 60 + 30, 16 * 60
+    buckets = {}
+    for b in raw:
+        t = _dt.fromtimestamp(b["t"] / 1000, tz=_ET)
+        m = t.hour * 60 + t.minute
+        if m < OPEN_M or m >= CLOSE_M:
+            continue
+        key = (t.date(), (m - OPEN_M) // 60)
+        agg = buckets.get(key)
+        if agg is None:
+            buckets[key] = dict(b)
+        else:
+            agg["h"] = max(agg["h"], b["h"])
+            agg["l"] = min(agg["l"], b["l"])
+            agg["c"] = b["c"]
+            agg["v"] += b["v"]
+    return [buckets[k] for k in sorted(buckets)], feed
+
+
 def build_history(symbol, interval="1d"):
     """OHLCV powering volatility bands, projections, and the candlestick
     chart. `c` is the field every existing caller reads; o/h/l/v are
@@ -879,6 +975,9 @@ def build_history(symbol, interval="1d"):
     data rather than degrade it honestly, so a failure here is a real error.
     """
     if interval == "60m":
+        pts, feed = alpaca_hourly_rth(symbol, 400)
+        if len(pts) > 20:
+            return {"symbol": symbol, "points": pts, "source": f"Alpaca hourly OHLCV ({feed})"}
         j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}"
                        "?range=1y&interval=60m", ua=YAHOO_UA)
         res = ((j.get("chart") or {}).get("result") or [{}])[0]
@@ -900,6 +999,10 @@ def build_history(symbol, interval="1d"):
         if len(pts) > 20:
             return {"symbol": symbol, "points": pts, "source": "Yahoo hourly OHLCV"}
         return {"error": f"no hourly history for {symbol}"}
+
+    pts, feed = alpaca_bars(symbol, "1Day", 760)
+    if len(pts) > 20:
+        return {"symbol": symbol, "points": pts, "source": f"Alpaca daily OHLCV ({feed})"}
 
     try:
         j = fetch_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{yf(symbol)}"
@@ -1016,9 +1119,67 @@ def build_street(symbol):
         "source": "Nasdaq analyst consensus",
     }
 
+def alpaca_quote(symbol):
+    """Alpaca snapshot -> the quote payload shape. None when unavailable.
+
+    Feed ladder, in descending order of truth: `sip` (real-time consolidated
+    tape, paid plans), `delayed_sip` (the same full tape, 15 minutes late),
+    `iex` (real-time but ~3% of the tape, so the print can sit cents off). A
+    late full-tape price beats a live sliver, so delayed_sip outranks iex, and
+    `source` always names which one answered plus its delay.
+
+    `prevDailyBar.c` is the prior REGULAR session close, which is the baseline
+    the headline change has to use — the bug this replaces compared an
+    after-hours print against today's close and showed MSFT green on a day it
+    fell 8%.
+    """
+    hdr = alpaca_headers()
+    if not hdr:
+        return None
+    for feed in ("sip", "delayed_sip", "iex"):
+        try:
+            snap = alpaca_json(f"/v2/stocks/{symbol}/snapshot?feed={feed}", hdr)
+        except Exception:
+            continue
+        t = snap.get("latestTrade") or {}
+        day = snap.get("dailyBar") or {}
+        prev = (snap.get("prevDailyBar") or {}).get("c")
+        price = t.get("p")
+        if price is None or not prev:
+            continue
+        state = market_state()
+        in_session = state == "open"
+        reg = day.get("c")
+        stamp = _dt.fromtimestamp(_epoch_ms(t["t"]) / 1000, tz=_ET) if t.get("t") else None
+        label = {"sip": "Alpaca real-time (SIP)",
+                 "delayed_sip": "Alpaca 15-min delayed (SIP)",
+                 "iex": "Alpaca real-time (IEX only, ~3% of tape)"}[feed]
+        return {
+            "symbol": symbol, "price": price,
+            "change": round(price - prev, 3),
+            "prevClose": prev,
+            "changePct": round((price / prev - 1) * 100, 2),
+            # The extended-session-only move, for the session chip.
+            "sessionChange": round(price - reg, 3) if (reg and not in_session) else None,
+            "sessionChangePct": round((price / reg - 1) * 100, 2) if (reg and not in_session) else None,
+            "asOf": stamp.strftime("%b %-d, %Y %-I:%M %p ET") if stamp else None,
+            "session": "live" if in_session else ("extended" if state == "ext" else "closed"),
+            "regular": {"price": reg, "asOf": None},
+            "name": None,
+            "source": label,
+        }
+    return None
+
+
 def build_quote(symbol):
-    """Real-time quote. Nasdaq first (higher rate limits, gives extended-hours),
-    Yahoo chart as fallback so a single provider hiccup never blanks the deck."""
+    """Real-time quote. Alpaca first — it is this repo's price source, and its
+    prevDailyBar gives the honest prior-regular-close baseline for free. Nasdaq
+    and then Yahoo remain as fallbacks so a missing key or a provider hiccup
+    degrades the deck instead of blanking it."""
+    q = alpaca_quote(symbol)
+    if q:
+        return q
+
     def money(s):
         if not s:
             return None
@@ -1186,7 +1347,15 @@ def build_profile(symbol):
         prof["name"] = prof.get("name") or m["name"]
         if not prof.get("marketCapRaw") and m["cap"]:
             prof["marketCapRaw"] = m["cap"]
-            prof["prevClose"] = prof.get("prevClose") or m["last"]
+    # PRICE comes from Alpaca, never from the screener table. The screener row is
+    # here for sector/industry/name/cap — fields Alpaca does not carry — and its
+    # `last` used to leak in as a prevClose backstop, which is exactly the
+    # two-feeds-disagreeing failure the rest of this module is built to avoid.
+    if not prof.get("prevClose"):
+        try:
+            prof["prevClose"] = (get("quote", symbol) or {}).get("prevClose")
+        except Exception:
+            pass
     return prof
 
 def build_market():

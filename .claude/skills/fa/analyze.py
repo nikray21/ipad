@@ -6,7 +6,7 @@
 SOURCES, in order of authority
   1. SEC EDGAR XBRL companyfacts  — the filings themselves. Authoritative.
   2. yfinance                     — street estimates, targets, market cap.
-  3. Alpaca                       — price and volume bars.
+  3. Alpaca                       — price. The only price source; see alpaca_price().
 
 WHY NO RATIO LIBRARY. Every defect in this codebase has had one shape: something
 other than the source of truth became a source of truth, then drifted. A library
@@ -21,6 +21,35 @@ import json, sys, os, re, urllib.request, datetime as dt
 
 UA = {"User-Agent": "NikRayani Research nikil.rayani@puriscorp.com"}
 SEC = "https://data.sec.gov"
+ALPACA = "https://data.alpaca.markets"
+
+
+def alpaca_price(ticker):
+    """Last trade from Alpaca — the price source for this repo. Returns
+    (price, source) or (None, None) so a missing key degrades one field instead
+    of failing the analysis.
+
+    This used to come from yfinance alongside market cap, which made the SOURCES
+    table above a lie: it claimed Alpaca was authoritative for price while every
+    valuation multiple was actually built on a vendor quote. Market cap, beta and
+    the street numbers still come from yfinance because Alpaca does not carry
+    them — but the PRICE is Alpaca's, and it says so in the output.
+    """
+    k = os.environ.get("APCA_API_KEY_ID") or os.environ.get("ALPACA_API_KEY_ID")
+    sec = os.environ.get("APCA_API_SECRET_KEY") or os.environ.get("ALPACA_API_SECRET_KEY")
+    if not k or not sec:
+        return None, None
+    h = {"APCA-API-KEY-ID": k, "APCA-API-SECRET-KEY": sec, "Accept": "application/json"}
+    for feed, label in (("sip", "Alpaca real-time"), ("delayed_sip", "Alpaca 15-min delayed"),
+                        ("iex", "Alpaca IEX-only")):
+        try:
+            d = _get(f"{ALPACA}/v2/stocks/{ticker}/snapshot?feed={feed}", headers=h)
+            p = (d.get("latestTrade") or {}).get("p")
+            if p:
+                return p, label
+        except Exception:
+            continue
+    return None, None
 
 
 def _get(url, headers=UA, timeout=45):
@@ -350,9 +379,15 @@ def analyze(ticker):
     try:
         import yfinance as yf
         i = yf.Ticker(out["ticker"]).info or {}
-        mc = i.get("marketCap"); price = i.get("currentPrice") or i.get("regularMarketPrice")
+        mc = i.get("marketCap")
+        # Price from Alpaca; yfinance's quote only stands in when no key is set,
+        # and the payload names which one answered so the two never blur.
+        price, psrc = alpaca_price(out["ticker"])
+        if price is None:
+            price, psrc = (i.get("currentPrice") or i.get("regularMarketPrice")), "yfinance (no Alpaca key)"
         ev = None if (mc is None or netdebt is None) else mc + netdebt
-        out["market"] = {"price": price, "marketCap": mc, "enterpriseValue": ev,
+        out["market"] = {"price": price, "priceSource": psrc, "marketCap": mc,
+                         "enterpriseValue": ev,
                          "beta": i.get("beta"), "shortPctFloat": i.get("shortPercentOfFloat"),
                          "sharesOut": i.get("sharesOutstanding")}
         out["street"] = {"analysts": i.get("numberOfAnalystOpinions"),
@@ -429,6 +464,8 @@ def report(o):
     print(f"  total returned     {bn(r['shareholderReturnTtm'])}      vs FCF {f(pct(r['shareholderReturnTtm'], t['fcf']),0,'%')}")
     print("\n== 6 VALUATION ==")
     print(f"  price / mkt cap    {f(m.get('price'))} / {bn(m.get('marketCap'))}      EV {bn(m.get('enterpriseValue'))}")
+    if m.get("priceSource"):
+        print(f"  price source       {m['priceSource']}")
     print(f"  P/E · P/S · P/FCF  {f(v.get('pe'),1)} · {f(v.get('ps'),2)} · {f(v.get('pfcf'),1)}")
     print(f"  EV/EBITDA          {f(v.get('evEbitda'),1)}x      EV/Sales {f(v.get('evSales'),2)}x")
     print(f"  FCF yield          {f(v.get('fcfYield'),1,'%')}      earnings yield {f(v.get('earningsYield'),1,'%')}")

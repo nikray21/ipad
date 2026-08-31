@@ -5,3 +5,4 @@ __pycache__/
 .cache_filings/
 .cache_form4/
 .cache_bars/
+.env.local

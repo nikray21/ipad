@@ -149,18 +149,44 @@ def cmd_bars(symbols, days=120):
 
 # ------------------------------------------------------------------ quote
 def cmd_quote(symbol):
+    """Best available price, in descending order of truth:
+         sip          — real-time consolidated tape. Needs a paid plan.
+         delayed_sip  — the same full tape, 15 minutes late. Free plans have it.
+         iex          — real-time, but IEX is ~3% of the tape, so the print can sit
+                        a few cents off his chart.
+    A 15-minute-late full-tape price beats a real-time 3% slice for grading a 4h
+    setup, so delayed_sip outranks iex. Whichever one answers, the delay is printed
+    — a grade never quotes a price without saying how stale and how complete it is.
+    """
     hdr = keys()
-    feed = os.environ.get("APCA_FEED", "iex")
-    try:
-        snap = _get(f"{DATA}/v2/stocks/{symbol}/snapshot?feed=sip", hdr); feed = "sip"
-    except urllib.error.HTTPError:
-        snap = _get(f"{DATA}/v2/stocks/{symbol}/snapshot?feed={feed}", hdr)
-    t, d, p = snap.get("latestTrade") or {}, snap.get("dailyBar") or {}, snap.get("prevDailyBar") or {}
-    chg = (d.get("c", 0) - p["c"]) / p["c"] * 100 if p.get("c") else None
-    print(f"{symbol}  ${t.get('p', float('nan')):.2f}   day {d.get('o')}/{d.get('h')}/{d.get('l')}/{d.get('c')}"
+    forced = os.environ.get("APCA_FEED")
+    snap = None
+    for f in ([forced] if forced else ["sip", "delayed_sip", "iex"]):
+        try:
+            snap = _get(f"{DATA}/v2/stocks/{symbol}/snapshot?feed={f}", hdr)
+            feed = f
+            break
+        except urllib.error.HTTPError as e:
+            if e.code != 403:
+                sys.exit(f"Alpaca {e.code} on feed={f}: {e.read()[:200].decode('utf8','replace')}")
+    if snap is None:
+        sys.exit(f"no feed on this plan could quote {symbol}")
+
+    t = snap.get("latestTrade") or {}
+    d = snap.get("dailyBar") or {}
+    p = snap.get("prevDailyBar") or {}
+    chg = (d["c"] - p["c"]) / p["c"] * 100 if p.get("c") and d.get("c") else None
+    age = ""
+    if t.get("t"):
+        secs = (datetime.now(timezone.utc) - _ts(t["t"])).total_seconds()
+        age = f", {int(secs // 60)}m old" if secs >= 60 else ", just now"
+    print(f"{symbol}  ${t.get('p', float('nan')):.2f}"
+          f"   day {d.get('o')}/{d.get('h')}/{d.get('l')}/{d.get('c')}"
           + (f"   {chg:+.2f}% vs prev close" if chg is not None else ""))
-    print(f"  last trade {t.get('t','?')}  feed={feed}"
-          + ("   (iex: consolidated tape not on this plan — confirm against his chart)" if feed == "iex" else ""))
+    note = {"sip": "full consolidated tape, real time",
+            "delayed_sip": "full consolidated tape, 15 min delayed",
+            "iex": "IEX only (~3% of the tape) — confirm against his chart"}.get(feed, feed)
+    print(f"  feed={feed} ({note}{age})   last trade {t.get('t','?')}")
 
 
 # ------------------------------------------------------------------ earnings

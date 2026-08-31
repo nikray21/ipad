@@ -24,8 +24,8 @@ XBRL tag map, and the reverse-DCF procedure.
 | Source | Gives | Trust |
 |---|---|---|
 | **SEC EDGAR XBRL companyfacts** | every income / balance / cash-flow line | authoritative — it *is* the filing |
-| **yfinance** | street targets, estimates, market cap, beta | vendor-derived; use as the cross-check, never the primary |
-| **Alpaca** | price and volume bars | authoritative for price |
+| **Alpaca** | price | the only price source in this repo — charts, quotes and the trade grader all read it |
+| **yfinance** | street targets, estimates, market cap, beta | vendor-derived; use as the cross-check, never the primary. It supplies the price ONLY when no Alpaca key is set, and the output says so |
 
 No third-party ratio library. Every ratio here is arithmetic on a **named XBRL
 tag**, and `--json` prints the tag that fed each figure. A library that computes
