@@ -62,7 +62,9 @@ matter how good the chart looks:
    trader is done for the day.
 5. **No room for even the 1:1** — the first opposing zone sits closer than +4%. There is
    no payday on that chart at any size.
-6. **Entry more than 2% away from the level** — the 4% stop would sit inside the zone.
+6. **The name doesn't fit a fixed 4% stop** — typical 4h bar range outside ~1.5–2.5%. See
+   *Does the name even fit* below.
+7. **Entry more than 2% away from the level** — the 4% stop would sit inside the zone.
    That's a WAIT for the pullback, not a smaller size. See *Entry location* below.
 
 ## The setups he actually trades
@@ -261,7 +263,29 @@ shrink your way out of; it's a **WAIT** for price to come back to the level.
 
 Shorts mirror it: enter within 2% *below* the level so the 4% stop clears above it.
 
-### The two plans — declared at entry, honored after
+#### Does the name even fit a 4% stop?
+
+A fixed stop is volatility-blind, so **the screening moves from the stop to the stock.**
+Check this before anything else — it is the first thing to fail:
+
+- **Typical 4h bar range must be roughly 1.5–2.5%.** Below that the name cannot reach +8%
+  in his horizon; above it, a 4% stop is barely one bar of noise and he gets shaken out on
+  a random wick.
+- Measure it off the chart: the median high-to-low of the last ~20 4h bars, as a percent
+  of price. No indicator needed.
+
+| Bar range | Verdict |
+|---|---|
+| < 1.5% | **Too slow.** BAC, CVX, MCD, SBUX, MSFT covered 8% in *zero* of the last 70 six-bar windows. The runner target does not exist there. |
+| **1.5–2.5%** | **The band the system is built for.** |
+| > 2.5% | **Too fast.** IREN, RIOT, NBIS, COIN, HOOD move 3–4% in a single bar — the 4% stop sits inside one candle. |
+
+Measured 2026-08-31 across his 20 usual names, only **AMD, GOOGL, INTC, META, NVDA and
+PLTR** were in the band. A perfect-looking setup in a name outside it is still a SKIP —
+say which side it failed on, because it tells him what to do instead: too slow means look
+elsewhere, too fast means wait for the name to calm down.
+
+## The two plans — declared at entry, honored after
 
 Measure the distance from entry to the **first opposing zone**. That distance picks the
 plan. He does not get to pick it once he is in the trade.
