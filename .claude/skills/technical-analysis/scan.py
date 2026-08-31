@@ -31,13 +31,13 @@ def load(paths):
     return bars
 
 
-def metrics(rows):
-    """SMA50, 10-bar slope %, extension %, median 20-bar range % — at the last closed bar."""
-    if len(rows) < 61:
+def metrics(rows, back=0):
+    """SMA50, 10-bar slope %, extension %, median 20-bar range % — at a closed bar."""
+    if len(rows) < 61 + back:
         return None
     c = [r["c"] for r in rows]
     sma = lambda i: sum(c[i - 49:i + 1]) / 50
-    i = len(rows) - 1
+    i = len(rows) - 1 - back
     s_now, s_prev = sma(i), sma(i - 10)
     rng = sorted((r["h"] - r["l"]) / r["c"] * 100 for r in rows[i - 20:i])
     return {
@@ -47,6 +47,29 @@ def metrics(rows):
         "range": rng[len(rng) // 2],
         "low": rows[i]["l"], "t": rows[i]["t"][:16],
     }
+
+
+def room(rows):
+    """% to the first live overhead pivot zone. Proxy for the LuxAlgo target level —
+    confirm on his chart before acting."""
+    n, L = len(rows), 3
+    px = rows[-1]["c"]
+    best = None
+    for k in range(L, n - L):
+        w = rows[k - L:k + L + 1]
+        if rows[k]["h"] != max(x["h"] for x in w):
+            continue
+        if any(rows[j]["c"] > rows[k]["h"] for j in range(k + 1, n)):
+            continue                      # zone already broken
+        if rows[k]["l"] > px and (best is None or rows[k]["l"] < best):
+            best = rows[k]["l"]
+    return None if best is None else (best - px) / px * 100
+
+
+def bounced(rows, back):
+    """Did the bar `back` bars ago dip to the SMA and close above it?"""
+    m = metrics(rows, back)
+    return bool(m and m["low"] <= m["sma"] and m["px"] > m["sma"])
 
 
 def main(paths):
@@ -64,17 +87,28 @@ def main(paths):
         touched  = m["low"] <= m["sma"]
         above    = m["px"] > m["sma"]
         near     = m["ext"] <= EXT_MAX
-        if eligible and steep and touched and above and near:
+        # the trigger may have fired on this bar or the previous one, as long as
+        # price is still within the 2.5% chase limit
+        fired = bounced(bars[s], 0) or bounced(bars[s], 1)
+        if eligible and steep and fired and above and near:
+            m["age"] = 0 if bounced(bars[s], 0) else 1
             takes.append((s, m))
-        elif eligible and steep and above and not touched:
+        elif eligible and steep and above and not fired:
             waits.append((s, m))
 
     print("SETUPS  (bounced off a steep rising 50 SMA this bar)")
     if not takes:
         print("  none\n")
     for s, m in takes:
-        print(f"  {s:<6} ${m['px']:.2f}  slope +{m['slope']:.1f}%  ext +{m['ext']:.1f}%  "
-              f"range {m['range']:.1f}%/bar   stop ${m['px']*.96:.2f}  target ${m['px']*1.08:.2f}")
+        age = "this bar" if m["age"] == 0 else "prev bar"
+        rm = room(bars[s])
+        if rm is None:      plan = "RUNNER 1:2 (clear air)"
+        elif rm >= 8:       plan = f"RUNNER 1:2 (room +{rm:.1f}%)"
+        elif rm >= 4:       plan = f"SCALP 1:1 (room +{rm:.1f}%)"
+        else:               plan = f"*** SKIP — only +{rm:.1f}% room, hard stop 6 ***"
+        print(f"  {s:<6} ${m['px']:.2f}  bounce {age}  slope +{m['slope']:.1f}%  ext +{m['ext']:.1f}%  "
+              f"range {m['range']:.1f}%/bar")
+        print(f"         stop ${m['px']*.96:.2f}  target ${m['px']*1.08:.2f}   {plan}")
 
     print("\nARMED  (eligible + steep uptrend, waiting for a pullback to the SMA)")
     if not waits:
