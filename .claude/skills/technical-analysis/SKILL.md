@@ -1,6 +1,6 @@
 ---
 name: technical-analysis
-description: Grade one of Nikil's swing trades (planned or already open) — 50 SMA structure (slope, distance band, bounce vs reclaim), LuxAlgo Liquidity Swings zones, SWING CALL trend — score it 1–10, size it to the grade, run the fixed 4%/8% stop-and-target math, and manage the exit. Use when he shares a chart screenshot with a position or asks to "check this trade", "grade this setup", "run TA on this", "can I buy this", "where's my stop", "should I take profit", or "is this SMA bounce good".
+description: Grade one of Nikil's swing trades (planned or already open) — 50 SMA structure (slope, distance band, bounce vs reclaim), LuxAlgo Liquidity Swings zones, SWING CALL trend — score it 1–10, size it to the grade, pick the 1:1 or 1:2 plan, run the fixed 4% stop math, and manage the exit to a $50–100 payday. Use when he shares a chart screenshot with a position or asks to "check this trade", "grade this setup", "run TA on this", "can I buy this", "where's my stop", "should I take profit", or "is this SMA bounce good".
 argument-hint: [ticker or paste/attach the chart screenshot]
 ---
 
@@ -60,8 +60,8 @@ matter how good the chart looks:
 4. **The daily circuit breaker is tripped** — two losses today, or −2% on the account,
    or three new trades already opened today. Say it plainly: the setup may be fine, the
    trader is done for the day.
-5. **No room to the 8% target** — the first opposing zone sits closer than +8%. The
-   ratio is fixed, so a target that can't be reached isn't a smaller trade, it's no trade.
+5. **No room for even the 1:1** — the first opposing zone sits closer than +4%. There is
+   no payday on that chart at any size.
 6. **Entry more than 2% away from the level** — the 4% stop would sit inside the zone.
    That's a WAIT for the pullback, not a smaller size. See *Entry location* below.
 
@@ -94,18 +94,21 @@ all-six-or-nothing gate: a mediocre setup gets a small size, not a lecture.
 | 2 | **Location** — zone quality: live, heavy, narrow, untested, confluent | 0–2 |
 | 3 | **Trigger** — did a full 4h candle close where it had to, with range/volume behind it | 0–2 |
 | 4 | **Entry location** — close enough to the level that the fixed 4% stop clears it | 0–1 |
-| 5 | **Room** — clear air to +8% before the first opposing zone | 0–2 |
+| 5 | **Room** — 2 pts if clear to +8% (runner), 1 pt if +4–8% (scalp), 0 below | 0–2 |
 | 6 | **Book & calendar** — risk budget, concentration, correlation, day-count, catalysts | 0–1 |
 
 **Grade → size.** The stop is always 4%, so **position size is the only risk dial** —
 size it as a percentage of the account, not as a risk budget. On $5,000:
 
-| Score | Grade | Verdict | Position | = risk |
-|---|---|---|---|---|
-| 9–10 | A | TAKE IT | 25% · $1,250 | $50 (1.0%) |
-| 7–8 | B | TAKE SMALL | 15% · $750 | $30 (0.6%) |
-| 5–6 | C | TAKE STARTER / paper it | 8% · $400 | $16 (0.3%) |
-| ≤ 4 | D | SKIP | — | — |
+| Score | Grade | Verdict | Position | risk | pays at +4% / +8% |
+|---|---|---|---|---|---|
+| 9–10 | A | TAKE IT | 25% · $1,250 | $50 | **$50 / $100** |
+| 7–8 | B | TAKE SMALL | 15% · $750 | $30 | $30 / $60 |
+| 5–6 | C | TAKE STARTER / paper it | 8% · $400 | $16 | $16 / $32 |
+| ≤ 4 | D | SKIP | — | — | — |
+
+Only an A-grade pays his $50–100 target. Say so when you hand him a B or C — he should
+know he is taking a $30 trade before he takes it, not after.
 
 TAKE SMALL is a **sized answer, not a hedge.** Never inflate a 6 to an 8 because he
 wants the trade, and never write "maybe" — the size *is* the opinion. A C that works is
@@ -199,25 +202,47 @@ and a downtrend — same touch, same stall, same pullback:
 
 He reads picture two as picture one. Trend is the only thing separating them.
 
-## The math — fixed 4% / 8%, nothing to calculate
+## What he is actually trying to earn
 
-No ATR. The stop and target are the same percentages on every trade, both sides:
+**$50–100 a trade.** Every rule below exists to make that number reachable, and the
+arithmetic is unforgiving about how:
+
+| Position | +2% | **+4%** | +6% | **+8%** | risk |
+|---|---|---|---|---|---|
+| **25% · $1,250** | $25 | **$50** | $75 | **$100** | $50 |
+| 15% · $750 | $15 | $30 | $45 | $60 | $30 |
+| 8% · $400 | $8 | $16 | $24 | $32 | $16 |
+
+Three things follow, and you say them whenever he is tempted to bail early:
+
+1. **$50–100 only exists at full size holding at least +4%.** A B-grade reaches $60 at
+   +8% and nowhere else. A C-grade never pays his goal — C trades keep his hand in, they
+   don't earn.
+2. **+2% is not a payday, it is half of one.** $25 at full size. To make $50 at +2% he
+   would need 50% of the account in one name — the COIN trade that panicked him out.
+3. So **+4% is the floor, not the ceiling.** When he says "I'll get out at 2–4% if the
+   profits are good", the honest translation is: 2% is not good, 4% is the minimum, 8% is
+   the goal.
+
+## The math — fixed 4% stop, 1:1 or 1:2
+
+No ATR. **The stop is always 4%.** The target is either +4% or +8% — and which one is
+decided by the chart *before he enters*, never by his nerves once he is in.
 
 ```
-LONG    Stop   = Entry × 0.96          (−4%)
-        Target = Entry × 1.08          (+8%)
-SHORT   Stop   = Entry × 1.04          (+4%)
-        Target = Entry × 0.92          (−8%)
+LONG    Stop   = Entry × 0.96          (−4%)   always
+        Target = Entry × 1.04  (1:1)   or  Entry × 1.08  (1:2)
+SHORT   Stop   = Entry × 1.04          (+4%)   always
+        Target = Entry × 0.96  (1:1)   or  Entry × 0.92  (1:2)
 
 Shares  = Position $ ÷ Entry           Position $ from the grade above
 Risk $  = Position $ × 0.04
-Reward $= Position $ × 0.08
-R:R     = 2.00x                        always, by construction
+Reward $= Position $ × 0.04 (1:1)  or  × 0.08 (1:2)
 Distance from 50 SMA = (Price − SMA) ÷ SMA × 100
 ```
 
-Because the ratio is fixed, **the grading moves to the two things that are still
-variable: where he enters, and whether there is room to the target.**
+Because the stop is fixed, **the grading moves to three things: where he enters, which
+plan the structure allows, and whether he holds to the target he declared.**
 
 ### Entry location — the rule that replaces the stop rule
 
@@ -236,15 +261,36 @@ shrink your way out of; it's a **WAIT** for price to come back to the level.
 
 Shorts mirror it: enter within 2% *below* the level so the 4% stop clears above it.
 
-### Room to target
+### The two plans — declared at entry, honored after
 
-The target is +8%, wherever the chart happens to be. So check it is reachable:
+Measure the distance from entry to the **first opposing zone**. That distance picks the
+plan. He does not get to pick it once he is in the trade.
 
-- **First opposing zone at or beyond +8%** → clear air, full marks.
-- **Zone between +5% and +8%** → the trade is fighting resistance before it pays. 1 point,
-  and expect to manage out early.
-- **Zone closer than +5%** → skip. The 1:2 doesn't exist on this chart; wait for a better
-  entry or a different name.
+| Room to the first opposing zone | Plan | Target | Pays at full size |
+|---|---|---|---|
+| **≥ +8%** | **RUNNER (1:2)** | +8% | **$100** |
+| **+4% to +8%** | **SCALP (1:1)** | +4%, or the zone if nearer | **$50** |
+| < +4% | none | — | SKIP — there is no payday on this chart |
+
+**The scalp is a concession to structure, not a mood.** It exists so a good setup with a
+zone overhead is still tradeable instead of a SKIP — that is the strictness he asked to
+lose. It is not permission to take any trade off at +2%.
+
+**Two hard bounds on the 1:1:**
+
+- **A-grade only, full size.** A 1:1 at B size pays $30 and at C size $16. If the setup
+  isn't worth full size, it isn't worth taking at 1:1 — take the runner or pass.
+- **It needs a 62% win rate to beat what he is already doing.** At 1:1 the breakeven is
+  50% and he must clear **62%** just to match his current $11.60/trade. The runner
+  breaks even at 33% and beats today at **41%**. The 1:2 survives being wrong far more
+  often, which is why it stays the default and the scalp is the exception.
+
+| If the win rate lands at | 1:1 pays | 1:2 pays |
+|---|---|---|
+| 75% | $25/trade | $62/trade |
+| 65% | $15/trade | $48/trade |
+| 55% | $5/trade | $33/trade |
+| 45% | −$5/trade | $18/trade |
 
 ### Concentration falls out of the math
 
@@ -259,22 +305,25 @@ position-count rule needed; the cap does the work.
 He plans 1.81x and realizes 0.22R. These rules exist to close that gap, and they matter
 more than any entry rule on this page.
 
-1. **No discretionary exit before +4%.** The *only* reasons to close a green trade under
-   +4%: a 4h close back below the entry zone / lost 50 SMA (structure break), or a hard
-   catalyst. "It's moving fast", "I'm nervous", "it's Friday" are not exits.
-2. **The ladder.** At **+4% sell half and move the stop to breakeven.** The rest runs to
-   +8%, or trails below the last *completed* 4h swing low. After +4% the worst case is
-   +2% — holding becomes free, which is the actual fix for "I get scared and take the
-   profit right away."
-3. **Time stop.** Six 4h bars without reaching +2% → close it. His real horizon is one
+1. **No discretionary exit before +4%, on either plan.** The *only* reasons to close a
+   green trade under +4%: a 4h close back below the entry zone / lost 50 SMA (structure
+   break), or a hard catalyst. "It's moving fast", "I'm nervous", "it's Friday" are not
+   exits. +2% is half a payday — taking it is the leak that made his average winner 0.40R.
+2. **SCALP: all out at +4%.** $50, done, no decision to agonise over. That simplicity is
+   the whole point of the plan.
+3. **RUNNER: at +4% take a third off and move the stop to breakeven.** That books ~$17,
+   makes the rest risk-free, and leaves two thirds working toward $100 — a full win lands
+   near **$84**. Keep the scale small: the reason to scale is his nerves, so take the
+   least that settles them. The rest trails below the last *completed* 4h swing low.
+4. **Never convert a runner into a scalp mid-trade.** If he declared +8% and takes it off
+   at +4% because it felt shaky, that is the old leak wearing a new name. The plan is
+   chosen once, at entry, by the chart.
+5. **Time stop.** Six 4h bars without reaching +2% → close it. His real horizon is one
    day; this turns his impatience into a rule instead of a leak, and it is what would have
    capped IREN at a scratch.
-4. **Never widen a stop. Never average down. Never move a stop backwards** — mid-trade,
+6. **Never widen a stop. Never average down. Never move a stop backwards** — mid-trade,
    that is not an option you offer. IREN went to −1.00R because *"i held the bag"*.
-5. **The target is +8%, not the next thing that looks good.** If the chart can't get
-   there before an opposing zone, that was a SKIP at entry — don't rescue it by inventing
-   a nearer target once he's in.
-6. **Friday.** If he will not hold over the weekend, don't open a fresh swing after
+7. **Friday.** If he will not hold over the weekend, don't open a fresh swing after
    Thursday's second 4h bar unless it can plausibly reach +4% inside Friday. State it as a
    planning constraint, not a lecture.
 
@@ -293,14 +342,16 @@ Short — his standing preference. Always this shape:
 
 1. **Verdict + score**: `TAKE IT / TAKE SMALL / TAKE STARTER / WAIT / SKIP` (or for an
    open trade `HOLD / TRIM / CUT`), the score as `7/10 · B`, and one sentence of why.
-2. **Setup name** — which archetype, and long or short.
+2. **Setup name and plan** — which archetype, long or short, and **RUNNER (1:2) or
+   SCALP (1:1)** with the dollars it pays if it works. He should see "$50" or "$100"
+   before he clicks.
 3. **Scorecard** — the six categories, each with its points and a few words.
 4. **The numbers block** — Level, entry vs level (%), Stop (−4%), Target (+8%), Shares,
    position value, Risk $, Reward $, and **distance from the 50 SMA in %**. Every figure
    from his chart.
 5. **The journal row** — pre-filled so he can paste it: Setup, Entry $, Qty, Stop Loss %
-   (4.0%), Stop Loss $, Target Profit % (8.0%), Target Profit $, Risk $, Reward $, R:R
-   (2.00x), Risk % Acct.
+   (always 4.0%), Stop Loss $, Target Profit % (4.0% scalp / 8.0% runner), Target Profit $,
+   Risk $, Reward $, R:R (1.00x / 2.00x), Risk % Acct.
 6. **The one decision point** — the single price or bar that changes the answer.
 
 On a **WAIT**, always give the armed trigger: the exact price, what has to happen to it
