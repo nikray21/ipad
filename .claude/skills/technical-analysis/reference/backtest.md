@@ -2,6 +2,9 @@
 
 **Universe:** 50 liquid US names (his journal tickers + common swing names).
 **Data:** 600 × 4h RTH bars each, 2025-06-18 → 2026-08-31 (~14 months), Webull.
+Live grading has since moved to Alpaca (`alpaca.py`), which rebuilds the same
+09:30–13:30 / 13:30–16:00 ET session buckets so these thresholds still apply.
+The next re-measure should be run on Alpaca bars end to end.
 **Method:** signal at a 4h bar close; entry at that close; barrier test to +target / −4%.
 Consecutive signal bars in the same name collapsed into **one independent episode**
 (6-bar gap), because raw signal bars badly overstate n. Bars where the high and low

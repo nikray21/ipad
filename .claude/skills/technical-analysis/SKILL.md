@@ -50,11 +50,43 @@ risk. It fired ~6.6×/month across a 50-name list, spread over 32 different name
 That is the whole A-setup. Everything else on this page is either how to size it, how to
 hold it, or a lower-grade variation.
 
+## Where the data comes from — Alpaca, and only Alpaca
+
+Every price in a grade comes from Alpaca, via `alpaca.py` in this folder. Not
+yfinance, not Webull, not a number recalled from earlier in the conversation. The
+journal's SBUX trade (#15) was stopped out for a loss because a model mixed feeds;
+one feed, stamped with which feed it was, or **ask**.
+
+```
+python3 .claude/skills/technical-analysis/alpaca.py bars NVDA AMD PLTR …   # 4h RTH bars -> JSON path
+python3 .claude/skills/technical-analysis/alpaca.py quote NVDA             # live-verified last trade
+python3 .claude/skills/technical-analysis/alpaca.py earnings NVDA --days 14
+```
+
+Needs `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the environment (Claude Code
+web: environment settings → environment variables). It tries the `sip` feed and
+falls back to `iex`, and prints which one it used — **say the feed in the grade
+when it is `iex`**, since IEX prints only a slice of the tape and the last trade
+can sit a few cents off his chart.
+
+**The bars are rebuilt, not taken as shipped.** Every threshold below was measured
+on regular-hours 4h bars — two per session, 09:30–13:30 and 13:30–16:00 ET.
+Alpaca's own `4Hour` bars are UTC-aligned and include pre/post market, which is a
+different bar and would quietly move the SMA, the slope and the bar-range band. So
+`alpaca.py` pulls 30Min bars, drops everything outside regular hours, and
+reassembles those exact buckets. Only **closed** buckets are scored; the forming
+one is reported separately with the time it closes, which is the time a WAIT
+answer has to name.
+
+Earnings is the one thing Alpaca does not carry — `alpaca.py earnings` reads
+Nasdaq's calendar for that, and it is a check, not a substitute for confirming on
+his chart.
+
 ## Finding setups (when he asks "find me a setup")
 
-1. Call `mcp__Webull__get_stock_bars` — `timespan="M240"`, `trading_sessions="RTH"`,
-   `count=100`, up to 20 symbols per call. Big results auto-save to a file.
-2. `python3 .claude/skills/technical-analysis/scan.py <those files>`
+1. `python3 .claude/skills/technical-analysis/alpaca.py bars <symbols…>` — it
+   prints the path of the JSON it wrote.
+2. `python3 .claude/skills/technical-analysis/scan.py <that path>`
 
 It prints three things: **SETUPS** (bounced off a steep rising SMA on the last closed
 bar), **ARMED** (eligible, steep uptrend, waiting for the pullback — with the exact SMA
@@ -143,8 +175,8 @@ the trade.
 ## Hard stops — automatic SKIP
 
 1. **Earnings inside the hold.** The hold is now ~10 days, so check a wider window than
-   before. Verify live, never from recall. His worst trade (IREN, −$150, 62% of all his
-   losses) was an earnings long.
+   before: `alpaca.py earnings <SYM> --days 14`. Verify live, never from recall. His
+   worst trade (IREN, −$150, 62% of all his losses) was an earnings long.
 2. **Ineligible name** — bar range outside 1.5–3.0%.
 3. **No bounce candle yet** — the 4h bar has not closed back above the SMA. This is a
    **WAIT**, not a dead idea: give him the SMA price and the bar-close time.
@@ -231,8 +263,9 @@ From a TradingView 4h screenshot (SWING CALL + Liquidity Swings + 50 SMA):
   claim it has an edge.
 - Current price / his entry, brackets, position size, and the last bar time.
 
-If something needed is missing, **ask**. Never infer a price from memory or a stale feed
-— he has been stopped out once already off a bad number a model handed him.
+If something needed is missing, **ask**, or pull it from Alpaca. Never infer a price
+from memory or a second feed — he has been stopped out once already off a bad number a
+model handed him.
 
 ## Bounce vs reclaim
 
@@ -268,7 +301,8 @@ make that the headline when it applies.
 
 1. Never place, modify, or cancel orders. He executes manually.
 2. Never soften a failing grade. A scored SKIP beats a hedged maybe.
-3. Every number traces to his chart or a live-verified quote. Unreadable → **ask**.
+3. Every number traces to his chart or an Alpaca quote (`alpaca.py quote <SYM>`).
+   Never a second feed, never a recalled price. Unreadable → **ask**.
 4. The stop is always 4%, so the **entry** must be within 2.5% of the SMA for it to mean
    anything. Repeat it whenever he's chasing.
 5. Moving a stop backwards mid-trade is never an option you offer.

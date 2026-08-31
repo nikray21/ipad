@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Screen for the A-setup from saved Webull 4h bar JSON. Stdlib only.
+"""Screen for the A-setup from Alpaca 4h RTH bars. Stdlib only.
 
-Workflow (cloud session):
-  1. Call mcp__Webull__get_stock_bars with timespan="M240", trading_sessions="RTH",
-     count>=80, up to 20 symbols per call. Large results are auto-saved to a file.
-  2. python3 scan.py <those files...>
+Workflow:
+  1. python3 alpaca.py bars ADBE AFRM AMD ...      (prints the JSON path it wrote)
+  2. python3 scan.py <that path>
+
+Alpaca is the only price source — see alpaca.py for why the bars are rebuilt into
+09:30/13:30 ET session buckets rather than used as Alpaca ships them. Only CLOSED
+bars are scored; the forming bar is reported as the ARMED trigger time.
 
 Prints: eligible names, live setups, and near-misses with the price to wait for.
 """
@@ -16,19 +19,21 @@ EXT_MAX     = 2.5      # max % the close may sit above the SMA
 
 
 def load(paths):
-    bars = {}
+    """Read alpaca.py bar files. Later files win when a symbol appears twice."""
+    bars, meta = {}, {}
     for p in paths:
         try:
-            blocks = json.load(open(p))["result"]
+            d = json.load(open(p))
         except Exception as e:
             print(f"  ! skipped {p}: {e}", file=sys.stderr); continue
-        for blk in blocks:
-            rows = [{"t": b["time"], "c": float(b["close"]), "h": float(b["high"]),
-                     "l": float(b["low"])} for b in blk["result"]]
-            rows.sort(key=lambda r: r["t"])
-            if len(rows) > len(bars.get(blk["symbol"], [])):
-                bars[blk["symbol"]] = rows
-    return bars
+        if d.get("source") != "alpaca":
+            print(f"  ! skipped {p}: not an alpaca.py bar file", file=sys.stderr); continue
+        meta = {"feed": d.get("feed"), "fetched_at": d.get("fetched_at")}
+        for sym, blk in (d.get("symbols") or {}).items():
+            rows = blk.get("bars") or []
+            if len(rows) >= len(bars.get(sym, ([], None))[0]):
+                bars[sym] = (rows, blk.get("next_close"))
+    return bars, meta
 
 
 def metrics(rows, back=0):
@@ -73,12 +78,17 @@ def bounced(rows, back):
 
 
 def main(paths):
-    bars = load(paths)
-    if not bars:
+    loaded, meta = load(paths)
+    if not loaded:
         print("no bar data found"); return
+    bars = {s: r for s, (r, _) in loaded.items()}
+    nextclose = {s: n for s, (_, n) in loaded.items()}
     rows = {s: metrics(r) for s, r in bars.items()}
     rows = {s: m for s, m in rows.items() if m}
-    print(f"scanned {len(rows)} names — last bar {next(iter(rows.values()))['t']}\n")
+    if not rows:
+        print("no name has the 61 closed bars a score needs"); return
+    print(f"scanned {len(rows)} names — last closed bar {next(iter(rows.values()))['t']} "
+          f"· alpaca feed={meta.get('feed')}\n")
 
     takes, waits = [], []
     for s, m in sorted(rows.items()):
@@ -114,8 +124,10 @@ def main(paths):
     if not waits:
         print("  none")
     for s, m in sorted(waits, key=lambda x: x[1]["ext"])[:12]:
+        nc = nextclose.get(s)
         print(f"  {s:<6} ${m['px']:.2f}  +{m['ext']:.1f}% over SMA — needs a dip to "
-              f"${m['sma']:.2f} and a close back above  (slope +{m['slope']:.1f}%)")
+              f"${m['sma']:.2f} and a close back above  (slope +{m['slope']:.1f}%)"
+              + (f"  [bar closes {nc[11:16]} ET]" if nc else ""))
 
     elig = [s for s, m in rows.items() if VOL_BAND[0] <= m["range"] <= VOL_BAND[1]]
     print(f"\nELIGIBLE NAMES ({len(elig)}/{len(rows)}, bar range {VOL_BAND[0]}–{VOL_BAND[1]}%):")
