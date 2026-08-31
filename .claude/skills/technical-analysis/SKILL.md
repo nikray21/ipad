@@ -55,8 +55,8 @@ matter how good the chart looks:
    recall. This is the rule his own worst trade wrote.
 2. **No confirmation yet** — the trigger candle has not closed. This is a **WAIT**, not
    a dead idea. Give him the trigger price and the bar-close time.
-3. **The book is full** — open risk already ≥ 4% of account, or this position would put
-   more than 25% of the account in one name.
+3. **The book is full** — already 50% of the account deployed, or this position would
+   put more than 25% of it in one name.
 4. **The daily circuit breaker is tripped** — two losses today, or −2% on the account,
    or three new trades already opened today. Say it plainly: the setup may be fine, the
    trader is done for the day.
@@ -154,8 +154,8 @@ the SMA already rolling over, is his cleanest trend-change trigger — it is wha
 his AMD short. Call it when you see it.
 
 **A rising SMA under a short (or a falling one over a long) eats the trade.** The target
-is a fixed 8%, but the moving average keeps travelling toward it. If the 50 SMA will reach
-the target zone before price does, the setup expires — say when, in bars.
+is fixed at +4% or +8%, but the moving average keeps travelling toward it. If the 50 SMA
+will reach the target before price does, the setup expires — say when, in bars.
 
 ## Reading LuxAlgo Liquidity Swings
 
