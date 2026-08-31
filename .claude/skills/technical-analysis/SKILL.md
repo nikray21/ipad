@@ -1,6 +1,6 @@
 ---
 name: technical-analysis
-description: Grade one of Nikil's swing trades (planned or already open) against the measured A-setup — a 50 SMA bounce in a steep uptrend on a name in the right volatility band — score it 1–10, size it, run the 4%/8% math, and hold it the 8–10 days the edge actually needs. Use when he shares a chart screenshot with a position or asks to "check this trade", "grade this setup", "run TA on this", "can I buy this", "where's my stop", "should I take profit", "is this SMA bounce good", or "find me a setup".
+description: Grade one of Nikil's swing trades (planned or already open) against the measured A-setup — a 50 SMA bounce in a steep uptrend on a name in the right volatility band, or its short mirror, a rejection at a falling 50 SMA — score it 1–10, size it, run the 4%/8% math, and hold it the 8–10 days the edge actually needs. Prices come from Alpaca. Use when he shares a chart screenshot with a position or asks to "check this trade", "grade this setup", "run TA on this", "can I buy this", "can I short this", "where's my stop", "should I take profit", "is this SMA bounce good", or "find me a setup".
 argument-hint: [ticker or paste/attach the chart screenshot]
 ---
 
@@ -86,7 +86,9 @@ his chart.
 
 1. `python3 .claude/skills/technical-analysis/alpaca.py bars <symbols…>` — it
    prints the path of the JSON it wrote.
-2. `python3 .claude/skills/technical-analysis/scan.py <that path>`
+2. `python3 .claude/skills/technical-analysis/scan.py <that path>` — longs.
+   `python3 … /scan.py --short <that path>` — the mirror. The short scan also prints
+   a **TOO STEEP TO SHORT** list, which is a SKIP list, not a watchlist.
 
 It prints three things: **SETUPS** (bounced off a steep rising SMA on the last closed
 bar), **ARMED** (eligible, steep uptrend, waiting for the pullback — with the exact SMA
@@ -128,6 +130,10 @@ Read zone volume **relative to the other zones on his chart**, never as an absol
 
 ## Plan — the target comes from the chart
 
+Long, room measured *up* to the first opposing zone. On a short read every sign
+inverted — room *down* to the first support — and the "pays" column is capped at C
+size, so a short runner pays $32, not $100.
+
 | Room to first opposing zone | Plan | Target | Pays at full size |
 |---|---|---|---|
 | **≥ +8%** | **RUNNER (1:2)** | +8% | **$100** |
@@ -138,7 +144,7 @@ Read zone volume **relative to the other zones on his chart**, never as an absol
 all-out at +4% pays +0.20R. Taking the 1:1 when +8% was available throws away half the
 edge. Use the scalp only when a zone genuinely blocks the path.
 
-## The math
+## The math (long — the short mirror is in the Shorts section)
 
 ```
 Stop   = Entry × 0.96      (−4%)   always
@@ -150,7 +156,7 @@ Extension = (Close − SMA) ÷ SMA × 100                            need ≤ 2.
 Bar range = median(High − Low) ÷ Close × 100 over 20 bars        need 1.5–3.0
 ```
 
-## Scoring — 1 to 10, same scale as his journal's self-assessment
+## Scoring (long) — 1 to 10, same scale as his journal's self-assessment
 
 | # | Category | Pts |
 |---|---|---|
@@ -172,7 +178,7 @@ Only an A pays his $50–100 target — tell him he's taking a $30 trade *before
 it. TAKE SMALL is a sized answer, not a hedge: never inflate a 6 to an 8 because he wants
 the trade.
 
-## Hard stops — automatic SKIP
+## Hard stops (long) — automatic SKIP
 
 1. **Earnings inside the hold.** The hold is now ~10 days, so check a wider window than
    before: `alpaca.py earnings <SYM> --days 14`. Verify live, never from recall. His
@@ -185,19 +191,114 @@ the trade.
    already opened.
 6. **No room** — first opposing zone closer than +4%.
 
-## Shorts — no measured edge, so treat them as speculation
+## Shorts — the mirror, and the one condition that does not mirror
 
-The mirror setup (price touching a falling 50 SMA from below and closing under) was
-tested across the same 50 names: **52% at 1:1, 34% at 1:2, expectancy ≈ 0** — and it got
-*worse* as the downtrend steepened, which is the opposite of the long side.
+**The Z-setup: price rallies up into a *falling* 50 SMA, the bar's high touches or
+crosses it, and the bar closes back *below*.** Call it a **rejection**, never a
+"bounce" — same word for the opposite event is how a short gets graded on long rules.
 
-So: **do not volunteer a short.** If he asks about one, grade it, say plainly that this
-pattern has no measured edge, and cap it at **C size ($400)** regardless of how good the
-chart looks. His journal's 6-for-8 short record is 8 trades of quick scalps — too few to
-argue with 113 measured setups. Plus the old short risks still hold: uncapped loss, gap
-risk, squeezes, and momentum names being the most tempting and most dangerous.
+Four conditions, each the flip of the long side except #2:
 
-## Managing the open trade
+1. **Eligible name** — median 4h bar range **1.5–3.0%** of price. *Unchanged* —
+   volatility is direction-blind, and a 4% stop is a 4% stop either way.
+2. **Falling 50 SMA, slope −1.0% to −1.5% over 10 bars — a BAND, not a floor.**
+   This is the one rule that does not flip and the one place a naive mirror loses
+   money. See below.
+3. **The rejection** — the bar's **high touched or crossed the 50 SMA** and the bar
+   **closed back below it.** One 4h candle, both facts.
+4. **Not extended** — the close sits **within 2.5% below the SMA.** Chasing a name
+   already 4% under the SMA is the same mistake as chasing one 4% above it.
+
+### Why the slope is a band and not a floor
+
+The long side pays more the steeper the trend. The short side does the opposite:
+
+| Slope | n | −4% | −8% | E at 1:2 |
+|---|---|---|---|---|
+| < −0.5% | 113 | 52% | 34% | +0.01 |
+| < −1.0% | 84 | 52% | 35% | **+0.05** |
+| < −1.5% | 54 | 47% | 27% | −0.19 |
+| < −2.0% | 35 | 41% | 24% | −0.27 |
+
+Those buckets are cumulative, so the **−1.0% to −1.5% slice alone** is the 30 setups
+that sit in the first row but not the second: **n=30, ≈61% reach −4%, ≈49% reach −8%,
+E ≈ +0.48R.** That is arithmetic on the table above, **not a measured result** — it
+subtracts two rounded percentages over 30 samples, so the error bars are wide enough
+to swallow the whole number. Treat it as **the hypothesis worth measuring next**, not
+as evidence. What it does justify: refusing the steep downtrends, because every
+bucket past −1.5% is measured negative across a larger n.
+
+So: **steeper is not better on the short side.** Below −1.5% is an automatic SKIP,
+and telling him a −3% slope is "a really clean downtrend" is exactly backwards.
+
+### The math, flipped
+
+```
+Stop   = Entry × 1.04      (+4%)   always — above the entry
+Target = Entry × 0.92      (−8%)   or × 0.96 on a scalp
+Shares = Position $ ÷ Entry
+Risk $ = Position $ × 0.04
+Slope  = (SMA_now − SMA_10_bars_ago) ÷ SMA_10_bars_ago × 100   need −1.5 ≤ slope ≤ −1.0
+Extension = (SMA − Close) ÷ SMA × 100                          need ≤ 2.5
+Bar range = median(High − Low) ÷ Close × 100 over 20 bars       need 1.5–3.0 (unchanged)
+Room   = % DOWN to the first live support zone below
+```
+
+### Scoring, flipped
+
+Same six categories, same 1–10, three of them re-read for direction:
+
+| # | Category | Pts |
+|---|---|---|
+| 1 | **Eligible name** — bar range 1.5–3.0% (unchanged) | 0–2 |
+| 2 | **SMA slope** — 2 pts inside −1.0…−1.5%, 1 pt −0.5…−1.0%, **0 below −1.5%** | 0–2 |
+| 3 | **The rejection** — high touched the SMA, close back below, one candle | 0–2 |
+| 4 | **Not extended** — close within 2.5% *below* the SMA | 0–1 |
+| 5 | **Room** — 2 pts clear to −8%, 1 pt −4 to −8%, 0 below | 0–2 |
+| 6 | **Book & calendar** — risk, concentration, day count, no earnings | 0–1 |
+
+### Sizing — the one thing that is deliberately NOT flipped
+
+A 9/10 short is **not** an A-size trade. The verdict table caps every short at
+**C size ($400, $16 risk)** no matter what it scores, because the measured
+expectancy across all 113 short setups is ≈0 while the long side is +0.44R. His
+journal's 6-for-8 short record is 8 quick scalps — too few to argue with 113
+measured setups.
+
+The cap comes off on evidence, not on a good-looking chart: re-run the backtest
+against the −1.0…−1.5% band directly on Alpaca bars, and if it holds up over a real
+n, the short side gets the same table as the long side. Until then a 9/10 short and
+a 6/10 short are the same $400.
+
+**Still do not volunteer a short.** Grade one when he asks, say the score and the
+cap in the same breath, and never let a clean-looking chart do the arguing.
+
+### Short-only hard stops (on top of the mirrored six)
+
+1. **Slope steeper than −1.5%** — measured negative. SKIP.
+2. **Hard to borrow, or a short interest / days-to-cover reading that flags a
+   squeeze.** The loss is uncapped and the stop is a suggestion in a squeeze.
+3. **Earnings inside the hold** — the same rule, and worse: a gap through a 4% stop
+   is the normal case on the short side, not the tail.
+4. **No support within −4%** — same as the long side's room test, pointed down.
+
+Gap risk, borrow fees and dividend liability all sit on the short side and none of
+them appear in the backtest's expectancy. That is another reason the cap stands.
+
+### Managing an open short
+
+Every management rule mirrors cleanly — the direction of the numbers changes, the
+discipline does not:
+
+- **Hold up to 20 bars (~10 trading days).** Same time stop, same reason.
+- **Nothing covers before −4%.** The setup is void on a 4h **close back above the
+  50 SMA** — that is the short's mirror of losing the SMA, and it is the one
+  legitimate early exit besides a hard catalyst.
+- **At −4%: cover a third, stop to breakeven.** The rest runs to −8%.
+- **Never widen the stop, never add to a loser, never move the stop up** away from
+  entry. On a short this rule is load-bearing: the loss has no floor.
+
+## Managing the open trade (long — the short mirror is in the Shorts section)
 
 This is where the money is. He plans 1.81x and realizes 0.22R.
 
@@ -270,9 +371,13 @@ model handed him.
 ## Bounce vs reclaim
 
 A **bounce** is price dipping to a *rising* SMA from above and closing back over it —
-that is the measured setup. A **reclaim** is price closing back above an SMA it had
+that is the measured long setup. A **reclaim** is price closing back above an SMA it had
 already lost: a reversal attempt, weaker, and it needs the trend to have re-established
-first. Say which one he is looking at, every time — he calls both "SMA bounce".
+first. A **rejection** is the short mirror — price rallying to a *falling* SMA from below
+and closing back under it. A **breakdown** is the short's reclaim: price closing below an
+SMA it had been holding, which is a fresh loss of trend, not the measured setup.
+
+Say which of the four he is looking at, every time — he calls all of them "SMA bounce".
 
 ## Output format
 
@@ -286,12 +391,17 @@ Short — his standing preference:
    position value, risk $, reward $.
 5. **The hold** — *"expect ~9 bars / 4–5 trading days; time stop 20 bars."* State it on
    every take, so the horizon is agreed before he's in.
-6. **Journal row** — Setup (SMA bounce), Entry $, Qty, Stop Loss % (4.0%), Stop Loss $,
-   Target Profit % (8.0% / 4.0%), Target Profit $, Risk $, Reward $, R:R, Risk % Acct.
+6. **Journal row** — Setup (SMA bounce / SMA rejection), Long or Short, Entry $, Qty,
+   Stop Loss % (4.0%), Stop Loss $, Target Profit % (8.0% / 4.0%), Target Profit $,
+   Risk $, Reward $, R:R, Risk % Acct.
 7. **The one decision point** — the single price that changes the answer.
 
-On a **WAIT**, give the armed trigger: the SMA price, that it needs a *close* above it,
-and when the bar closes. He front-runs setups when he hears "no".
+On a **WAIT**, give the armed trigger: the SMA price, the direction the close has to
+come from (*above* it on a long, *below* it on a short), and when the bar closes. He
+front-runs setups when he hears "no".
+
+**On any short**, the verdict line carries the cap: `7/10 · B — but shorts cap at C
+size, so this is a $400 trade`. Never print a short verdict without the cap attached.
 
 **If he is already in it:** separate fixable (stop, target, how long to hold) from sunk
 (entry). The most common correction will be *"you are about to cut this too early"* —

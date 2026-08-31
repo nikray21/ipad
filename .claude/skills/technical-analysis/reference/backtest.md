@@ -119,6 +119,14 @@ psychological ease that makes holding possible.
 It gets *worse* as the downtrend steepens — the opposite of the long side. Capped at
 starter size in the skill.
 
+Because those buckets are cumulative, the **−1.0% to −1.5% slice alone** is row 2 minus
+row 3: n=30, ≈61% to −4%, ≈49% to −8%, E ≈ +0.48R. That is subtraction on rounded
+percentages over 30 samples, so it is a **hypothesis, not a result** — the error bars
+cover most of the range. The skill screens shorts to that band and SKIPs anything
+steeper (where the negative expectancy IS measured, over a larger n), but keeps the
+size cap until the band is measured directly. **That is the next measurement to run**,
+on Alpaca bars, end to end.
+
 ## What this does not prove
 
 - **One regime.** 14 months, broadly a bull tape. A sustained bear market was not tested
