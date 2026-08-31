@@ -36,10 +36,20 @@ Nasdaq still supplies the things Alpaca does not carry — analyst ratings, targ
 estimates, sector/industry/market-cap metadata, and the earnings calendar. Every
 payload names the source that answered it.
 
-Needs `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the environment. Set them as
-**environment variables on the cloud environment**, not in a committed file — a key
-in git is a key in every clone and fork of the repo. Without them the code falls
-back to Yahoo/Nasdaq and says so rather than failing.
+Needs `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the environment. They live in
+the `env` block of `.claude/settings.json`, which Claude Code reads at the start of
+every session in this repo — that file is the only thing that persists between cloud
+sessions, so it is where the keys go.
+
+**If those two values are blank, fill them in and nothing else changes.** Without
+them the code falls back to Yahoo/Nasdaq and stamps the payload with that source
+rather than failing, so a blank key shows up as a chart sourced from Yahoo, not as
+an error.
+
+That file is committed, so the key is in the repo history and in every clone and
+fork of it. That is a deliberate trade for a **paper** key (`PK…` prefix — market
+data and a simulated account; live trading returns 401). If a live key (`AK…`) ever
+replaces it, this is the wrong home for it: move it out of git first.
 
 Feeds, in descending order of truth: `sip` (real-time full tape, paid plans),
 `delayed_sip` (same tape, 15 min late), `iex` (real time but ~3% of the tape).
