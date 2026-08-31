@@ -5,6 +5,11 @@ Source: **TRADING_JOURNAL_updated (2).xlsx** in his Drive
 $5,000 account. Re-read it before a grading session if it has been updated —
 these numbers are a snapshot, not a constant.
 
+**Unit note:** these trades were sized with variable stops (avg planned risk $65.09), so
+"R" below means *his* planned risk on that trade. Under the current fixed system **1R =
+4%** of position value on every trade, which makes the same finding easier to act on: the
+avg winner of 0.40R is a trade closed around **+1.6%** against a 4% stop.
+
 **Sample-size warning: 25 trades in one month is suggestive, not proven.** Per-setup
 buckets are 1–6 trades each. Treat every "best setup / worst setup" line below as a
 prior to lean on, never as a law to quote at him.
