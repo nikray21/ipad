@@ -143,9 +143,10 @@ Avg hold is **1.0 day** against a 4h *swing* playbook targeting 2R. He closes fo
 reasons unrelated to the chart: *"it's friday not trying to hold"*, *"didn't want to
 hold over weekend"*, *"had to sell on market close because on flight."*
 
-Don't fight this. Set the target at the **first** opposing zone he can realistically
-reach inside his horizon, and if that target is under 1.5R, the answer is WAIT for a
-better entry — not a 2R target he will abandon at +0.5%.
+**Fight this one.** It was written before the backtest, which measured that winners take
+a median of 9 bars (~4.5 trading days) and that cutting at 6 bars collapses expectancy
+from +$22 to +$6 per trade. The horizon is not a preference to design around — it is the
+edge. Either he holds ~10 days, or the system does not pay. See `backtest.md`.
 
 ## He grades himself
 
