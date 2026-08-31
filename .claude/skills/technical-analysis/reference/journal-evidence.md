@@ -84,9 +84,12 @@ earnings on shorts. His worst trade ever was a long.
 
 Two findings, both load-bearing:
 
-1. **Zone bounces are his best setup and SMA bounces are his only losing one.** The 50
-   SMA is a *filter*, not a location. All three "Bounce off Support Line" trades were
-   SPCX, so the effect is one ticker — lean on it, don't quote it.
+1. **This ranking did NOT survive measurement — see `backtest.md`.** Across 50 names and
+   14 months the SMA bounce is the *only* pattern with an edge, and requiring a LuxAlgo
+   zone added nothing to it. The three "Bounce off Support Line" winners were all SPCX:
+   one ticker, three trades, against 93 measured setups. The SMA-bounce losses below came
+   from execution — an earnings trade, a flat SMA, no close confirmation — not from the
+   pattern. **Trust `backtest.md` over this table.**
 2. The five SMA-bounce trades break down as: RKLB +$9 (*"bad trade"*), AMD +$30
    (*"got faked out"*), RIOT +$32, BAC −$3, **IREN −$150**. Four scratches and a
    disaster. The winners were small enough to be noise; the loser paid for everything.
