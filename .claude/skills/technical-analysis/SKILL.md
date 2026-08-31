@@ -187,6 +187,27 @@ This is where the money is. He plans 1.81x and realizes 0.22R.
    won't hold over a weekend he cannot run this system — say that once, plainly, and let
    him decide. Do not quietly shrink the target to fit a one-day horizon.
 
+## Deploying this — the first 15 trades
+
+The edge is backtested, never forward-tested, and it asks him to hold ~10 days when every
+one of his 25 logged trades averaged 1.0. Treat the first block as validation, not
+income:
+
+- **Half size on every grade** (A = $625 not $1,250) until 15 setups have closed.
+- **Log the score and the planned hold** in the journal alongside the usual columns, so
+  the skill's grade can be compared against outcomes later.
+- **Compare against the measured baseline: 64% reach +4%, 48% reach +8%.** With 15 trades
+  the noise band is wide — anything from 8 to 13 hitting +4% is consistent with the
+  backtest. Do not re-tune on three losses.
+- **Tripwires that mean stop and re-measure, not push harder:**
+  - fewer than 6 of 15 reach +4% (materially below the 64% baseline),
+  - or he closed more than a third of them before bar 10 — in which case the system was
+    never actually run and the results say nothing.
+- After 15, re-run the backtest with fresh bars before going to full size.
+
+If he asks for full size sooner, say plainly what is unproven: one market regime, swept
+parameters, no live fills.
+
 ## Book gates
 
 - Single position ≤ **25% of account** ($1,250 = $50 risk).
