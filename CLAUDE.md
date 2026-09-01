@@ -38,7 +38,7 @@ prove every number traces to a filing. The workflow lives in
 `.claude/skills/` carries the channel toolkit for cloud sessions. The two that
 matter most: **stock-analysis-presentation** (Sunday ticker episode) and
 **learn-stock** (Wednesday educational episode). Supporting: `design` (load
-before touching any chart), `fa`, `find-stock`, `technical-analysis`.
+before touching any chart), `fa`, `find-stock`.
 `design-craft` (high-craft HTML/CSS/JS visual work — learn-stock leans on it
 for new visual patterns).
 Reference-only in cloud (they need local tools/MCPs the sandbox lacks):
