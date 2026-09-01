@@ -65,8 +65,11 @@ into scratches. It is not a psychological concession — it is where the edge li
 Four conditions, all measured:
 
 1. **Eligible name** — median 4h bar range **1.5–3.0%** of price (see below).
-2. **Steep rising 50 SMA** — up **≥1%** over the last 10 bars. Not merely "rising": a
-   shallow slope is where the edge disappears (slope >0% pays +$12/trade, >1% pays +$22).
+2. **Steep rising 50 SMA** — up **≥1.5%** over the last 10 bars. Not merely "rising":
+   below +1.0% the edge is *gone*, not merely smaller — re-swept on Alpaca under the
+   breakeven rule, slope ≥0% pays +0.04R and slope ≥1.5% pays +0.27R. And it keeps
+   climbing: ≥2.5% pays +0.37R, ≥3.0% pays +0.48R. **Steeper is always better, so use
+   slope to rank competing setups, not just to gate them.**
 3. **The bounce** — the bar's **low touched or crossed the 50 SMA** and the bar
    **closed back above it.** One 4h candle, both facts.
 4. **Not extended** — the close sits **within 2.5% above the SMA**. Chasing 4%+ above it
@@ -180,7 +183,7 @@ Bar range = median(High − Low) ÷ Close × 100 over 20 bars        need 1.5–
 | # | Category | Pts |
 |---|---|---|
 | 1 | **Eligible name** — bar range in the 1.5–3.0% band | 0–2 |
-| 2 | **SMA slope** — 2 pts if ≥1.5%, 1 pt if 1–1.5%, 0 below | 0–2 |
+| 2 | **SMA slope** — 2 pts if ≥2.5%, 1 pt if 1.5–2.5%, below 1.5% is a hard SKIP | 0–2 |
 | 3 | **The bounce** — low touched the SMA, close back above, one candle | 0–2 |
 | 4 | **Not extended** — close within 2.5% of the SMA | 0–1 |
 | 5 | **Room** — 2 pts clear to +8%, 1 pt +4–8%, 0 below | 0–2 |
@@ -203,6 +206,8 @@ the trade.
    before. Verify live, never from recall. His worst trade (IREN, −$150, 62% of all his
    losses) was an earnings long.
 2. **Ineligible name** — bar range outside 1.5–3.0%.
+2b. **Shallow slope** — 50 SMA up less than **1.5%** over 10 bars. Below 1.0% the measured
+   edge is zero; 1.0–1.5% is the grey band and not worth his money.
 3. **No bounce candle yet** — the 4h bar has not closed back above the SMA. This is a
    **WAIT**, not a dead idea: give him the SMA price and the bar-close time.
 4. **Book full** — 50% of the account already deployed, or this would put >25% in one name.

@@ -12,12 +12,15 @@ import sys, os, json, statistics as st
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import screener as S
 
-SLOPE_MIN, VOL_BAND, EXT_MAX, STOP = 1.0, (1.5, 3.0), 2.5, 0.04
+SLOPE_MIN, VOL_BAND, EXT_MAX, STOP = 1.5, (1.5, 3.0), 2.5, 0.04
 GAP, HORIZON = 6, 20          # episode separation, and the time stop in bars
 
 
-def signals(rows):
-    """Indices of bars that fire the A-setup, collapsed into episodes."""
+def signals(rows, slope_min=SLOPE_MIN):
+    """Indices of bars that fire the A-setup, collapsed into episodes.
+
+    slope_min is a parameter so the threshold can be swept below the default;
+    hardcoding it made every sub-default row of a sweep identical."""
     out, last = [], -99
     for i in range(60, len(rows)):
         c = [r["c"] for r in rows[:i + 1]]
@@ -27,7 +30,7 @@ def signals(rows):
         ext = (c[-1] - sma) / sma * 100
         rng = sorted((r["h"] - r["l"]) / r["c"] * 100 for r in rows[i - 20:i])
         band = rng[len(rng) // 2]
-        if (VOL_BAND[0] <= band <= VOL_BAND[1] and slope >= SLOPE_MIN
+        if (VOL_BAND[0] <= band <= VOL_BAND[1] and slope >= slope_min
                 and rows[i]["l"] <= sma and c[-1] > sma and 0 <= ext <= EXT_MAX):
             if i - last >= GAP:
                 out.append(i)
