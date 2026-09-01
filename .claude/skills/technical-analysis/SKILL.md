@@ -57,15 +57,38 @@ hold it, or a lower-grade variation.
 
 ## Finding setups (when he asks "find me a setup")
 
-1. Call `mcp__Webull__get_stock_bars` — `timespan="M240"`, `trading_sessions="RTH"`,
-   `count=100`, up to 20 symbols per call. Big results auto-save to a file.
-2. `python3 .claude/skills/technical-analysis/scan.py <those files>`
+**Alpaca is the only price source.** It needs `APCA_API_KEY_ID` and
+`APCA_API_SECRET_KEY` in the environment — set them on the cloud environment at
+claude.ai/code (the cloud icon above the message box → gear → Environment variables),
+not as GitHub Actions secrets, which sessions cannot read. Variables load at container
+start, so a session already running will not see a key added mid-session.
 
-It prints three things: **SETUPS** (bounced off a steep rising SMA on the last closed
-bar), **ARMED** (eligible, steep uptrend, waiting for the pullback — with the exact SMA
-price to dip to), and the **eligible name list**. Grade anything it surfaces normally
+```
+python3 .claude/skills/technical-analysis/screener.py            # the whole universe
+python3 .claude/skills/technical-analysis/screener.py SHOP UBER  # named symbols
+```
+
+It prints, for each side: **SETUPS** (bounced off a steep rising SMA on the last closed
+bar, scored, with the plan), and **ARMED** (eligible, steep uptrend, waiting for the
+pullback — with the exact SMA price to dip to). Grade anything it surfaces normally
 before he acts; the scanner screens, it does not decide. The ARMED list is the one to
 hand him most days — it turns "nothing today" into "here are five prices to set alerts at".
+
+Two things the output does for you, and one it cannot:
+
+- A setup is graded on the **last closed 4h bar**, which can be hours old. Each one
+  carries a live quote and is marked `*** VOID ***` once price has walked back through
+  the SMA. A void setup is not a trade, however good the grade beside it looks.
+- Bars are built from 30-minute data, because Alpaca has no 4h timeframe and no
+  regular-hours filter. The day splits at **noon ET** — 4h bars sit on the UTC 4-hour
+  grid and the session opens at 13:30 UTC — giving a 2.5h bar clipped by the open and a
+  full 4h bar into the close.
+- It has **no earnings feed**. Alpaca does not provide one, so hard-stop #1 has to be
+  checked against his broker every time. Never infer an earnings date from recall.
+
+Real-time quotes come from the IEX feed; historical bars use SIP, the full consolidated
+tape. IEX sees roughly 3% of volume and prints different highs and lows, so never build
+a level from it — on 2026-08-31 NVDA closed 220.78 on SIP against 220.86 on IEX.
 
 ## Eligibility — screen the stock, because the stop can't flex
 
