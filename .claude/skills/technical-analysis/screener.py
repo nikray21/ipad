@@ -15,6 +15,11 @@ SHORT is the mirror and has NO measured edge (expectancy ~0, worse as the
 downtrend steepens). It is printed because it was asked for, capped at C size.
 """
 import json, os, sys, urllib.request, urllib.parse, datetime as dt
+try:
+    from zoneinfo import ZoneInfo
+    ET = ZoneInfo("America/New_York")           # handles the EST/EDT switch
+except Exception:
+    ET = dt.timezone(dt.timedelta(hours=-4))    # EDT fallback
 
 SLOPE_MIN = 1.0          # % move in the 50 SMA over 10 bars
 VOL_BAND  = (1.5, 3.0)   # median 4h bar range as % of price
@@ -31,24 +36,37 @@ CAT DE BA GE HON JPM GS BAC XOM CVX WMT COST NKE LULU DIS""".split()
 # ---------------------------------------------------------------- data sources
 
 def from_alpaca(symbols):
-    """4h RTH bars from Alpaca. Alpaca has no 4H timeframe, so 1H bars are
-    stitched into the same 4-bar RTH buckets Webull uses (09:30, 13:30 ET)."""
+    """4h RTH bars from Alpaca.
+
+    Alpaca has no 4H timeframe and no regular-hours filter on /bars, so bars are
+    built from 30-minute bars. 30Min is the coarsest timeframe whose boundaries
+    land on 09:30 and 13:30 -- an hourly bar stamped 09:00 straddles the open,
+    mixing pre-market prints into the session high/low."""
     kid = os.environ.get("APCA_API_KEY_ID") or os.environ.get("ALPACA_API_KEY_ID")
     sec = os.environ.get("APCA_API_SECRET_KEY") or os.environ.get("ALPACA_API_SECRET_KEY")
     if not (kid and sec):
         sys.exit("APCA_API_KEY_ID / APCA_API_SECRET_KEY not set in the environment.")
     start = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=140)).strftime("%Y-%m-%d")
+    feed = os.environ.get("ALPACA_FEED", "sip")   # sip = full tape; iex sees ~3% of it
     out, page = {}, None
     while True:
-        q = {"symbols": ",".join(symbols), "timeframe": "1Hour", "start": start,
-             "limit": 10000, "adjustment": "split", "feed": "iex"}
+        q = {"symbols": ",".join(symbols), "timeframe": "30Min", "start": start,
+             "limit": 10000, "adjustment": "split", "feed": feed}
         if page:
             q["page_token"] = page
         req = urllib.request.Request(
             "https://data.alpaca.markets/v2/stocks/bars?" + urllib.parse.urlencode(q),
             headers={"APCA-API-KEY-ID": kid, "APCA-API-SECRET-KEY": sec})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            d = json.load(r)
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                d = json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 403) and feed == "sip":
+                print("  ! no SIP entitlement — falling back to the IEX feed, which "
+                      "sees ~3% of volume and prints different highs/lows",
+                      file=sys.stderr)
+                feed = "iex"; continue
+            raise
         for sym, bars in (d.get("bars") or {}).items():
             out.setdefault(sym, []).extend(bars)
         page = d.get("next_page_token")
@@ -57,21 +75,35 @@ def from_alpaca(symbols):
     return {s: _to_4h(b) for s, b in out.items()}
 
 
-def _to_4h(hourly):
-    """Fold 1H bars into 4h RTH buckets: 09:30-13:29 and 13:30-16:00 ET."""
+OPEN, MID, CLOSE = 9 * 60 + 30, 13 * 60 + 30, 16 * 60
+
+def _to_4h(half_hourly):
+    """Fold 30-minute bars into RTH 4h buckets: 09:30-13:30 and 13:30-16:00 ET.
+
+    Drops the bucket still in progress. The A-setup is defined on a CLOSED 4h
+    bar -- a live bar's low and close both still move, so grading one is the
+    same error as reading the chart with the crosshair on it."""
     buckets = {}
-    for b in hourly:
+    for b in half_hourly:
         t = dt.datetime.fromisoformat(b["t"].replace("Z", "+00:00"))
-        et = t - dt.timedelta(hours=4)              # UTC -> ET (EDT)
+        et = t.astimezone(ET)
         mins = et.hour * 60 + et.minute
-        if not (9 * 60 + 30) <= mins < 16 * 60:     # RTH only
+        if not OPEN <= mins < CLOSE:                 # regular hours only
             continue
-        half = 0 if mins < 13 * 60 + 30 else 1
-        key = (et.date(), half)
-        g = buckets.setdefault(key, {"h": -1e9, "l": 1e9, "c": None, "t": et})
+        half = 0 if mins < MID else 1
+        g = buckets.setdefault((et.date(), half),
+                               {"h": -1e9, "l": 1e9, "c": None, "t": et})
         g["h"] = max(g["h"], b["h"]); g["l"] = min(g["l"], b["l"]); g["c"] = b["c"]
-    rows = [{"t": v["t"].isoformat(), "c": float(v["c"]), "h": float(v["h"]),
-             "l": float(v["l"])} for k, v in sorted(buckets.items())]
+
+    now = dt.datetime.now(ET)
+    rows = []
+    for (day, half), v in sorted(buckets.items()):
+        ends = dt.datetime.combine(day, dt.time(0), ET) + dt.timedelta(
+            minutes=MID if half == 0 else CLOSE)
+        if now < ends:                               # bucket still forming
+            continue
+        rows.append({"t": v["t"].isoformat(), "c": float(v["c"]),
+                     "h": float(v["h"]), "l": float(v["l"])})
     return rows
 
 
