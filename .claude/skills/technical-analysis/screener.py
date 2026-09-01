@@ -203,16 +203,19 @@ def main(argv):
             sc, why = score(m, rm, age, side)
             grade = "A" if sc >= 9 else "B" if sc >= 7 else "C" if sc >= 5 else "D"
             d = 1 if side == "long" else -1
-            stop, tgt = m["px"] * (1 - .04 * d), m["px"] * (1 + .08 * d)
-            plan = "RUNNER 1:2" if (rm is None or rm >= 8) else \
-                   "SCALP 1:1" if rm >= 4 else "SKIP — no room"
-            if rm is not None and rm < 4:
-                tgt = m["px"] * (1 + .04 * d)
+            stop = m["px"] * (1 - .04 * d)
+            if rm is None or rm >= 8:                    # clear to +8%
+                plan, tgt = "RUNNER 1:2", m["px"] * (1 + .08 * d)
+            elif rm >= 4:                                # a zone caps it at +4%
+                plan, tgt = "SCALP 1:1", m["px"] * (1 + .04 * d)
+            else:                                        # nothing worth taking
+                plan, tgt = "SKIP — no room", None
             print(f"  {s:<6} ${m['px']:.2f}  {sc}/10 {grade}  {plan}")
             print(f"         slope {m['slope']:+.1f}%  ext {m['ext']:+.1f}%  "
                   f"range {m['range']:.1f}%/bar  touch {'this' if age==0 else 'prev'} bar"
                   f"  room {'clear' if rm is None else f'{rm:+.1f}%'}")
-            print(f"         stop ${stop:.2f}   target ${tgt:.2f}")
+            t = "—" if tgt is None else f"${tgt:.2f}"
+            print(f"         stop ${stop:.2f}   target {t}")
         print("\nARMED (steep trend, waiting for the pullback to the SMA)")
         if not armed:
             print("  none")

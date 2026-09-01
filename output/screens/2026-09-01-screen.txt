@@ -4,10 +4,10 @@ source: WEBULL bars — scanned 100 names, last closed bar 2026-08-31T16:00
 SETUPS
   ACHR   $5.78  8/10 B  SCALP 1:1
          slope +2.8%  ext +0.0%  range 2.7%/bar  touch this bar  room +5.5%
-         stop $5.55   target $6.24
+         stop $5.55   target $6.01
   LYFT   $16.90  7/10 B  SKIP — no room
          slope +3.3%  ext +0.2%  range 2.6%/bar  touch this bar  room +1.5%
-         stop $16.22   target $17.58
+         stop $16.22   target —
 
 ARMED (steep trend, waiting for the pullback to the SMA)
   UBER   $75.65  +0.8% vs SMA — needs a dip to $75.01 and a close back above  (slope +2.4%)
@@ -25,7 +25,7 @@ ARMED (steep trend, waiting for the pullback to the SMA)
 SETUPS
   META   $572.34  6/10 C  SKIP — no room
          slope -1.4%  ext -0.4%  range 1.6%/bar  touch this bar  room +3.2%
-         stop $595.23   target $549.45
+         stop $595.23   target —
 
 ARMED (steep trend, waiting for the pullback to the SMA)
   AMD    $470.72  -1.7% vs SMA — needs a pop to $478.94 and a close back below  (slope -2.3%)
