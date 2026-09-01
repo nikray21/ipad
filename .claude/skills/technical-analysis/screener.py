@@ -41,7 +41,8 @@ def from_alpaca(symbols):
     sec = os.environ.get("APCA_API_SECRET_KEY") or os.environ.get("ALPACA_API_SECRET_KEY")
     if not (kid and sec):
         sys.exit("APCA_API_KEY_ID / APCA_API_SECRET_KEY not set in the environment.")
-    start = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=140)).strftime("%Y-%m-%d")
+    days = int(os.environ.get("ALPACA_DAYS", "140"))
+    start = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=days)).strftime("%Y-%m-%d")
     feed = os.environ.get("ALPACA_FEED", "sip")   # sip = full tape; iex sees ~3% of it
     out, page = {}, None
     while True:
