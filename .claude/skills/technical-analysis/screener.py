@@ -150,6 +150,27 @@ def room(rows, side):
     return (best - px) / px * 100 * (1 if side == "long" else -1)
 
 
+def live_price(symbols):
+    """Last trade now. The setup is graded on a closed bar, but that bar can be
+    hours old -- price may already have walked back through the SMA, which voids
+    it. Real-time quotes need the IEX feed; SIP quotes are a paid entitlement."""
+    kid = os.environ.get("APCA_API_KEY_ID") or os.environ.get("ALPACA_API_KEY_ID")
+    sec = os.environ.get("APCA_API_SECRET_KEY") or os.environ.get("ALPACA_API_SECRET_KEY")
+    try:
+        req = urllib.request.Request(
+            "https://data.alpaca.markets/v2/stocks/snapshots?" + urllib.parse.urlencode(
+                {"symbols": ",".join(symbols), "feed": "iex"}),
+            headers={"APCA-API-KEY-ID": kid, "APCA-API-SECRET-KEY": sec})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            d = json.load(r)
+        return {s: v["latestTrade"]["p"] for s, v in d.items()
+                if (v or {}).get("latestTrade")}
+    except Exception as e:
+        print(f"  ! no live quote ({e}) -- setups below are as of the bar close only",
+              file=sys.stderr)
+        return {}
+
+
 def touched(rows, back, side):
     m = metrics(rows, back)
     if not m:
@@ -205,6 +226,7 @@ def main(argv):
             elif age is None:
                 armed.append((s, m))
 
+        live = live_price([s for s, _, _ in takes]) if takes else {}
         tag = "LONG — the measured A-setup" if side == "long" else \
               "SHORT — mirror setup, NO measured edge (E~0), C size max"
         print(f"=== {tag} ===")
@@ -223,7 +245,14 @@ def main(argv):
                 plan, tgt = "SCALP 1:1", m["px"] * (1 + .04 * d)
             else:                                        # nothing worth taking
                 plan, tgt = "SKIP — no room", None
-            print(f"  {s:<6} ${m['px']:.2f}  {sc}/10 {grade}  {plan}")
+            now = live.get(s)
+            if now is not None:
+                gone = (now < m["sma"]) if side == "long" else (now > m["sma"])
+                mark = (f"  *** VOID — now ${now:.2f}, back through the SMA ***" if gone
+                        else f"  (live ${now:.2f}, still holding)")
+            else:
+                mark = ""
+            print(f"  {s:<6} ${m['px']:.2f}  {sc}/10 {grade}  {plan}{mark}")
             print(f"         slope {m['slope']:+.1f}%  ext {m['ext']:+.1f}%  "
                   f"range {m['range']:.1f}%/bar  touch {'this' if age==0 else 'prev'} bar"
                   f"  room {'clear' if rm is None else f'{rm:+.1f}%'}")
