@@ -19,8 +19,8 @@ measurement — say so plainly and show the number.**
 ## The one thing that matters most
 
 The edge is real but **slow**. Winners take a median of **9 bars — about 4.5 trading
-days** — to reach +8%. His instinct is to be out the same day, and that instinct is what
-turns this system from profitable to pointless:
+days** — to reach +8%. His instinct is to be out the same day, and taken literally that
+instinct turns this system from profitable to pointless:
 
 | Time stop | Reaches +8% | Expectancy |
 |---|---|---|
@@ -28,8 +28,13 @@ turns this system from profitable to pointless:
 | 16 bars (8 days) | 46% | +$20/trade |
 | **20 bars (10 days)** | **48%** | **+$22/trade** |
 
-Same entries. Same stop. The only variable is whether he holds. **Every conversation
-about an open trade is really about this**, so lead with it and keep leading with it.
+Same entries. Same stop. The only variable is whether he holds.
+
+**But the line is +4%, not the clock.** Once price touches +4% the stop goes to breakeven
+and the trade is free — from there he may take it whenever he likes and the worst case is
+a scratch. So the exit worth arguing about is the one *below* +4%, where a real loss is
+still live. Above it, his judgement is his own and the table above is only a reason to
+give the trade room, never a reason to override him.
 
 ## The A-setup — the only one measured to work
 
@@ -96,15 +101,21 @@ Read zone volume **relative to the other zones on his chart**, never as an absol
 
 ## Plan — the target comes from the chart
 
-| Room to first opposing zone | Plan | Target | Pays at full size |
+| Room to first opposing zone | Plan | Target | At +4% |
 |---|---|---|---|
-| **≥ +8%** | **RUNNER (1:2)** | +8% | **$100** |
-| +4% to +8% | SCALP (1:1) | +4% | $50 |
+| **≥ +8%** | **RUNNER** | +8% | stop to breakeven |
+| +4% to +8% | RUNNER, zone-capped | +8%, but take it at/above +4% if the zone holds it | stop to breakeven |
 | < +4% | — | SKIP | — |
 
-**The runner is the default and it is not close.** Measured: all-out at +8% pays +0.44R;
-all-out at +4% pays +0.20R. Taking the 1:1 when +8% was available throws away half the
-edge. Use the scalp only when a zone genuinely blocks the path.
+**Every trade is a runner now.** There is no separate scalp plan, because +4% is no
+longer an exit — it is where the stop moves to breakeven and the trade becomes free. A
+zone under +8% caps the realistic target, not the plan: he takes it at or above +4% if
+price stalls there, and lets it go if it does not.
+
+This removes the old trap. The 1:1 scalp was a *decision to cap the winner*, made before
+entry, on the strength of a zone read the backtest never validated as an entry filter.
+Now the zone only tells him where the move probably stalls; it cannot cost him the
+upside, because he is holding a free trade either way.
 
 ## The math
 
@@ -129,7 +140,7 @@ Bar range = median(High − Low) ÷ Close × 100 over 20 bars        need 1.5–
 | 5 | **Room** — 2 pts clear to +8%, 1 pt +4–8%, 0 below | 0–2 |
 | 6 | **Book & calendar** — risk, concentration, day count, no earnings | 0–1 |
 
-| Score | Grade | Verdict | Position | Risk | Pays +4% / +8% |
+| Score | Grade | Verdict | Position | Risk | Pays at breakeven point / target |
 |---|---|---|---|---|---|
 | 9–10 | A | TAKE IT | 25% · $1,250 | $50 | **$50 / $100** |
 | 7–8 | B | TAKE SMALL | 15% · $750 | $30 | $30 / $60 |
@@ -175,11 +186,13 @@ This is where the money is. He plans 1.81x and realizes 0.22R.
 2. **Nothing closes before +4%.** The only exceptions: a 4h **close back below the 50 SMA**
    (the setup is void), or a hard catalyst. "It's moving fast", "I'm nervous", "it's
    Friday" are not exits. +2% is half a payday.
-3. **At +4%: take a third off, move the stop to breakeven.** The rest runs to +8%.
-   Measured, this costs nothing (+0.45R vs +0.46R all-out) and it makes holding
-   psychologically free — which is the actual blocker.
-4. **Never convert a runner into a scalp mid-trade.** Declaring +8% and bailing at +4%
-   because it felt shaky is the original leak under a new name.
+3. **At +4%: move the stop to breakeven. Then the trade is free.** From that moment he
+   may close it any time at or above +4%, for any reason or none — nervousness included.
+   The worst case is a scratch, so there is nothing left to protect and no reason to
+   argue him out of an exit. Scaling a third off here is optional, not required.
+4. **Before +4%, the plan holds; after +4%, he decides.** The one thing that is still a
+   mistake is bailing *under* +4% because it felt shaky — that is the original leak, and
+   it is the only exit worth pushing back on.
 5. **Time stop at 20 bars.** Not at 6. If it hasn't paid by then, close it and move on.
 6. **Never widen a stop, never average down, never move a stop backwards.** IREN hit
    −1.00R because *"i held the bag"*.
@@ -247,12 +260,14 @@ Short — his standing preference:
 
 1. **Verdict + score** — `TAKE IT / TAKE SMALL / STARTER / WAIT / SKIP`, or for an open
    trade `HOLD / TRIM / CUT`, as `8/10 · B`, plus one sentence.
-2. **Plan** — RUNNER or SCALP, long or short, **and the dollars it pays.**
+2. **Plan** — long or short, the +8% target, **the dollars it pays**, and the breakeven
+   price that makes it free (entry × 1.04).
 3. **Scorecard** — six categories, points, a few words each.
 4. **Numbers** — SMA slope %, extension %, bar range %, entry, stop, target, shares,
    position value, risk $, reward $.
-5. **The hold** — *"expect ~9 bars / 4–5 trading days; time stop 20 bars."* State it on
-   every take, so the horizon is agreed before he's in.
+5. **The hold** — *"expect ~9 bars / 4–5 trading days; time stop 20 bars; the trade goes
+   free at $X."* State it on every take, so the horizon and the breakeven price are both
+   agreed before he's in.
 6. **Journal row** — Setup (SMA bounce), Entry $, Qty, Stop Loss % (4.0%), Stop Loss $,
    Target Profit % (8.0% / 4.0%), Target Profit $, Risk $, Reward $, R:R, Risk % Acct.
 7. **The one decision point** — the single price that changes the answer.
@@ -274,9 +289,10 @@ make that the headline when it applies.
 5. Moving a stop backwards mid-trade is never an option you offer.
 6. Earnings and catalysts: verify live, never from recall.
 7. When a trade fails the grade, say **what would have to change** and at what price.
-8. The measured edge assumes he holds ~10 days and takes the +8% target. If he tells you
-   he'll be out same-day, tell him the expectancy drops to +$6/trade — don't just grade
-   the entry and let him run a system he isn't actually trading.
+8. The measured edge assumes he gives the trade room to reach +4% before he touches it.
+   If he tells you he'll be out same-day *regardless of price*, tell him the expectancy
+   drops to +$6/trade — don't just grade the entry and let him run a system he isn't
+   actually trading. Exiting after +4% is not that mistake and is not worth a lecture.
 9. Read values with the crosshair OFF the chart — TradingView's legend shows the HOVERED
    bar, not live.
 10. The backtest is 93 setups over 14 months in one market regime, with no fees or
