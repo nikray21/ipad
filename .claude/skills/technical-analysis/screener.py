@@ -9,7 +9,7 @@ LONG is the measured A-setup: 64% reach +4%, 48% reach +8%, +0.44R.
 SHORT is the mirror and has NO measured edge (expectancy ~0, worse as the
 downtrend steepens). It is printed because it was asked for, capped at C size.
 """
-import json, os, sys, urllib.request, urllib.parse, datetime as dt
+import json, os, sys, time, urllib.request, urllib.parse, datetime as dt
 try:
     from zoneinfo import ZoneInfo
     ET = ZoneInfo("America/New_York")           # handles the EST/EDT switch
@@ -53,16 +53,33 @@ def from_alpaca(symbols):
         req = urllib.request.Request(
             "https://data.alpaca.markets/v2/stocks/bars?" + urllib.parse.urlencode(q),
             headers={"APCA-API-KEY-ID": kid, "APCA-API-SECRET-KEY": sec})
-        try:
-            with urllib.request.urlopen(req, timeout=90) as r:
-                d = json.load(r)
-        except urllib.error.HTTPError as e:
-            if e.code in (401, 403) and feed == "sip":
-                print("  ! no SIP entitlement — falling back to the IEX feed, which "
-                      "sees ~3% of volume and prints different highs/lows",
-                      file=sys.stderr)
-                feed = "iex"; continue
-            raise
+        for attempt in range(6):
+            try:
+                with urllib.request.urlopen(req, timeout=90) as r:
+                    d = json.load(r)
+                break
+            except urllib.error.HTTPError as e:
+                if e.code in (401, 403) and feed == "sip":
+                    print("  ! no SIP entitlement — falling back to the IEX feed, which "
+                          "sees ~3% of volume and prints different highs/lows",
+                          file=sys.stderr)
+                    feed = "iex"; d = None; break
+                # 429 is a shared per-account budget, so a second process running
+                # against the same key is enough to trip it. Back off and retry
+                # rather than lose a fetch that is already minutes deep.
+                if e.code == 429 or e.code >= 500:
+                    wait = 2 ** attempt * 5
+                    print(f"  ! HTTP {e.code} — retrying in {wait}s", file=sys.stderr)
+                    time.sleep(wait); continue
+                raise
+            except (urllib.error.URLError, TimeoutError) as e:
+                wait = 2 ** attempt * 5
+                print(f"  ! {e} — retrying in {wait}s", file=sys.stderr)
+                time.sleep(wait); continue
+        else:
+            raise RuntimeError("Alpaca kept failing after 6 attempts")
+        if d is None:
+            continue
         for sym, bars in (d.get("bars") or {}).items():
             out.setdefault(sym, []).extend(bars)
         page = d.get("next_page_token")

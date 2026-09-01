@@ -93,11 +93,16 @@ def main(months=14):
         print(f"  using cached bars ({len(bars)} names) -- delete .cache_bars.json to refetch",
               file=sys.stderr)
     else:
-        bars = {}
+        part = cache + ".part"
+        bars = json.load(open(part)) if os.path.exists(part) else {}
         for i in range(0, len(syms), 25):
-            bars.update(S.from_alpaca(syms[i:i + 25]))
+            chunk = [x for x in syms[i:i + 25] if x not in bars]
+            if not chunk:
+                continue
+            bars.update(S.from_alpaca(chunk))
+            json.dump(bars, open(part, "w"))      # checkpoint every chunk
             print(f"  fetched {min(i+25,len(syms))}/{len(syms)} names", file=sys.stderr)
-        json.dump(bars, open(cache, "w"))
+        os.replace(part, cache)
 
     res = {0.04: [], 0.08: []}
     be, names = [], set()
