@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Editorial animated hero</title>
+<!--
+  DEMONSTRATES: committed editorial direction, modular type scale, OKLCH palette,
+  masked line-by-line text reveal, staggered entrance, native scroll-driven
+  progress bar, real easing, reduced-motion guard. Plain HTML/CSS/JS, no build.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Newsreader',Georgia,serif;
+    --body:'Space Grotesk',system-ui,sans-serif;
+    --bg:oklch(0.98 0.008 85);
+    --text:oklch(0.20 0.02 60);
+    --muted:oklch(0.48 0.02 60);
+    --border:oklch(0.88 0.01 70);
+    --accent:oklch(0.52 0.17 25); /* ink red-orange */
+    --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
+    --ease-out-quart:cubic-bezier(0.25,1,0.5,1);
+    --s5:24px;--s7:48px;--s8:64px;--s9:96px;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);
+    font-feature-settings:"kern","liga";text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{color:oklch(0.42 0.17 25)}
+
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;
+    background:var(--accent);transform-origin:left;transform:scaleX(0);z-index:9;
+    animation:grow linear;animation-timeline:scroll(root)}
+  @keyframes grow{to{transform:scaleX(1)}}
+
+  header.bar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:20px clamp(24px,5vw,96px);z-index:8;
+    mix-blend-mode:multiply}
+  .bar .mark{font-family:var(--display);font-size:20px;font-weight:500;letter-spacing:-0.01em}
+  .bar nav{display:flex;gap:var(--s5);font-size:14px;color:var(--muted)}
+
+  .hero{min-height:100svh;display:grid;align-content:center;
+    padding:0 clamp(24px,5vw,96px);max-width:1440px;margin-inline:auto}
+  .eyebrow{font-size:13px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:var(--s5)}
+  h1{font-family:var(--display);font-weight:400;
+    font-size:clamp(3rem,1.5rem+7vw,7.5rem);line-height:0.98;letter-spacing:-0.02em;
+    text-wrap:balance;max-width:16ch}
+  h1 em{font-style:italic;color:var(--accent)}
+  .line{display:block;overflow:hidden}
+  .line span{display:block;transform:translateY(110%);
+    transition:transform 1s var(--ease-out-expo)}
+  .hero.in .line span{transform:none}
+  .hero.in .line:nth-child(2) span{transition-delay:.08s}
+  .hero.in .line:nth-child(3) span{transition-delay:.16s}
+  .sub{margin-top:var(--s7);max-width:46ch;font-size:clamp(1rem,0.9rem+0.5vw,1.25rem);
+    line-height:1.55;color:var(--muted);text-wrap:pretty;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .8s var(--ease-out-quart) .4s,transform .8s var(--ease-out-quart) .4s}
+  .hero.in .sub{opacity:1;transform:none}
+  .cta{margin-top:var(--s7);display:flex;gap:16px;flex-wrap:wrap;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .8s var(--ease-out-quart) .55s,transform .8s var(--ease-out-quart) .55s}
+  .hero.in .cta{opacity:1;transform:none}
+  .btn{font:500 15px/1 var(--body);padding:16px 28px;border-radius:2px;
+    border:1px solid var(--text);background:var(--text);color:var(--bg);
+    transition:transform .2s var(--ease-out-quart),background .2s}
+  .btn.ghost{background:transparent;color:var(--text)}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(0)}
+
+  section.body{max-width:1440px;margin:0 auto;padding:var(--s9) clamp(24px,5vw,96px);
+    display:grid;grid-template-columns:repeat(12,1fr);gap:var(--s5);
+    border-top:1px solid var(--border)}
+  .body h2{grid-column:1/6;font-family:var(--display);font-weight:400;
+    font-size:clamp(1.8rem,1rem+2vw,3rem);line-height:1.05;letter-spacing:-0.01em;
+    text-wrap:balance}
+  .body p{grid-column:7/13;font-size:1.125rem;line-height:1.6;color:var(--muted);
+    max-width:60ch;text-wrap:pretty}
+  .reveal{opacity:0;transform:translateY(28px);
+    transition:opacity .7s var(--ease-out-quart),transform .7s var(--ease-out-quart)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;
+      transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+  <div class="progress"></div>
+  <header class="bar">
+    <div class="mark">Field&nbsp;Notes</div>
+    <nav><a href="#">Work</a><a href="#">Studio</a><a href="#">Journal</a><a href="#">Contact</a></nav>
+  </header>
+
+  <main class="hero" id="hero">
+    <p class="eyebrow">Independent design practice · Est. 2019</p>
+    <h1>
+      <span class="line"><span>We design</span></span>
+      <span class="line"><span>the <em>quiet</em> parts</span></span>
+      <span class="line"><span>that make it work.</span></span>
+    </h1>
+    <p class="sub">Interfaces, identities, and moving images for teams who care
+      about the difference between fine and finished. No templates, no noise —
+      just decisions made on purpose.</p>
+    <div class="cta">
+      <a class="btn" href="#work">See the work</a>
+      <a class="btn ghost" href="#">Read the journal</a>
+    </div>
+  </main>
+
+  <section class="body" id="work">
+    <h2 class="reveal">A point of view, applied consistently.</h2>
+    <p class="reveal">Craft is not a finishing step. It's the accumulation of a
+      thousand small, deliberate choices — the easing curve, the optical margin,
+      the one word that was cut. This page is a demonstration of a few: a masked
+      line reveal on load, a scroll-linked progress rule with zero JavaScript,
+      and an entrance that staggers so the eye reads it as arriving. Steal the
+      technique; bring your own idea.</p>
+  </section>
+
+  <script>
+    // Trigger hero entrance on load
+    requestAnimationFrame(() => document.getElementById('hero').classList.add('in'));
+    // Reveal-on-scroll for body items
+    const io = new IntersectionObserver((es) => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { threshold: 0.2 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Continuous timeline motion</title>
+<!--
+  DEMONSTRATES: the "one clock" pattern for authored motion pieces. A single
+  requestAnimationFrame loop drives a declarative CUE table; every element's
+  state is DERIVED from time t via easing over its [start,duration] window, so
+  elements persist and interpolate rather than restarting. This is how motion
+  reads as composed instead of a pile of independent CSS animations.
+  Rendered on canvas (best for many moving elements). Loops.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:oklch(0.15 0.02 275);overflow:hidden}
+  canvas{display:block;width:100vw;height:100vh}
+  .hint{position:fixed;left:20px;bottom:16px;color:oklch(0.6 0.02 275);
+    font:500 13px/1 'Space Grotesk',sans-serif;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hint">one clock · cue table · everything derived from t — the timeline loops</div>
+<script>
+const c = document.getElementById('c'), ctx = c.getContext('2d');
+let W, H, DPR;
+function resize(){
+  DPR = Math.min(devicePixelRatio||1, 2);
+  W = innerWidth; H = innerHeight;
+  c.width = W*DPR; c.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener('resize', resize); resize();
+
+// --- easing ---
+const clamp01 = x => x<0?0:x>1?1:x;
+const easeOutExpo = x => x>=1?1:1-Math.pow(2,-10*x);
+const easeInOut  = x => x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const lerp = (a,b,t)=>a+(b-a)*t;
+// progress of a cue at time t: 0 before start, eased 0..1 across duration
+const cue = (t,start,dur,ease=easeOutExpo)=>ease(clamp01((t-start)/dur));
+
+const LOOP = 9; // seconds
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+// A ring of dots that assemble, breathe, then a label resolves.
+const N = 48;
+const dots = Array.from({length:N},(_,i)=>({
+  a: (i/N)*Math.PI*2,
+  delay: (i/N)*0.9,          // staggered assembly
+  hue: 275 + (i/N)*70
+}));
+
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W,H)*0.28;
+
+  // scene beats (all derived from t):
+  const assemble = cue(t, 0.2, 1.6);          // dots fly in
+  const breathe  = Math.sin((t-1.8)*1.6)*0.5+0.5; // continuous after assembly
+  const spin     = t*0.18;                     // continuous rotation
+  const labelIn  = cue(t, 3.0, 1.2);           // title resolves
+  const ringGrow = cue(t, 0.4, 2.0, easeInOut);
+
+  // ring glow
+  ctx.save();
+  ctx.globalAlpha = 0.15*ringGrow;
+  ctx.strokeStyle = 'oklch(0.75 0.14 200)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx,cy,R*ringGrow,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+
+  // dots
+  for (const d of dots){
+    const p = clamp01((assemble - d.delay*0.5) / (1 - d.delay*0.5));
+    const ep = easeOutExpo(p);
+    const rr = R * lerp(1.8, 1, ep) * (1 + (assemble>0.99? breathe*0.06 : 0));
+    const ang = d.a + spin;
+    const x = cx + Math.cos(ang)*rr;
+    const y = cy + Math.sin(ang)*rr;
+    const size = lerp(0, 4.5, ep);
+    ctx.beginPath();
+    ctx.fillStyle = `oklch(0.78 0.15 ${d.hue})`;
+    ctx.globalAlpha = ep;
+    ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // center label — resolves by rising + fading, tracked over time
+  ctx.save();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.globalAlpha = labelIn;
+  ctx.translate(cx, cy + lerp(18,0,labelIn));
+  ctx.fillStyle='oklch(0.97 0.01 275)';
+  ctx.font="700 " + Math.round(Math.min(W,H)*0.07) + "px 'Space Grotesk',sans-serif";
+  ctx.fillText('COMPOSED', 0, 0);
+  ctx.globalAlpha = labelIn*0.6;
+  ctx.fillStyle='oklch(0.7 0.03 275)';
+  ctx.font="500 " + Math.round(Math.min(W,H)*0.022) + "px 'Space Grotesk',sans-serif";
+  ctx.fillText('not a pile of animations', 0, Math.min(W,H)*0.06);
+  ctx.restore();
+}
+
+let t0 = performance.now();
+function frame(now){
+  const t = reduce ? LOOP*0.6 : ((now - t0)/1000) % LOOP; // freeze at a nice frame if reduced
+  draw(t);
+  if (!reduce) requestAnimationFrame(frame);
+}
+if (reduce) draw(LOOP*0.6); else requestAnimationFrame(frame);
+</script>
+</body>
+</html>

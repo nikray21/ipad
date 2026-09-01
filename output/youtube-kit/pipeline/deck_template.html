@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cream">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>__TITLE__</title>
+<style>
+/* ============================================================
+   NikRayani Terminal — Episode Deck
+   Palettes lifted verbatim from the Terminal's styles.css so the
+   deck and the dashboard are unmistakably the same product.
+   ============================================================ */
+:root[data-theme="cream"] {
+  color-scheme: light;
+  --bg:#faf9f5; --surface:#ffffff; --surface-2:#f2f0e9;
+  --border:rgba(25,25,25,0.11); --ink:#1f1e1d; --ink-2:#40403c; --muted:#6f6e66;
+  --grid:#e6e3da; --accent:#c2603f; --cool:#2a78d6;
+  --s1:#c2603f; --s2:#2a78d6;
+  --good:#257a33; --warn:#a9741a; --crit:#b8352f;
+  --shadow:0 1px 2px rgba(25,25,25,0.05);
+  --accent-wash:rgba(194,96,63,0.09);
+  --good-wash:rgba(37,122,51,0.10); --crit-wash:rgba(184,53,47,0.09); --warn-wash:rgba(169,116,26,0.10);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#1b1a19; --surface:#262624; --surface-2:#30302e;
+  --border:rgba(240,238,230,0.10); --ink:#f0eee6; --ink-2:#c2c0b6; --muted:#8f8d84;
+  --grid:#34322f; --accent:#d97757; --cool:#4d90da;
+  --s1:#d67350; --s2:#4d90da;
+  --good:#2f9e44; --warn:#e8a33d; --crit:#e05252;
+  --shadow:none;
+  --accent-wash:rgba(217,119,87,0.11);
+  --good-wash:rgba(47,158,68,0.13); --crit-wash:rgba(224,82,82,0.12); --warn-wash:rgba(232,163,61,0.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink); -webkit-font-smoothing:antialiased;
+  display:flex; align-items:center; justify-content:center;
+}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Stage: a fixed 1920x1080 canvas scaled to the window ---------- */
+#stage{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none}
+/* Camera mode reserves a real column by PADDING the slide, so the stage still
+   scales 1:1 into a 1920x1080 recording and no type shrinks. The earlier version
+   scaled the whole 16:9 stage into 70% of the width — 0.70x on every font, and
+   324px of dead vertical space. */
+body.camzone .slide{padding-left:var(--cam-l,96px);padding-right:var(--cam-r,96px);
+                    padding-bottom:var(--cam-b,92px)}
+
+.slide{
+  position:absolute; inset:0; padding:74px 96px 92px;
+  display:none; flex-direction:column; background:var(--bg);
+}
+.slide.on{display:flex}
+
+/* ---------- Camera alignment guide (never on during a take) ---------- */
+#camguide{position:absolute;inset:0;pointer-events:none;z-index:60}
+#camguide .cg-col{position:absolute;top:0;bottom:0;background:rgba(194,96,63,.07);
+  border-right:2px dashed var(--accent);opacity:.85}
+/* The frame the camera fills. Designed to be ON CAMERA: a soft filled slot with
+   a hairline border, so it reads as part of the slide before the feed lands on
+   it and still frames the feed cleanly if alignment is a pixel or two out. */
+#camguide .cg-box{position:absolute;border-radius:28px;background:var(--surface-2);
+  border:2px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#camguide .cg-lab{position:absolute;text-align:center;font-size:19px;font-weight:700;
+  color:var(--accent);letter-spacing:.02em}
+#camguide .cg-lab span{display:block;font-size:16px;font-weight:600;color:var(--muted);
+  margin-top:4px;letter-spacing:.04em}
+/* ---------- Chrome ---------- */
+.kicker{
+  display:flex; align-items:center; gap:14px;
+  font-size:15px; font-weight:700; letter-spacing:.17em; color:var(--muted);
+  text-transform:uppercase; margin-bottom:6px;
+}
+.kicker .no{color:var(--accent)}
+.kicker .src{
+  margin-left:auto; font-size:15px; letter-spacing:.08em; font-weight:600;
+  color:var(--muted); text-transform:none;
+}
+/* Persistent identity — the ticker and company on every slide's top row. */
+.kicker .ident{
+  font-size:15px; letter-spacing:.04em; font-weight:600; color:var(--muted);
+  text-transform:none; padding-left:16px; border-left:2px solid var(--border);
+  white-space:nowrap;
+}
+.kicker .ident b{color:var(--accent); font-weight:800; letter-spacing:.12em}
+h1.head{font-size:64px;font-weight:760;letter-spacing:-.022em;line-height:1.03;margin-bottom:10px;
+  text-wrap:balance}
+h1.head.sm{font-size:52px}
+.sub{font-size:25px;color:var(--ink-2);line-height:1.4;max-width:1500px;font-weight:400;
+  text-wrap:pretty}
+
+.footer{
+  /* absolutely positioned, so it ignores the slide's padding — it printed
+     straight across the reserved camera column until it read the same vars. */
+  position:absolute; left:var(--cam-l,96px); right:var(--cam-r,96px); bottom:34px;
+  display:flex; align-items:center; gap:16px;
+  font-size:13px; color:var(--muted); letter-spacing:.05em;
+  border-top:1px solid var(--border); padding-top:13px;
+}
+.footer .mark{font-weight:700;letter-spacing:.16em}
+.footer .mark span{color:var(--muted);font-weight:500}
+.footer .pg{margin-left:auto;font-variant-numeric:tabular-nums}
+.footer .stamp{color:var(--muted)}
+
+/* The "why this matters" band — the beginner payoff on every slide */
+.stem{stroke:var(--s1)} .stem.bad{stroke:var(--crit)} .stem.good{stroke:var(--good)}
+.stem.warn{stroke:var(--warn)} .stem.mut{stroke:var(--muted);opacity:.55}
+.dot{fill:var(--s1)} .dot.bad{fill:var(--crit)} .dot.good{fill:var(--good)}
+.dot.warn{fill:var(--warn)} .dot.mut{fill:var(--muted);opacity:.62}
+/* ---------- The punch line ----------
+   This used to be a 90-word "why it matters" paragraph in a tinted box. On a
+   1920x1080 frame that is a wall of text the viewer reads instead of listening,
+   and it was saying what the presenter says out loud. The explanation now lives
+   in the presenter notes; the screen carries ONE line, set large enough to be
+   read from the sofa in the second it takes to land. */
+.punch{
+  margin-top:auto; display:flex; gap:20px; align-items:center;
+  border-left:5px solid var(--accent); padding:6px 0 6px 26px;
+}
+.punch p{font-size:40px;line-height:1.22;font-weight:680;letter-spacing:-.012em;
+  color:var(--ink);max-width:1180px;text-wrap:balance}
+.punch p b,.punch p strong{font-weight:800;color:var(--accent)}
+
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;min-height:0;padding:14px 0}
+.body.top{justify-content:flex-start}
+
+/* ---------- Title slide ---------- */
+.slide.title{padding:0 96px;justify-content:center}
+.title .tk{font-size:17px;font-weight:700;letter-spacing:.3em;color:var(--accent);margin-bottom:26px}
+.title h1{font-size:112px;font-weight:800;letter-spacing:-.03em;line-height:.98}
+.title .ident{display:flex;align-items:baseline;gap:20px;margin-top:20px;font-size:26px;color:var(--muted);letter-spacing:.08em}
+.title .hook{
+  margin-top:52px; font-size:44px; line-height:1.24; font-weight:600;
+  color:var(--ink); max-width:1420px; letter-spacing:-.012em;
+}
+.title .hook em{font-style:normal;color:var(--accent)}
+.title .pxrow{display:flex;align-items:baseline;gap:26px;margin-top:46px}
+.title .px{font-size:76px;font-weight:750;letter-spacing:-.02em}
+.title .chg{font-size:34px;font-weight:650}
+.chg.dn{color:var(--crit)} .chg.up{color:var(--good)}
+
+/* ---------- Big statement number ---------- */
+.mega{display:flex;align-items:baseline;gap:34px;flex-wrap:wrap}
+.mega .v{font-size:170px;font-weight:800;letter-spacing:-.035em;line-height:.92;color:var(--accent);
+  font-variant-numeric:tabular-nums}
+.mega .v.ink{color:var(--ink)}
+.mega .v.bad{color:var(--crit)}
+.mega .v.good{color:var(--good)}
+.mega .cap{font-size:27px;color:var(--ink-2);max-width:620px;line-height:1.36}
+
+/* ---------- Stat tiles ---------- */
+.tiles{display:grid;gap:16px}
+.tile{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:26px 28px; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:7px;
+}
+.tile .tv{font-size:52px;font-weight:770;letter-spacing:-.02em;line-height:1;
+  font-variant-numeric:tabular-nums}
+.tile .tv.sm{font-size:40px}
+/* One tile per grid may be the HERO — the slide's entry point, at display
+   scale (scale contrast: the biggest number should be the one that matters). */
+.tile.hero .tv{font-size:82px;letter-spacing:-.028em}
+.tile .tl{font-size:17px;color:var(--ink-2);font-weight:600}
+.tile .tn{font-size:15px;color:var(--muted);line-height:1.38}
+.tile.accent .tv{color:var(--accent)}
+.tile.good .tv{color:var(--good)} .tile.bad .tv{color:var(--crit)} .tile.warn .tv{color:var(--warn)}
+
+/* ---------- Quote ---------- */
+.quote{
+  background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0; padding:34px 40px; box-shadow:var(--shadow);
+}
+.quote p{font-size:34px;line-height:1.36;font-weight:500;letter-spacing:-.008em}
+.quote .attr{margin-top:18px;font-size:16px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+
+/* ---------- Charts ---------- */
+.chartwrap{width:100%;flex:1;min-height:0;display:flex;flex-direction:column}
+svg{width:100%;height:100%;overflow:visible;display:block}
+svg text{font-family:system-ui,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+.ax{font-size:16px;fill:var(--muted)}
+.axb{font-size:17px;fill:var(--ink-2);font-weight:600}
+.vlab{font-size:20px;fill:var(--ink);font-weight:700}
+.vlab.sm{font-size:17px}
+.gridline{stroke:var(--grid);stroke-width:1}
+.bar{fill:var(--accent)}
+.bar.mut{fill:var(--muted);opacity:.42}
+.bar.cool{fill:var(--s2)}
+.bar.s1{fill:var(--s1)}
+.bar.s2{fill:var(--s2)}
+.bar.good{fill:var(--good)} .bar.bad{fill:var(--crit)}
+.snk{stroke:none}
+.snk.trunk{fill:var(--s1);opacity:.78}
+.snk.cost{fill:var(--muted)}
+.snk.gain{fill:var(--s2)}
+.snk.bad{fill:var(--crit)}
+.gg-track{stroke:var(--grid)}
+.gg-fill{stroke:var(--s1)}
+.dn-total{stroke:var(--grid)}
+.dn-a{stroke:var(--s1)} .dn-b{stroke:var(--s2)}
+.dn-a-s{stroke:var(--s1)} .dn-b-s{stroke:var(--s2)}
+.dn-a-fill{fill:var(--s1)} .dn-b-fill{fill:var(--s2)}
+.tm{stroke:var(--bg);stroke-width:2}
+.tm.ok{fill:var(--good);opacity:.82}
+.tm.warn{fill:var(--warn);opacity:.85}
+.tm.bad{fill:var(--crit);opacity:.9}
+.tm-t{fill:#0d1b0f;font-weight:650}
+.tm-v{fill:#0d1b0f;font-weight:800;font-variant-numeric:tabular-nums}
+.fv-under{fill:var(--good);opacity:.62}
+.fv-fair{fill:var(--warn);opacity:.70}
+.fv-over{fill:var(--crit);opacity:.30}
+.fv-t-under{fill:var(--good)} .fv-t-fair{fill:var(--warn)} .fv-t-over{fill:var(--crit)}
+/* A band that is mechanical rather than a verdict — a merger collar — must not
+   be painted green/red: "below the floor" is the WORST outcome for a holder, so
+   green there says the opposite of the truth. Neutral zones, labels carry it. */
+.fv-n-out{fill:var(--muted);opacity:.22} .fv-n-mid{fill:var(--s2);opacity:.40}
+.fv-tn-out{fill:var(--muted)} .fv-tn-mid{fill:var(--s2)}
+.legend{display:flex;gap:32px;font-size:18px;color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:16px;height:16px;border-radius:3px;margin-right:9px;vertical-align:-2px}
+
+/* entry animation — bars grow, lines draw */
+/* Entry animations run 1-2s longer than they used to. A slide that has finished
+   animating before the presenter has finished the first sentence reads as a
+   static image; this keeps it unfolding under the voice. Every one is still
+   `both`, so a slide revisited mid-animation lands in its final state. */
+.slide.on .grow{animation:grow 1.9s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .growX{animation:growX 2.0s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .sweep{animation:draw 3.0s cubic-bezier(.35,.65,.25,1) both}
+.slide.on .pop{animation:pop 1.5s cubic-bezier(.2,.9,.3,1.25) both}
+.slide.on .bloom{animation:bloom 2.1s cubic-bezier(.34,1.3,.5,1) both}
+.slide.on .snap .row{animation:rowin 1.25s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .snap .pip.on{animation:pipin .8s cubic-bezier(.2,.9,.3,1.5) both}
+.slide.on .draw{animation:draw 2.8s cubic-bezier(.3,.6,.3,1) both}
+.slide.on .fade{animation:fade 1.45s ease both}
+@keyframes grow{from{transform:scaleY(.001)}to{transform:scaleY(1)}}
+@keyframes growX{from{transform:scaleX(.001)}to{transform:scaleX(1)}}
+@keyframes pop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+@keyframes bloom{0%{opacity:0;transform:scale(.12)}60%{opacity:1;transform:scale(1.06)}
+  100%{opacity:1;transform:scale(1)}}
+@keyframes pipin{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+@keyframes rowin{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes fade{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+/* Editorial chrome entrance: the headline wipes up out of a mask, the sub
+   follows, and the punch line lands LAST — after the chart has mostly built —
+   so the conclusion arrives as a beat, not as furniture. The clip-path ends
+   on negative insets so descenders are never clipped at rest. */
+.slide.on .kicker{animation:fade .8s cubic-bezier(.25,1,.5,1) both}
+.slide.on h1.head{animation:maskrise .95s cubic-bezier(.16,1,.3,1) both}
+.slide.on .sub{animation:fade .9s cubic-bezier(.25,1,.5,1) .22s both}
+.slide.on .punch{animation:maskrise 1.0s cubic-bezier(.16,1,.3,1) 1.15s both}
+@keyframes maskrise{from{opacity:0;clip-path:inset(0 0 100% 0);transform:translateY(22px)}
+  to{opacity:1;clip-path:inset(-12% -2% -16% -2%);transform:none}}
+/* The text slides used to appear fully formed while every chart slide built
+   itself, which read as a bug. Same entrance, staggered by position. */
+.slide.on .finds>.find,.slide.on .tiles>.tile,.slide.on .ww .wcol li,
+.slide.on .whylist>p,.slide.on .mega>*,.slide.on .quote>*,
+.slide.on .callrow>*,.slide.on.title>.tk,.slide.on.title>h1,
+.slide.on.title>.ident,.slide.on.title>.pxrow,.slide.on.title>.hook{animation:rowin 1.0s cubic-bezier(.2,.7,.3,1) both}
+.slide.on .finds>.find:nth-child(1),.slide.on .tiles>.tile:nth-child(1),
+.slide.on .whylist>p:nth-child(1),.slide.on .mega>*:nth-child(1),
+.slide.on .quote>*:nth-child(1),.slide.on.title>.tk{animation-delay:60ms}
+.slide.on .finds>.find:nth-child(2),.slide.on .tiles>.tile:nth-child(2),
+.slide.on .whylist>p:nth-child(2),.slide.on .mega>*:nth-child(2),
+.slide.on .quote>*:nth-child(2),.slide.on.title>h1{animation-delay:170ms}
+.slide.on .finds>.find:nth-child(3),.slide.on .tiles>.tile:nth-child(3),
+.slide.on .whylist>p:nth-child(3),.slide.on .callrow>*:nth-child(1),
+.slide.on.title>.ident{animation-delay:280ms}
+.slide.on .finds>.find:nth-child(4),.slide.on .tiles>.tile:nth-child(4),
+.slide.on .whylist>p:nth-child(4),.slide.on .callrow>*:nth-child(2),
+.slide.on.title>.pxrow{animation-delay:390ms}
+.slide.on .finds>.find:nth-child(n+5),.slide.on .tiles>.tile:nth-child(n+5),
+.slide.on .whylist>p:nth-child(n+5),.slide.on.title>.hook{animation-delay:500ms}
+/* Findings cards land one at a time — a deliberate build for the cold open,
+   each card arriving as its finding is named. Later rule wins over the shared
+   tiles/finds stagger above. */
+.slide.on .finds>.find:nth-child(1){animation-delay:100ms}
+.slide.on .finds>.find:nth-child(2){animation-delay:280ms}
+.slide.on .finds>.find:nth-child(3){animation-delay:460ms}
+.slide.on .finds>.find:nth-child(4){animation-delay:640ms}
+.slide.on .finds>.find:nth-child(n+5){animation-delay:820ms}
+.slide.on .ww .wcol li:nth-child(1){animation-delay:120ms}
+.slide.on .ww .wcol li:nth-child(2){animation-delay:210ms}
+.slide.on .ww .wcol li:nth-child(3){animation-delay:300ms}
+.slide.on .ww .wcol li:nth-child(4){animation-delay:390ms}
+.slide.on .ww .wcol li:nth-child(n+5){animation-delay:480ms}
+@media (prefers-reduced-motion:reduce){.slide.on .finds>.find,.slide.on .tiles>.tile,
+  .slide.on .ww .wcol li,.slide.on .whylist>p,.slide.on .mega>*,
+  .slide.on .quote>*,.slide.on .callrow>*,.slide.on.title>*{animation:none}}
+@media (prefers-reduced-motion:reduce){.slide.on .grow,.slide.on .growX,.slide.on .draw,
+  .slide.on .sweep,.slide.on .pop,.slide.on .fade,.slide.on .bloom,
+  .slide.on .snap .row,.slide.on .snap .pip.on,
+  .slide.on .kicker,.slide.on h1.head,.slide.on .sub,.slide.on .punch{animation:none}}
+
+/* ---------- Verdict ---------- */
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.vt{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:19px 21px;box-shadow:var(--shadow)}
+.vt .d{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.vt .r{font-size:31px;font-weight:800;margin:5px 0 6px;letter-spacing:-.01em}
+.vt .f{font-size:15.5px;color:var(--ink-2);line-height:1.36}
+.vt.strong{border-color:color-mix(in srgb,var(--good) 42%,transparent);background:var(--good-wash)}
+.vt.strong .r{color:var(--good)}
+.vt.risk{border-color:color-mix(in srgb,var(--crit) 42%,transparent);background:var(--crit-wash)}
+.vt.risk .r{color:var(--crit)}
+.vt.weak,.vt.mixed{border-color:color-mix(in srgb,var(--warn) 42%,transparent);background:var(--warn-wash)}
+.vt.weak .r,.vt.mixed .r{color:var(--warn)}
+
+.callrow{display:grid;grid-template-columns:1fr 1.15fr;gap:18px;margin-top:4px}
+.callbox{
+  background:var(--accent-wash); border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
+  border-radius:12px; padding:24px 28px; display:flex; flex-direction:column; justify-content:center;
+}
+.callbox .cl{font-size:15px;letter-spacing:.15em;font-weight:800;color:var(--accent);text-transform:uppercase}
+.callbox .cv{font-size:66px;font-weight:820;letter-spacing:-.025em;line-height:1;margin:6px 0 10px}
+.callbox .cd{font-size:19px;color:var(--ink-2);line-height:1.4}
+
+/* fair value calculator */
+.calc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow)}
+.calc h4{font-size:15px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:800}
+.asm{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.asm .a{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:9px 11px}
+.asm .a.sel{border-color:var(--accent);background:var(--accent-wash)}
+.asm .a .an{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.asm .a .av{font-size:25px;font-weight:750;letter-spacing:-.01em}
+.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cs{border:1px solid var(--border);border-radius:9px;padding:12px 14px;background:var(--surface-2)}
+.cs.base{border-color:var(--accent);background:var(--accent-wash)}
+.cs .cn{font-size:15px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.cs .cfv{font-size:34px;font-weight:790;letter-spacing:-.02em;margin-top:3px}
+.cs .cr{font-size:15px;color:var(--ink-2);margin-top:2px}
+.cs .cr b{font-weight:750}
+.hintline{font-size:15px;color:var(--muted);margin-top:11px;letter-spacing:.03em}
+
+/* ---------- Why-list (verdict reasoning) ---------- */
+.whylist{display:flex;flex-direction:column;gap:11px}
+.whylist p{font-size:20px;line-height:1.45;color:var(--ink-2);padding-left:20px;border-left:2px solid var(--border)}
+.whylist p b{color:var(--ink);font-weight:680}
+
+/* ---------- Source chips — what this analysis was built from ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:40px}
+.chips .cl{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-right:6px}
+.chips .ch{display:inline-flex;align-items:baseline;gap:8px;background:var(--surface-2);
+  border:1px solid var(--border);border-radius:7px;padding:7px 13px;font-size:15px}
+.chips .ch b{font-weight:750;letter-spacing:.03em}
+.chips .ch span{color:var(--muted);font-size:15px}
+
+/* ---------- Snapshot: radar beside scored rows ---------- */
+.snap{display:grid;grid-template-columns:0.82fr 1.18fr;gap:34px;align-items:center}
+/* wider-than-tall viewBox (labels need horizontal room), so the box gets
+   extra height rather than letterboxing the ring down to nothing */
+.snap-radar{width:100%;height:520px;display:flex;align-items:center}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:210px 200px 1fr;gap:20px;align-items:center;
+  padding:15px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row .rn{font-size:21px;font-weight:700}
+.row .rf{font-size:17.5px;color:var(--ink-2);line-height:1.34}
+.pips{display:flex;gap:5px}
+.pip{width:30px;height:17px;border-radius:4px;background:var(--grid)}
+.pip.on{background:var(--good)}
+.pip.on.warn{background:var(--warn)}
+.pip.on.bad{background:var(--crit)}
+
+/* ---------- Findings: the work nobody else did ---------- */
+.finds{display:flex;flex-direction:column;gap:15px}
+.find{display:grid;grid-template-columns:74px 1fr;gap:24px;align-items:start;
+  background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 28px;box-shadow:var(--shadow)}
+.find .fn{font-size:44px;font-weight:820;line-height:.9;color:var(--accent);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+/* A finding may carry its headline STAT — the card then leads with the number
+   (scannable in a second) and the sentence explains it, instead of five cards
+   of prose. Cards without a stat keep the classic numbered layout. */
+.find.hasstat{grid-template-columns:216px 1fr}
+.find .fno{font-size:15px;font-weight:800;letter-spacing:.14em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:6px}
+.find .fstat{font-size:44px;font-weight:820;line-height:.95;color:var(--accent);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.find .fc{font-size:23px;line-height:1.38;color:var(--ink)}
+.find .fw{margin-top:9px;font-size:15px;color:var(--muted);letter-spacing:.02em}
+.find .fw b{color:var(--ink-2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  font-size:15px;margin-right:9px}
+
+/* ---------- Working / watch two-column checklist ---------- */
+.ww{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.wcol{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:24px 26px;box-shadow:var(--shadow)}
+.wcol.good{border-color:color-mix(in srgb,var(--good) 42%,transparent);background:var(--good-wash)}
+.wcol.bad{border-color:color-mix(in srgb,var(--warn) 46%,transparent);background:var(--warn-wash)}
+.wcol h4{font-size:15px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;margin-bottom:16px}
+.wcol.good h4{color:var(--good)} .wcol.bad h4{color:var(--warn)}
+.wcol li{display:flex;gap:14px;align-items:flex-start;padding:9px 0;font-size:19.5px;
+  line-height:1.38;list-style:none}
+.wcol .ic{flex:none;font-weight:800;width:18px;font-size:20px}
+.wcol.good .ic{color:var(--good)} .wcol.bad .ic{color:var(--warn)}
+
+/* ---------- Presenter notes drawer (never on camera unless summoned) ---------- */
+#notes{
+  position:fixed; left:0; right:0; bottom:0; max-height:42vh; overflow:auto;
+  background:var(--surface); border-top:2px solid var(--accent);
+  padding:20px 30px 24px; display:none; z-index:60;
+  box-shadow:0 -14px 40px rgba(0,0,0,.22);
+}
+#notes.on{display:block}
+#notes .nh{font-size:12px;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:9px}
+#notes p{font-size:17.5px;line-height:1.5;color:var(--ink);max-width:1500px}
+
+/* ---------- Grid overview ---------- */
+#grid{position:fixed;inset:0;background:var(--bg);z-index:70;display:none;overflow:auto;padding:34px}
+#grid.on{display:block}
+#grid .gg{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+#grid .gc{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 14px;cursor:pointer}
+#grid .gc:hover{border-color:var(--accent)}
+#grid .gc.cur{border-color:var(--accent);background:var(--accent-wash)}
+#grid .gc .gn{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em}
+#grid .gc .gt{font-size:14px;margin-top:4px;line-height:1.28;color:var(--ink)}
+#grid .gc .go{display:inline-block;margin-top:7px;font-size:10px;font-weight:800;letter-spacing:.12em;
+  color:var(--warn);border:1px solid var(--warn);border-radius:4px;padding:1px 5px}
+#grid .gc.opt{opacity:.72}
+#grid .tot{font-size:13px;color:var(--muted);margin-bottom:15px;letter-spacing:.04em}
+#grid h3{font-size:13px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);margin-bottom:15px;font-weight:800}
+
+/* ---------- Presenter HUD ---------- */
+#hud{
+  position:fixed; top:12px; right:14px; z-index:65;
+  display:none; gap:9px; align-items:center;
+  font-size:12.5px; color:var(--muted); letter-spacing:.06em;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:6px 11px; font-variant-numeric:tabular-nums;
+}
+#hud.on{display:flex}
+#hud b{color:var(--ink);font-weight:700}
+#hud .over{color:var(--crit)}
+
+/* ---------- Print → PDF ---------- */
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{overflow:visible;height:auto}
+  #stage{transform:none!important;width:1920px;height:auto}
+  .slide{display:flex!important;position:relative;page-break-after:always;height:1080px}
+  #notes,#grid,#hud{display:none!important}
+  /* A PDF is a handout, not a recording: drop the reserved camera column and its
+     frame so the page is full-bleed. Camera mode is the default now, so without
+     this every exported PDF carried an empty slot down the left. */
+  body.camzone .slide{padding-left:96px!important;padding-right:96px!important;
+                      padding-bottom:92px!important}
+  #camguide{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<div id="hud"><span id="hud-slide"></span><span>·</span><span id="hud-target"></span><span>·</span><b id="hud-clock">0:00</b></div>
+
+<div id="notes"><div class="nh" id="notes-head">Presenter notes</div><p id="notes-body"></p></div>
+
+<div id="grid"><h3>All slides — click to jump · Esc to close</h3>
+<div class="tot" id="grid-total"></div><div class="gg" id="grid-cells"></div></div>
+
+<script>
+const DECK = __PAYLOAD__;
+</script>
+<script>
+(() => {
+"use strict";
+
+/* ============================================================
+   Formatting
+   ============================================================ */
+const f1 = n => n.toFixed(1);
+const f2 = n => n.toFixed(2);
+const money = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const usd0 = n => "$" + Math.round(n).toLocaleString("en-US");
+const pct = (n, d=1) => (n>0?"+":"") + n.toFixed(d) + "%";
+const bn = n => "$" + (n/1000).toFixed(2) + "B";
+const esc = s => String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const fmtT = s => Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+
+/* ============================================================
+   SVG chart engine — hand-rolled, theme-reactive, dependency-free
+   ============================================================ */
+const FMT = {
+  auto: v => (Math.abs(v) >= 1000 ? (v/1000).toFixed(2)+"B" : Math.round(v)+"M"),
+  usdB: v => (v < 0 ? "−$" : "$") + (Math.abs(v) / 1000).toFixed(1) + "B",
+  usdM: v => (v < 0 ? "−$" : "$") + Math.abs(Math.round(v)).toLocaleString("en-US") + "M",
+  pct:  v => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%",
+  plain: v => Math.round(v).toLocaleString("en-US"),
+  plain0: v => Math.round(v).toLocaleString("en-US"),
+  plain1: v => v.toFixed(1),
+  usd0: v => (v < 0 ? "−$" : "$") + Math.abs(Math.round(v)).toLocaleString("en-US"),
+  usd2: v => (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(2),
+  pct0: v => (v < 0 ? "−" : "") + Math.abs(v).toFixed(0) + "%",
+};
+
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, txt){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (txt != null) n.textContent = txt;
+  return n;
+}
+/*
+   Camera-safe framing. Measured across all 24 slides, 82% of the 1920x1080
+   canvas carries ink on some slide and the only always-empty region is a strip
+   at the very bottom — so a webcam bubble laid over a full-bleed deck WILL
+   cover content. `?cam=left|right|bottom` reserves a real column that no slide
+   can reach into, by padding the slide rather than shrinking the whole stage.
+
+     ?cam=left           deck right, 30% of the width free on the left
+     ?cam=left&camw=26   the same, with the reserved column set to 26%
+
+   DECLARED HERE, at the top, deliberately: charts render during load, well
+   before the bottom of this script runs, so reading CAM from a `const` further
+   down threw "Cannot access 'CAM' before initialization" and every chart on
+   the deck came back a DEAD CHART.
+*/
+/*
+   `let`, not `const`, and remembered: requiring `?cam=left&camw=26` in the URL
+   meant opening the deck normally — a double-click, or a bare `#s2` link — gave
+   the full-bleed layout with no hint that a camera layout existed. C toggles it,
+   the choice persists like the theme does, and the query string still wins when
+   it is present so a link can pin a layout.
+*/
+const _q = new URLSearchParams(location.search);
+function _stored(k, d){ try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } }
+/*
+   CAMERA MODE IS THE DEFAULT. Every episode is recorded with the camera beside
+   the deck, so that is the layout a deck should open in — not one you have to
+   remember to switch on.
+
+   The stored value is TRI-STATE ("left" / "right" / "off"), never absent-means-off:
+   with a default of "left", removing the key on toggle-off meant the next open
+   silently went back to camera mode, so turning it off could not stick.
+*/
+const _camStored = _stored("nr_deck_cam", null);
+let CAM = _q.get("cam") || (_camStored === "off" ? null : (_camStored || "left"));
+let CAMW = Math.min(60, Math.max(15,
+  parseFloat(_q.get("camw") || _stored("nr_deck_camw", "26")))) / 100;
+let camGuideOn = false;
+
+/* Switch camera mode at runtime: persist it, rebuild every chart at the new
+   width, then re-fit. */
+function setCam(mode, w){
+  CAM = mode;
+  if (w != null) CAMW = Math.min(0.60, Math.max(0.15, w));
+  try {
+    localStorage.setItem("nr_deck_cam", mode || "off");   // "off", not absent
+    localStorage.setItem("nr_deck_camw", String(Math.round(CAMW * 100)));
+  } catch (e) {}
+  if (!mode) camGuideOn = false;
+  DECK.slides.forEach((sl, i) => mountCharts(slides[i], sl, i + 1));
+  fit();
+  buildGrid();
+}
+
+/*
+   Charts were 1660 wide always. In camera mode the reserved column is real
+   space, so a 1660 viewBox inside a narrower box gets scaled DOWN by
+   preserveAspectRatio and every label with it — a 17px axis label rendering at
+   11px. Building the chart at the width it actually has keeps text at its true
+   size. `spec.width` still wins if a chart ever needs to override.
+*/
+/*
+   One knob for the pace of the build. Every chart's per-element stagger goes
+   through this, so the sequence can be slowed without touching 46 separate
+   constants. Raised so a slide keeps unfolding for a beat or two after the flip
+   rather than being finished before the first sentence is out.
+*/
+const AD_SCALE = 2.0;
+function AD(ms){ return Math.round((ms || 0) * AD_SCALE); }
+
+/*
+   A bar rounded at its DATA END ONLY. `rx` on a rect rounds all four corners,
+   including the end sitting on the baseline, which is the giveaway of a default
+   chart — the baseline end should be square so the mark reads as anchored.
+   dir: "up" | "down" | "right" | "left" names where the value end is.
+*/
+function barPath(x, y, w, h, r, dir){
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  if (dir === "up")
+    return `M${x} ${y+h} L${x} ${y+r} Q${x} ${y} ${x+r} ${y} L${x+w-r} ${y} `
+         + `Q${x+w} ${y} ${x+w} ${y+r} L${x+w} ${y+h} Z`;
+  if (dir === "down")
+    return `M${x} ${y} L${x} ${y+h-r} Q${x} ${y+h} ${x+r} ${y+h} L${x+w-r} ${y+h} `
+         + `Q${x+w} ${y+h} ${x+w} ${y+h-r} L${x+w} ${y} Z`;
+  if (dir === "mid")            // an interior stacked segment: square both ends
+    return `M${x} ${y} L${x+w} ${y} L${x+w} ${y+h} L${x} ${y+h} Z`;
+  if (dir === "left")
+    return `M${x+w} ${y} L${x+r} ${y} Q${x} ${y} ${x} ${y+r} L${x} ${y+h-r} `
+         + `Q${x} ${y+h} ${x+r} ${y+h} L${x+w} ${y+h} Z`;
+  return `M${x} ${y} L${x+w-r} ${y} Q${x+w} ${y} ${x+w} ${y+r} L${x+w} ${y+h-r} `
+       + `Q${x+w} ${y+h} ${x+w-r} ${y+h} L${x} ${y+h} Z`;
+}
+
+function chartW(){
+  return 1660 - camPx();
+}
+
+/* The reserved column, in stage pixels. 0 unless ?cam=left|right. */
+function camPx(){
+  return (CAM === "left" || CAM === "right") ? Math.round(1920 * CAMW) : 0;
+}
+
+/*
+   Wrap a label to a pixel budget. Lifted out of chartTreemap, because camera
+   mode narrows every chart and the first thing to break is a two-word sub-label
+   that only ever fitted at 1660 wide: DVA's guidance chart printed "narrowed,
+   midpoint" straight through "first FY2026 guide".
+*/
+function wrapLabel(text, px, boxPx, maxLines){
+  const budget = Math.max(3, Math.floor(boxPx / (px * 0.53)));
+  const lines = [];
+  String(text).split(" ").forEach(word => {
+    const last = lines[lines.length - 1];
+    if (last && (last + " " + word).length <= budget) lines[lines.length - 1] += " " + word;
+    else lines.push(word);
+  });
+  if (maxLines && lines.length > maxLines) {
+    const keep = lines.slice(0, maxLines);
+    keep[maxLines - 1] = keep[maxLines - 1].slice(0, Math.max(1, budget - 1)) + "…";
+    return keep;
+  }
+  return lines;
+}
+
+function svgRoot(w, h){
+  const s = el("svg", {viewBox:`0 0 ${w} ${h}`, preserveAspectRatio:"xMidYMid meet"});
+  return s;
+}
+
+/*
+   Vertical fade fill — a flat translucent block under a line reads as a default
+   chart; a color→transparent gradient reads as designed (the ECharts area-fill
+   idea, rebuilt as plain SVG). One gradient def per call, colors stay on the
+   palette tokens so both themes keep working.
+*/
+let GRAD_N = 0;
+function areaFill(s, color, top){
+  const id = "ag" + (++GRAD_N);
+  let defs = s.querySelector("defs");
+  if (!defs) { defs = el("defs", {}); s.insertBefore(defs, s.firstChild); }
+  const g = el("linearGradient", {id, x1: 0, y1: 0, x2: 0, y2: 1});
+  g.appendChild(el("stop", {offset: "0%", "stop-color": color, "stop-opacity": top}));
+  g.appendChild(el("stop", {offset: "100%", "stop-color": color, "stop-opacity": 0.02}));
+  defs.appendChild(g);
+  return `url(#${id})`;
+}
+
+/* Emphasis halo — a soft radial glow behind a hero mark (the ECharts
+   "emphasis" state). A radial gradient fading to zero, NOT stacked rings:
+   the ring version read as a bigger dot, not a glow. */
+function halo(s, cx, cy, r, color, delayMs){
+  const id = "hg" + (++GRAD_N);
+  let defs = s.querySelector("defs");
+  if (!defs) { defs = el("defs", {}); s.insertBefore(defs, s.firstChild); }
+  const g = el("radialGradient", {id});
+  g.appendChild(el("stop", {offset: "30%", "stop-color": color, "stop-opacity": 0.26}));
+  g.appendChild(el("stop", {offset: "100%", "stop-color": color, "stop-opacity": 0}));
+  defs.appendChild(g);
+  s.appendChild(el("circle", {cx, cy, r: r * 2.8, fill: `url(#${id})`,
+    class: "fade", style: `animation-delay:${AD(delayMs)}ms`}));
+}
+
+/* Vertical bars with a value label above each. */
+function chartBars(spec){
+  const W = chartW(), H = spec.height || 470, PT = 54, PL = 20, PR = 20;
+  const s = svgRoot(W, H);
+  const vals = spec.series.map(d => d.v);
+  // Diverging charts need a deeper bottom gutter: a negative bar's value label
+  // hangs below the bar and would otherwise land on the category label.
+  const diverging = spec.zeroLine && Math.min(...vals) < 0;
+  const PB = diverging ? 130 : 62;
+  const axY = diverging ? H - PB + 76 : H - PB + 30;
+  const subY = diverging ? H - PB + 100 : H - PB + 53;
+  const max = spec.max != null ? spec.max : Math.max(...vals) * 1.16;
+  // Headroom below zero too, so a small negative bar and its label both fit.
+  const min = spec.min != null ? spec.min : Math.min(0, ...vals) * 1.55;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+
+  (spec.gridlines || 4) && [...Array(spec.gridlines || 4)].forEach((_, i) => {
+    const gv = min + (max - min) * (i + 1) / ((spec.gridlines || 4) + 1);
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(gv), y2:y(gv), class:"gridline"}));
+  });
+
+  // Diverging series need an explicit zero rule, or a small negative bar reads
+  // as a short positive one.
+  if (spec.zeroLine && min < 0) {
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(0), y2:y(0),
+      stroke:"var(--ink-2)", "stroke-width":"2", opacity:".65"}));
+  }
+
+  const n = spec.series.length;
+  const slot = plotW / n, bw = Math.min(spec.barWidth || 64, slot * 0.62);
+  spec.series.forEach((d, i) => {
+    const cx = PL + slot * i + slot / 2;
+    const top = y(d.v), base = y(Math.max(min, 0));
+    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${base}px;animation-delay:${AD(i*55)}ms`});
+    g.appendChild(el("path", {
+      d: barPath(cx - bw/2, Math.min(top, base), bw, Math.max(2, Math.abs(base - top)),
+                 5, top <= base ? "up" : "down"),
+      class: "bar" + (d.cls ? " " + d.cls : "")
+    }));
+    s.appendChild(g);
+    // A negative bar hangs below zero, so its label goes under it — placing it
+    // "above the top" would print it inside the bar.
+    const ly = d.v < 0 ? top + 32 : top - 15;
+    const lab = el("text", {x:cx, y: ly, "text-anchor":"middle", class:"vlab fade", style:`animation-delay:${AD(260+i*55)}ms`}, d.lab);
+    s.appendChild(lab);
+    wrapLabel(d.x, 17, slot - 12, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:axY + li * 21, "text-anchor":"middle", class:"axb"}, ln)));
+    if (d.x2) wrapLabel(d.x2, 15, slot - 12, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:subY + li * 19, "text-anchor":"middle", class:"ax"}, ln)));
+  });
+  return s;
+}
+
+/* Two grouped series per category — used for the payor comparison. */
+function chartGrouped(spec){
+  const W = chartW(), H = spec.height || 460, PB = 74, PT = 54, PL = 20, PR = 20;
+  const s = svgRoot(W, H);
+  const all = spec.cats.flatMap(c => c.vals);
+  const max = Math.max(...all) * 1.20;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const y = v => PT + plotH - (v / max) * plotH;
+
+  [...Array(4)].forEach((_, i) => {
+    const gv = max * (i+1) / 5;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(gv), y2:y(gv), class:"gridline"}));
+  });
+
+  const n = spec.cats.length, slot = plotW / n;
+  spec.cats.forEach((c, i) => {
+    const cx = PL + slot * i + slot / 2;
+    const bw = Math.min(58, slot * 0.26), gap = 12;
+    c.vals.forEach((v, j) => {
+      const x = cx - bw - gap/2 + j * (bw + gap);
+      const top = y(v), base = y(0);
+      const g = el("g", {class:"grow", style:`transform-origin:${x+bw/2}px ${base}px;animation-delay:${AD(i*70+j*35)}ms`});
+      g.appendChild(el("rect", {x, y:top, width:bw, height:Math.max(2, base-top), rx:4,
+        class:"bar" + (j === 0 ? " mut" : (c.cls ? " " + c.cls : ""))}));
+      s.appendChild(g);
+      s.appendChild(el("text", {x:x+bw/2, y:top-13, "text-anchor":"middle", class:"vlab sm fade",
+        style:`animation-delay:${AD(280+i*70+j*35)}ms`}, c.labs[j]));
+    });
+    s.appendChild(el("text", {x:cx, y:H-PB+30, "text-anchor":"middle", class:"axb"}, c.x));
+    if (c.delta) s.appendChild(el("text", {x:cx, y:H-PB+56, "text-anchor":"middle",
+      class:"ax", style:`fill:${c.deltaGood ? "var(--good)" : "var(--crit)"};font-weight:700;font-size:19px`}, c.delta));
+  });
+  return s;
+}
+
+/* Price line with annotated markers. */
+function chartLine(spec){
+  const W = chartW(), H = spec.height || 470, PB = 52, PT = 62, PL = 24, PR = 96;
+  const s = svgRoot(W, H);
+  const pts = spec.points;
+  const lo = Math.min(...pts.map(p=>p.v)), hi = Math.max(...pts.map(p=>p.v));
+  const pad = (hi - lo) * 0.14;
+  const min = lo - pad, max = hi + pad;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const x = i => PL + (i / (pts.length - 1)) * plotW;
+  const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+
+  [...Array(4)].forEach((_, i) => {
+    const gv = min + (max-min)*(i+1)/5;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(gv), y2:y(gv), class:"gridline"}));
+    s.appendChild(el("text", {x:W-PR+12, y:y(gv)+6, class:"ax"}, "$" + Math.round(gv)));
+  });
+
+  const d = pts.map((p,i) => (i?"L":"M") + x(i).toFixed(1) + " " + y(p.v).toFixed(1)).join(" ");
+  const area = d + ` L ${x(pts.length-1).toFixed(1)} ${(PT+plotH)} L ${x(0).toFixed(1)} ${(PT+plotH)} Z`;
+  s.appendChild(el("path", {d:area, fill: areaFill(s, "var(--accent)", .16)}));
+  const path = el("path", {d, fill:"none", stroke:"var(--accent)", "stroke-width":"3.4",
+    "stroke-linejoin":"round", "stroke-linecap":"round", class:"draw"});
+  s.appendChild(path);
+  requestAnimationFrame(() => {
+    try { const L = path.getTotalLength(); path.style.setProperty("--len", L);
+          path.style.strokeDasharray = L; } catch(e){}
+  });
+
+  if (spec.ref) {
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(spec.ref.v), y2:y(spec.ref.v),
+      stroke:"var(--ink-2)", "stroke-width":"2", "stroke-dasharray":"7 5", opacity:".7"}));
+    s.appendChild(el("text", {x:W-PR+12, y:y(spec.ref.v)+6, class:"axb",
+      style:"font-size:19px"}, spec.ref.lab));
+  }
+  (spec.ticks || []).forEach(tk =>
+    s.appendChild(el("text", {x:x(tk.i), y:H-PB+34, "text-anchor":"middle", class:"ax",
+      style:"font-size:15px"}, tk.lab)));
+
+  (spec.markers || []).forEach((m, k) => {
+    const i = m.i < 0 ? pts.length + m.i : m.i;
+    const px = x(i), py = y(pts[i].v);
+    const up = m.side !== "below";
+    s.appendChild(el("line", {x1:px, x2:px, y1:py, y2: up ? PT-14 : PT+plotH+16,
+      stroke:"var(--ink-2)", "stroke-width":"1.4", "stroke-dasharray":"4 4", opacity:".55", class:"fade",
+      style:`animation-delay:${AD(700+k*90)}ms`}));
+    s.appendChild(el("circle", {cx:px, cy:py, r:7, fill:"var(--bg)", stroke:m.crit?"var(--crit)":"var(--accent)",
+      "stroke-width":"3.4", class:"fade", style:`animation-delay:${AD(700+k*90)}ms`}));
+    const ty = up ? PT-24 : PT+plotH+40;
+    const anchor = i > pts.length*0.78 ? "end" : (i < pts.length*0.10 ? "start" : "middle");
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(760+k*90)}ms`});
+    g.appendChild(el("text", {x:px, y:ty, "text-anchor":anchor, class:"vlab",
+      style:m.crit?"fill:var(--crit)":""}, m.lab));
+    if (m.sub) g.appendChild(el("text", {x:px, y:ty + (up?-24:24), "text-anchor":anchor, class:"ax"}, m.sub));
+    s.appendChild(g);
+  });
+  return s;
+}
+
+/* Waterfall bridge — start, contributions, end. */
+function chartBridge(spec){
+  const W = chartW(), H = spec.height || 450, PB = 78, PT = 62, PL = 20, PR = 20;
+  const s = svgRoot(W, H);
+  let run = 0; const tops = [];
+  spec.steps.forEach(st => {
+    if (st.type === "total") tops.push({from:0, to:st.v});
+    else { tops.push({from:run, to:run + st.v}); run += st.v; }
+    if (st.type === "start") run = st.v;
+  });
+
+  // The scale must span the whole running path, not just its high point. A
+  // bridge that crosses zero — cash generated, then capital spending far larger
+  // than it — used to map its negative bars off the bottom of the slide and
+  // straight through the "why it matters" band.
+  const lo = Math.min(0, ...tops.map(t => Math.min(t.from, t.to)));
+  const hi = Math.max(0, ...tops.map(t => Math.max(t.from, t.to)));
+  const pad = (hi - lo) * 0.18 || 1;
+  // Headroom above for the value labels; below only if anything goes negative.
+  const max = hi + pad, min = lo < 0 ? lo - pad * 0.55 : 0;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+  const zeroY = y(0);
+  const n = spec.steps.length, slot = plotW / n, bw = Math.min(84, slot * 0.40);
+
+  if (lo < 0) {
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:zeroY, y2:zeroY,
+      stroke:"var(--ink)", "stroke-width":1.5, opacity:".45"}));
+  }
+
+  spec.steps.forEach((st, i) => {
+    const cx = PL + slot*i + slot/2;
+    const t = tops[i], top = y(Math.max(t.from, t.to)), bot = y(Math.min(t.from, t.to));
+    const cls = st.type === "start" || st.type === "total" ? "mut" : (st.cls || "");
+    const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${bot}px;animation-delay:${AD(i*80)}ms`});
+    g.appendChild(el("rect", {x:cx-bw/2, y:top, width:bw, height:Math.max(3, bot-top), rx:4, class:"bar "+cls}));
+    s.appendChild(g);
+    // A bar sitting below the zero line wears its label underneath, or the label
+    // lands inside the bar above it.
+    const endsBelow = Math.min(t.from, t.to) < 0 && Math.max(t.from, t.to) <= 0.0001;
+    // The TOTAL is the landing of the whole walk — the number the slide exists
+    // for — so it dwarfs the step labels and wears the accent (scale contrast:
+    // the hero should not whisper at the same size as its supporting cast).
+    const isTotal = st.type === "total";
+    s.appendChild(el("text", {x:cx, y: endsBelow ? bot + (isTotal ? 44 : 30) : top - 14,
+      "text-anchor":"middle", class:"vlab fade",
+      style:`animation-delay:${AD(300+i*80)}ms`
+        + (isTotal ? ";font-size:44px;fill:var(--accent)" : "")}, st.lab));
+    s.appendChild(el("text", {x:cx, y:H-PB+30, "text-anchor":"middle", class:"axb"}, st.x));
+    if (st.x2) s.appendChild(el("text", {x:cx, y:H-PB+54, "text-anchor":"middle", class:"ax"}, st.x2));
+    // No connector into a total — its `from` is 0, which drew a stray rule
+    // along the baseline instead of a step link.
+    if (i < n-1 && st.type !== "total" && spec.steps[i+1].type !== "total") {
+      const ny = y(tops[i+1].from);
+      s.appendChild(el("line", {x1:cx+bw/2, x2:PL+slot*(i+1)+slot/2-bw/2, y1:ny, y2:ny,
+        stroke:"var(--muted)", "stroke-width":"1.4", "stroke-dasharray":"4 4", opacity:".6"}));
+    }
+  });
+  return s;
+}
+
+/* Horizontal comparison bars — used for the two-price-tags slide. */
+function chartHBars(spec){
+  const W = chartW(), H = spec.height || 420;
+  const s = svgRoot(W, H);
+  // PR must clear the longest value label. A two-part label (rate then margin)
+  // at 27px overran the viewBox at the old 210 and was clipped off the slide.
+  const LBL = 300, PR = spec.labelRoom || 500;
+  const max = Math.max(...spec.rows.map(r => r.v)) * 1.02;
+  const rowH = (H - 30) / spec.rows.length;
+  spec.rows.forEach((r, i) => {
+    const cy = 22 + rowH*i + rowH/2;
+    const bw = ((W - LBL - PR) * r.v) / max;
+    s.appendChild(el("text", {x:LBL-22, y:cy+3, "text-anchor":"end", class:"axb",
+      style:"font-size:22px"}, r.name));
+    if (r.sub) s.appendChild(el("text", {x:LBL-22, y:cy+27, "text-anchor":"end", class:"ax"}, r.sub));
+    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${AD(i*90)}ms`});
+    g.appendChild(el("path", {d: barPath(LBL, cy - 19, Math.max(3, bw), 38, 5, "right"),
+      class:"bar "+(r.cls||"")}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x:LBL+bw+18, y:cy+9, class:"vlab fade",
+      style:`animation-delay:${AD(300+i*90)}ms;font-size:27px`}, r.lab));
+  });
+  return s;
+}
+
+/*
+   Stacked horizontal bars — a shared cost block plus a variable margin block.
+   Plain side-by-side bars showed the two payors' REVENUE (a ~2.8x gap) while
+   the caption talked about MARGIN (a ~10x gap), so the picture argued against
+   the words. Stacking the identical cost out of both makes the margin gap the
+   thing you actually see.
+*/
+function chartStackedH(spec){
+  const W = chartW(), H = spec.height || 420;
+  const s = svgRoot(W, H);
+  const LBL = 300, PR = spec.labelRoom || 300;
+  const max = Math.max(...spec.rows.map(r => r.segs.reduce((a, x) => a + x.v, 0)));
+  const plotW = W - LBL - PR;
+  const rowH = (H - 40) / spec.rows.length;
+
+  spec.rows.forEach((r, i) => {
+    const cy = 26 + rowH * i + rowH / 2;
+    s.appendChild(el("text", {x:LBL-24, y:cy+2, "text-anchor":"end", class:"axb",
+      style:"font-size:24px"}, r.name));
+    if (r.sub) s.appendChild(el("text", {x:LBL-24, y:cy+28, "text-anchor":"end", class:"ax"}, r.sub));
+
+    let x = LBL, total = 0;
+    r.segs.forEach((seg, j) => {
+      const w = (plotW * seg.v) / max;
+      const g = el("g", {class:"growX", style:`transform-origin:${x}px ${cy}px;animation-delay:${AD(i*110+j*80)}ms`});
+      // 2px of surface between fills — abutting segments otherwise read as one
+      // mark — and rounding only on the two outer ends of the whole stack.
+      const first = j === 0, last = j === r.segs.length - 1;
+      const gap = last ? 0 : 2;
+      g.appendChild(el("path", {
+        d: barPath(x, cy - 24, Math.max(2, w - gap), 48, 5,
+                   first ? "left" : (last ? "right" : "mid")),
+        class:"bar " + (seg.cls || "")}));
+      s.appendChild(g);
+      if (seg.lab && w > 130) {
+        s.appendChild(el("text", {x:x+w/2, y:cy+8, "text-anchor":"middle", class:"vlab fade",
+          style:`animation-delay:${AD(340+i*110+j*80)}ms;fill:${seg.ink || "var(--bg)"};font-size:23px`},
+          seg.lab));
+      } else if (seg.lab) {
+        // Too narrow to hold its own label — float it above the segment rather
+        // than drop it. The small number is often the whole point of the slide.
+        s.appendChild(el("text", {x:x+w/2, y:cy-42, "text-anchor":"middle", class:"vlab fade",
+          style:`animation-delay:${AD(340+i*110+j*80)}ms;font-size:21px`}, seg.lab));
+      }
+      x += w; total += seg.v;
+    });
+    s.appendChild(el("text", {x:x+20, y:cy+9, class:"vlab fade",
+      style:`animation-delay:${AD(420+i*110)}ms;font-size:26px`}, r.totalLab));
+  });
+  return s;
+}
+
+/* Guidance range bar with the implied-second-half marker. */
+function chartRange(spec){
+  const W = chartW(), H = spec.height || 300;
+  const s = svgRoot(W, H);
+  const PL = 90, PR = 130, trackY = 148;
+  const lo = spec.scaleLo, hi = spec.scaleHi;
+  const x = v => PL + ((v - lo) / (hi - lo)) * (W - PL - PR);
+
+  s.appendChild(el("rect", {x:PL, y:trackY-5, width:W-PL-PR, height:10, rx:5, fill:"var(--grid)"}));
+  s.appendChild(el("rect", {x:x(spec.bandLo), y:trackY-19, width:x(spec.bandHi)-x(spec.bandLo), height:38,
+    rx:7, fill:"var(--accent)", opacity:".24", class:"fade"}));
+  [[spec.bandLo, spec.bandLoLab], [spec.bandHi, spec.bandHiLab]].forEach(([v, lab], k) => {
+    s.appendChild(el("line", {x1:x(v), x2:x(v), y1:trackY-22, y2:trackY+22, stroke:"var(--accent)", "stroke-width":"3"}));
+    s.appendChild(el("text", {x:x(v), y:trackY+58, "text-anchor":"middle", class:"vlab"}, lab));
+  });
+  // Band name sits BELOW the range labels — above the track it collided with
+  // the marker's leader line.
+  s.appendChild(el("text", {x:(x(spec.bandLo)+x(spec.bandHi))/2, y:trackY+96, "text-anchor":"middle",
+    class:"axb", style:"font-size:19px;letter-spacing:.1em;text-transform:uppercase;fill:var(--muted)"},
+    spec.bandName));
+
+  (spec.marks || []).forEach((m, k) => {
+    const mx = x(m.v);
+    s.appendChild(el("line", {x1:mx, x2:mx, y1:trackY-64, y2:trackY+20,
+      stroke: m.crit ? "var(--crit)" : "var(--ink)", "stroke-width":"3.2", class:"fade",
+      style:`animation-delay:${AD(300+k*120)}ms`}));
+    s.appendChild(el("circle", {cx:mx, cy:trackY, r:9, fill: m.crit ? "var(--crit)" : "var(--ink)",
+      class:"fade", style:`animation-delay:${AD(300+k*120)}ms`}));
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(360+k*120)}ms`});
+    g.appendChild(el("text", {x:mx, y:trackY-76, "text-anchor":"middle", class:"vlab",
+      style:m.crit?"fill:var(--crit)":""}, m.lab));
+    g.appendChild(el("text", {x:mx, y:trackY-102, "text-anchor":"middle", class:"ax"}, m.sub || ""));
+    s.appendChild(g);
+  });
+  return s;
+}
+
+/*
+   Two measures on one plot, INDEXED to 100 at the start — the sanctioned
+   alternative to a dual y-axis, which is never acceptable. Earnings step on the
+   day each quarter was reported, so the line shows what the market knew when it
+   knew it, rather than smearing a quarter across three months.
+*/
+function chartIndexed(spec){
+  const W = chartW(), H = spec.height || 520, PB = 56, PT = 62, PL = 24, PR = 108;
+  const s = svgRoot(W, H);
+  const all = spec.price.concat(spec.earn).map(p => p.v);
+  const lo = Math.min(...all), hi = Math.max(...all);
+  const min = lo - (hi - lo) * 0.10, max = hi + (hi - lo) * 0.14;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const t0 = spec.price[0].t, t1 = spec.price[spec.price.length - 1].t;
+  const X = t => PL + ((t - t0) / (t1 - t0)) * plotW;
+  const Y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+
+  // The base-100 rule always carries its own label, so a gridline tick that lands
+  // within a label's height of it must not print one — PLTR drew "115" straight
+  // on top of "100" for a whole session before the layout audit caught it.
+  [...Array(4)].forEach((_, i) => {
+    const gv = min + (max - min) * (i + 1) / 5;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(gv), y2:Y(gv), class:"gridline"}));
+    if (Math.abs(Y(gv) - Y(100)) > 22)
+      s.appendChild(el("text", {x:W-PR+12, y:Y(gv)+6, class:"ax"}, Math.round(gv)));
+  });
+  s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(100), y2:Y(100),
+    stroke:"var(--ink-2)", "stroke-width":"1.6", "stroke-dasharray":"5 5", opacity:".5"}));
+  s.appendChild(el("text", {x:W-PR+12, y:Y(100)+6, class:"axb"}, "100"));
+
+  // earnings first, so the price line reads on top of it
+  let d = "";
+  spec.earn.forEach((p, i) => {
+    d += (i ? `L ${X(p.t).toFixed(1)} ${Y(spec.earn[i-1].v).toFixed(1)} L ${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`
+             : `M ${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`) + " ";
+  });
+  d += `L ${X(t1).toFixed(1)} ${Y(spec.earn[spec.earn.length-1].v).toFixed(1)}`;
+  const ep = el("path", {d, fill:"none", stroke:"var(--s2)", "stroke-width":"3",
+    "stroke-linejoin":"round", class:"draw"});
+  s.appendChild(ep);
+
+  const pd = spec.price.map((p, i) => (i ? "L" : "M") + X(p.t).toFixed(1) + " " + Y(p.v).toFixed(1)).join(" ");
+  const pp = el("path", {d:pd, fill:"none", stroke:"var(--s1)", "stroke-width":"2.6",
+    "stroke-linejoin":"round", "stroke-linecap":"round", class:"draw"});
+  s.appendChild(pp);
+  requestAnimationFrame(() => [ep, pp].forEach(n => {
+    try { const L = n.getTotalLength(); n.style.setProperty("--len", L); n.style.strokeDasharray = L; } catch(e){}
+  }));
+
+  // Direct end-labels: identity never rests on the legend swatch alone.
+  [[spec.earn[spec.earn.length-1].v, spec.earnLabel, "var(--s2)"],
+   [spec.price[spec.price.length-1].v, spec.priceLabel, "var(--s1)"]].forEach(([v, lab, c], k) => {
+    s.appendChild(el("circle", {cx:X(t1), cy:Y(v), r:6, fill:c, stroke:"var(--bg)", "stroke-width":"2.5",
+      class:"fade", style:`animation-delay:${AD(900+k*110)}ms`}));
+    s.appendChild(el("text", {x:X(t1)-20, y:Y(v)-20, "text-anchor":"end", class:"vlab fade",
+      style:`animation-delay:${AD(960+k*110)}ms;fill:${c}`}, lab));
+  });
+  (spec.ticks || []).forEach(tk =>
+    s.appendChild(el("text", {x:X(tk.t), y:H-PB+32, "text-anchor":"middle", class:"ax"}, tk.lab)));
+  return s;
+}
+
+/*
+   Stacked capital structure where one component can go NEGATIVE. DaVita's
+   shareholders' equity crosses below zero mid-series, so the equity block has to
+   hang under the axis rather than be clipped to it — that crossing is the story.
+*/
+function chartFunded(spec){
+  const W = chartW(), H = spec.height || 520, PB = 74, PT = 58, PL = 24, PR = 96;
+  const s = svgRoot(W, H);
+  const tops = spec.series.map(d => d.a + Math.max(0, d.b));
+  const bots = spec.series.map(d => Math.min(0, d.b));
+  const max = Math.max(...tops) * 1.14, min = Math.min(...bots) * 1.55 || 0;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const Y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+
+  [...Array(4)].forEach((_, i) => {
+    const gv = min + (max - min) * (i + 1) / 5;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(gv), y2:Y(gv), class:"gridline"}));
+    const f = FMT[spec.fmtKind] || FMT.usdB;
+    s.appendChild(el("text", {x:W-PR+12, y:Y(gv)+6, class:"ax"}, f(gv)));
+  });
+  s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(0), y2:Y(0),
+    stroke:"var(--ink-2)", "stroke-width":"2", opacity:".7"}));
+
+  const n = spec.series.length, slot = plotW / n, bw = Math.min(66, slot * 0.42);
+  spec.series.forEach((d, i) => {
+    const cx = PL + slot * i + slot / 2;
+    // debt sits on the zero line; equity stacks above it, or hangs below when negative
+    const dTop = Y(d.a), z = Y(0);
+    let g = el("g", {class:"grow", style:`transform-origin:${cx}px ${z}px;animation-delay:${AD(i*60)}ms`});
+    g.appendChild(el("rect", {x:cx-bw/2, y:dTop, width:bw, height:Math.max(2, z-dTop),
+      rx:4, class:"bar s1"}));
+    s.appendChild(g);
+    const eTop = d.b >= 0 ? Y(d.a + d.b) : z + 2, eH = Math.abs(Y(d.b) - z);
+    const ey = d.b >= 0 ? eTop : z + 2;
+    g = el("g", {class:"grow", style:`transform-origin:${cx}px ${d.b >= 0 ? Y(d.a) : z}px;animation-delay:${AD(i*60+40)}ms`});
+    g.appendChild(el("rect", {x:cx-bw/2, y:ey, width:bw, height:Math.max(2, eH),
+      rx:4, class:"bar " + (d.b < 0 ? "bad" : "s2")}));
+    s.appendChild(g);
+    if (d.lab) s.appendChild(el("text", {x:cx, y:dTop-16, "text-anchor":"middle", class:"vlab sm fade",
+      style:`animation-delay:${AD(300+i*60)}ms`}, d.lab));
+    s.appendChild(el("text", {x:cx, y:H-PB+34, "text-anchor":"middle", class:"axb"}, d.x));
+    if (d.x2) s.appendChild(el("text", {x:cx, y:H-PB+56, "text-anchor":"middle",
+      class:"ax", style:d.x2crit ? "fill:var(--crit);font-weight:700" : ""}, d.x2));
+  });
+  return s;
+}
+
+/*
+   Small multiples — one panel per measure, each on its own scale, sharing the x
+   axis. This is the answer when two measures differ by an order of magnitude:
+   DVA's equity swings ±$0.8B against $10B of debt, so a single stacked bar made
+   the equity crossing invisible (the same failure the payor slide had). Two
+   panels keep both legible without ever implying a second y-axis on one plot.
+*/
+function chartSmallMult(spec){
+  const W = chartW(), H = spec.height || 540, PL = 24, PR = 116, GAP = 42, PB = 76;
+  const s = svgRoot(W, H);
+  const n = spec.panels.length;
+  const panelH = (H - PB - GAP * (n - 1)) / n;
+  const plotW = W - PL - PR;
+  const cols = spec.panels[0].series.length;
+  const slot = plotW / cols, bw = Math.min(62, slot * 0.40);
+
+  spec.panels.forEach((pan, pi) => {
+    const top = pi * (panelH + GAP), bot = top + panelH;
+    const vals = pan.series.map(d => d.v);
+    const hi = Math.max(0, ...vals), lo = Math.min(0, ...vals);
+    const pad = (hi - lo) * 0.20 || 1;
+    const max = hi + pad, min = lo - (lo < 0 ? pad : 0);
+    const Y = v => bot - ((v - min) / (max - min)) * (bot - top);
+
+    s.appendChild(el("text", {x:PL, y:top - 10, class:"axb",
+      style:"font-size:18px;letter-spacing:.1em;text-transform:uppercase;font-weight:800"}, pan.label));
+    const fm = FMT[pan.fmtKind] || FMT.usdM;
+    [max, min].forEach(v => s.appendChild(el("text", {x:W-PR+14, y:Y(v)+6, class:"ax"}, fm(v))));
+    const zero = Y(0);
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:zero, y2:zero,
+      stroke:"var(--ink-2)", "stroke-width":lo < 0 ? 2 : 1, opacity:lo < 0 ? .7 : .35}));
+
+    pan.series.forEach((d, i) => {
+      const cx = PL + slot * i + slot / 2;
+      const y0 = Y(d.v), h = Math.abs(zero - y0);
+      const g = el("g", {class:"grow", style:`transform-origin:${cx}px ${zero}px;animation-delay:${AD(pi*90+i*55)}ms`});
+      g.appendChild(el("rect", {x:cx-bw/2, y:Math.min(y0, zero), width:bw, height:Math.max(2, h),
+        rx:4, class:"bar " + (d.cls || "")}));
+      s.appendChild(g);
+      if (d.lab) s.appendChild(el("text", {x:cx, y:d.v < 0 ? Math.max(y0, zero) + 28 : Math.min(y0, zero) - 12,
+        "text-anchor":"middle", class:"vlab sm fade",
+        style:`animation-delay:${AD(300+pi*90+i*55)}ms`}, d.lab));
+    });
+  });
+
+  spec.panels[0].series.forEach((d, i) => {
+    const cx = PL + slot * i + slot / 2;
+    s.appendChild(el("text", {x:cx, y:H-PB+40, "text-anchor":"middle", class:"axb"}, d.x));
+    if (d.x2) s.appendChild(el("text", {x:cx, y:H-PB+62, "text-anchor":"middle", class:"ax",
+      style:d.x2crit ? "fill:var(--crit);font-weight:700" : ""}, d.x2));
+  });
+  return s;
+}
+
+/*
+   SANKEY — the income statement as a flow. One trunk whose height is money,
+   narrowing as costs peel off and widening where non-operating income joins.
+   This is the right form for "where does a dollar of revenue end up", and it
+   shows in one picture what a bar chart needs three slides to say: how thin the
+   tax ribbon is next to everything else.
+
+   steps: an ordered list, each one of
+     {node:  "label", v: <trunk value here>}   a labelled checkpoint on the trunk
+     {out:   "label", v: <amount leaving>}     a cost peeling downward
+     {in:    "label", v: <amount joining>}     income merging upward
+*/
+function chartSankey(spec){
+  const W = chartW(), H = spec.height || 520, PT = 66, PB = 96, PL = 8, PR = 8;
+  const s = svgRoot(W, H);
+  const steps = spec.steps;
+  const max = spec.max || Math.max(...steps.filter(x => x.node).map(x => x.v));
+  const plotH = H - PT - PB;
+  const hOf = v => Math.max(2.5, (v / max) * plotH * 0.74);
+  const mid = PT + plotH * 0.44;                       // trunk centre line
+
+  // x positions: nodes anchor the grid, branches sit between them
+  const n = steps.length;
+  const X = i => PL + (i / (n - 1)) * (W - PL - PR);
+
+  // running trunk value
+  let run = steps[0].v;
+  const trunk = [];                                     // {x, v} at each step
+  steps.forEach((st, i) => {
+    if (st.node) run = st.v;
+    else if (st.out) run -= st.v;
+    else if (st.in) run += st.v;
+    trunk.push({x: X(i), v: run, st});
+  });
+
+  const ribbon = (x0, v0, x1, v1, yc0, yc1, cls, op) => {
+    const h0 = hOf(v0) / 2, h1 = hOf(v1) / 2, cx = (x0 + x1) / 2;
+    const d = `M ${x0} ${yc0 - h0} C ${cx} ${yc0 - h0}, ${cx} ${yc1 - h1}, ${x1} ${yc1 - h1}`
+            + ` L ${x1} ${yc1 + h1} C ${cx} ${yc1 + h1}, ${cx} ${yc0 + h0}, ${x0} ${yc0 + h0} Z`;
+    return el("path", {d, class: "snk " + (cls || ""), opacity: op == null ? 1 : op});
+  };
+
+  // trunk segments
+  for (let i = 0; i < trunk.length - 1; i++) {
+    const a = trunk[i], b = trunk[i + 1];
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(i * 70)}ms`});
+    g.appendChild(ribbon(a.x, a.v, b.x, b.v, mid, mid, "trunk"));
+    s.appendChild(g);
+  }
+
+  // branches leaving and joining
+  trunk.forEach((t, i) => {
+    const st = t.st;
+    if (!st.out && !st.in) return;
+    const prev = trunk[i - 1];
+    const down = !!st.out;
+    const yEnd = down ? mid + plotH * 0.40 : mid - plotH * 0.40;
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(140 + i * 70)}ms`});
+    g.appendChild(ribbon(prev.x, st.v, t.x, st.v, mid, yEnd, st.cls || (down ? "cost" : "gain"), .82));
+    s.appendChild(g);
+    const lab = el("text", {x: t.x, y: yEnd + (down ? 34 : -22), "text-anchor": "middle",
+      class: "vlab sm fade", style: `animation-delay:${AD(240 + i * 70)}ms`},
+      (down ? "−" : "+") + spec.fmt2(st.v));
+    s.appendChild(lab);
+    s.appendChild(el("text", {x: t.x, y: yEnd + (down ? 56 : -44), "text-anchor": "middle",
+      class: "ax fade", style: `animation-delay:${AD(240 + i * 70)}ms`}, st.out || st.in));
+  });
+
+  // node labels on the trunk
+  trunk.forEach((t, i) => {
+    if (!t.st.node) return;
+    const anchor = i === 0 ? "start" : (i === trunk.length - 1 ? "end" : "middle");
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(300 + i * 70)}ms`});
+    g.appendChild(el("text", {x: t.x, y: mid - hOf(t.v) / 2 - 34, "text-anchor": anchor,
+      class: "vlab", style: "font-size:23px"}, spec.fmt2(t.v)));
+    g.appendChild(el("text", {x: t.x, y: mid - hOf(t.v) / 2 - 12, "text-anchor": anchor,
+      class: "axb", style: "font-size:16px"}, t.st.node));
+    s.appendChild(g);
+  });
+  return s;
+}
+
+/*
+   FORECAST — reported history continuing into guided/forecast periods, split by
+   a labelled divider with the past region shaded. Taken from Simply Wall St's
+   "Past | Analysts Forecasts" chart, which is the clearest way to show that a
+   line keeps rising while its GRADIENT rolls over: the levels reassure and the
+   growth labels indict, in one picture.
+
+   points: [{x, v, lab?, growth?, guided?}]   guided:true switches to the dashed
+                                              projection style and shades behind
+*/
+function chartForecast(spec){
+  const W = chartW(), H = spec.height || 520, PT = 74, PB = 96, PL = 30, PR = 120;
+  const s = svgRoot(W, H);
+  const P = spec.points, n = P.length;
+  const max = Math.max(...P.map(p => p.v)) * 1.20;
+  const plotH = H - PT - PB, plotW = W - PL - PR;
+  const X = i => PL + (i / (n - 1)) * plotW;
+  const Y = v => PT + plotH - (v / max) * plotH;
+  const firstG = P.findIndex(p => p.guided);
+  const split = firstG > 0 ? (X(firstG - 1) + X(firstG)) / 2 : null;
+
+  [...Array(4)].forEach((_, i) => {
+    const gv = max * (i + 1) / 5;
+    s.appendChild(el("line", {x1: PL, x2: W - PR, y1: Y(gv), y2: Y(gv), class: "gridline"}));
+    s.appendChild(el("text", {x: W - PR + 12, y: Y(gv) + 6, class: "ax"}, spec.fmt2(gv)));
+  });
+
+  if (split != null) {
+    // shade the reported region so the forecast reads as a different claim
+    s.appendChild(el("rect", {x: PL, y: PT, width: split - PL, height: plotH,
+      fill: "var(--ink)", opacity: ".045"}));
+    s.appendChild(el("line", {x1: split, y1: PT - 8, x2: split, y2: PT + plotH,
+      stroke: "var(--ink-2)", "stroke-width": 2, "stroke-dasharray": "5 4", opacity: ".7"}));
+    s.appendChild(el("text", {x: split - 14, y: PT - 18, "text-anchor": "end", class: "axb",
+      style: "font-size:17px;letter-spacing:.1em;text-transform:uppercase"}, spec.pastLab));
+    s.appendChild(el("text", {x: split + 14, y: PT - 18, class: "axb",
+      style: "font-size:17px;letter-spacing:.1em;text-transform:uppercase;fill:var(--s1)"},
+      spec.futureLab));
+  }
+
+  const seg = (from, to, dashed) => {
+    const d = P.slice(from, to + 1).map((p, k) =>
+      (k ? "L" : "M") + X(from + k).toFixed(1) + " " + Y(p.v).toFixed(1)).join(" ");
+    const area = d + ` L ${X(to).toFixed(1)} ${PT + plotH} L ${X(from).toFixed(1)} ${PT + plotH} Z`;
+    s.appendChild(el("path", {d: area, fill: areaFill(s, "var(--s1)", dashed ? .10 : .28)}));
+    const path = el("path", {d, fill: "none", stroke: "var(--s1)", "stroke-width": dashed ? 3.4 : 4,
+      "stroke-linejoin": "round", "stroke-linecap": "round",
+      "stroke-dasharray": dashed ? "9 7" : null, class: dashed ? "fade" : "draw",
+      style: dashed ? "animation-delay:700ms" : ""});
+    s.appendChild(path);
+    if (!dashed) requestAnimationFrame(() => { try { const L = path.getTotalLength();
+      path.style.setProperty("--len", L); path.style.strokeDasharray = L; } catch(e){} });
+  };
+  if (firstG > 0) { seg(0, firstG - 1, false); seg(firstG - 1, n - 1, true); }
+  else seg(0, n - 1, false);
+
+  P.forEach((p, i) => {
+    if (p.lab) s.appendChild(el("text", {x: X(i), y: Y(p.v) - 20, "text-anchor": "middle",
+      class: "vlab sm fade", style: `animation-delay:${AD(400 + i * 55)}ms`}, p.lab));
+    if (p.growth) s.appendChild(el("text", {x: X(i), y: H - PB + 58, "text-anchor": "middle",
+      class: "ax", style: `font-weight:700;font-size:18px;fill:${p.guided ? "var(--s1)" : "var(--muted)"}`},
+      p.growth));
+    s.appendChild(el("text", {x: X(i), y: H - PB + 32, "text-anchor": "middle", class: "axb",
+      style: "font-size:16px"}, p.x));
+    if (i === firstG - 1 || i === n - 1) {
+      if (i === n - 1) halo(s, X(i), Y(p.v), 9, "var(--s1)", 760);
+      s.appendChild(el("circle", {cx: X(i), cy: Y(p.v), r: 8, fill: "var(--s1)",
+        stroke: "var(--bg)", "stroke-width": 3}));
+    }
+  });
+  if (spec.growthLab) s.appendChild(el("text", {x: PL, y: H - PB + 58, class: "ax",
+    "text-anchor": "start", style: "font-size:15px;letter-spacing:.08em;text-transform:uppercase"},
+    spec.growthLab));
+  return s;
+}
+
+/* GAUGE — one number against the threshold that makes it mean something. */
+function chartGauge(spec){
+  const W = chartW(), H = spec.height || 440;
+  const s = svgRoot(W, H);
+  const cx = W / 2, cy = H * 0.78, R = Math.min(H * 0.66, 330), TH = 46;
+  const lo = spec.min ?? 0, hi = spec.max;
+  const ang = v => Math.PI * (1 - Math.min(1, Math.max(0, (v - lo) / (hi - lo))));
+  const pt = (a, r) => [cx + Math.cos(a) * r, cy - Math.sin(a) * r];
+  const arc = (a0, a1, r, w, cls, op) => {
+    const [x0, y0] = pt(a0, r), [x1, y1] = pt(a1, r);
+    const large = 0, sweep = a0 > a1 ? 1 : 0;
+    return el("path", {d: `M ${x0} ${y0} A ${r} ${r} 0 ${large} ${sweep} ${x1} ${y1}`,
+      fill: "none", "stroke-width": w, class: cls, opacity: op == null ? 1 : op,
+      "stroke-linecap": "round"});
+  };
+  s.appendChild(arc(ang(lo), ang(hi), R, TH, "gg-track"));
+  s.appendChild(arc(ang(lo), ang(spec.value), R, TH, "gg-fill"));
+
+  // the threshold that gives the number meaning
+  if (spec.threshold != null) {
+    const a = ang(spec.threshold), [tx, ty] = pt(a, R + TH / 2 + 6), [bx, by] = pt(a, R - TH / 2 - 6);
+    s.appendChild(el("line", {x1: bx, y1: by, x2: tx, y2: ty,
+      stroke: "var(--ink)", "stroke-width": 4}));
+    const [lx, ly] = pt(a, R + TH / 2 + 54);
+    s.appendChild(el("text", {x: lx, y: ly, "text-anchor": "middle", class: "axb",
+      style: "font-size:19px;font-weight:700"}, spec.thresholdLab));
+  }
+  // A second needle for the comparison case — company against industry, or this
+  // period against the last. Only drawn when a sourced value is supplied.
+  if (spec.compare != null) {
+    const a = ang(spec.compare), [nx, ny] = pt(a, R + TH / 2 + 4), [bx2, by2] = pt(a, R - TH / 2 - 4);
+    s.appendChild(el("line", {x1: bx2, y1: by2, x2: nx, y2: ny,
+      stroke: "var(--s2)", "stroke-width": 5, "stroke-linecap": "round"}));
+    const [lx2, ly2] = pt(a, R + TH / 2 + 50);
+    s.appendChild(el("text", {x: lx2, y: ly2, "text-anchor": "middle", class: "axb",
+      style: "font-size:19px;font-weight:700;fill:var(--s2)"}, spec.compareLab));
+  }
+  s.appendChild(el("text", {x: cx, y: cy - 46, "text-anchor": "middle", class: "vlab fade",
+    style: "font-size:110px;font-weight:820;letter-spacing:-.03em;fill:var(--s1)"}, spec.valueLab));
+  s.appendChild(el("text", {x: cx, y: cy - 4, "text-anchor": "middle", class: "axb",
+    style: "font-size:21px"}, spec.label));
+  [[lo, ang(lo)], [hi, ang(hi)]].forEach(([v, a]) => {
+    const [x, y] = pt(a, R - TH / 2 - 30);
+    s.appendChild(el("text", {x, y, "text-anchor": "middle", class: "ax"}, spec.fmt2(v)));
+  });
+  (spec.marks || []).forEach(m => {
+    const a = ang(m.v), [x, y] = pt(a, R + TH / 2 + 22);
+    s.appendChild(el("circle", {cx: pt(a, R)[0], cy: pt(a, R)[1], r: 7,
+      fill: "var(--bg)", stroke: "var(--muted)", "stroke-width": 3}));
+    s.appendChild(el("text", {x, y, "text-anchor": "middle", class: "ax"}, m.lab));
+  });
+  return s;
+}
+
+/* DUMBBELL — then vs now for a handful of series, change as the connector. */
+function chartDumbbell(spec){
+  const W = chartW(), H = spec.height || 430;
+  const s = svgRoot(W, H);
+  const LBL = 300, PR = spec.labelRoom || 330;
+  const all = spec.rows.flatMap(r => [r.from, r.to]);
+  // A hardcoded zero floor pushed any negative endpoint left of the label column
+  // and straight through the row name. The scale has to hold what it is given.
+  const hi = Math.max(...all), lo = Math.min(0, ...all);
+  const pad = (hi - lo) * 0.06 || 1;
+  const max = hi + pad, min = lo < 0 ? lo - pad : 0;
+  const X = v => LBL + ((v - min) / (max - min)) * (W - LBL - PR);
+  const rowH = (H - 40) / spec.rows.length;
+
+  spec.rows.forEach((r, i) => {
+    const cy = 24 + rowH * i + rowH / 2;
+    s.appendChild(el("text", {x: LBL - 26, y: cy + 2, "text-anchor": "end", class: "axb",
+      style: "font-size:23px"}, r.name));
+    if (r.sub) s.appendChild(el("text", {x: LBL - 26, y: cy + 27, "text-anchor": "end", class: "ax"}, r.sub));
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(i * 110)}ms`});
+    g.appendChild(el("line", {x1: X(r.from), y1: cy, x2: X(r.to), y2: cy,
+      stroke: r.cls === "mut" ? "var(--muted)" : "var(--s1)", "stroke-width": 9,
+      "stroke-linecap": "round", opacity: .5}));
+    g.appendChild(el("circle", {cx: X(r.from), cy, r: 13, fill: "var(--bg)",
+      stroke: "var(--muted)", "stroke-width": 4}));
+    g.appendChild(el("circle", {cx: X(r.to), cy, r: 15,
+      fill: r.cls === "mut" ? "var(--muted)" : "var(--s1)",
+      stroke: "var(--bg)", "stroke-width": 3}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x: X(r.from), y: cy - 28, "text-anchor": "middle", class: "ax fade",
+      style: `animation-delay:${AD(200 + i * 110)}ms`}, r.fromLab));
+    // The value label sits outboard of its dot, never over the rail. When the
+    // value is negative the dot lands at the very left of the plot, so outboard
+    // would run into the row name in the gutter — then it goes ABOVE the dot.
+    const leftward = X(r.to) < X(r.from);
+    const wantX = X(r.to) + (leftward ? -26 : 26);
+    const needed = String(r.toLab).length * 13;
+    const cramped = leftward && (wantX - needed) < LBL + 8;
+    s.appendChild(el("text", {
+      x: cramped ? X(r.to) : wantX,
+      y: cramped ? cy - 30 : cy + 9,
+      "text-anchor": cramped ? "middle" : (leftward ? "end" : "start"),
+      class: "vlab fade",
+      style: `animation-delay:${AD(240 + i * 110)}ms;font-size:26px`}, r.toLab));
+    if (r.delta) s.appendChild(el("text", {x: W - 20, y: cy + 9, "text-anchor": "end",
+      class: "vlab fade", style: `animation-delay:${AD(280 + i * 110)}ms;font-size:30px;` +
+      // Colour carries meaning: good is green, not the accent. `--s1` is a
+      // series colour and `--accent` is chrome, so neither may stand for "good".
+      `fill:${r.deltaGood === false ? "var(--muted)"
+              : r.deltaGood ? "var(--good)" : "var(--s1)"}`}, r.delta));
+  });
+  return s;
+}
+
+/* SLOPE — the same measure re-forecast over time; the angle IS the message. */
+function chartSlope(spec){
+  const W = chartW(), H = spec.height || 460, PT = 70, PB = 92, PL = 240, PR = 300;
+  const s = svgRoot(W, H);
+  const vals = spec.points.map(p => p.v);
+  const min = Math.min(...vals) * 0.94, max = Math.max(...vals) * 1.04;
+  const X = i => PL + (i / (spec.points.length - 1)) * (W - PL - PR);
+  const Y = v => PT + (H - PT - PB) - ((v - min) / (max - min)) * (H - PT - PB);
+
+  const d = spec.points.map((p, i) => (i ? "L" : "M") + X(i) + " " + Y(p.v)).join(" ");
+  const path = el("path", {d, fill: "none", stroke: "var(--s1)", "stroke-width": 5,
+    "stroke-linejoin": "round", "stroke-linecap": "round", class: "draw"});
+  s.appendChild(path);
+  requestAnimationFrame(() => { try { const L = path.getTotalLength();
+    path.style.setProperty("--len", L); path.style.strokeDasharray = L; } catch(e){} });
+
+  spec.points.forEach((p, i) => {
+    const g = el("g", {class: "fade", style: `animation-delay:${AD(400 + i * 150)}ms`});
+    g.appendChild(el("circle", {cx: X(i), cy: Y(p.v), r: 11, fill: "var(--s1)",
+      stroke: "var(--bg)", "stroke-width": 4}));
+    g.appendChild(el("text", {x: X(i), y: Y(p.v) - 30, "text-anchor": "middle", class: "vlab",
+      style: "font-size:31px"}, p.lab));
+    s.appendChild(g);
+    s.appendChild(el("text", {x: X(i), y: H - PB + 40, "text-anchor": "middle", class: "axb",
+      style: "font-size:21px"}, p.x));
+    if (p.x2) s.appendChild(el("text", {x: X(i), y: H - PB + 66, "text-anchor": "middle", class: "ax"}, p.x2));
+  });
+  if (spec.endNote) {
+    const last = spec.points.length - 1;
+    s.appendChild(el("text", {x: X(last) + 34, y: Y(spec.points[last].v) + 10, class: "vlab fade",
+      style: "font-size:26px;fill:var(--s1)"}, spec.endNote));
+  }
+  return s;
+}
+
+/*
+   DISTRIBUTION — buckets of a population with a "you are here" marker. The
+   honest way to say "expensive": show where everyone else trades and point.
+*/
+function chartDistribution(spec){
+  const W = chartW(), H = spec.height || 460, PB = 96, PT = 76, PL = 40, PR = 40;
+  const s = svgRoot(W, H);
+  const max = Math.max(...spec.buckets.map(b => b.n)) * 1.18;
+  const plotH = H - PB - PT, plotW = W - PL - PR;
+  const slot = plotW / spec.buckets.length, bw = slot * 0.72;
+  const Y = v => PT + plotH - (v / max) * plotH;
+
+  spec.buckets.forEach((b, i) => {
+    const cx = PL + slot * i + slot / 2;
+    const g = el("g", {class: "grow", style: `transform-origin:${cx}px ${PT + plotH}px;animation-delay:${AD(i * 45)}ms`});
+    g.appendChild(el("rect", {x: cx - bw / 2, y: Y(b.n), width: bw,
+      height: Math.max(2, PT + plotH - Y(b.n)), rx: 4,
+      class: "bar " + (b.here ? "" : "mut")}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x: cx, y: H - PB + 32, "text-anchor": "middle",
+      class: b.here ? "axb" : "ax"}, b.x));
+  });
+  // the marker
+  const hi = spec.buckets.findIndex(b => b.here);
+  if (hi >= 0) {
+    const cx = PL + slot * hi + slot / 2;
+    s.appendChild(el("line", {x1: cx, y1: PT - 40, x2: cx, y2: PT + plotH,
+      stroke: "var(--s1)", "stroke-width": 3.5, "stroke-dasharray": "6 5", class: "fade",
+      style: "animation-delay:700ms"}));
+    s.appendChild(el("text", {x: cx, y: PT - 52, "text-anchor": "middle", class: "vlab fade",
+      style: "animation-delay:760ms;font-size:30px;fill:var(--s1)"}, spec.hereLab));
+  }
+  return s;
+}
+
+/*
+   DONUT — a market-cap ring with the business drawn to scale inside it. The most
+   visceral way to show a multiple: you do not tell someone a stock is expensive,
+   you show them how little revenue fits inside the price.
+*/
+function chartDonut(spec){
+  const W = chartW(), H = spec.height || 470;
+  const s = svgRoot(W, H);
+  const cx = W * 0.235, cy = H / 2 + 6, R = Math.min(H * 0.40, 178), TH = 44;
+
+  // Every ring is a real circle sweeping from twelve o'clock, so a 1.4% slice is
+  // drawn as 1.4% of a turn. The whole point of the slide is how little of the
+  // price is revenue, so the arc is never padded to make it visible.
+  // All three arcs share ONE ring, so the slivers are read against the whole
+  // circle rather than against each other. Drawn largest first, so the smaller
+  // ones nest inside — a 1.4% slice is 5 degrees of arc and that is the point.
+  const ring = (r, w, cls, frac, delay) => {
+    const c = 2 * Math.PI * r;
+    return el("circle", {cx, cy, r, fill:"none", "stroke-width":w, class:cls + " sweep",
+      "stroke-dasharray": `${c * frac} ${c}`,
+      style: `--len:${c * frac}px;animation-delay:${AD(delay)}ms`,
+      transform: `rotate(-90 ${cx} ${cy})`});
+  };
+  s.appendChild(ring(R, TH, "dn-total", 1, 0));
+  const ordered = spec.parts.map((p, i) => ({...p, i, frac: p.v / spec.total}))
+                            .sort((a2, b2) => b2.frac - a2.frac);
+  ordered.forEach((p, k) => s.appendChild(
+    ring(R, TH, p.i ? "dn-b" : "dn-a", p.frac, 300 + k * 260)));
+
+  // One pointer at twelve o'clock saying how thin that whole stack is. Without
+  // it the eye reads the ring as empty and misses the argument entirely.
+  const topFrac = ordered[0].frac;
+  const g = el("g", {class:"fade", style:"animation-delay:840ms"});
+  g.appendChild(el("line", {x1: cx, y1: cy - R - TH / 2 - 4, x2: cx, y2: cy - R - TH / 2 - 46,
+    stroke:"var(--muted)", "stroke-width":2}));
+  g.appendChild(el("text", {x: cx, y: cy - R - TH / 2 - 58, "text-anchor":"middle", class:"axb",
+    style:"font-size:19px"}, `a whole year of sales is this ${(topFrac * 100).toFixed(1)}% of the ring`));
+  s.appendChild(g);
+
+  s.appendChild(el("text", {x:cx, y:cy - 8, "text-anchor":"middle", class:"axb",
+    style:"font-size:17px;letter-spacing:.08em;text-transform:uppercase"}, spec.totalLabel));
+  s.appendChild(el("text", {x:cx, y:cy + 34, "text-anchor":"middle", class:"vlab pop",
+    style:"font-size:44px;animation-delay:180ms"}, spec.totalValue));
+
+  // Three columns share the width: ring, legend, stats. At 1660 they all fitted
+  // with room to spare; at the narrower camera width the legend text ran into
+  // the stats panel. Lay the columns out from measured widths instead of fixed
+  // offsets, and stack the stats vertically when a row of them will not fit.
+  const est = (s2, fs) => String(s2).length * fs * 0.55;
+  const legendW = Math.max(...spec.parts.map(p =>
+    28 + Math.max(est(p.name, 20), est(p.lab, 36),
+                  est(`${(p.v / spec.total * 100).toFixed(1)}% of the market cap`, 18))));
+  const LX = Math.max(cx + R + TH / 2 + 30, cx + R + 130 - Math.max(0, 1660 - W) * 0.5);
+  const statsN = (spec.stats || []).length;
+  const statsRoom = W - (LX + legendW + 40);
+  const statsRow = statsN === 0 || statsRoom >= statsN * 210;
+
+  spec.parts.forEach((p, i) => {
+    const y = cy - 74 + i * 104;
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(700 + i * 220)}ms`});
+    g.appendChild(el("rect", {x: LX, y: y - 26, width: 15, height: 15, rx: 3,
+      class: i ? "dn-b-fill" : "dn-a-fill"}));
+    g.appendChild(el("text", {x: LX + 28, y: y - 13, class:"axb", style:"font-size:20px"}, p.name));
+    g.appendChild(el("text", {x: LX + 28, y: y + 24, class:"vlab", style:"font-size:36px"}, p.lab));
+    g.appendChild(el("text", {x: LX + 28, y: y + 50, class:"ax", style:"font-size:18px"},
+      `${(p.v / spec.total * 100).toFixed(1)}% of the market cap`));
+    s.appendChild(g);
+  });
+
+  // The two multiples, in their own panel so they read as a conclusion.
+  const stats = spec.stats || [];
+  if (stats.length) {
+    const divX = statsRow ? W - 452 - 40 : LX + legendW + 26;
+    s.appendChild(el("line", {x1: divX, y1: cy - 118, x2: divX, y2: cy + 118,
+      stroke:"var(--border)", "stroke-width":2}));
+    stats.forEach((st, i) => {
+      // A row when there is room; otherwise one above the other, which reads the
+      // same and needs a third of the width.
+      const x = statsRow ? W - 452 + 104 + i * 224
+                         : divX + 30 + (W - divX - 30) / 2;
+      const yv = statsRow ? cy - 14 : cy - 74 + i * 118;
+      const fs = statsRow ? 62 : 52;
+      const g = el("g", {class:"pop", style:`animation-delay:${AD(900 + i * 160)}ms`});
+      g.appendChild(el("text", {x, y: yv, "text-anchor":"middle", class:"vlab",
+        style:`font-size:${fs}px;fill:var(--s1)`}, st.v));
+      g.appendChild(el("text", {x, y: yv + (statsRow ? 40 : 30), "text-anchor":"middle",
+        class:"axb", style:"font-size:19px"}, st.l));
+      s.appendChild(g);
+    });
+  }
+  return s;
+}
+
+/*
+   TREEMAP — the balance sheet at a glance, blocks sized by value. Two panels
+   (assets vs liabilities+equity), everything green except debt in red, so the
+   one thing to worry about is the only thing that is not.
+*/
+function chartTreemap(spec){
+  const W = chartW(), H = spec.height || 500, GAP = 46, PT = 40;
+  const s = svgRoot(W, H);
+  // A single panel used to be drawn at half width, leaving the right half empty —
+  // it was only ever called with two.
+  const nPanels = Math.max(1, spec.panels.length);
+  const panelW = (W - GAP * (nPanels - 1)) / nPanels, panelH = H - PT;
+
+  // squarified-ish slice-and-dice: alternate split direction by aspect
+  function layout(items, x, y, w, h, out) {
+    if (!items.length) return;
+    if (items.length === 1) { out.push({...items[0], x, y, w, h}); return; }
+    const tot = items.reduce((a, b) => a + b.v, 0);
+    let half = 0, i = 0;
+    while (i < items.length - 1 && half + items[i].v < tot / 2) { half += items[i].v; i++; }
+    // A first block already past the halfway mark leaves the left slice empty and
+    // recurses on the same list forever. Both slices must shrink.
+    if (i === 0) i = 1;
+    const a = items.slice(0, i), b = items.slice(i);
+    const fa = a.reduce((x2, y2) => x2 + y2.v, 0) / tot;
+    if (w >= h) { layout(a, x, y, w * fa, h, out); layout(b, x + w * fa, y, w * (1 - fa), h, out); }
+    else        { layout(a, x, y, w, h * fa, out); layout(b, x, y + h * fa, w, h * (1 - fa), out); }
+  }
+
+  spec.panels.forEach((pan, pi) => {
+    const px = pi * (panelW + GAP);
+    s.appendChild(el("text", {x: px, y: 24, class:"axb",
+      style:"font-size:20px;letter-spacing:.09em;text-transform:uppercase"}, pan.label));
+    const items = [...pan.items].filter(i => i.v > 0).sort((a, b) => b.v - a.v);
+    const out = [];
+    layout(items, px, PT, panelW, panelH, out);
+    out.forEach((r, k) => {
+      const g = el("g", {class:"fade", style:`animation-delay:${AD(pi * 120 + k * 45)}ms`});
+      g.appendChild(el("rect", {x: r.x + 2, y: r.y + 2, width: Math.max(1, r.w - 4),
+        height: Math.max(1, r.h - 4), rx: 5, class: "tm " + (r.cls || "ok")}));
+      // A block too small for both lines still gets its value — a blank block is
+      // worse than a small label — and every label is clipped to its own block so
+      // a narrow one cannot spill over the panel edge.
+      const inner = r.w - 36;
+      // A narrow block is usually tall, so the name wraps rather than truncating —
+      // "Other assets" clipped to "Other…" loses the only thing the block says.
+      const wrap = (t, px) => {
+        const budget = Math.max(3, Math.floor(inner / (px * 0.53)));
+        const lines = [];
+        t.split(" ").forEach(word => {
+          const last = lines[lines.length - 1];
+          if (last && (last + " " + word).length <= budget) lines[lines.length - 1] += " " + word;
+          else lines.push(word.length <= budget ? word : word.slice(0, budget - 1) + "…");
+        });
+        return lines;
+      };
+      if (r.h > 54 && inner > 46) {
+        const nf = r.w > 240 ? 19 : 15, vf = r.w > 240 ? 26 : 19;
+        const lines = wrap(r.name, nf);
+        lines.forEach((ln, li) => g.appendChild(el("text",
+          {x: r.x + 18, y: r.y + 30 + li * (nf + 5), class:"tm-t", style:`font-size:${nf}px`}, ln)));
+        g.appendChild(el("text", {x: r.x + 18, y: r.y + 34 + lines.length * (nf + 5),
+          class:"tm-v", style:`font-size:${vf}px`}, r.lab));
+      } else if (r.h > 26 && inner > 34) {
+        g.appendChild(el("text", {x: r.x + 18, y: r.y + r.h / 2 + 6, class:"tm-v",
+          style:"font-size:17px"}, r.lab));
+      }
+      s.appendChild(g);
+    });
+  });
+  return s;
+}
+
+/* FAIR-VALUE BAND — where the price sits on an under/fair/over ruler. */
+function chartFvBand(spec){
+  const W = chartW(), H = spec.height || 430;
+  const s = svgRoot(W, H);
+  // Five stacked lanes, each with its own room: verdict, bear/bull bracket,
+  // current price, the band itself, then the base case underneath.
+  const PL = 60, PR = 60, y = 186, bh = 96;
+  const fv = spec.fairValue;
+  const lo = fv * (1 - spec.band), hi = fv * (1 + spec.band);
+  // The scale has to hold the bear/bull bracket too, or it runs off the rail.
+  const scLo = Math.min(lo * 0.72, spec.price * 0.9, (spec.rangeLo ?? Infinity) * 0.9);
+  const scHi = Math.max(hi * 1.28, spec.price * 1.1, (spec.rangeHi ?? 0) * 1.06);
+  const X = v => PL + ((v - scLo) / (scHi - scLo)) * (W - PL - PR);
+  // The zones wash in left-to-right before the markers land on them.
+  const zone = (a, b, cls, k) => el("rect", {x: X(a), y, width: Math.max(2, X(b) - X(a)),
+    height: bh, class: cls + " fade", style: `animation-delay:${AD(k * 120)}ms`});
+  const neutral = spec.zoneTone === "neutral";
+  s.appendChild(zone(scLo, lo, neutral ? "fv-n-out" : "fv-under", 0));
+  s.appendChild(zone(lo, hi, neutral ? "fv-n-mid" : "fv-fair", 1));
+  s.appendChild(zone(hi, scHi, neutral ? "fv-n-out" : "fv-over", 2));
+  // A single point estimate reads as false precision. The bracket is the range
+  // the same model produces across the bear and bull assumption sets.
+  if (spec.rangeLo != null && spec.rangeHi != null) {
+    const by = y - 112;
+    const g = el("g", {class:"fade", style:"animation-delay:520ms"});
+    g.appendChild(el("line", {x1:X(spec.rangeLo), y1:by, x2:X(spec.rangeHi), y2:by,
+      stroke:"var(--ink)", "stroke-width":2.5}));
+    [[spec.rangeLo, spec.rangeLoLab, "end"], [spec.rangeHi, spec.rangeHiLab, "start"]]
+      .forEach(([v, lab, anch]) => {
+        g.appendChild(el("line", {x1:X(v), y1:by - 11, x2:X(v), y2:by + 11,
+          stroke:"var(--ink)", "stroke-width":2.5}));
+        // Flip the label inboard when the tick sits at the very end of the rail,
+        // or it is drawn off the canvas: bear $3.06 landed at x = -37.
+        const room = 14 + lab.length * 9.5;
+        const flip = (anch === "end" && X(v) - room < 4) ||
+                     (anch === "start" && X(v) + room > W - 4);
+        const a = flip ? (anch === "end" ? "start" : "end") : anch;
+        // A flipped label sits over the bracket rail itself, which struck
+        // "bear $3.06" clean through. Drop it below the rail instead.
+        g.appendChild(el("text", {x:X(v) + (a === "end" ? -14 : 14),
+          y: by + (flip ? 28 : 6), "text-anchor":a, class:"ax",
+          style:"font-size:18px"}, lab));
+      });
+    s.appendChild(g);
+  }
+
+  // Zone labels sit centred in their own zone — but when the price is far outside
+  // the band, the "below" and "fair" zones squeeze into a sliver at the left and
+  // their two labels print on top of each other (RKLB: price 648% over base).
+  // Detect that and fall back to an evenly spaced swatch legend, which cannot
+  // collide and keeps all three meanings on screen.
+  const pct = (spec.band * 100).toFixed(0);
+  const zLab = spec.zoneLabs || [`more than ${pct}% below`,
+                                 `within ${pct}% — about right`,
+                                 `more than ${pct}% above`];
+  const zc = spec.zoneTone === "neutral"
+    ? [["fv-tn-out", "fv-n-out"], ["fv-tn-mid", "fv-n-mid"], ["fv-tn-out", "fv-n-out"]]
+    : [["fv-t-under", "fv-under"], ["fv-t-fair", "fv-fair"], ["fv-t-over", "fv-over"]];
+  const zl = [[(scLo + lo) / 2, zLab[0], zc[0][0], zc[0][1]],
+              [fv, zLab[1], zc[1][0], zc[1][1]],
+              [(hi + scHi) / 2, zLab[2], zc[2][0], zc[2][1]]];
+  const halfW = lab => lab.length * 4.6;
+  const fits = zl.every(([v, lab], k) =>
+    k === 0 || X(v) - halfW(lab) > X(zl[k-1][0]) + halfW(zl[k-1][1]) + 10);
+  if (fits) {
+    zl.forEach(([v, lab, cls]) =>
+      s.appendChild(el("text", {x: X(v), y: y + bh + 34, "text-anchor":"middle",
+        class: "ax " + cls, style:"font-size:17px;font-weight:700"}, lab)));
+  } else {
+    const ly = y + bh + 30, gap = (W - PL - PR) / 3;
+    zl.forEach(([, lab, cls, fill], k) => {
+      const lx = PL + gap * k + 26;
+      s.appendChild(el("rect", {x: lx - 26, y: ly - 13, width: 17, height: 17, rx: 3,
+        class: fill}));
+      s.appendChild(el("text", {x: lx, y: ly, "text-anchor":"start",
+        class: "ax " + cls, style:"font-size:17px;font-weight:700"}, lab));
+    });
+  }
+
+  [[spec.price, spec.priceLab, "Current price", -1], [fv, spec.fairLab, spec.fairName, 1]]
+    .forEach(([v, lab, name, dir], k) => {
+      const x = X(v);
+      s.appendChild(el("line", {x1:x, y1:y - 14, x2:x, y2:y + bh + 14,
+        stroke:"var(--ink)", "stroke-width":4, class:"fade", style:`animation-delay:${AD(200 + k*150)}ms`}));
+      const ty = dir < 0 ? y - 30 : y + bh + 76;
+      const g = el("g", {class:"fade", style:`animation-delay:${AD(260 + k*150)}ms`});
+      g.appendChild(el("text", {x, y: ty, "text-anchor":"middle", class:"vlab",
+        style:"font-size:34px"}, lab));
+      // A 34px value needs more than 26px of clearance or its box eats the name.
+      g.appendChild(el("text", {x, y: ty + (dir < 0 ? -34 : 32), "text-anchor":"middle",
+        class:"axb", style:"font-size:17px"}, name));
+      s.appendChild(g);
+    });
+  if (spec.verdict) s.appendChild(el("text", {x: W / 2, y: 44, "text-anchor":"middle",
+    class:"vlab", style:"font-size:30px;fill:var(--s1)"}, spec.verdict));
+  return s;
+}
+
+/* INSIDER — shares sold against shares bought, by recency bucket. */
+function chartInsider(spec){
+  const W = chartW(), H = spec.height || 470, MID = W * 0.52, PT = 54;
+  const s = svgRoot(W, H);
+  const max = Math.max(...spec.rows.map(r => Math.max(r.sold, r.bought))) * 1.05;
+  const rowH = (H - PT - 20) / spec.rows.length;
+  // Fixed columns: row label, then a right-aligned figure column, then the bars.
+  // Hanging the figure off the bar's end put the longest row's label on top of
+  // its own category name.
+  const VALX = 500, halfW = MID - VALX - 24;
+  s.appendChild(el("text", {x: MID - 20, y: 30, "text-anchor":"end", class:"axb",
+    style:"font-size:19px;letter-spacing:.1em;text-transform:uppercase;fill:var(--crit)"}, "Shares sold"));
+  s.appendChild(el("text", {x: MID + 20, y: 30, class:"axb",
+    style:"font-size:19px;letter-spacing:.1em;text-transform:uppercase;fill:var(--good)"}, "Shares bought"));
+  s.appendChild(el("line", {x1:MID, y1:PT - 14, x2:MID, y2:H - 16,
+    stroke:"var(--border)", "stroke-width":2}));
+
+  spec.rows.forEach((r, i) => {
+    const cy = PT + rowH * i + rowH / 2;
+    s.appendChild(el("text", {x: 20, y: cy + 4, class:"axb", style:"font-size:23px"}, r.label));
+    const wS = (r.sold / max) * halfW;
+    const g = el("g", {class:"growX", style:`transform-origin:${MID}px ${cy}px;animation-delay:${AD(i*90)}ms`});
+    g.appendChild(el("rect", {x: MID - wS, y: cy - 26, width: Math.max(2, wS), height: 52,
+      rx: 4, class:"bar bad"}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x: VALX, y: cy + 2, "text-anchor":"end", class:"vlab fade",
+      style:`animation-delay:${AD(260+i*90)}ms;font-size:21px`}, r.soldLab));
+    s.appendChild(el("text", {x: VALX, y: cy + 26, "text-anchor":"end", class:"ax fade",
+      style:`animation-delay:${AD(260+i*90)}ms`}, r.sub));
+    // the empty side is the finding
+    s.appendChild(el("text", {x: MID + 26, y: cy + 6, class:"vlab",
+      style:"font-size:23px;fill:var(--muted)"}, r.boughtLab));
+  });
+  return s;
+}
+
+/* PEERS — ranked multiples with an average line and a growth column beside. */
+function chartPeers(spec){
+  const W = chartW(), H = spec.height || 500, LBL = 250, PR = 300, PT = 62;
+  const s = svgRoot(W, H);
+  const max = Math.max(...spec.rows.map(r => r.v)) * 1.12;
+  const plotW = W - LBL - PR;
+  const rowH = (H - PT - 24) / spec.rows.length;
+  const X = v => LBL + (v / max) * plotW;
+
+  if (spec.avg != null) {
+    s.appendChild(el("rect", {x: X(spec.avg), y: PT - 8, width: W - PR - X(spec.avg),
+      height: H - PT - 16, fill:"var(--crit)", opacity:".07"}));
+    s.appendChild(el("line", {x1:X(spec.avg), y1:PT - 20, x2:X(spec.avg), y2:H - 24,
+      stroke:"var(--warn)", "stroke-width":3}));
+    s.appendChild(el("text", {x:X(spec.avg), y:PT - 30, "text-anchor":"middle", class:"vlab",
+      style:"font-size:20px;fill:var(--warn)"}, spec.avgLab));
+  }
+  s.appendChild(el("text", {x: W - PR + 40, y: PT - 30, class:"axb",
+    style:"font-size:17px;letter-spacing:.08em;text-transform:uppercase"}, spec.rightHead));
+
+  spec.rows.forEach((r, i) => {
+    const cy = PT + rowH * i + rowH / 2;
+    const g = el("g", {class:"growX", style:`transform-origin:${LBL}px ${cy}px;animation-delay:${AD(i*80)}ms`});
+    g.appendChild(el("rect", {x: LBL, y: cy - 26, width: Math.max(3, X(r.v) - LBL), height: 52,
+      rx: 4, class: "bar " + (r.here ? "" : "mut")}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x: LBL - 22, y: cy + 3, "text-anchor":"end",
+      class: r.here ? "vlab" : "axb", style:`font-size:${r.here ? 22 : 20}px`}, r.name));
+    s.appendChild(el("text", {x: X(r.v) + 18, y: cy + 6, class:"vlab fade",
+      style:`animation-delay:${AD(260+i*80)}ms;font-size:25px${r.here ? ";fill:var(--s1)" : ""}`}, r.lab));
+    s.appendChild(el("text", {x: W - PR + 40, y: cy + 6, class: r.here ? "vlab" : "axb",
+      style:"font-size:22px"}, r.right));
+  });
+  return s;
+}
+
+/* Radar over N scored dimensions — the whole company as one shape. */
+function chartRadar(spec){
+  /*
+     The plot is square, but the axis LABELS sit outside the ring and read
+     outward, so a square viewBox leaves them nowhere to go: at R + 40 the left
+     label began 24px from the edge and "The launch business" ran to x = -133,
+     painting outside the box entirely (svg{overflow:visible} hides that) and,
+     in camera mode, straight across the reserved column. The box is wider than
+     the plot so labels have real room, and they wrap rather than run.
+  */
+  // CX and CY are separate: one shared C shifted the plot DOWN by LP as well as
+  // across, which put the bottom label 156px below the box.
+  const S = 460, LP = 170, CX = S / 2 + LP, CY = S / 2, R = S * 0.40, max = spec.max || 5;
+  const s = svgRoot(S + LP * 2, S);
+  const n = spec.axes.length;
+  const pt = (i, r) => {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    return [CX + Math.cos(a) * r, CY + Math.sin(a) * r];
+  };
+  for (let ring = 1; ring <= max; ring++) {
+    const d = spec.axes.map((_, i) => pt(i, R * ring / max)).map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ") + " Z";
+    s.appendChild(el("path", {d, fill:"none", stroke:"var(--grid)", "stroke-width":"1"}));
+  }
+  spec.axes.forEach((_, i) => {
+    const p = pt(i, R);
+    s.appendChild(el("line", {x1:CX, y1:CY, x2:p[0], y2:p[1], stroke:"var(--grid)", "stroke-width":"1"}));
+  });
+  const P = spec.axes.map((a, i) => pt(i, R * a.v / max));
+  // closed smooth curve through the points — midpoint bezier, wraps around
+  let dd = "";
+  for (let i = 0; i < P.length; i++) {
+    const p0 = P[(i - 1 + P.length) % P.length], p1 = P[i], p2 = P[(i + 1) % P.length];
+    const m0 = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+    const m1 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+    dd += (i ? "" : `M ${m0[0].toFixed(1)} ${m0[1].toFixed(1)} `)
+        + `Q ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}, ${m1[0].toFixed(1)} ${m1[1].toFixed(1)} `;
+  }
+  dd += "Z";
+  const blob = el("g", {class:"bloom", style:`transform-origin:${CX}px ${CY}px;animation-delay:120ms`});
+  blob.appendChild(el("path", {d:dd, fill:"var(--s1)", "fill-opacity":".22",
+    stroke:"var(--s1)", "stroke-width":"2.6"}));
+  s.appendChild(blob);
+  spec.axes.forEach((a, i) => {
+    const p = pt(i, R * a.v / max);
+    s.appendChild(el("circle", {cx:p[0], cy:p[1], r:5, fill:"var(--s1)",
+      stroke:"var(--bg)", "stroke-width":"2", class:"fade", style:`animation-delay:${AD(240+i*70)}ms`}));
+    const l = pt(i, R + 40);
+    const anchor = Math.abs(l[0] - CX) < 12 ? "middle" : (l[0] > CX ? "start" : "end");
+    // room between this label's anchor and the edge of the box it must stay in
+    const room = anchor === "middle" ? S : (anchor === "start" ? S + LP * 2 - l[0] : l[0]);
+    const lines = wrapLabel(a.name, 19, Math.max(60, room - 8), 2);
+    lines.forEach((ln, li) =>
+      s.appendChild(el("text", {x:l[0], y:l[1] + 6 + (li - (lines.length - 1) / 2) * 23,
+        "text-anchor":anchor, class:"axb",
+        style:"font-size:19px;font-weight:700;fill:var(--ink)"}, ln)));
+  });
+  return s;
+}
+
+/* Where price sits on the analyst target rail. */
+function chartTrack(spec){
+  const W = chartW(), H = spec.height || 260;
+  const s = svgRoot(W, H);
+  const PL = 130, PR = 130, y = 150;
+  const lo = spec.lo, hi = spec.hi;
+  // The scale spanned the analyst range ALONE, so a price below the lowest
+  // target drew off the canvas: DVA's rail bled 730px past the left edge and
+  // the "now" marker — the single most important mark — vanished entirely.
+  // Span everything actually drawn, and let the rail show the range.
+  const all = [lo, hi, spec.now, spec.mean].filter(v => v != null && !isNaN(v));
+  const rawLo = Math.min(...all), rawHi = Math.max(...all);
+  const pad = (rawHi - rawLo) * 0.06 || 1;
+  const scLo = rawLo - pad, scHi = rawHi + pad;
+  const X = v => PL + ((v - scLo) / (scHi - scLo)) * (W - PL - PR);
+  s.appendChild(el("rect", {x:X(lo), y:y-4, width:Math.max(2, X(hi)-X(lo)), height:8, rx:4,
+    fill:"var(--grid)"}));
+  s.appendChild(el("rect", {x:X(spec.now), y:y-4, width:Math.max(2, X(spec.mean)-X(spec.now)),
+    height:8, rx:4, fill:"var(--s1)", opacity:".5", class:"fade"}));
+  [{v:lo, lab:spec.loLab, cls:"ax", side:1},
+   {v:hi, lab:spec.hiLab, cls:"ax", side:1}].forEach(m => {
+    s.appendChild(el("line", {x1:X(m.v), x2:X(m.v), y1:y-13, y2:y+13, stroke:"var(--muted)", "stroke-width":"2"}));
+    s.appendChild(el("text", {x:X(m.v), y:y+46, "text-anchor":"middle", class:"ax"}, m.lab));
+  });
+  // When the price and the mean target are close together their 30px value
+  // labels touch — and a narrower chart in camera mode brings them together at
+  // gaps that were fine at 1660. Stack the second one above the first instead.
+  const marks = [{v:spec.now, lab:spec.nowLab, sub:"now", c:"var(--s1)"},
+                 {v:spec.mean, lab:spec.meanLab, sub:"mean target", c:"var(--ink)"}];
+  const need = (String(spec.nowLab).length + String(spec.meanLab).length) * 8.5;
+  const tight = Math.abs(X(spec.now) - X(spec.mean)) < need;
+  marks.forEach((m, k) => {
+    const lift = tight && k === 1 ? 62 : 0;
+    s.appendChild(el("line", {x1:X(m.v), x2:X(m.v), y1:y-30, y2:y+30, stroke:m.c, "stroke-width":"3.4",
+      class:"fade", style:`animation-delay:${AD(200+k*130)}ms`}));
+    s.appendChild(el("circle", {cx:X(m.v), cy:y, r:9, fill:m.c, stroke:"var(--bg)", "stroke-width":"2.5",
+      class:"fade", style:`animation-delay:${AD(200+k*130)}ms`}));
+    s.appendChild(el("text", {x:X(m.v), y:y-46-lift, "text-anchor":"middle", class:"vlab fade",
+      style:`animation-delay:${AD(260+k*130)}ms;fill:${m.c};font-size:30px`}, m.lab));
+    s.appendChild(el("text", {x:X(m.v), y:y-74-lift, "text-anchor":"middle", class:"ax fade",
+      style:`animation-delay:${AD(260+k*130)}ms`}, m.sub));
+  });
+
+  // How much the analysts actually agree. A mean with a 3x spread around it is
+  // not a consensus, and the spread is arithmetic on the three numbers already
+  // drawn — nothing new is asserted.
+  if (spec.agreement !== false && spec.mean) {
+    const dev = Math.max(Math.abs(hi - spec.mean), Math.abs(spec.mean - lo)) / spec.mean;
+    const band = dev > 0.15 ? ["Low agreement", "var(--crit)"]
+               : dev > 0.07 ? ["Moderate agreement", "var(--warn)"]
+                            : ["High agreement", "var(--good)"];
+    s.appendChild(el("text", {x: W / 2, y: y + 92, "text-anchor": "middle", class: "vlab",
+      style: `font-size:21px;fill:${band[1]}`}, band[0]));
+    s.appendChild(el("text", {x: W / 2, y: y + 118, "text-anchor": "middle", class: "ax"},
+      `targets run ${(dev * 100).toFixed(0)}% from the average at the widest`));
+  }
+  return s;
+}
+
+/*
+   LOLLIPOP — ranked change, one value per category. The correct form when the job
+   is comparing a handful of changes: the position of the dot carries the value and
+   the thin stem only leads the eye to it, so four rows of it read in a glance
+   where four fat bars read as a wall. Thin marks, one dot per row, direct labels.
+*/
+function chartLollipop(spec){
+  const W = chartW(), H = spec.height || 440, PT = 40, PB = 96, PL = 30, PR = 30;
+  const s = svgRoot(W, H);
+  const vals = spec.rows.map(r => r.v);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const pad = (hi - lo) * 0.16 || 1;
+  const min = lo - (lo < 0 ? pad : 0), max = hi + pad;
+  const plotH = H - PT - PB, plotW = W - PL - PR;
+  const y = v => PT + plotH - ((v - min) / (max - min)) * plotH;
+  const n = spec.rows.length, slot = plotW / n;
+  const y0 = y(0);
+
+  s.appendChild(el("line", {x1:PL, x2:W-PR, y1:y0, y2:y0,
+    stroke:"var(--ink)", "stroke-width":1.5, opacity:".5"}));
+
+  spec.rows.forEach((r, i) => {
+    const cx = PL + slot * i + slot / 2, yv = y(r.v);
+    const cls = r.cls ? " " + r.cls : "";
+    const g = el("g", {class:"grow",
+      style:`transform-origin:${cx}px ${y0}px;animation-delay:${AD(i * 70)}ms`});
+    // 3px stem, 11px head — the spec's thin mark with a marker above 8px
+    g.appendChild(el("line", {x1:cx, x2:cx, y1:y0, y2:yv,
+      class:"stem" + cls, "stroke-width":3}));
+    g.appendChild(el("circle", {cx, cy:yv, r:11, class:"dot" + cls,
+      stroke:"var(--bg)", "stroke-width":3}));
+    s.appendChild(g);
+    s.appendChild(el("text", {x:cx, y: r.v < 0 ? yv + 40 : yv - 26, "text-anchor":"middle",
+      class:"vlab fade", style:`animation-delay:${AD(300 + i * 70)}ms;font-size:30px`}, r.lab));
+    wrapLabel(r.name, 18, slot - 16, 2).forEach((ln, li) =>
+      s.appendChild(el("text", {x:cx, y:H - PB + 42 + li * 23, "text-anchor":"middle",
+        class:"axb", style:"font-size:18px"}, ln)));
+    if (r.sub) s.appendChild(el("text", {x:cx, y:H - PB + (wrapLabel(r.name, 18, slot - 16, 2).length > 1 ? 88 : 66),
+      "text-anchor":"middle", class:"ax"}, r.sub));
+  });
+  return s;
+}
+
+/*
+   STEP AREA — a running total over dated steps. Change-over-time is a line's job,
+   not a bar's: the staircase shows the shape of the accumulation and the filled
+   area under it carries the "how much so far". Labels are SELECTIVE — first, last
+   and any step flagged `mark` — because a number on every point is noise.
+*/
+function chartStepArea(spec){
+  const W = chartW(), H = spec.height || 440, PT = 56, PB = 92, PL = 70, PR = 70;
+  const s = svgRoot(W, H);
+  const pts = spec.points;
+  const max = Math.max(...pts.map(p => p.v)) * 1.18;
+  const plotH = H - PT - PB, plotW = W - PL - PR;
+  const X = i => PL + (i / (pts.length - 1)) * plotW;
+  const Y = v => PT + plotH - (v / max) * plotH;
+
+  for (let g = 0; g <= 4; g++) {
+    const gv = max * g / 4;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(gv), y2:Y(gv), class:"gridline"}));
+  }
+
+  // the staircase itself, and the area beneath it
+  let d = `M${X(0)} ${Y(0)}`;
+  pts.forEach((p, i) => { d += ` L${X(i)} ${Y(p.v)}`;
+    if (i < pts.length - 1) d += ` L${X(i+1)} ${Y(p.v)}`; });
+  const area = d + ` L${X(pts.length-1)} ${Y(0)} Z`;
+  s.appendChild(el("path", {d: area, fill: areaFill(s, "var(--s1)", .26),
+    class:"fade", style:`animation-delay:${AD(200)}ms`}));
+  const line = el("path", {d, fill:"none", stroke:"var(--s1)", "stroke-width":3.5,
+    "stroke-linejoin":"round", class:"draw"});
+  s.appendChild(line);
+  requestAnimationFrame(() => { try { const L = line.getTotalLength();
+    line.style.setProperty("--len", L); line.style.strokeDasharray = L; } catch(e){} });
+
+  pts.forEach((p, i) => {
+    const last = i === pts.length - 1;
+    const show = i === 0 || last || p.mark;
+    if (last) halo(s, X(i), Y(p.v), 12, "var(--crit)", 340 + i * 90);
+    s.appendChild(el("circle", {cx:X(i), cy:Y(p.v), r: last ? 12 : 8,
+      fill: last ? "var(--crit)" : "var(--s1)", stroke:"var(--bg)", "stroke-width":3,
+      class:"fade", style:`animation-delay:${AD(340 + i * 90)}ms`}));
+    if (show)
+      s.appendChild(el("text", {x:X(i), y:Y(p.v) - 26, "text-anchor":"middle",
+        class:"vlab fade", style:`animation-delay:${AD(420 + i * 90)}ms;font-size:${last ? 40 : 27}px`
+        + (last ? ";fill:var(--crit)" : "")}, p.lab));
+    s.appendChild(el("text", {x:X(i), y:H - PB + 40, "text-anchor":"middle", class:"axb",
+      style:"font-size:18px"}, p.x));
+    if (p.x2) s.appendChild(el("text", {x:X(i), y:H - PB + 64, "text-anchor":"middle",
+      class:"ax", style:"font-size:15px"}, p.x2));
+  });
+  return s;
+}
+
+/*
+   CONNECTED SCATTER — two measures moving against each other over time, plotted
+   as a trajectory rather than as two panels of bars. "Twice the customers, each
+   worth a fifth less" is ONE shape here: the path walks right and falls. Two bar
+   panels make the viewer hold one chart in their head while reading the other,
+   and a dual-axis line would be the single worst option available.
+*/
+function chartScatter(spec){
+  const W = chartW(), H = spec.height || 500, PT = 58, PB = 96, PL = 124, PR = 210;
+  const s = svgRoot(W, H);
+  const xs = spec.points.map(p => p.x), ys = spec.points.map(p => p.y);
+  const xlo = Math.min(...xs), xhi = Math.max(...xs);
+  const ylo = Math.min(...ys), yhi = Math.max(...ys);
+  const xp = (xhi - xlo) * 0.22 || 1, yp = (yhi - ylo) * 0.34 || 1;
+  // The y scale spans [min, max]. It used to clamp at zero, which drew any
+  // negative point below the plot — a margin trajectory that starts in losses
+  // was invisible. A chart's scale spans every mark it draws.
+  const x0 = xlo - xp, x1 = xhi + xp;
+  const y0 = ylo >= 0 ? Math.max(0, ylo - yp) : ylo - yp, y1 = yhi + yp;
+  const plotW = W - PL - PR, plotH = H - PT - PB;
+  const X = v => PL + ((v - x0) / (x1 - x0)) * plotW;
+  const Y = v => PT + plotH - ((v - y0) / (y1 - y0)) * plotH;
+
+  for (let g = 0; g <= 3; g++) {
+    const gv = y0 + (y1 - y0) * g / 3;
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(gv), y2:Y(gv), class:"gridline"}));
+    s.appendChild(el("text", {x:PL-18, y:Y(gv)+7, "text-anchor":"end", class:"ax"},
+      spec.fmt2 ? spec.fmt2(gv) : String(Math.round(gv))));
+  }
+  if (y0 < 0 && y1 > 0)
+    s.appendChild(el("line", {x1:PL, x2:W-PR, y1:Y(0), y2:Y(0),
+      stroke:"var(--ink)", "stroke-width":1.5, opacity:".5"}));
+  // axis titles — the whole chart is unreadable without them
+  s.appendChild(el("text", {x:PL, y:H-PB+62, class:"axb", style:"font-size:19px"}, spec.xTitle));
+  s.appendChild(el("text", {x:PL, y:PT-26, class:"axb", style:"font-size:19px"},
+    "↑ " + spec.yTitle));
+
+  const d = spec.points.map((p, i) => (i ? "L" : "M") + X(p.x) + " " + Y(p.y)).join(" ");
+  const path = el("path", {d, fill:"none", stroke:"var(--s1)", "stroke-width":3.5,
+    "stroke-linecap":"round", class:"draw"});
+  s.appendChild(path);
+  requestAnimationFrame(() => { try { const L = path.getTotalLength();
+    path.style.setProperty("--len", L); path.style.strokeDasharray = L; } catch(e){} });
+
+  // an arrowhead on the last leg, so the direction of travel is unmistakable
+  const n = spec.points.length;
+  if (n > 1) {
+    const a = spec.points[n-2], b = spec.points[n-1];
+    const ang = Math.atan2(Y(b.y) - Y(a.y), X(b.x) - X(a.x));
+    const L = 22, sp = 0.42;
+    const tipX = X(b.x) - Math.cos(ang) * 16, tipY = Y(b.y) - Math.sin(ang) * 16;
+    s.appendChild(el("path", {
+      d: `M${tipX} ${tipY} L${tipX - Math.cos(ang - sp) * L} ${tipY - Math.sin(ang - sp) * L} `
+       + `L${tipX - Math.cos(ang + sp) * L} ${tipY - Math.sin(ang + sp) * L} Z`,
+      fill:"var(--s1)", class:"fade", style:`animation-delay:${AD(700)}ms`}));
+  }
+
+  spec.points.forEach((p, i) => {
+    const last = i === n - 1;
+    // A fixed 130ms stagger overran the 3s envelope at 8 points (NBIS's eight
+    // quarters ended at 4.15s); 60ms keeps a long trajectory inside it.
+    if (last) halo(s, X(p.x), Y(p.y), 14, "var(--s1)", 280 + i * 60);
+    s.appendChild(el("circle", {cx:X(p.x), cy:Y(p.y), r: last ? 14 : 10,
+      fill: last ? "var(--s1)" : "var(--bg)", stroke:"var(--s1)", "stroke-width":3.5,
+      class:"fade", style:`animation-delay:${AD(280 + i * 60)}ms`}));
+    const g = el("g", {class:"fade", style:`animation-delay:${AD(340 + i * 60)}ms`});
+    // labels go right of the point, except the last which would run off the plot
+    const rightOf = !last || X(p.x) < W - PR - 40;
+    g.appendChild(el("text", {x:X(p.x) + (rightOf ? 26 : -26), y:Y(p.y) - 6,
+      "text-anchor": rightOf ? "start" : "end", class:"axb", style:"font-size:20px"}, p.lab));
+    if (p.sub) g.appendChild(el("text", {x:X(p.x) + (rightOf ? 26 : -26), y:Y(p.y) + 22,
+      "text-anchor": rightOf ? "start" : "end", class:"vlab",
+      style:`font-size:${last ? 32 : 25}px`}, p.sub));
+    s.appendChild(g);
+  });
+  return s;
+}
+
+const CHARTS = {bars:chartBars, grouped:chartGrouped, line:chartLine,
+                bridge:chartBridge, hbars:chartHBars, range:chartRange,
+                stackedh:chartStackedH, indexed:chartIndexed,
+                funded:chartFunded, radar:chartRadar, track:chartTrack,
+                smallmult:chartSmallMult, sankey:chartSankey, gauge:chartGauge,
+                dumbbell:chartDumbbell, slope:chartSlope, distribution:chartDistribution,
+                forecast:chartForecast, donut:chartDonut, treemap:chartTreemap,
+                fvband:chartFvBand, insider:chartInsider, peers:chartPeers,
+                lollipop:chartLollipop, steparea:chartStepArea, scatter:chartScatter};
+
+/* ============================================================
+   Fair-value model — runs live so the assumptions are his, on camera
+   ============================================================ */
+const FV = DECK.fairValue;
+let liveCases = JSON.parse(JSON.stringify(FV.cases));
+let selAsm = 0;
+const ASM_KEYS = [
+  {k:"revGrowth",   n:"Revenue growth", suf:"%",  step:0.5},
+  {k:"opMargin",    n:"Operating margin", suf:"%", step:0.5},
+  {k:"exitPE",      n:"Exit P/E",      suf:"x",  step:0.5},
+  {k:"shareChange", n:"Shares / yr",   suf:"%",  step:0.5}
+];
+
+function runCase(c){
+  const K = FV.constants, H = FV.horizonYears;
+  const growth = Math.pow(1 + c.revGrowth/100, H);
+  const rev    = K.startRevenueTTM * growth;
+  const ebit   = rev * c.opMargin/100;
+  const interest = K.netDebt * K.interestRate/100;
+  const pretax = ebit - interest;
+  const net    = pretax * (1 - K.taxRate/100);
+  const nci    = K.nciAnnualRunRate * growth;      // minority interests scale with the business
+  const attrib = net - nci;
+  const shares = DECK.sharesOutstanding * Math.pow(1 + c.shareChange/100, H);
+  const eps    = attrib / shares;
+  const price5 = eps * c.exitPE;
+  const fv     = price5 / Math.pow(1 + FV.requiredReturn/100, H);
+  const cagr   = (Math.pow(price5 / DECK.price, 1/H) - 1) * 100;
+  return {rev, ebit, eps, price5, fv, cagr, shares};
+}
+
+function renderCalc(host){
+  const c = liveCases.base;
+  const asm = host.querySelector(".asm");
+  asm.innerHTML = ASM_KEYS.map((a, i) =>
+    `<div class="a${i===selAsm?" sel":""}"><div class="an">${a.n}</div>
+     <div class="av num">${a.k==="shareChange"?(c[a.k]>0?"+":""):""}${f1(c[a.k])}${a.suf}</div></div>`).join("");
+  const cs = host.querySelector(".cases");
+  cs.innerHTML = ["bear","base","bull"].map(k => {
+    const r = runCase(liveCases[k]);
+    return `<div class="cs${k==="base"?" base":""}"><div class="cn">${k}</div>
+      <div class="cfv num">${usd0(r.fv)}</div>
+      <div class="cr num">${usd0(r.price5)} in ${FV.horizonYears}y · <b style="color:${r.cagr>=0?"var(--good)":"var(--crit)"}">${pct(r.cagr)}/yr</b></div></div>`;
+  }).join("");
+}
+
+/* ============================================================
+   Slide renderers
+   ============================================================ */
+function slideChrome(sl, idx){
+  const parts = [];
+  if (sl.type !== "title") {
+    // The ticker + company ride the top of EVERY slide, so a viewer landing
+    // mid-video always knows which stock is on screen. The footer stamp alone
+    // was not enough — it is the least-read corner of the frame.
+    parts.push(`<div class="kicker"><span class="no">${String(idx).padStart(2,"0")}</span>
+      <span>${esc(sl.kicker || "")}</span>
+      ${sl.src ? `<span class="src">${esc(sl.src)}</span>` : ""}
+      <span class="ident"${sl.src ? "" : ' style="margin-left:auto"'}><b>${esc(DECK.symbol)}</b> · ${esc(DECK.company)}</span></div>`);
+    if (sl.head) parts.push(`<h1 class="head${sl.head.length > 46 ? " sm" : ""}">${sl.head}</h1>`);
+    if (sl.sub)  parts.push(`<div class="sub">${sl.sub}</div>`);
+  }
+  return parts.join("");
+}
+
+function render(sl, idx, total){
+  const d = document.createElement("div");
+  d.className = "slide" + (sl.type === "title" ? " title" : "");
+  let inner = slideChrome(sl, idx);
+
+  if (sl.type === "title") {
+    inner = `<div class="tk">${esc(sl.kicker)}</div>
+      <h1>${esc(sl.company)}</h1>
+      <div class="ident"><span>${esc(sl.ticker)}</span><span>·</span><span>${esc(sl.exchange)}</span><span>·</span><span>${esc(sl.sector)}</span></div>
+      <div class="pxrow"><span class="px num">${money(sl.price)}</span>
+        <span class="chg num ${sl.changePct < 0 ? "dn" : "up"}">${pct(sl.changePct, 2)} today</span></div>
+      <div class="hook">${sl.hook}</div>
+      ${sl.chips ? `<div class="chips"><span class="cl">Read the source</span>` +
+        sl.chips.map(c => `<span class="ch"><b>${esc(c.form)}</b><span>${esc(c.when)}</span></span>`).join("") +
+        `</div>` : ""}`;
+  }
+  else if (sl.type === "mega") {
+    inner += `<div class="body"><div class="mega">
+      <div class="v ${sl.tone || ""} num">${sl.value}</div>
+      <div class="cap">${sl.caption}</div></div>${sl.extra ? sl.extra : ""}</div>`;
+  }
+  else if (sl.type === "tiles") {
+    const cols = sl.cols || Math.min(4, sl.tiles.length);
+    inner += `<div class="body"><div class="tiles" style="grid-template-columns:repeat(${cols},1fr)">` +
+      sl.tiles.map(t => `<div class="tile ${t.tone||""}${t.hero?" hero":""}">
+        <div class="tv${t.small?" sm":""} num">${t.v}</div>
+        <div class="tl">${t.l}</div>${t.n?`<div class="tn">${t.n}</div>`:""}</div>`).join("") +
+      `</div></div>`;
+  }
+  else if (sl.type === "quote") {
+    inner += `<div class="body"><div class="quote"><p>“${sl.quote}”</p>
+      <div class="attr">${esc(sl.attr)}</div></div>${sl.extra||""}</div>`;
+  }
+  else if (sl.type === "chart") {
+    // `extra` lets a chart slide carry a compact tile row under the visual —
+    // the NBIS close puts its four-chip recap beneath the fair-value ruler.
+    // Centered body (not .top): top-aligned charts left a dead band between
+    // the visual and the punch line on every short chart.
+    inner += `<div class="body"><div class="chartwrap" data-chart="${idx}"></div>
+      ${sl.legend ? `<div class="legend">${sl.legend.map(g=>`<span><i style="background:${g.c}"></i>${esc(g.t)}</span>`).join("")}</div>` : ""}
+      ${sl.extra ? sl.extra : ""}</div>`;
+  }
+  else if (sl.type === "snapshot") {
+    inner += `<div class="body"><div class="snap">
+      <div class="snap-radar" data-radar="${idx}"></div>
+      <div class="rows">` + sl.rows.map((r, ri) => `<div class="row"
+        style="animation-delay:${AD(260 + ri * 90)}ms">
+        <div class="rn">${esc(r.name)}</div>
+        <div class="pips">${[1,2,3,4,5].map(i =>
+          `<span class="pip${i <= r.score ? " on" + (r.tone ? " " + r.tone : "") : ""}"
+           style="animation-delay:${AD(380 + ri * 90 + i * 70)}ms"></span>`).join("")}</div>
+        <div class="rf">${r.fact}</div></div>`).join("") + `</div></div></div>`;
+  }
+  else if (sl.type === "findings") {
+    inner += `<div class="body"><div class="finds">` + sl.items.map((f, i) =>
+      f.stat
+        ? `<div class="find hasstat"><div><div class="fno num">Finding ${String(i + 1).padStart(2, "0")}</div>
+           <div class="fstat num">${esc(f.stat)}</div></div>
+           <div><div class="fc">${f.claim}</div>
+           <div class="fw"><b>Buried in</b>${esc(f.where)}</div></div></div>`
+        : `<div class="find"><div class="fn num">${String(i + 1).padStart(2, "0")}</div>
+           <div><div class="fc">${f.claim}</div>
+           <div class="fw"><b>Buried in</b>${esc(f.where)}</div></div></div>`).join("") +
+      `</div></div>`;
+  }
+  else if (sl.type === "twocol") {
+    inner += `<div class="body"><div class="ww">
+      <div class="wcol good"><h4>${esc(sl.leftHead)}</h4><ul>` +
+      sl.left.map(x => `<li><span class="ic">✓</span><span>${x}</span></li>`).join("") +
+      `</ul></div>
+      <div class="wcol bad"><h4>${esc(sl.rightHead)}</h4><ul>` +
+      sl.right.map(x => `<li><span class="ic">✕</span><span>${x}</span></li>`).join("") +
+      `</ul></div></div></div>`;
+  }
+  else if (sl.type === "verdict") {
+    inner += `<div class="body top" style="gap:16px">
+      ${sl.reasons ? `<div class="whylist">` + sl.reasons.map(r => `<p>${r}</p>`).join("") + `</div>` : ""}
+      <div class="callrow">
+        <div class="callbox"><div class="cl">My call</div><div class="cv">${esc(sl.call)}</div>
+          <div class="cd">${esc(sl.callLine)}</div></div>
+        <div class="calc"><h4>Fair value — my assumptions, live</h4>
+          <div class="asm"></div><div class="cases"></div>
+          <div class="hintline">↑↓ change · ⇥ next assumption · these are assumptions, not facts</div>
+        </div>
+      </div></div>`;
+  }
+  else if (sl.type === "reasons") {
+    inner += `<div class="body"><div class="whylist">` +
+      sl.reasons.map(r => `<p>${r}</p>`).join("") + `</div></div>`;
+  }
+
+  if (sl.punch) inner += `<div class="punch"><p>${sl.punch}</p></div>`;
+  inner += `<div class="footer"><span class="mark">NIKRAYANI <span>TERMINAL</span></span>
+    <span class="stamp">${esc(DECK.stamp)}</span>
+    <span class="pg num">${idx} / ${total}</span></div>`;
+
+  d.innerHTML = inner;
+
+  mountCharts(d, sl, idx);
+  if (sl.type === "verdict") renderCalc(d);
+  return d;
+}
+
+/*
+   Chart mounting, split out of render() so it can be redone. Charts are sized at
+   BUILD time from chartW(), so toggling camera mode at runtime has to rebuild
+   them — otherwise the column is reserved but every chart is still 1660 wide and
+   overflows into it.
+*/
+function mountCharts(d, sl, idx){
+  if (sl.type === "chart" && sl.chart) {
+    const host = d.querySelector(".chartwrap");
+    host.innerHTML = "";
+    try {
+      const fn = CHARTS[sl.chart.kind];
+      if (!fn) throw new Error("unknown chart kind: " + sl.chart.kind);
+      // Charts that print their own values get a named formatter, never a
+      // function passed across the payload boundary.
+      sl.chart.fmt2 = FMT[sl.chart.fmtKind] || FMT.usdM;
+      host.appendChild(fn(sl.chart));
+    } catch (err) {
+      // Renders loudly rather than silently blanking the deck. A chart that
+      // throws used to kill every later slide in the same map().
+      host.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;
+        height:100%;border:2px dashed var(--crit);border-radius:12px;color:var(--crit);
+        font-size:22px;padding:30px;text-align:center">
+        CHART FAILED TO RENDER — ${esc(sl.chart.kind)}<br>
+        <span style="font-size:16px;color:var(--muted)">${esc(err.message)}</span></div>`;
+      console.error("[deck] chart failed on slide", idx, err);
+    }
+  }
+  if (sl.type === "snapshot") {
+    const rad = d.querySelector("[data-radar]");
+    rad.innerHTML = "";
+    rad.appendChild(chartRadar({axes: sl.rows.map(r => ({name: r.name, v: r.score}))}));
+  }
+}
+
+/* ============================================================
+   Deck controller
+   ============================================================ */
+const stage = document.getElementById("stage");
+const slides = DECK.slides.map((sl, i) => render(sl, i + 1, DECK.slides.length));
+slides.forEach(s => stage.appendChild(s));
+
+/*
+   THE LAYOUT AUDIT LIVES IN THE DECK, NOT IN A CONSOLE PASTE.
+
+   Every layout bug this deck has shipped was found by hand-pasting a geometry
+   sweep into devtools — which means it ships the moment anyone forgets. So the
+   sweep is here, it runs on every load, and it prints one line.
+
+   Cheap checks run always. The full geometry pass needs each slide activated in
+   turn (the `.slide.on` gate means an inactive slide reports no animation and an
+   unlaid-out chart), so it runs on `?audit=1` or on demand via deckAudit().
+*/
+const KNOWN_ANIM = new Set(["grow","growX","draw","fade","sweep","pop","bloom","pipin","rowin",
+                            "maskrise"]);
+
+function deckAudit(){
+  const issues = [];
+  const wasOn = slides.findIndex(s => s.classList.contains("on"));
+  slides.forEach((sl, i) => {
+    slides.forEach(s => s.classList.remove("on"));
+    sl.classList.add("on");
+    const d = DECK.slides[i];
+    const nm = `${i + 1} ${d.chart ? d.chart.kind : d.type}`;
+    const host = sl.querySelector("[data-chart]");
+    if (host && !host.querySelector("svg")) issues.push(`${nm}: DEAD CHART`);
+
+    // A key the renderer does not read prints the literal word "undefined" on
+    // camera. Cheap to check, and it caught it on the very first slide.
+    {
+      const junk = /\b(undefined|NaN|\[object Object\])\b/;
+      for (const n of sl.querySelectorAll("*")) {
+        if (n.children.length) continue;
+        const s = (n.textContent || "").trim();
+        if (s && junk.test(s))
+          issues.push(`${nm}: renders the literal text "${s.slice(0, 30)}"`);
+      }
+    }
+
+    // Nothing may enter the reserved camera column. This is the whole promise of
+    // ?cam= — and it was already being broken: the footer is absolutely
+    // positioned at left:96px, so the slug printed straight across the column
+    // while the audit reported CLEAN.
+    if (camPx()) {
+      const colL = CAM === "left" ? 0 : 1920 - camPx();
+      const colR = CAM === "left" ? camPx() : 1920;
+      const sr = document.getElementById("stage").getBoundingClientRect();
+      const sc = sr.width / 1920 || 1;
+      const toStage = r => ({l: (r.left - sr.left) / sc, r: (r.right - sr.left) / sc});
+      for (const el of sl.querySelectorAll("*")) {
+        if (el.children.length && el.tagName !== "svg") continue;
+        const hasInk = el.tagName === "svg" || (el.textContent || "").trim();
+        if (!hasInk) continue;
+        const b = toStage(el.getBoundingClientRect());
+        if (b.r < colL + 1 || b.l > colR - 1) continue;          // clear of it
+        const over = Math.min(b.r, colR) - Math.max(b.l, colL);
+        if (over > 1.5)
+          issues.push(`${nm}: "${(el.textContent || el.tagName).trim().slice(0, 24)}" `
+                      + `runs ${over.toFixed(0)}px into the reserved camera column`);
+      }
+    }
+
+    // EVERY svg on the slide, not just the one in a [data-chart] host. The
+    // snapshot slide renders its radar into .snap-radar, so it escaped the
+    // geometry checks completely — and it was drawing 133px outside its own box.
+    for (const svg of sl.querySelectorAll("svg")) {
+      const vb = (svg.getAttribute("viewBox") || "").split(/\s+/).map(Number);
+      let bb = null;
+      try { bb = svg.getBBox(); } catch (e) { /* detached or empty */ }
+      if (bb && vb.length === 4) {
+        // Measure the CONTENT against the viewBox. Measuring the <svg> element
+        // box is useless — it is in bounds by definition, which is how a bridge
+        // drawing to 2587 inside a 500-high box passed unnoticed.
+        // All FOUR edges. This checked only bottom and right, so a bracket label
+        // that ran to x = -37 — clipped clean off the left of the rail — passed.
+        if (bb.y + bb.height > vb[3] + 40)
+          issues.push(`${nm}: chart draws ${(bb.y + bb.height - vb[3]).toFixed(0)}px below its box`);
+        if (bb.x + bb.width > vb[2] + 60)
+          issues.push(`${nm}: chart draws ${(bb.x + bb.width - vb[2]).toFixed(0)}px past its right edge`);
+        if (bb.y < vb[1] - 40)
+          issues.push(`${nm}: chart draws ${(vb[1] - bb.y).toFixed(0)}px above its box`);
+        if (bb.x < vb[0] - 8)
+          issues.push(`${nm}: chart draws ${(vb[0] - bb.x).toFixed(0)}px past its left edge`);
+        const punch = sl.querySelector(".punch");
+        if (punch) {
+          const hb = svg.getBoundingClientRect(), wb = punch.getBoundingClientRect();
+          const sc = hb.width / vb[2], contentBottom = hb.top + (bb.y + bb.height) * sc;
+          if (contentBottom > wb.top + 2)
+            issues.push(`${nm}: chart overlaps the punch line by ${(contentBottom - wb.top).toFixed(0)}px`);
+        }
+      }
+      // Text drawn ACROSS a stroked line. Text-vs-text could not see this: a
+      // bracket label flipped inboard printed on top of its own rail, so the
+      // value read as struck through. Only near-horizontal lines matter — a
+      // vertical tick passing beside a centred label is by design.
+      {
+        const inkOf = n => {
+          const fs = parseFloat(getComputedStyle(n).fontSize) || 16;
+          const yb = parseFloat(n.getAttribute("y"));
+          return isNaN(yb) ? null : {top: yb - fs * 0.75, bot: yb + fs * 0.22, fs};
+        };
+        const lines = [...svg.querySelectorAll("line")].map(n => {
+          const g = k => parseFloat(n.getAttribute(k));
+          return {y1:g("y1"), y2:g("y2"), x1:Math.min(g("x1"),g("x2")),
+                  x2:Math.max(g("x1"),g("x2")), cls: n.getAttribute("class"),
+                  w: parseFloat(n.getAttribute("stroke-width")) ||
+                     parseFloat(getComputedStyle(n).strokeWidth) || 1};
+        }).filter(L => !isNaN(L.y1) && Math.abs(L.y1 - L.y2) <= 2 && L.x2 - L.x1 > 30
+                       // A recessive 1px gridline is DESIGNED to pass behind a
+                       // label — it grazed a "$" descender and read as a fault.
+                       // Only a prominent rule can strike text through.
+                       && L.w >= 2 && !/grid|zero/.test(L.cls || ""));
+        for (const n of svg.querySelectorAll("text")) {
+          const ink = inkOf(n); if (!ink) continue;
+          const bb = n.getBBox(); if (!bb.width) continue;
+          for (const L of lines) {
+            const half = Math.max(1.5, L.w / 2);
+            if (L.y1 + half > ink.top && L.y1 - half < ink.bot &&
+                bb.x < L.x2 - 4 && bb.x + bb.width > L.x1 + 4) {
+              issues.push(`${nm}: "${n.textContent.slice(0,22)}" is struck through by a line`);
+              break;
+            }
+          }
+        }
+      }
+      // Text running into text. Glyph boxes are the wrong yardstick: a 44px value
+      // stacked cleanly above its 17px caption has a box tall enough to swallow
+      // the caption whole, while the ink never touches. Compare BASELINES — two
+      // lines collide only if their baselines are closer than the taller line's
+      // height and they also overlap horizontally.
+      const vbY = vb.length === 4 ? vb[1] : 0;
+      const hostRect = svg.getBoundingClientRect();
+      const scale = vb.length === 4 ? hostRect.width / vb[2] : 1;
+      const T = [...svg.querySelectorAll("text")]
+        .map(n => {
+          const r = n.getBoundingClientRect();
+          const yAttr = parseFloat(n.getAttribute("y"));
+          const fs = parseFloat(getComputedStyle(n).fontSize) || 16;
+          return {
+            n, r, fs,
+            base: Number.isFinite(yAttr) ? hostRect.top + (yAttr - vbY) * scale
+                                         : r.bottom - r.height * 0.21,
+          };
+        })
+        .filter(o => o.r.width > 0 && o.n.textContent.trim());
+      // Ink, not boxes: a line of text occupies roughly [baseline - 0.75em,
+      // baseline + 0.22em]. A 110px numeral's box reaches far above its ink and
+      // swallows the caption beneath it; its ink does not.
+      const ink = o => ({ top: o.base - 0.75 * o.fs * scale,
+                          bot: o.base + 0.22 * o.fs * scale });
+      for (let a = 0; a < T.length; a++) for (let b = a + 1; b < T.length; b++) {
+        const A = T[a], B = T[b];
+        const ox = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
+        if (ox <= 8) continue;
+        const ia = ink(A), ib = ink(B);
+        const oy = Math.min(ia.bot, ib.bot) - Math.max(ia.top, ib.top);
+        if (oy > 2)
+          issues.push(`${nm}: "${A.n.textContent.trim().slice(0, 18)}" collides with `
+                    + `"${B.n.textContent.trim().slice(0, 18)}"`);
+      }
+    }
+
+    sl.querySelectorAll("*").forEach(el => {
+      const cs = getComputedStyle(el);
+      const an = cs.animationName;
+      if (an !== "none") {
+        an.split(",").map(x => x.trim()).forEach(x => {
+          if (!KNOWN_ANIM.has(x)) issues.push(`${nm}: unknown animation "${x}"`);
+        });
+        if (cs.animationFillMode !== "both") issues.push(`${nm}: animation fill is ${cs.animationFillMode}, not both`);
+        if ((parseFloat(cs.animationDuration) || 0) === 0) issues.push(`${nm}: zero-duration animation`);
+      }
+      const fs = parseFloat(cs.fontSize) || 99;
+      if (fs < 15 && el.textContent.trim() && !el.children.length
+          && !el.closest("#notes,#hud,#grid,.footer"))
+        issues.push(`${nm}: ${fs}px text on camera`);
+    });
+  });
+  slides.forEach(s => s.classList.remove("on"));
+  slides[wasOn < 0 ? 0 : wasOn].classList.add("on");
+
+  const st = getComputedStyle(stage);
+  if (!CAM && /matrix\((?:[\d.]+, 0, 0, [\d.]+), ([-\d.]+), ([-\d.]+)\)/.test(st.transform)) {
+    const m = st.transform.match(/matrix\([\d.]+, 0, 0, [\d.]+, ([-\d.]+), ([-\d.]+)\)/);
+    if (m && (Math.abs(+m[1]) > 0.5 || Math.abs(+m[2]) > 0.5))
+      issues.push(`stage: translated by ${m[1]},${m[2]} with no ?cam= — the deck is off-centre`);
+  }
+  return [...new Set(issues)];
+}
+window.deckAudit = deckAudit;
+// The script is an IIFE, so camera state is otherwise unreachable from devtools
+// or a test harness — and it needs checking in both layouts.
+window.deckCam = () => ({mode: CAM, camw: Math.round(CAMW * 100), reservedPx: camPx(),
+                         numbersShown: camGuideOn});
+
+(function bootCheck(){
+  const dead = [];
+  slides.forEach((d, i) => {
+    const host = d.querySelector("[data-chart]");
+    if (host && !host.querySelector("svg")) dead.push(`${i + 1} (${DECK.slides[i].chart.kind})`);
+  });
+  if (dead.length) {
+    console.log(`[deck] SELF-CHECK FAILED — no chart on slide(s): ${dead.join(", ")}`);
+    return;
+  }
+  if (new URLSearchParams(location.search).has("audit")) {
+    // Wait a frame so layout and fonts have settled before measuring.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const issues = deckAudit();
+      console.log(issues.length
+        ? `[deck] AUDIT — ${issues.length} issue(s):\n  ` + issues.join("\n  ")
+        : `[deck] AUDIT CLEAN — ${slides.length} slides, no layout, animation or text faults`);
+    }));
+  } else {
+    console.log(`[deck] self-check ok — ${slides.length} slides, every chart rendered `
+              + `· add ?audit=1 for the full layout audit`);
+  }
+})();
+
+let cur = 0, notesOn = false, hudOn = false, t0 = null, tick = null;
+
+
+function fit(){
+  const W = window.innerWidth, H = window.innerHeight;
+
+  // No ?cam= — behave exactly as before: the body flex-centres the stage and all
+  // this does is scale it. Adding a translate on top of that centring shifted the
+  // whole deck sideways and cropped it.
+  if (!CAM) {
+    stage.style.transformOrigin = "center center";
+    stage.style.transform = `scale(${Math.min(W / 1920, H / 1080)})`;
+    document.body.classList.remove("camzone");
+    // Redraw (i.e. remove) the frame too: returning before this left the camera
+    // slot painted on the slide after camera mode had been switched off.
+    drawCamGuide();
+    return;
+  }
+
+  // Camera mode: the stage still fills the frame and still scales from its
+  // centre — the column is reserved INSIDE the canvas with padding. That keeps
+  // the deck 1:1 in a 1080p recording and leaves no translate to double-apply.
+  document.body.classList.add("camzone");
+  const px = camPx();
+  stage.style.setProperty("--cam-l", (CAM === "left"  ? 96 + px : 96) + "px");
+  stage.style.setProperty("--cam-r", (CAM === "right" ? 96 + px : 96) + "px");
+  stage.style.setProperty("--cam-b",
+    (CAM === "bottom" ? 92 + Math.round(1080 * CAMW) : 92) + "px");
+  stage.style.transformOrigin = "center center";
+  stage.style.transform = `scale(${Math.min(W / 1920, H / 1080)})`;
+  drawCamGuide();
+}
+window.addEventListener("resize", fit); fit();
+
+/*
+   The alignment guide. Press C in camera mode: it draws the reserved column and
+   a 3:4 portrait bubble centred in it, and prints both boxes in RECORDING
+   pixels — so the camera source can be positioned by typing numbers into OBS
+   rather than dragging it and hoping. Off by default; it must never be up while
+   recording, so it is also forced off when the deck goes fullscreen-clean.
+*/
+function camBubbleBox(){
+  const px = camPx();
+  if (!px) return null;
+  const M = 44;                                   // breathing room inside the column
+  const w = px - M * 2;
+  const h = Math.min(1080 - M * 2, Math.round(w * 4 / 3));   // 3:4 portrait
+  return {x: (CAM === "right" ? 1920 - px : 0) + M, y: Math.round((1080 - h) / 2),
+          w, h, colX: CAM === "right" ? 1920 - px : 0, colW: px};
+}
+
+function drawCamGuide(){
+  let g = document.getElementById("camguide");
+  const box = camBubbleBox();
+  if (!box) { if (g) g.remove(); return; }
+  if (!g) {
+    g = document.createElement("div");
+    g.id = "camguide";
+    document.getElementById("stage").appendChild(g);
+  }
+  // The FRAME is part of the slide and stays up: the camera sits inside it, so
+  // it has to look designed, carry no text, and be there in the recording.
+  // The MEASUREMENTS are a setup aid and must never be on camera — C toggles
+  // those alone.
+  g.innerHTML =
+    `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;` +
+    `width:${box.w}px;height:${box.h}px"></div>` +
+    (camGuideOn
+      ? `<div class="cg-col" style="left:${box.colX}px;width:${box.colW}px"></div>` +
+        `<div class="cg-lab" style="left:${box.x}px;top:${box.y + box.h + 16}px;` +
+        `width:${box.w}px">` +
+          `<b>put the camera here</b> ${box.w} &times; ${box.h} at ${box.x}, ${box.y}` +
+          `<span>reserved column ${box.colW}px &middot; ` +
+          `${(CAMW * 100).toFixed(0)}% &middot; C hides these numbers</span>` +
+        `</div>`
+      : "");
+}
+
+/*
+   Count-up numerals: big money/percent tiles tally from zero on slide entry,
+   easing out over ~850ms. The LAST frame always writes the exact original
+   string, so the resting deck is byte-identical to the build — the animation
+   can never leave a drifted or misformatted figure on screen. Skipped under
+   prefers-reduced-motion; only runs from show(), so the in-deck audit (which
+   toggles .on directly) always measures the final text.
+*/
+const CU_RE = /^([+\-−]?[^0-9]*)([\d,]+)(\.\d+)?([^0-9]*)$/;
+function countUps(slideEl){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  slideEl.querySelectorAll(".mega .v, .tile .tv, .find .fstat").forEach(el => {
+    const fin = el.dataset.cuFinal || (el.dataset.cuFinal = el.textContent);
+    const m = fin.match(CU_RE);
+    if (!m) return;                               // "none", "+ interest" — leave alone
+    const num = parseFloat((m[2] + (m[3] || "")).replace(/,/g, ""));
+    if (!isFinite(num)) return;
+    const dec = m[3] ? m[3].length - 1 : 0;
+    const grouped = m[2].includes(",");
+    if (el._cu) cancelAnimationFrame(el._cu);
+    const t0 = performance.now(), D = 850;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / D);
+      if (p >= 1) { el.textContent = fin; el._cu = 0; return; }
+      const e = 1 - Math.pow(1 - p, 4);           // ease-out-quart
+      let v = (num * e).toFixed(dec);
+      if (grouped) v = (+v).toLocaleString("en-US",
+        {minimumFractionDigits: dec, maximumFractionDigits: dec});
+      el.textContent = m[1] + v + m[4];
+      el._cu = requestAnimationFrame(tick);
+    };
+    el._cu = requestAnimationFrame(tick);
+  });
+}
+
+function show(i){
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle("on", k === cur));
+  // re-trigger entry animations by reflowing the newly shown slide
+  void slides[cur].offsetWidth;
+  countUps(slides[cur]);
+  const n = DECK.slides[cur];
+  document.getElementById("notes-body").textContent = n.notes || "—";
+  document.getElementById("notes-head").textContent =
+    `Slide ${cur+1} of ${slides.length} — ${(n.head || n.company || "").replace(/<[^>]+>/g,"")}`;
+  document.getElementById("hud-slide").textContent = `${cur+1}/${slides.length}`;
+  document.getElementById("hud-target").textContent = n.target ? `target ${n.target}s` : "";
+  location.hash = "s" + (cur + 1);
+  if (n.type === "verdict") renderCalc(slides[cur]);
+  buildGrid();
+}
+
+function setTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("nr_deck_theme", t); } catch(e){}
+}
+function startClock(){
+  t0 = Date.now();
+  clearInterval(tick);
+  tick = setInterval(() => {
+    const s = Math.floor((Date.now() - t0) / 1000);
+    const c = document.getElementById("hud-clock");
+    c.textContent = Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+    c.classList.toggle("over", s > DECK.totalTarget);
+  }, 500);
+}
+function buildGrid(){
+  const g = document.getElementById("grid-cells");
+  g.innerHTML = DECK.slides.map((s, i) =>
+    `<div class="gc${i===cur?" cur":""}${s.optional?" opt":""}" data-i="${i}">
+     <div class="gn">${String(i+1).padStart(2,"0")} · ${s.target||"?"}s</div>
+     <div class="gt">${esc((s.head || s.company || "").replace(/<[^>]+>/g,""))}</div>
+     ${s.optional?'<span class="go">cut for time</span>':""}</div>`).join("");
+  document.getElementById("grid-total").textContent =
+    `Full cut ${fmtT(DECK.totalTarget)} · core cut ${fmtT(DECK.coreTarget)} if you drop the ${DECK.optionalCount} marked slides`;
+  g.querySelectorAll(".gc").forEach(c => c.onclick = () => {
+    show(+c.dataset.i); document.getElementById("grid").classList.remove("on");
+  });
+}
+
+addEventListener("keydown", e => {
+  const gridOn = document.getElementById("grid").classList.contains("on");
+  const k = e.key;
+  if (k === "Escape") { document.getElementById("grid").classList.remove("on"); return; }
+  if (k === "ArrowRight" || k === " " || k === "PageDown") { e.preventDefault(); show(cur + 1); }
+  else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+  else if (k === "Home") show(0);
+  else if (k === "End") show(slides.length - 1);
+  else if (k === "t" || k === "T")
+    setTheme(document.documentElement.getAttribute("data-theme") === "cream" ? "dark" : "cream");
+  else if (k === "n" || k === "N") {
+    notesOn = !notesOn; document.getElementById("notes").classList.toggle("on", notesOn);
+  }
+  else if (k === "h" || k === "H") {
+    hudOn = !hudOn; document.getElementById("hud").classList.toggle("on", hudOn);
+    if (hudOn && !t0) startClock();
+  }
+  else if (k === "r" || k === "R") startClock();
+  else if (k === "C" && e.shiftKey) {
+    if (!camPx()) return;              // nothing reserved, nothing to align to
+    camGuideOn = !camGuideOn; drawCamGuide();
+  }
+  else if (k === "c") setCam(CAM ? null : "left");
+  else if ((k === "[" || k === "]") && camPx())
+    setCam(CAM, CAMW + (k === "]" ? 0.02 : -0.02));
+  else if (k === "g" || k === "G") { document.getElementById("grid").classList.toggle("on"); buildGrid(); }
+  else if (k === "f" || k === "F") {
+    if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+  }
+  // fair-value calculator, only while the verdict slide is up
+  else if (DECK.slides[cur].type === "verdict") {
+    if (k === "Tab") { e.preventDefault(); selAsm = (selAsm + (e.shiftKey ? 3 : 1)) % 4; renderCalc(slides[cur]); }
+    else if (k === "ArrowUp" || k === "ArrowDown") {
+      e.preventDefault();
+      const a = ASM_KEYS[selAsm], dir = k === "ArrowUp" ? 1 : -1;
+      ["bear","base","bull"].forEach(c => liveCases[c][a.k] = +(liveCases[c][a.k] + dir * a.step).toFixed(2));
+      renderCalc(slides[cur]);
+    }
+  }
+});
+
+// deep-link + stored theme
+const q = new URLSearchParams(location.search);
+setTheme(q.get("theme") === "dark" ? "dark"
+       : q.get("theme") === "cream" ? "cream"
+       : (() => { try { return localStorage.getItem("nr_deck_theme") || "cream"; } catch(e){ return "cream"; } })());
+show(location.hash.startsWith("#s") ? (+location.hash.slice(2) - 1) || 0 : 0);
+})();
+</script>
+</body>
+</html>

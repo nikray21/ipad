@@ -1,0 +1,110 @@
+{
+  "_README": [
+    "Template for episodes/<SYM>.json — the filing-read facts for one Sunday episode.",
+    "Delete every _README and _HOWTO key before building.",
+    "RULE ZERO: at least three original findings or the build fails.",
+    "Every figure names the source id it came from. Every source id resolves in `sources`.",
+    "See skills/stock-analysis-presentation/references/episode-contract.md for the full contract.",
+    "Worked examples that shipped: pipeline/episodes/{NBIS,PLTR,DVA,SPCX,RKLB}.json"
+  ],
+
+  "symbol": "SYM",
+  "company": "Full Legal Name N.V.",
+  "episodeDate": "YYYY-MM-DD",
+
+  "_HOWTO_sources": "One entry per filing you cite. `label` is what renders in SOURCES.md; `url` is the EDGAR archive folder. Source ids are referenced by every figure's `src`.",
+  "sources": {
+    "8k-q2-26": {
+      "label": "8-K — Q2 2026 earnings release (EX-99.1), filed Aug 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/CIK/ACCESSIONNODASH/"
+    },
+    "10q-q2-26": {
+      "label": "10-Q — quarter ended Jun 30 2026, filed Aug 12 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/CIK/ACCESSIONNODASH/"
+    },
+    "10k-2025": {
+      "label": "10-K — fiscal year 2025, filed Feb 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/CIK/ACCESSIONNODASH/"
+    }
+  },
+
+  "_HOWTO_filings": "Every figure read out of a filing. `v` = the value, `src` = a source id, `unit` = what it is. validate_facts.py re-finds each one in the filing text on a NUMBER BOUNDARY — add `_pct` or `searchAs` if a figure appears differently in the text; never loosen the match. Mark anything you recomputed across many filings `_derived`.",
+  "filings": {
+    "_vendorNote": "Optional. If crosscheck.py disagrees with the filings, explain exactly why here and state that the filings win.",
+    "results": {
+      "revenueQ2":      { "v": 0.0, "src": "8k-q2-26", "unit": "USD millions" },
+      "revenueQ2prior": { "v": 0.0, "src": "8k-q2-26", "unit": "USD millions" },
+      "revenueH1":      { "v": 0.0, "src": "8k-q2-26", "unit": "USD millions" }
+    },
+    "guidance": {
+      "fyRevenueLow":  { "v": 0.0, "src": "8k-q2-26", "unit": "USD millions" },
+      "fyRevenueHigh": { "v": 0.0, "src": "8k-q2-26", "unit": "USD millions" }
+    },
+    "balance": {
+      "cash": { "v": 0.0, "src": "10q-q2-26", "unit": "USD millions" },
+      "debt": { "v": 0.0, "src": "10q-q2-26", "unit": "USD millions" }
+    },
+    "insider": {
+      "_derived": true,
+      "_HOWTO": "No single Form 4 states an aggregate. Cache the XML under .cache_form4/<SYM>/ and let the audit re-parse and recompute it.",
+      "soldUSD":   { "v": 0.0, "src": "form4", "unit": "USD" },
+      "boughtUSD": { "v": 0.0, "src": "form4", "unit": "USD" }
+    }
+  },
+
+  "_HOWTO_findings": "THREE MINIMUM. `stat` renders at 44px accent under a FINDING NN label. `claim` is one explaining line. `where` MUST name the note, page, table or statement — 'the 10-Q' is rejected; '10-Q Note 3, three pages past the highlights' is accepted. ORDER THIS LIST TO DELIVERY ORDER or the breadcrumb kickers lie.",
+  "findings": [
+    {
+      "stat": "$781M",
+      "claim": "One sentence: the number management leads with, set against the number they file three pages later.",
+      "where": "10-Q Note 3 — the revenue-recognition paragraph, three pages past the highlights",
+      "src": "10q-q2-26"
+    },
+    {
+      "stat": "1.4%",
+      "claim": "Second finding.",
+      "where": "10-Q statement of operations, the tax line",
+      "src": "10q-q2-26"
+    },
+    {
+      "stat": "93% → 83% → 72%",
+      "claim": "Third finding.",
+      "where": "arithmetic on the guide they published as a raise",
+      "src": "8k-q2-26"
+    }
+  ],
+
+  "_HOWTO_fairValue": "Three cases so the deck can ship a bear/bull bracket, never a single point estimate (Rule 20). The fvband entry line is computed in derive() — e.g. the midpoint of base and bull.",
+  "fairValue": {
+    "horizonYears": 5,
+    "requiredReturn": 10.0,
+    "cases": {
+      "bear": { "revGrowth": 20.0, "opMargin":  8.0, "exitPE": 20.0, "shareChange": 6.0 },
+      "base": { "revGrowth": 35.0, "opMargin": 14.0, "exitPE": 25.0, "shareChange": 4.0 },
+      "bull": { "revGrowth": 50.0, "opMargin": 22.0, "exitPE": 30.0, "shareChange": 3.0 }
+    }
+  },
+
+  "_HOWTO_verdict": "`call` is BUY / WATCH / AVOID. `callLine` is the one sentence. Tiles are the scored dimensions; `rating` is strong / mixed / weak.",
+  "verdict": {
+    "call": "WATCH",
+    "callLine": "One sentence. No typed figures — use {path|fmt} tokens for anything price-dependent.",
+    "tiles": [
+      { "dim": "Growth",             "rating": "strong", "fact": "" },
+      { "dim": "Demand",             "rating": "strong", "fact": "" },
+      { "dim": "Operating leverage", "rating": "mixed",  "fact": "" },
+      { "dim": "Profitability",      "rating": "weak",   "fact": "" },
+      { "dim": "Cash & funding",     "rating": "mixed",  "fact": "" },
+      { "dim": "Valuation",          "rating": "weak",   "fact": "" }
+    ]
+  },
+
+  "_HOWTO_proseLiteralsOK": "Structural filing figures that are fixed for the quarter and therefore allowed to appear literally in prose. Every entry is a decision someone made — keep the list short and justified.",
+  "proseLiteralsOK": ["97.6%", "$43M"],
+
+  "_HOWTO_notes": "One key per slide id. The long-form presenter script — never rendered on screen, lands in SCRIPT.md and Notes/. Write these properly; they are half the episode. Include the target duration.",
+  "notes": {
+    "findings": "COLD OPEN, to camera before the deck: … THEN the slide: … TARGET 26s.",
+    "quarter": "…"
+  }
+}

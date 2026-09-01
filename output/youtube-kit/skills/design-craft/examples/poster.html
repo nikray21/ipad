@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — Print poster (18×24in)</title>
+<!--
+  DEMONSTRATES: fixed-canvas print composition. Explicit pixel page (18×24in
+  @ 96dpi = 1728×2304), enormous typographic hierarchy, strict grid, one accent,
+  generous margins, hairline rules, a single dominant element. No responsive
+  rules — the export sizes to the canvas. This is how print/poster/social work.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:oklch(0.18 0.02 40); --paper:oklch(0.95 0.02 85);
+    --accent:oklch(0.58 0.19 30); --mut:oklch(0.42 0.03 40);
+    --m:120px; /* margin */
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{background:#3a3a3a}
+  body{display:grid;place-items:center;padding:40px;font-family:'Archivo',sans-serif}
+  .page{width:1728px;height:2304px;background:var(--paper);color:var(--ink);
+    padding:var(--m);position:relative;overflow:hidden;
+    box-shadow:0 40px 120px rgb(0 0 0/.5);display:flex;flex-direction:column}
+  .top{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:26px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    padding-bottom:28px;border-bottom:2px solid var(--ink)}
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .kicker{font-size:38px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:24px}
+  h1{font-family:'Archivo Black',sans-serif;font-weight:900;font-size:340px;line-height:0.82;
+    letter-spacing:-0.03em;text-transform:uppercase}
+  h1 .o{color:var(--paper);-webkit-text-stroke:5px var(--ink)}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lead{font-size:44px;line-height:1.25;max-width:22ch;margin-top:56px;color:var(--mut);text-wrap:pretty;font-weight:400}
+  .bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;
+    padding-top:40px;border-top:2px solid var(--ink);font-size:28px;line-height:1.35}
+  .bottom .l{font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:22px;color:var(--accent);margin-bottom:10px}
+  .num{position:absolute;right:var(--m);top:calc(var(--m) + 120px);
+    font-family:'Archivo Black';font-size:900px;line-height:.7;color:var(--accent);
+    opacity:.10;letter-spacing:-.04em;pointer-events:none}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="num">26</div>
+    <div class="top"><span>Design Studio</span><span>No. 26 · 2026</span></div>
+    <div class="hero">
+      <div class="kicker">Annual Exhibition · Free Entry</div>
+      <h1>Make<br>it <em>mean</em><br><span class="o">some</span>thing</h1>
+      <p class="lead">A show of work where every decision was made on purpose. Typography, motion, and the quiet craft in between.</p>
+    </div>
+    <div class="bottom">
+      <div><div class="l">When</div>September 12–30<br>10am – 8pm daily</div>
+      <div><div class="l">Where</div>The Long Gallery<br>140 Field Street</div>
+      <div><div class="l">Tickets</div>Free, no booking<br>studio.example/show</div>
+    </div>
+  </div>
+</body>
+</html>

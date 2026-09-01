@@ -1,0 +1,757 @@
+{
+  "symbol": "RKLB",
+  "company": "Rocket Lab Corporation",
+  "episodeDate": "2026-08-10",
+  "_note": "Q2 2026 landed AFTER the close on Aug 10. The regular session closed at $80.04; the quote is the after-hours print. The deck says so on screen \u2014 the market's real verdict is tomorrow's session, and no reaction figure is claimed.",
+  "sources": {
+    "8k-q2-26": {
+      "label": "8-K EX-99.1 \u2014 Q2 2026 results, filed Aug 10 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000061/"
+    },
+    "10q-q2-26": {
+      "label": "10-Q \u2014 quarter ended June 30 2026, filed Aug 10 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000062/rklb-20260630.htm"
+    },
+    "8k-iridium": {
+      "label": "8-K \u2014 Iridium merger agreement, filed June 29 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001085/g085783_8k.htm"
+    },
+    "8k-q4-24": {
+      "label": "8-K EX-99.1 \u2014 Q4'24 results, filed Feb 27 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000162828025008658/"
+    },
+    "8k-q1-25": {
+      "label": "8-K EX-99.1 \u2014 Q1'25 results, filed May 8 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000162828025023816/"
+    },
+    "8k-q2-25": {
+      "label": "8-K EX-99.1 \u2014 Q2'25 results, filed Aug 7 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000162828025038900/"
+    },
+    "8k-q3-25": {
+      "label": "8-K EX-99.1 \u2014 Q3'25 results, filed Nov 10 2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999425000020/"
+    },
+    "8k-q4-25": {
+      "label": "8-K EX-99.1 \u2014 Q4'25 results, filed Feb 26 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000012/"
+    },
+    "8k-q1-26": {
+      "label": "8-K EX-99.1 \u2014 Q1'26 results, filed May 7 2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000027/"
+    }
+  },
+  "findings": [
+    {
+      "claim": "The rocket business shrank. Launch revenue fell 4.4% year over year while the release led with record revenue, up 62%.",
+      "where": "10-Q Note 18, Segments \u2014 the Launch Services column, twelve pages past the income statement",
+      "src": "10q-q2-26"
+    },
+    {
+      "claim": "Revenue grew 77% across seven quarters and the operating loss did not move. It has not once left the band between $51M and $60M.",
+      "where": "the operating loss line across eight consecutive quarterly 8-Ks, lined up",
+      "src": "8k-q2-26"
+    },
+    {
+      "claim": "The cash half of the Iridium deal is bigger than all the cash Rocket Lab has. $27.00 a share on 108.5M shares is about $2.9B; they hold $2.4B.",
+      "where": "8-K of June 29, Item 1.01 \u2014 the Merger Consideration paragraph \u2014 set against the 10-Q's cash and marketable securities lines",
+      "src": "8k-iridium"
+    },
+    {
+      "claim": "Every headline contract number in the release carries the same footnote: it includes options the customer never has to exercise.",
+      "where": "8-K EX-99.1, footnote 1 under the highlights \u2014 attached to the $437M, the $397M and the $1B of Q3 signings",
+      "src": "8k-q2-26"
+    },
+    {
+      "claim": "$924M of insider selling and not one share bought, with the founder-CEO alone selling $557M. Fewer than four in ten of those filings cite a pre-set plan.",
+      "where": "64 SEC Form 4 filings over twelve months \u2014 table I, the non-derivative transaction rows, codes S and P only \u2014 aggregated and recomputed by the audit",
+      "src": "8k-q2-26"
+    }
+  ],
+  "filings": {
+    "results": {
+      "revenueQ2": {
+        "v": 234066,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "revenueQ2prior": {
+        "v": 144498,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "revenueH1": {
+        "v": 434414,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "revenueH1prior": {
+        "v": 267067,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "productRevQ2": {
+        "v": 181347,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "productRevQ2prior": {
+        "v": 92725,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "serviceRevQ2": {
+        "v": 52719,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "serviceRevQ2prior": {
+        "v": 51773,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "grossProfitQ2": {
+        "v": 84576,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "grossProfitQ2prior": {
+        "v": 46388,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "rndQ2": {
+        "v": 82429,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "rndQ2prior": {
+        "v": 66134,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "sgaQ2": {
+        "v": 59661,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "sgaQ2prior": {
+        "v": 39893,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "opexQ2": {
+        "v": 142090,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "opexQ2prior": {
+        "v": 106027,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "opLossQ2": {
+        "v": -57514,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "Operating loss (57,514)"
+      },
+      "opLossQ2prior": {
+        "v": -59639,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "(57,514) (59,639)"
+      },
+      "netLossQ2": {
+        "v": -49258,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "Net loss $ (49,258)"
+      },
+      "netLossQ2prior": {
+        "v": -66414,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "(49,258) $ (66,414)"
+      },
+      "interestIncomeQ2": {
+        "v": 16486,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "interestIncomeQ2prior": {
+        "v": 5019,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "adjEbitdaQ2": {
+        "v": -8833,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "ADJUSTED EBITDA $ (8,833)"
+      },
+      "adjEbitdaQ2prior": {
+        "v": -27584,
+        "src": "8k-q2-26",
+        "unit": "USD thousands",
+        "searchAs": "(8,833) $ (27,584)"
+      },
+      "nonGaapGrossProfitQ2": {
+        "v": 97033,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "nonGaapGrossMarginQ2": {
+        "v": 41.5,
+        "src": "8k-q2-26",
+        "unit": "%"
+      },
+      "epsQ2": {
+        "v": -0.08,
+        "src": "8k-q2-26",
+        "unit": "USD",
+        "searchAs": "Basic and diluted $ (0.08)"
+      },
+      "wtdAvgSharesQ2": {
+        "v": 629681803,
+        "src": "8k-q2-26"
+      }
+    },
+    "sbc": {
+      "src": "8k-q2-26",
+      "_units": "USD thousands, Q2 2026",
+      "inGrossProfit": 5090,
+      "inRnd": 6934,
+      "inSga": 7537
+    },
+    "segments": {
+      "src": "10q-q2-26",
+      "_units": "USD thousands",
+      "revQ2": {
+        "launch": 44586,
+        "space": 189480
+      },
+      "revQ2prior": {
+        "launch": 46646,
+        "space": 97852
+      },
+      "grossQ2": {
+        "launch": 19110,
+        "space": 65466
+      },
+      "grossQ2prior": {
+        "launch": 14220,
+        "space": 32168
+      },
+      "revH1": {
+        "launch": 108249,
+        "space": 326165
+      },
+      "revH1prior": {
+        "launch": 82238,
+        "space": 184829
+      }
+    },
+    "balanceSheet": {
+      "cash": {
+        "v": 2129485,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "securitiesCurrent": {
+        "v": 172700,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "securitiesNonCurrent": {
+        "v": 85405,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "totalAssets": {
+        "v": 4187374,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "totalLiabilities": {
+        "v": 695221,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "contractLiabilities": {
+        "v": 351193,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "convertibleNotes": {
+        "v": 13129,
+        "src": "8k-q2-26",
+        "unit": "USD thousands"
+      },
+      "longTermBorrowings": {
+        "v": 1716,
+        "src": "8k-q2-26",
+        "unit": "thousands",
+        "note": "The balance sheet's own 'Long-term borrowings, net' line, separate from the convertible notes. Excluding it made a tile that says 'borrowings' quote only the notes."
+      },
+      "goodwill": {
+        "v": 299072,
+        "src": "10q-q2-26",
+        "unit": "USD thousands"
+      },
+      "goodwillPrior": {
+        "v": 205750,
+        "src": "10q-q2-26",
+        "unit": "USD thousands"
+      },
+      "commonOutstanding": {
+        "v": 598180438,
+        "src": "8k-q2-26"
+      },
+      "preferredOutstanding": {
+        "v": 40951250,
+        "src": "8k-q2-26"
+      },
+      "sharesOutstanding": {
+        "v": 639131.688,
+        "src": "8k-q2-26",
+        "unit": "thousands",
+        "_derived": true,
+        "_derivedNote": "Common outstanding 598,180,438 + preferred 40,951,250. Both printed on the balance sheet and validated individually. Note 17 states the preferred is treated as common for earnings per share, and the company's own Q3 guidance counts 641 million shares 'including approximately 41 million of Series A Convertible Participating Preferred Shares'. decks/RKLB.py re-adds them and dies on a mismatch."
+      }
+    },
+    "guidance": {
+      "src": "8k-q2-26",
+      "_note": "Q3 2026, as issued Aug 10 2026",
+      "revLow": 250,
+      "revHigh": 265,
+      "gaapGmLow": 29,
+      "gaapGmHigh": 31,
+      "opexLow": 143,
+      "opexHigh": 149,
+      "adjEbitdaLossLow": 17,
+      "adjEbitdaLossHigh": 23,
+      "sharesGuided": 641,
+      "preferredInGuide": 41,
+      "searchAs": {
+        "gaapGmLow": "GAAP Gross Margins between 29% and 31%",
+        "gaapGmHigh": "between 29% and 31%",
+        "preferredInGuide": "approximately 41 million of Series A Convertible Participating Preferred Shares"
+      }
+    },
+    "backlog": {
+      "total": {
+        "v": 2.36,
+        "src": "8k-q2-26",
+        "unit": "USD billions"
+      },
+      "growthPct": {
+        "v": 137,
+        "src": "8k-q2-26",
+        "unit": "%"
+      }
+    },
+    "iridium": {
+      "cashPerShare": {
+        "v": 27.0,
+        "src": "8k-iridium",
+        "unit": "USD per share"
+      },
+      "ratioFloor": {
+        "v": 0.24,
+        "src": "8k-iridium"
+      },
+      "ratioCap": {
+        "v": 0.4,
+        "src": "8k-iridium"
+      },
+      "collarLow": {
+        "v": 67.5,
+        "src": "8k-iridium",
+        "unit": "USD"
+      },
+      "collarHigh": {
+        "v": 112.5,
+        "src": "8k-iridium",
+        "unit": "USD"
+      },
+      "targetShares": {
+        "v": 108.5,
+        "src": "8k-q2-26",
+        "unit": "millions",
+        "_derived": true,
+        "_derivedNote": "Iridium's own latest filed weighted-average share count, read live off its XBRL through marketdata.get('fundamentals','IRDM'). Not a Rocket Lab figure, so no Rocket Lab filing states it."
+      },
+      "quote": {
+        "v": "each issued and outstanding share of common stock of Iridium \u2026 will be converted into the right to receive (i) $27.00 in cash",
+        "src": "8k-iridium",
+        "note": "Merger Consideration paragraph"
+      }
+    },
+    "insider": {
+      "_derived": true,
+      "src": "8k-q2-26",
+      "windowEnd": "2026-08-10",
+      "totalSoldShares": 13885859,
+      "totalSoldValue": 923.8,
+      "totalBought": 0,
+      "distinctSellers": 11,
+      "plan10b5Filings": 25,
+      "totalFilings": 64,
+      "buckets": [
+        {
+          "label": "0\u20133 months",
+          "people": 6,
+          "sold": 3849294,
+          "value": 362.8,
+          "bought": 0
+        },
+        {
+          "label": "3\u20136 months",
+          "people": 5,
+          "sold": 233449,
+          "value": 16.5,
+          "bought": 0
+        },
+        {
+          "label": "6\u20139 months",
+          "people": 8,
+          "sold": 4396755,
+          "value": 277.0,
+          "bought": 0
+        },
+        {
+          "label": "9\u201312 months",
+          "people": 5,
+          "sold": 5406361,
+          "value": 267.5,
+          "bought": 0
+        }
+      ],
+      "topSellers": [
+        {
+          "name": "Peter Beck",
+          "role": "Founder, CEO",
+          "shares": 0,
+          "value": 557.0
+        },
+        {
+          "name": "Adam Spice",
+          "role": "CFO",
+          "shares": 0,
+          "value": 164.3
+        },
+        {
+          "name": "Matthew Ocko",
+          "role": "Director",
+          "shares": 0,
+          "value": 90.3
+        }
+      ],
+      "_derivedNote": "Aggregated from 64 Form 4 XML filings cached under .cache_form4/RKLB/. Codes S and P only \u2014 grants (A), gifts (G), option exercises (M), conversions (C) and other (J) excluded. audit_deck.py re-parses and recomputes every figure here."
+    },
+    "earningsHistory": {
+      "releases": [
+        {
+          "date": "2025-02-27",
+          "q": "Q4'24",
+          "fy": "2025",
+          "guideLow": 117,
+          "guideHigh": 123,
+          "src": "8k-q4-24"
+        },
+        {
+          "date": "2025-05-08",
+          "q": "Q1'25",
+          "fy": "2025",
+          "guideLow": 130,
+          "guideHigh": 140,
+          "src": "8k-q1-25"
+        },
+        {
+          "date": "2025-08-07",
+          "q": "Q2'25",
+          "fy": "2025",
+          "guideLow": 145,
+          "guideHigh": 155,
+          "src": "8k-q2-25"
+        },
+        {
+          "date": "2025-11-10",
+          "q": "Q3'25",
+          "fy": "2025",
+          "guideLow": 170,
+          "guideHigh": 180,
+          "src": "8k-q3-25"
+        },
+        {
+          "date": "2026-02-26",
+          "q": "Q4'25",
+          "fy": "2026",
+          "guideLow": 185,
+          "guideHigh": 200,
+          "src": "8k-q4-25"
+        },
+        {
+          "date": "2026-05-07",
+          "q": "Q1'26",
+          "fy": "2026",
+          "guideLow": 225,
+          "guideHigh": 240,
+          "src": "8k-q1-26"
+        },
+        {
+          "date": "2026-08-10",
+          "q": "Q2'26",
+          "fy": "2026",
+          "guideLow": 250,
+          "guideHigh": 265,
+          "src": "8k-q2-26"
+        }
+      ]
+    },
+    "quarterly": {
+      "_note": "Revenue and operating loss as reported in each quarter's OWN 8-K \u2014 that is the point of the table, and it is why every row carries a different src. EPS is null before Q2'26 because this company has no earnings series to build.",
+      "rows": [
+        {
+          "q": "Q4'24",
+          "end": "2024-12-31",
+          "eps": null,
+          "revenue": 132388,
+          "opLoss": -51549,
+          "src": "8k-q4-24",
+          "searchAs_opLoss": "Operating loss (51,549)"
+        },
+        {
+          "q": "Q1'25",
+          "end": "2025-03-31",
+          "eps": null,
+          "revenue": 122569,
+          "opLoss": -59188,
+          "src": "8k-q1-25",
+          "searchAs_opLoss": "Operating loss (59,188)"
+        },
+        {
+          "q": "Q2'25",
+          "end": "2025-06-30",
+          "eps": null,
+          "revenue": 144498,
+          "opLoss": -59639,
+          "src": "8k-q2-25",
+          "searchAs_opLoss": "Operating loss (59,639)"
+        },
+        {
+          "q": "Q3'25",
+          "end": "2025-09-30",
+          "eps": null,
+          "revenue": 155080,
+          "opLoss": -58969,
+          "src": "8k-q3-25",
+          "searchAs_opLoss": "Operating loss (58,969)"
+        },
+        {
+          "q": "Q4'25",
+          "end": "2025-12-31",
+          "eps": null,
+          "revenue": 179652,
+          "opLoss": -51042,
+          "src": "8k-q4-25",
+          "searchAs_opLoss": "Operating loss (51,042)"
+        },
+        {
+          "q": "Q1'26",
+          "end": "2026-03-31",
+          "eps": null,
+          "revenue": 200348,
+          "opLoss": -55969,
+          "src": "8k-q1-26",
+          "searchAs_opLoss": "Operating loss (55,969)"
+        },
+        {
+          "q": "Q2'26",
+          "end": "2026-06-30",
+          "eps": -0.08,
+          "revenue": 234066,
+          "opLoss": -57514,
+          "src": "8k-q2-26",
+          "searchAs_opLoss": "Operating loss (57,514)"
+        }
+      ]
+    },
+    "peers": {
+      "tickers": [
+        "IRDM",
+        "BA",
+        "NOC",
+        "LMT",
+        "LHX"
+      ],
+      "names": {
+        "IRDM": "Iridium (the target)",
+        "BA": "Boeing",
+        "NOC": "Northrop Grumman",
+        "LMT": "Lockheed Martin",
+        "LHX": "L3Harris"
+      },
+      "target": "IRDM",
+      "defense": [
+        "BA",
+        "NOC",
+        "LMT",
+        "LHX"
+      ],
+      "_note": "`target` is the company RKLB is buying, not a comparable. Any 'versus the defense primes' figure must average `defense` only \u2014 averaging all five gave 23.8x and the headline attributed it to the primes alone."
+    },
+    "contracts": {
+      "newLaunchContracts": {
+        "v": 437,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "searchAs": "more than $437 million"
+      },
+      "sbAmtiAward": {
+        "v": 397,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "searchAs": "Awarded a $397 million"
+      },
+      "geoSatellites": {
+        "v": 160,
+        "src": "8k-q2-26",
+        "unit": "USD millions",
+        "searchAs": "more than $160 million across two contracts"
+      },
+      "revenueGrowthQ2": {
+        "v": 62,
+        "src": "8k-q2-26",
+        "unit": "%",
+        "searchAs": "a 62% increase YoY"
+      }
+    }
+  },
+  "fairValue": {
+    "_comment": "Revenue-based over five years, because Rocket Lab has never earned an operating profit and the exit margin is the whole question. Tax is set to zero for the horizon \u2014 there are years of losses to work through first, and taxing the terminal year would flatter nothing since we are valuing on the exit multiple anyway. Net debt is negative: they hold about $2.4B of cash and securities against almost no borrowing. It does NOT model the Iridium acquisition, which is the single biggest thing that would change every input.",
+    "horizonYears": 5,
+    "requiredReturn": 12.0,
+    "cases": {
+      "bear": {
+        "revGrowth": 20.0,
+        "opMargin": 6.0,
+        "exitPE": 22.0,
+        "shareChange": 6.0
+      },
+      "base": {
+        "revGrowth": 32.0,
+        "opMargin": 12.0,
+        "exitPE": 30.0,
+        "shareChange": 4.5
+      },
+      "bull": {
+        "revGrowth": 45.0,
+        "opMargin": 18.0,
+        "exitPE": 38.0,
+        "shareChange": 3.0
+      }
+    },
+    "constants": {
+      "netDebt": -2374461,
+      "interestRate": 4.0,
+      "taxRate": 0.0,
+      "nciAnnualRunRate": 0,
+      "startRevenueTTM": 769146
+    }
+  },
+  "proseLiteralsOK": [
+    "record revenue, up 62%",
+    "up 62% year over year",
+    "a 4.4% fall in launch revenue",
+    "$27.00 a share in cash",
+    "$557M of it by the founder"
+  ],
+  "verdict": {
+    "call": "NOT YET",
+    "callLine": "Flawless revenue execution, no progress at all on profit, and a {iridiumCash|usd} cash bill about to land.",
+    "scored": [
+      {
+        "dim": "Revenue growth",
+        "score": 5,
+        "tone": "",
+        "fact": "Revenue grew {revGrowth|%0} to {rev|usd} and has beaten or hit the top of guidance seven quarters running."
+      },
+      {
+        "dim": "Backlog",
+        "score": 5,
+        "tone": "",
+        "fact": "Backlog of $2.36B, more than double a year ago \u2014 though the headline contract values include options."
+      },
+      {
+        "dim": "Balance sheet",
+        "score": 4,
+        "tone": "",
+        "fact": "{netCashPos|usd} of cash and securities against {totalDebt|usd} of borrowings."
+      },
+      {
+        "dim": "Path to profit",
+        "score": 1,
+        "tone": "bad",
+        "fact": "The operating loss is {opLoss|usd}, statistically unchanged across eight quarters while revenue nearly doubled."
+      },
+      {
+        "dim": "The launch business",
+        "score": 2,
+        "tone": "warn",
+        "fact": "Launch revenue fell {launchChangeAbs|%0} year over year to {launchRev|usd}. All the growth is in Space Systems."
+      },
+      {
+        "dim": "Valuation",
+        "score": 1,
+        "tone": "bad",
+        "fact": "{psAnnualised|x0} the revenue this quarter annualises to, for a business that has never made an operating profit."
+      }
+    ],
+    "working": [
+      "Revenue grew {revGrowth|%0} to {rev|usd} \u2014 a record, and the seventh straight quarter at or above the top of guidance",
+      "Backlog of {backlogTotal|usd}, up {backlogGrowth|%0} in a year",
+      "Gross margin reached {gmPct|%} \u2014 the business does make money on what it sells",
+      "{netCashPos|usd} of cash and securities, and the convertible notes are all but gone",
+      "Neutron first-flight hardware is in assembly, with the rocket targeted at the pad in Q4 2026"
+    ],
+    "watch": [
+      "The operating loss has not improved in eight quarters \u2014 {opLoss|usd} this time",
+      "Launch revenue went backwards: down {launchChangeAbs|%0} year over year",
+      "The Iridium cash bill is about {iridiumCash|usd} against {netCashPos|usd} on hand",
+      "Every headline contract figure includes options the customer can decline",
+      "{insiderSold|usd} of insider selling, {insiderTopValue|usd} of it by the founder, and nothing bought"
+    ],
+    "why": [
+      "Start with what is genuinely excellent, because a lot of it is. Revenue grew {revGrowth|%0} to {rev|usd}, a record, and they have now landed at or above the top of their own guidance seven quarters in a row. That is rare. Backlog more than doubled. Gross margin is {gmPct|%}. They are about to fly a reusable medium-lift rocket. Nobody should mistake this for a bad company.",
+      "Now the thing that stopped me. Line up eight quarters of operating loss and it does not move: {opLossMin|usd} to {opLossMax|usd}, every single quarter, while revenue grew {revOverPeriod|%0} from {revFirst|usd} to {rev|usd}. Every extra dollar of sales has been spent. That is a choice, not a failure \u2014 but it means the profit everyone is waiting for keeps being deferred one more year.",
+      "And look where the growth is. Launch revenue \u2014 the rockets, the thing this company is named after \u2014 fell {launchChangeAbs|%0} year over year to {launchRev|usd}. All of the growth is Space Systems, the satellite and components business. That is a good business. It is also a manufacturing business trading on a rocket company's multiple.",
+      "Then the bill. They have agreed to pay Iridium shareholders $27.00 a share in cash. On Iridium's own share count that is about {iridiumCash|usd}. Rocket Lab holds {netCashPos|usd}. The cash they have promised is larger than the cash they have, which means borrowing, issuing shares, or both \u2014 on top of a share count that has already grown {shareGrowth|%0} in a year.",
+      "So: not yet. I want to own the company that flies Neutron and turns Space Systems into real profit. I do not want to pay {psAnnualised|x0} revenue for it the week before it writes a cheque it cannot yet cover."
+    ]
+  },
+  "notes": {
+    "title": "Rocket Lab reported Q2 after the close today, and the stock is down about ten percent in after-hours trading. Nothing is settled \u2014 the real verdict is tomorrow. But the filings are already public, so let's read them before the market decides. TARGET 22s.",
+    "tape": "Here is the two-year picture. It ran to a hundred and fifty dollars in May, then fell sixty-one percent to fifty-eight in July. It had clawed back to eighty-three by Friday. Then tonight's numbers. TARGET 24s.",
+    "findings": "Five things in tonight's filings that are not in tonight's headline. Every one comes from a document filed in the last few hours, or from the eight quarters before it. TARGET 26s.",
+    "business": "Two businesses. Launch Services flies Electron rockets. Space Systems builds satellites and the parts that go in them. Hold on to which is which, because the next slide is the whole episode. TARGET 22s.",
+    "segments": "This is the one. The release says record revenue, up sixty-two percent. Underneath, the rocket business shrank four point four percent. Every dollar of growth came from the satellite side. TARGET 30s.",
+    "growth": "And the growth itself is real and relentless. Seven quarters in a row they have landed at or above the top of their own guidance. That is genuinely hard to do. TARGET 24s.",
+    "flatloss": "Now put the loss underneath it. Revenue nearly doubled. The operating loss did not move \u2014 it has been between fifty-one and sixty million every single quarter for two years. Every extra dollar of sales was spent. TARGET 32s.",
+    "opex": "Here is where it went. Research and development up twenty-five percent, sales and admin up fifty percent. They are spending ahead of Neutron and ahead of the acquisitions. TARGET 24s.",
+    "interest": "And be careful with the improving net loss. Most of that improvement is interest on the two point four billion of cash they raised \u2014 not the business getting closer to profit. TARGET 26s.",
+    "ebitda": "Watch the adjusted number too. Adjusted losses of nine million against a real operating loss of fifty-eight million. Nineteen million of the difference is pay handed out in shares. TARGET 28s.",
+    "gross": "None of which means the product is bad. Gross margin is thirty-six percent and rising, and the launch side actually earns forty-three cents in the dollar now. The problem is below the gross line, not above it. TARGET 24s.",
+    "backlog": "Backlog is a record two point three six billion, more than double last year. One caveat, in the release's own footnote: the headline contract values include options the customer never has to exercise. TARGET 26s.",
+    "iridium": "And then this. They are buying Iridium \u2014 twenty-seven dollars a share in cash, plus stock. On Iridium's share count that cash is about two point nine billion. Rocket Lab has two point four. TARGET 32s.",
+    "collar": "The stock half has a collar. Between sixty-seven fifty and a hundred twelve fifty, Iridium holders get a fixed twenty-seven dollars of stock. Below sixty-seven fifty, the ratio locks. The stock is inside that band tonight, close to the bottom of it. TARGET 28s.",
+    "insider": "Nine hundred and twenty-four million of insider selling over the year. Not one share bought. Five hundred and fifty-seven million of it by the founder and chief executive. And fewer than four in ten of those filings mention a pre-set plan. TARGET 32s.",
+    "valuation": "So what are you paying. Annualise this quarter and it is about sixty times sales, for a company that has never earned an operating profit. TARGET 26s.",
+    "peers": "Against the defense primes it builds alongside \u2014 and against Iridium, the company it is buying \u2014 Rocket Lab is in a different universe on price. TARGET 24s.",
+    "verdict": "Six dimensions. The growth and the backlog are excellent. The profit path, the launch business and the price are not. TARGET 24s.",
+    "twolists": "What's working, and what I'd watch. TARGET 20s.",
+    "fairvalue": "My own arithmetic, and it has to be generous to get anywhere near tonight's price. TARGET 26s.",
+    "call": "Not yet. A company I want to own at a price I don't, the week before it writes a cheque it can't cover. Let's go to the chart. TARGET 30s."
+  }
+}

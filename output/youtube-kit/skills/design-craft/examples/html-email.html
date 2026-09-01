@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example — HTML email</title>
+<!--
+  DEMONSTRATES: send-ready email. Table layout, all styles inlined, 600px column,
+  web-safe font stack, bulletproof button, image with alt + fallback bg,
+  mobile-safe single column, real content. Renders in Gmail/Outlook/Apple Mail.
+  (A <style> block is kept ONLY for the responsive enhancement + is optional.)
+-->
+<style>
+  @media (max-width:600px){
+    .col{display:block!important;width:100%!important}
+    .pad{padding:24px!important}
+    .h1{font-size:28px!important}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#eceae4;">
+  <!-- preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0">Your September issue: the quiet craft edition.</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eceae4">
+    <tr><td align="center" style="padding:32px 16px">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden">
+
+        <!-- header -->
+        <tr><td style="padding:28px 40px;border-bottom:1px solid #e6e3dc;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:bold;color:#2a2621;letter-spacing:-0.01em">
+          Field&nbsp;Notes
+          <span style="float:right;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:normal;color:#9a958a;letter-spacing:.08em;text-transform:uppercase;padding-top:8px">Issue 26</span>
+        </td></tr>
+
+        <!-- hero image (alt + bg fallback) -->
+        <tr><td style="background:#d9d3c6;font-size:0;line-height:0">
+          <img src="https://via.placeholder.com/600x280" width="600" height="280" alt="This month's cover: a studio desk at dawn" style="display:block;width:100%;max-width:600px;height:auto;border:0"/>
+        </td></tr>
+
+        <!-- body -->
+        <tr><td class="pad" style="padding:40px">
+          <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;color:#b5552f">The Quiet Craft Edition</p>
+          <h1 class="h1" style="margin:0 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:1.15;color:#2a2621">Small decisions, made on purpose</h1>
+          <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#4a453d">
+            This month we look at the details nobody notices individually and everyone feels together — easing curves, optical margins, and the single word that got cut. Real text, not baked into an image, so it renders even with images off.
+          </p>
+
+          <!-- bulletproof button -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 4px">
+            <tr><td align="center" bgcolor="#2a2621" style="border-radius:4px">
+              <a href="#" style="display:inline-block;padding:15px 30px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none">Read the issue →</a>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <!-- two-up (stacks on mobile) -->
+        <tr><td style="padding:0 40px 32px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td class="col" width="50%" valign="top" style="padding:20px;background:#f6f4ee;border-radius:6px;font-family:Arial,Helvetica,sans-serif">
+              <div style="font-size:12px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:#b5552f">Technique</div>
+              <div style="font-size:16px;line-height:1.4;color:#2a2621;margin-top:6px">Masked line reveals in 20 lines of CSS</div>
+            </td>
+            <td class="col" width="16" style="font-size:0">&nbsp;</td>
+            <td class="col" width="50%" valign="top" style="padding:20px;background:#f6f4ee;border-radius:6px;font-family:Arial,Helvetica,sans-serif">
+              <div style="font-size:12px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:#b5552f">Teardown</div>
+              <div style="font-size:16px;line-height:1.4;color:#2a2621;margin-top:6px">Why one accent beats five</div>
+            </td>
+          </tr></table>
+        </td></tr>
+
+        <!-- footer -->
+        <tr><td style="padding:28px 40px;background:#2a2621;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#b7b1a4">
+          Field Notes · 140 Field Street<br>
+          <a href="#" style="color:#e0dbd0;text-decoration:underline">View in browser</a> ·
+          <a href="#" style="color:#e0dbd0;text-decoration:underline">Unsubscribe</a>
+        </td></tr>
+
+      </table>
+
+      <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#9a958a;margin:20px 0 0">You're receiving this because you signed up at studio.example.</p>
+
+    </td></tr>
+  </table>
+</body>
+</html>

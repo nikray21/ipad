@@ -1,0 +1,46 @@
+=============================================================================
+YOUTUBE DESCRIPTION TEMPLATE — @NikRayani
+Order matters. /post-video fills this from the transcript + episodes/<SYM>.json.
+Delete this header block before pasting.
+=============================================================================
+
+[LINE 1 — the hook, first half. This and line 2 are ALL that show in search.]
+[LINE 2 — the hook, second half. NO LINKS ABOVE THIS FOLD.]
+
+In this video:
+• [Finding 1 — tease it, don't spoil it]
+• [Finding 2]
+• [Finding 3]
+• [The valuation / the call, framed as a question]
+
+📄 Sources — every number in this video traces to a filing:
+[8-K Q2 2026 earnings release] https://www.sec.gov/Archives/edgar/data/.../
+[10-Q quarter ended Jun 30 2026] https://www.sec.gov/Archives/edgar/data/.../
+[10-K FY2025] https://www.sec.gov/Archives/edgar/data/.../
+
+⏱ CHAPTERS
+0:00 [Curiosity-preserving phrase from the content]
+1:24 [The customers who vanished]
+3:07 [...]
+5:41 [My fair value: $173]
+8:12 [...]
+
+⚠️ Not financial advice. I'm not your financial advisor and nothing here is a
+recommendation to buy or sell anything. I read the filings and show my work —
+do your own research and make your own decisions.
+
+#TICKER #StockAnalysis #Investing #StockMarket #DueDiligence
+
+=============================================================================
+RULES
+- Hook = exactly 2 lines. No links, no hashtags, no chapters above it.
+- Chapters: first at 0:00 · at least 3 · every one >= 10 seconds · M:SS ·
+  chronological. Break any of those and NONE of them link.
+- Chapter labels: a phrase from the content that preserves curiosity.
+  Never "Part 2", never "Introduction".
+- Source links come from episodes/<SYM>.json `sources`. Credibility is the brand.
+- Numbers come from the episode JSON, NOT from the transcript's ASR guesses.
+- 4-6 hashtags.
+- Never copy an ASR spelling ("Nebus", "Corvive") into the description.
+- If the video says "comment ___", pin that comment right after posting.
+=============================================================================

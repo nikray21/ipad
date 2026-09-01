@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NIKRAYANI — Visual Library</title>
+<style>
+/* ============================================================
+   SWING-9TO5 — flip-through deck build of the alpha-video episode.
+   Same 19 slides, same words, same choreography — each slide's
+   animation is a pure function of time-since-flip.
+   Shortcuts match the episode-deck template:
+   →/Space next · ← back · T theme · N notes · H HUD · G grid ·
+   F fullscreen · R restart timer · C camera frame · ⇧C OBS numbers ·
+   [ ] resize camera bubble · Esc close grid
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#1b1a19; --surface:#262624; --surface-2:#30302e;
+  --border:rgba(240,238,230,0.10); --ink:#f0eee6; --ink-2:#c2c0b6; --muted:#8f8d84;
+  --grid:#34322f; --accent:#d97757; --s1:#d67350; --s2:#4d90da;
+  --good:#2f9e44; --warn:#e8a33d; --crit:#e05252;
+  --accent-wash:rgba(217,119,87,0.12);
+}
+:root[data-theme="cream"] {
+  color-scheme: light;
+  --bg:#faf9f5; --surface:#ffffff; --surface-2:#f2f0e9;
+  --border:rgba(25,25,25,0.11); --ink:#1f1e1d; --ink-2:#40403c; --muted:#6f6e66;
+  --grid:#e6e3da; --accent:#c2603f; --s1:#c2603f; --s2:#2a78d6;
+  --good:#257a33; --warn:#a9741a; --crit:#b8352f;
+  --accent-wash:rgba(194,96,63,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink); -webkit-font-smoothing:antialiased;
+  font-feature-settings:"kern","liga"; text-rendering:optimizeLegibility;
+  display:flex; align-items:center; justify-content:center;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important; animation-iteration-count:1!important;
+    transition-duration:.01ms!important; scroll-behavior:auto!important;
+  }
+}
+#stage{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none;overflow:hidden;background:var(--bg)}
+
+/* ---------- Camera alignment guide (never on during a take) ---------- */
+#camguide{position:absolute;inset:0;pointer-events:none;z-index:60}
+#camguide .cg-col{position:absolute;top:0;bottom:0;background:var(--accent-wash);
+  border-right:2px dashed var(--accent);opacity:.85}
+#camguide .cg-box{position:absolute;border-radius:28px;background:var(--surface-2);
+  border:2px solid var(--border);opacity:.55}
+#camguide .cg-lab{position:absolute;text-align:center;font-size:19px;font-weight:700;
+  color:var(--accent);letter-spacing:.02em}
+#camguide .cg-lab span{display:block;font-size:16px;font-weight:600;color:var(--muted);
+  margin-top:4px;letter-spacing:.04em}
+
+/* ---------- Presenter notes drawer ---------- */
+#notes{
+  position:fixed; left:0; right:0; bottom:0; max-height:42vh; overflow:auto;
+  background:var(--surface); border-top:2px solid var(--accent);
+  padding:20px 30px 24px; display:none; z-index:80;
+  box-shadow:0 -14px 40px rgba(0,0,0,.22);
+}
+#notes.on{display:block}
+#notes .nh{font-size:12px;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:9px}
+#notes p{font-size:17.5px;line-height:1.5;color:var(--ink);max-width:1500px}
+
+/* ---------- Grid overview ---------- */
+#grid{position:fixed;inset:0;background:var(--bg);z-index:90;display:none;overflow:auto;padding:34px}
+#grid.on{display:block}
+#grid .gg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+#grid .gc{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 14px;cursor:pointer}
+#grid .gc:hover{border-color:var(--accent)}
+#grid .gc.cur{border-color:var(--accent);background:var(--accent-wash)}
+#grid .gc .gn{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.1em}
+#grid .gc .gt{font-size:14px;margin-top:4px;line-height:1.28;color:var(--ink)}
+#grid .tot{font-size:13px;color:var(--muted);margin-bottom:15px;letter-spacing:.04em}
+#grid h3{font-size:13px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);margin-bottom:15px;font-weight:800}
+
+/* ---------- Presenter HUD ---------- */
+#hud{
+  position:fixed; top:12px; right:14px; z-index:85;
+  display:none; gap:9px; align-items:center;
+  font-size:12.5px; color:var(--muted); letter-spacing:.06em;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:6px 11px; font-variant-numeric:tabular-nums;
+}
+#hud.on{display:flex}
+#hud b{color:var(--ink);font-weight:700}
+#hud .over{color:var(--crit)}
+
+/* ---------- Episode-deck signature chrome ---------- */
+.kick{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:700;
+  letter-spacing:.17em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+.kick .no{color:var(--accent)}
+/* The punch line — lifted verbatim from deck_template.html. One line, 40px,
+   bold words in accent; the explanation lives in the presenter notes. */
+.punch{margin-top:auto;display:flex;gap:20px;align-items:center;
+  border-left:5px solid var(--accent);padding:6px 0 6px 26px}
+.punch p{font-size:40px;line-height:1.22;font-weight:680;letter-spacing:-.012em;
+  color:var(--ink);max-width:1180px;text-wrap:balance;margin:0}
+.punch p b{font-weight:800;color:var(--accent)}
+
+/* ---------- Progress rail ticks ---------- */
+#rail-ticks{display:flex;justify-content:space-between;margin-top:8px}
+#rail-ticks span{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);opacity:.7;cursor:pointer;font-variant-numeric:tabular-nums;
+  transition:color .2s cubic-bezier(.25,1,.5,1),opacity .2s cubic-bezier(.25,1,.5,1)}
+#rail-ticks span:hover{color:var(--ink);opacity:1}
+#rail-ticks span.cur{color:var(--accent);opacity:1}
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<div id="hud"><span id="hud-slide"></span><span>·</span><span id="hud-target"></span><span>·</span><b id="hud-clock">0:00</b></div>
+<div id="notes"><div class="nh" id="notes-head">Presenter notes</div><p id="notes-body"></p></div>
+<div id="grid"><h3>All slides — click to jump · Esc to close</h3>
+<div class="tot" id="grid-total"></div><div class="gg" id="grid-cells"></div></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ============================================================
+   Tokens — two palettes, JS-side (all slide paint is inline).
+   Kept literally in sync with the CSS vars above.
+   ============================================================ */
+const TOK = {
+  dark: {
+    bg:'#1b1a19', surface:'#262624', surface2:'#30302e', ink:'#f0eee6', ink2:'#c2c0b6',
+    muted:'#8f8d84', grid:'#34322f', accent:'#d97757', s1:'#d67350', s2:'#4d90da',
+    good:'#2f9e44', warn:'#e8a33d', crit:'#e05252',
+    bgRGB:'27,26,25', accentRGB:'217,119,87',
+    accentWash:'rgba(217,119,87,.12)', goodWash:'rgba(47,158,68,.12)',
+    critWash:'rgba(224,82,82,.14)', warnWash:'rgba(232,163,61,.14)',
+    s2Wash:'rgba(77,144,218,.16)',
+    // dark elevation = a hairline light edge on top, never a drop shadow
+    cardShadow:'inset 0 1px 0 rgba(240,238,230,.055)',
+    vignette:'radial-gradient(ellipse at 55% 45%, transparent 55%, rgba(0,0,0,.16) 100%)',
+    grainOp:'.05', glow2RGB:'232,163,61'
+  },
+  cream: {
+    bg:'#faf9f5', surface:'#ffffff', surface2:'#f2f0e9', ink:'#1f1e1d', ink2:'#40403c',
+    muted:'#6f6e66', grid:'#e6e3da', accent:'#c2603f', s1:'#c2603f', s2:'#2a78d6',
+    good:'#257a33', warn:'#a9741a', crit:'#b8352f',
+    bgRGB:'250,249,245', accentRGB:'194,96,63',
+    accentWash:'rgba(194,96,63,.10)', goodWash:'rgba(37,122,51,.10)',
+    critWash:'rgba(184,53,47,.10)', warnWash:'rgba(169,116,26,.11)',
+    s2Wash:'rgba(42,120,214,.13)',
+    cardShadow:'0 1px 2px rgba(25,25,25,.06)',
+    vignette:'radial-gradient(ellipse at 55% 45%, transparent 60%, rgba(31,30,29,.055) 100%)',
+    grainOp:'.033', glow2RGB:'169,116,26'
+  }
+};
+let C = TOK.dark;
+
+const FONT = 'system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
+/* The content column's left edge is DYNAMIC — colLeft(), defined with the camera
+   state below. Camera mode on (default): 96 + reserved column = 792, the exact
+   video-build geometry. Camera mode off (press c): 96, full-bleed like the
+   episode deck. */
+const COL_RIGHT = 96;
+const SLIDE_TARGET = 15;
+const TOTAL_TARGET = () => DEFS.length * SLIDE_TARGET;   // fn: DEFS defined later
+
+/* ============================================================
+   Motion system — verbatim from the video deck
+   ============================================================ */
+const clamp01 = x => Math.min(1, Math.max(0, x));
+const easeOutCubic  = x => 1 - Math.pow(1 - x, 3);
+const easeInCubic   = x => x * x * x;
+const easeInOutCubic= x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2;
+const easeOutBack   = x => { const c1=1.70158,c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); };
+const easeOutExpo   = x => x >= 1 ? 1 : 1 - Math.pow(2, -10*x);   // dramatic settle
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const draw = (t,s,d=1) => easeInOutCubic(clamp01((t-s)/d));
+const prog = (t,s,d) => clamp01((t-s)/d);
+const breathe = (T,sp=.5,amt=.02,ph=0) => 1 + amt*Math.sin(T*sp+ph);
+const floatY  = (T,sp=.6,amt=4,ph=0) => amt*Math.sin(T*sp+ph);
+
+/* Style appliers — each sets an element to its state at time t */
+function stEnter(el,t,start,dy=26,dur=.7){
+  const e = easeOutCubic(clamp01((t-start)/dur));
+  el.style.opacity = e; el.style.transform = `translateY(${(1-e)*dy}px)`;
+}
+const stRise = stEnter;
+function stPop(el,t,start,dur=.55){
+  const p = clamp01((t-start)/dur), e = easeOutBack(p);
+  el.style.opacity = clamp01(p*2); el.style.transform = `scale(${.6+.4*e})`;
+}
+function stFocus(el,t,start,dur=.85,dy=30){
+  const p = easeOutCubic(clamp01((t-start)/dur));
+  el.style.opacity = p; el.style.transform = `translateY(${(1-p)*dy}px)`;
+  el.style.filter = `blur(${(1-p)*7}px)`;
+}
+/* SVG group pop about a point */
+function svPop(g,t,start,cx,cy,dur=.55){
+  const p = clamp01((t-start)/dur), e = easeOutBack(p), s = .6+.4*e;
+  g.setAttribute('opacity', clamp01(p*2));
+  g.setAttribute('transform', `translate(${cx},${cy}) scale(${s}) translate(${-cx},${-cy})`);
+}
+
+/* ============================================================
+   DOM helpers
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+function H(tag, style, html){
+  const e = document.createElement(tag);
+  if (style) Object.assign(e.style, style);
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+function S(tag, attrs){
+  const e = document.createElementNS(NS, tag);
+  for (const k in (attrs||{})) e.setAttribute(k, attrs[k]);
+  return e;
+}
+/* a stroke that draws in via dash: pathLength=1 */
+function drawablePath(d, stroke, width, extra){
+  const p = S('path', Object.assign({d, fill:'none', stroke, 'stroke-width':width,
+    'stroke-linecap':'round', pathLength:'1', 'stroke-dasharray':'1', 'stroke-dashoffset':'1'}, extra||{}));
+  return p;
+}
+function setDraw(p, v){ p.setAttribute('stroke-dashoffset', String(1 - v)); }
+
+/* ============================================================
+   Stage + persistent furniture
+   ============================================================ */
+const stage = document.getElementById('stage');
+
+const fadeLayer = H('div', {position:'absolute', inset:'0', zIndex:'0', pointerEvents:'none'});
+const glowLayer = H('div', {position:'absolute', top:'-200px', right:'-100px', width:'1100px',
+  height:'900px', borderRadius:'50%', zIndex:'0', pointerEvents:'none'});
+/* Second ambient glow — adjacent warm hue, very low alpha, slow counter-phase
+   drift. Two close hues at low chroma = calm depth, not a rave. */
+const glow2Layer = H('div', {position:'absolute', bottom:'-260px', left:'620px', width:'900px',
+  height:'700px', borderRadius:'50%', zIndex:'0', pointerEvents:'none'});
+const dotLayer  = H('div', {position:'absolute', left:'720px', right:'0', top:'0', bottom:'0',
+  opacity:'.5', zIndex:'0', pointerEvents:'none',
+  webkitMaskImage:'linear-gradient(90deg, transparent 0%, #000 14%)',
+  maskImage:'linear-gradient(90deg, transparent 0%, #000 14%)'});
+stage.append(fadeLayer, glowLayer, glow2Layer, dotLayer);
+
+/* Vignette (implied light) + film grain (kills banding on the glows, adds
+   warmth). Both static, painted per theme, over the slide but under chrome. */
+const vignetteLayer = H('div', {position:'absolute', inset:'0', zIndex:'5', pointerEvents:'none'});
+const grainLayer = H('div', {position:'absolute', inset:'0', zIndex:'5', pointerEvents:'none',
+  mixBlendMode:'overlay',
+  backgroundImage:'url("data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22240%22 height=%22240%22 filter=%22url(%23n)%22 opacity=%220.5%22/></svg>")',
+  backgroundSize:'240px 240px'});
+stage.append(vignetteLayer, grainLayer);
+
+function paintFurnitureStatic(){
+  // Camera mode keeps the baked left-gutter fade; full-bleed paints solid.
+  fadeLayer.style.background = (typeof CAM !== 'undefined' && !CAM) ? C.bg :
+    `linear-gradient(90deg, rgba(${C.bgRGB},0) 0%, rgba(${C.bgRGB},0) 25%, ` +
+    `rgba(${C.bgRGB},.55) 33%, rgba(${C.bgRGB},.94) 40%, ${C.bg} 48%)`;
+  dotLayer.style.backgroundImage = `radial-gradient(${C.grid} 1.4px, transparent 1.4px)`;
+  dotLayer.style.backgroundSize = '46px 46px';
+  vignetteLayer.style.background = C.vignette;
+  grainLayer.style.opacity = C.grainOp;
+}
+function furnitureUpdate(G){
+  const A = 0.05 + 0.045*(0.5 + 0.5*Math.sin(G*0.5));
+  glowLayer.style.background =
+    `radial-gradient(circle, rgba(${C.accentRGB},${A.toFixed(4)}) 0%, transparent 62%)`;
+  const A2 = 0.028 + 0.018*(0.5 + 0.5*Math.sin(G*0.35 + 2.2));
+  glow2Layer.style.background =
+    `radial-gradient(circle, rgba(${C.glow2RGB},${A2.toFixed(4)}) 0%, transparent 60%)`;
+  const D = (G*6) % 40;
+  dotLayer.style.backgroundPosition = `${D}px ${D}px`;
+}
+
+/* slide mount point */
+const slideHost = H('div', {position:'absolute', inset:'0', zIndex:'1'});
+stage.appendChild(slideHost);
+
+/* Footer */
+const footer = H('div', {position:'absolute', left:'792px', bottom:'44px', zIndex:'2',
+  fontSize:'15px', letterSpacing:'.08em'});
+footer.innerHTML = `<b style="font-weight:700;letter-spacing:.08em">NIKRAYANI</b>` +
+  `<span>&nbsp;&nbsp;·&nbsp;&nbsp;Educational — not financial advice</span>`;
+stage.appendChild(footer);
+function paintFooter(){
+  footer.style.color = C.muted;
+  footer.querySelector('b').style.color = C.ink2;
+}
+
+/* Progress rail */
+const rail = H('div', {position:'absolute', left:'792px', right:COL_RIGHT+'px',
+  bottom:'82px', zIndex:'3'});
+const railTrack = H('div', {height:'3px', borderRadius:'2px'});
+const railFill  = H('div', {height:'3px', borderRadius:'2px', width:'0%'});
+railTrack.appendChild(railFill);
+const railTicks = H('div'); railTicks.id = 'rail-ticks';
+rail.append(railTrack, railTicks);
+stage.appendChild(rail);
+/* Ticks derive from DEFS.length — built at boot so any slide count works. */
+function buildRailTicks(){
+  railTicks.innerHTML = '';
+  for (let i = 0; i < DEFS.length; i++){
+    const s = document.createElement('span');
+    s.textContent = String(i+1).padStart(2,'0');
+    s.onclick = () => show(i);
+    railTicks.appendChild(s);
+  }
+}
+function paintRail(){
+  railTrack.style.background = C.grid;
+  railFill.style.background = C.accent;
+  railFill.style.boxShadow = `0 0 10px rgba(${C.accentRGB},.5)`;
+}
+function railUpdate(t){
+  const p = (cur + clamp01(t/SLIDE_TARGET)) / DEFS.length;
+  railFill.style.width = (p*100).toFixed(3) + '%';
+}
+function railMark(){
+  [...railTicks.children].forEach((s,i) => s.classList.toggle('cur', i === cur));
+}
+
+/* Boundary sweep — plays for 0.5s on every flip */
+const sweep = H('div', {position:'absolute', left:'744px', right:'0', top:'0',
+  bottom:'0', zIndex:'4', pointerEvents:'none', overflow:'hidden'});
+const sweepBand = H('div', {position:'absolute', top:'0', bottom:'0', width:'200px',
+  filter:'blur(3px)', opacity:'0'});
+sweep.appendChild(sweepBand);
+stage.appendChild(sweep);
+function sweepUpdate(t){
+  if (cur === 0 && !flipped) { sweepBand.style.opacity = '0'; return; }
+  if (t >= 0.5){ sweepBand.style.opacity = '0'; return; }
+  const x = t/0.5, p = easeInOutCubic(x), glow = 0.55*(1 - Math.abs(x-0.5)*2);
+  sweepBand.style.opacity = '1';
+  sweepBand.style.left = `calc(${(p*100).toFixed(2)}% - 100px)`;
+  sweepBand.style.background =
+    `linear-gradient(90deg, transparent, rgba(${C.accentRGB},${glow.toFixed(3)}), transparent)`;
+}
+
+/* ============================================================
+   Camera guide — the transparent gutter IS the camera zone in
+   this deck's design (baked in), so C toggles the slot frame,
+   ⇧C the OBS pixel numbers, [ ] the bubble width.
+   ============================================================ */
+function _stored(k,d){ try { return localStorage.getItem(k) ?? d; } catch(e){ return d; } }
+const _q = new URLSearchParams(location.search);
+let CAM = (_q.get('cam') || _stored('nr_swing_cam', 'left')) !== 'off';
+/* 36.25% = 696px reserved → column starts at 96+696 = 792, the video build's
+   exact geometry. Stored with decimals so the default round-trips. */
+let CAMW = Math.min(45, Math.max(15, parseFloat(_q.get('camw') || _stored('nr_swing_camw','36.25')))) / 100;
+let camGuideOn = false;
+function camPx(){ return Math.round(1920 * CAMW); }
+function colLeft(){ return CAM ? COL_RIGHT + camPx() : COL_RIGHT; }
+/* Reflow everything that hangs off the column's left edge, then rebuild the
+   current slide at the new width — same behavior as the episode deck's setCam. */
+function relayout(){
+  footer.style.left = colLeft() + 'px';
+  rail.style.left = colLeft() + 'px';
+  sweep.style.left = (colLeft() - 48) + 'px';
+  paintFurnitureStatic();
+  drawCamGuide();
+}
+function setCam(on, w){
+  CAM = on;
+  if (w != null) CAMW = Math.min(0.45, Math.max(0.15, w));
+  try {
+    localStorage.setItem('nr_swing_cam', on ? 'left' : 'off');
+    localStorage.setItem('nr_swing_camw', (CAMW*100).toFixed(2));
+  } catch(e){}
+  if (!on) camGuideOn = false;
+  relayout();
+  mountSlide(cur);      // rebuild at the new column width, clock untouched
+}
+function camBubbleBox(){
+  if (!CAM) return null;
+  const px = camPx(), M = 44;
+  const w = px - M*2;
+  const h = Math.min(1080 - M*2, Math.round(w*4/3));
+  return {x: M, y: Math.round((1080-h)/2), w, h, colX: 0, colW: px};
+}
+function drawCamGuide(){
+  let g = document.getElementById('camguide');
+  const box = camBubbleBox();
+  if (!box){ if (g) g.remove(); return; }
+  if (!g){ g = H('div'); g.id = 'camguide'; stage.appendChild(g); }
+  g.innerHTML =
+    `<div class="cg-box" style="left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px"></div>` +
+    (camGuideOn
+      ? `<div class="cg-col" style="left:${box.colX}px;width:${box.colW}px"></div>` +
+        `<div class="cg-lab" style="left:${box.x}px;top:${box.y+box.h+16}px;width:${box.w}px">` +
+          `<b>put the camera here</b> ${box.w} &times; ${box.h} at ${box.x}, ${box.y}` +
+          `<span>reserved column ${box.colW}px &middot; ${(CAMW*100).toFixed(0)}% &middot; ` +
+          `⇧C hides these numbers</span></div>`
+      : '');
+}
+
+/* ============================================================
+   Slide chrome — SlideFrame
+   ============================================================ */
+function buildFrame(def){
+  const root = H('div', {position:'absolute', inset:'0', transformOrigin:'62% 45%'});
+  const ups = [];
+
+  // Ghost numeral
+  const ghost = H('div', {position:'absolute', top:'300px', right:(COL_RIGHT-24)+'px',
+    zIndex:'0', fontSize:'360px', fontWeight:'800', letterSpacing:'-.05em',
+    lineHeight:'1', textAlign:'right', fontFamily:FONT,
+    background:`linear-gradient(180deg, ${C.ink}, transparent)`,
+    webkitBackgroundClip:'text', backgroundClip:'text', color:'transparent',
+    fontVariantNumeric:'tabular-nums'});
+  ghost.textContent = String(def.num).padStart(2,'0');
+  root.appendChild(ghost);
+  ups.push(t => {
+    const p = easeOutCubic(prog(t, .1, 1.4));
+    ghost.style.opacity = (0.09*p).toFixed(4);
+    ghost.style.transform = `translateY(${(1-p)*24}px) scale(${breathe(t,.35,.014)})`;
+  });
+
+  // Content column
+  // bottom 132 (was 104): the editorial why-band needs clear air above the
+  // progress rail now that its box is gone — the fill read as an underline.
+  const col = H('div', {position:'absolute', left:colLeft()+'px', right:COL_RIGHT+'px',
+    top:'116px', bottom:'132px', display:'flex', flexDirection:'column', zIndex:'1'});
+  root.appendChild(col);
+
+  if (def.kicker){
+    // Episode-deck kicker: slide number in accent, label in muted small caps.
+    const kRow = H('div');
+    kRow.className = 'kick';
+    const no = H('span', {fontVariantNumeric:'tabular-nums'});
+    no.className = 'no';
+    no.textContent = String(def.num).padStart(2,'0');
+    const k = H('span');
+    k.textContent = def.kicker;
+    kRow.append(no, k);
+    col.appendChild(kRow);
+    ups.push(t => stEnter(kRow, t, .15));
+  }
+
+  // Headline: masked word-by-word rise — each word in an overflow-hidden
+  // wrapper, staggered 70ms, easeOutExpo settle. Padding/negative-margin on the
+  // mask keeps descenders from clipping at this tight line-height.
+  const head = H('div', {fontSize:(def.headSize||64)+'px', fontWeight:'760',
+    letterSpacing:'-.022em', lineHeight:'1.06', color:C.ink});
+  const headWords = def.head.split(' ').map(w => {
+    const wrap = H('span', {display:'inline-block', overflow:'hidden',
+      verticalAlign:'top', padding:'0.06em 0 0.14em', margin:'-0.06em 0 -0.14em'});
+    const inner = H('span', {display:'inline-block', transform:'translateY(112%)'});
+    inner.textContent = w;
+    wrap.appendChild(inner);
+    head.appendChild(wrap);
+    head.appendChild(document.createTextNode(' '));
+    return inner;
+  });
+  col.appendChild(head);
+  ups.push(t => {
+    headWords.forEach((w, i) => {
+      const p = easeOutExpo(clamp01((t - (0.32 + i*0.07)) / 0.9));
+      w.style.transform = `translateY(${((1-p)*112).toFixed(2)}%)`;
+    });
+  });
+
+  // No sub line — executive style: the speaker carries the words. The long
+  // form lives in def.notes and lands in the presenter-notes drawer (N).
+
+  // Visual block, with the gentle 5px bob
+  const visWrap = H('div', {flex:'1', display:'flex', alignItems:'center',
+    justifyContent:'center', minHeight:'0', marginTop:'18px'});
+  const vis = H('div', {width:'100%'});
+  visWrap.appendChild(vis);
+  col.appendChild(visWrap);
+  ups.push(t => { vis.style.transform = `translateY(${floatY(t,.5,5).toFixed(2)}px)`; });
+
+  if (def.punch){
+    const band = H('div');
+    band.className = 'punch';
+    band.innerHTML = `<p>${def.punch}</p>`;
+    col.appendChild(band);
+    ups.push(t => stEnter(band, t, 1.2, 16));
+  }
+
+  // entrance envelope on the whole slide
+  ups.push(t => {
+    const inP = easeOutCubic(clamp01(t/0.8));
+    root.style.opacity = inP;
+    root.style.transform = `translateY(${(1-inP)*46}px) scale(${0.985 + 0.015*inP})`;
+  });
+
+  return {root, vis, ups};
+}
+
+/* small shared bits */
+function card(styles){
+  return H('div', Object.assign({background:C.surface, border:`1px solid ${C.grid}`,
+    borderRadius:'14px', boxShadow:C.cardShadow}, styles));
+}
+const NUMS = {fontVariantNumeric:'tabular-nums'};
+
+/* ============================================================
+   SLIDE VISUALS — one mount function per slide.
+   Each receives the visual container and returns updaters.
+   ============================================================ */
+
+/* ---- 1 · SwingWhat ---- */
+function vSwingWhat(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 300',
+    style:'width:100%;max-width:960px;overflow:visible;display:block;margin:0 auto'});
+  [0.25,0.55,0.85].forEach(f => svg.appendChild(
+    S('line', {x1:0, x2:960, y1:f*300, y2:f*300, stroke:C.grid, opacity:.45})));
+  const wave = drawablePath(
+    'M40,120 C180,140 260,235 360,235 C470,235 560,120 680,78 C780,48 860,68 920,92',
+    C.s2, 4);
+  svg.appendChild(wave);
+  const dot = S('circle', {r:9, fill:C.ink, stroke:C.s2, 'stroke-width':3});
+  const ring = S('circle', {r:9, fill:'none', stroke:C.s2, 'stroke-width':3, opacity:0});
+  svg.append(ring, dot);
+
+  const DIP = {x:360, y:235}, PEAK = {x:680, y:78};
+  const buy = S('g', {opacity:0});
+  buy.append(
+    S('circle', {cx:DIP.x, cy:DIP.y, r:8, fill:C.good}),
+    S('rect', {x:DIP.x-34, y:DIP.y+20, width:68, height:34, rx:8, fill:C.good}));
+  const buyT = S('text', {x:DIP.x, y:DIP.y+43, fill:'#fff', 'font-size':18,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT}); buyT.textContent = 'BUY';
+  buy.appendChild(buyT);
+  const sell = S('g', {opacity:0});
+  sell.append(
+    S('circle', {cx:PEAK.x, cy:PEAK.y, r:8, fill:C.accent}),
+    S('rect', {x:PEAK.x-38, y:PEAK.y-54, width:76, height:34, rx:8, fill:C.accent}));
+  const sellT = S('text', {x:PEAK.x, y:PEAK.y-31, fill:'#fff', 'font-size':18,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT}); sellT.textContent = 'SELL';
+  sell.appendChild(sellT);
+  svg.append(buy, sell);
+
+  const arc = S('path', {d:'M360,205 Q520,-18 680,52', fill:'none', stroke:C.accent,
+    'stroke-width':2.5, pathLength:'1', 'stroke-dasharray':'.02 .02', opacity:0});
+  const arcLab = S('text', {x:(DIP.x+PEAK.x)/2, y:PEAK.y-74, fill:C.accent, 'font-size':18,
+    'font-weight':700, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  arcLab.textContent = 'one swing · days to weeks';
+  svg.append(arc, arcLab);
+  vis.appendChild(svg);
+
+  // horizon boxes
+  const rowWrap = H('div', {display:'flex', gap:'14px', marginTop:'22px',
+    justifyContent:'center'});
+  const boxes = [
+    ['Day trade','minutes–hours', C.crit, 5.0, false],
+    ['Swing','days–weeks', C.good, 5.25, true],
+    ['Invest','months–years', C.muted, 5.5, false],
+  ].map(([title, sub, bc, at, active]) => {
+    const b = H('div', {padding:'14px 18px', borderRadius:'12px',
+      border:`1px solid ${bc}`, background: active ? C.goodWash : C.surface,
+      opacity:'0'});
+    b.innerHTML = `<div style="font-size:20px;font-weight:720;color:${active?C.ink:C.ink2}"></div>` +
+      `<div style="font-size:15px;color:${C.muted};margin-top:2px"></div>`;
+    b.children[0].textContent = title; b.children[1].textContent = sub;
+    b._at = at;
+    rowWrap.appendChild(b);
+    return b;
+  });
+  vis.appendChild(rowWrap);
+
+  const wlen = wave.getTotalLength();
+  ups.push(t => {
+    setDraw(wave, draw(t, .9, 2.2));
+    const dotP = clamp01((t-.9)/2.2);
+    const pt = wave.getPointAtLength(wlen * dotP);
+    dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y);
+    dot.setAttribute('opacity', t > .9 ? 1 : 0);
+    if (dotP >= 1){
+      ring.setAttribute('cx', pt.x); ring.setAttribute('cy', pt.y);
+      ring.setAttribute('r', 9 + 7*(0.5+0.5*Math.sin(t*3)));
+      ring.setAttribute('opacity', 0.35*(0.5+0.5*Math.cos(t*3)));
+    } else ring.setAttribute('opacity', 0);
+    svPop(buy, t, 2.0, DIP.x, DIP.y+20);
+    svPop(sell, t, 3.4, PEAK.x, PEAK.y-30);
+    const aP = draw(t, 3.9, .9);
+    arc.setAttribute('opacity', aP);
+    arc.setAttribute('stroke-dashoffset', String(1 - aP));
+    arcLab.setAttribute('opacity', aP);
+    boxes.forEach(b => stRise(b, t, b._at, 16));
+  });
+  return ups;
+}
+
+/* ---- 2 · Math ---- */
+function vMath(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'16px'});
+  function stat(atIn, color, from, to, prefix, label, sub){
+    const c = card({flex:'1', padding:'26px 28px', opacity:'0'});
+    c.innerHTML =
+      `<div style="font-size:108px;font-weight:800;letter-spacing:-.035em;color:${color};font-variant-numeric:tabular-nums;line-height:.95"></div>` +
+      `<div style="font-size:21px;font-weight:680;color:${C.ink};margin-top:10px"></div>` +
+      `<div style="font-size:16px;color:${C.muted};margin-top:4px"></div>`;
+    c.children[1].textContent = label; c.children[2].textContent = sub;
+    row.appendChild(c);
+    ups.push(t => {
+      stRise(c, t, atIn-.1, 20);
+      const p = easeOutCubic(prog(t, atIn, 1.6));
+      const v = Math.round(from + (to-from)*p);
+      c.children[0].textContent = prefix + v + '%';
+    });
+    return c;
+  }
+  stat(.9,  C.crit, 0, 97, '',  'lost money', 'Brazil · persisted 300+ sessions');
+  stat(1.2, C.warn, 99, 1, '<', 'predictably profitable', 'Taiwan · every trade, 15 years');
+  vis.appendChild(row);
+
+  const rule = H('div', {display:'flex', gap:'20px', alignItems:'center',
+    marginTop:'22px', justifyContent:'center'});
+  const stamp = H('div', {padding:'10px 18px', background:C.crit, color:'#fff',
+    fontSize:'20px', fontWeight:'800', letterSpacing:'.04em', borderRadius:'6px',
+    transformOrigin:'left center', opacity:'0'}, 'JUNE 2026');
+  const struck = H('span', {position:'relative', fontSize:'22px', fontWeight:'600',
+    color:C.ink2}, '$25K pattern-day-trader rule');
+  const strike = H('span', {position:'absolute', left:'0', top:'52%', height:'3px',
+    width:'0%', background:C.crit});
+  struck.appendChild(strike);
+  const gone = H('span', {fontSize:'22px', fontWeight:'700', color:C.good, opacity:'0'},
+    '→ gone');
+  rule.append(stamp, struck, gone);
+  vis.appendChild(rule);
+  ups.push(t => {
+    stPop(stamp, t, 3.5);
+    strike.style.width = (draw(t, 4.0, .6)*100).toFixed(2) + '%';
+    gone.style.opacity = draw(t, 4.6, .6);
+  });
+  return ups;
+}
+
+/* ---- 3 · Edge (DayTimeline) ---- */
+function vEdge(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 150',
+    style:'width:100%;max-width:960px;overflow:visible;display:block;margin:0 auto'});
+  const x = hr => ((hr-8)/12)*960;
+  svg.appendChild(S('rect', {x:0, y:70, width:960, height:14, rx:7, fill:C.surface2}));
+  const mkt = S('rect', {x:x(9.5), y:70, width:0, height:14, fill:'rgba(224,82,82,.28)',
+    stroke:C.crit, 'stroke-width':1.5});
+  svg.appendChild(mkt);
+  const mktLab = S('text', {x:x(9.5), y:58, fill:C.crit, 'font-size':16, 'font-weight':700,
+    'font-family':FONT, opacity:0});
+  mktLab.textContent = 'MARKET OPEN · 9:30–4  (you’re at work)';
+  svg.appendChild(mktLab);
+  const win = S('rect', {x:x(16.1), y:70, width:x(16.6)-x(16.1), height:14, fill:C.good, opacity:0});
+  svg.appendChild(win);
+  const winLab1 = S('text', {x:(x(16.1)+x(16.6))/2, y:54, fill:C.good, 'font-size':15,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  winLab1.textContent = '15 min';
+  const winLab2 = S('text', {x:(x(16.1)+x(16.6))/2, y:104, fill:C.muted, 'font-size':13,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  winLab2.textContent = 'after close';
+  svg.append(winLab1, winLab2);
+  const hrs = [[8,'8a'],[10,'10a'],[12,'12p'],[14,'2p'],[16,'4p'],[18,'6p'],[20,'8p']];
+  hrs.forEach(([h,l]) => {
+    svg.appendChild(S('line', {x1:x(h), x2:x(h), y1:88, y2:96, stroke:C.muted, opacity:.7}));
+    const tx = S('text', {x:x(h), y:118, fill:C.muted, 'font-size':14, 'text-anchor':'middle',
+      'font-family':FONT});
+    tx.textContent = l; svg.appendChild(tx);
+  });
+  const ph = S('line', {x1:0, x2:0, y1:40, y2:100, stroke:C.ink2, 'stroke-width':2, opacity:0});
+  const phDot = S('circle', {cy:40, r:6, fill:C.accent, opacity:0});
+  svg.append(ph, phDot);
+  vis.appendChild(svg);
+
+  const mktW = x(16)-x(9.5);
+  ups.push(t => {
+    const mp = draw(t, 1.2, 1.5);
+    mkt.setAttribute('width', mktW*mp);
+    mktLab.setAttribute('opacity', mp > .8 ? 1 : 0);
+    const flash = t > 3.6 ? 0.5+0.5*Math.sin((t-3.6)*8) : 0;
+    win.setAttribute('opacity', t > 1.2 ? .35 + .5*flash : 0);
+    winLab1.setAttribute('opacity', t > 3.6 ? 1 : 0);
+    winLab2.setAttribute('opacity', t > 3.6 ? 1 : 0);
+    const swp = clamp01((t-.8)/4.5), px = x(8 + swp*12);
+    ph.setAttribute('x1', px); ph.setAttribute('x2', px);
+    phDot.setAttribute('cx', px);
+    const on = t > .8 ? 1 : 0;
+    ph.setAttribute('opacity', on*.8); phDot.setAttribute('opacity', on);
+  });
+  return ups;
+}
+
+/* ---- 4 · Setup ---- */
+function vSetup(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'16px'});
+  [['1 chart','SWING CALL trend line + LuxAlgo zones', C.s2, .9],
+   ['1 broker','Bracket orders do the watching', C.good, 1.15],
+   ['15 min','Once a night, after the close', C.accent, 1.4]
+  ].forEach(([big, sub, color, at]) => {
+    const c = card({flex:'1', padding:'28px 24px', borderRadius:'16px', opacity:'0'});
+    c.innerHTML = `<div style="font-size:42px;font-weight:780;color:${color};letter-spacing:-.02em"></div>` +
+      `<div style="font-size:17px;color:${C.ink2};margin-top:10px;line-height:1.4"></div>`;
+    c.children[0].textContent = big; c.children[1].textContent = sub;
+    row.appendChild(c);
+    ups.push(t => stRise(c, t, at, 20));
+  });
+  vis.appendChild(row);
+  return ups;
+}
+
+/* ---- 5 · Routine ---- */
+function vRoutine(vis){
+  const ups = [];
+  const MIN = [5, 5, 3, 2], TOTAL = 15;
+  const segColors = [C.s2, C.good, C.warn, C.accent];
+  const row = H('div', {display:'flex', gap:'48px', alignItems:'center'});
+
+  // Donut: the fifteen minutes as segments, sweeping in step by step.
+  const svg = S('svg', {viewBox:'0 0 230 230', width:'230', style:'flex:none'});
+  svg.appendChild(S('circle', {cx:115, cy:115, r:86, fill:'none', stroke:C.surface2,
+    'stroke-width':26}));
+  let acc = 0;
+  const segs = MIN.map((m, i) => {
+    const frac = m/TOTAL;
+    const c = S('circle', {cx:115, cy:115, r:86, fill:'none', stroke:segColors[i],
+      'stroke-width':26, pathLength:'1', 'stroke-dasharray':'0 1',
+      'stroke-dashoffset':String(-(acc + 0.006)),
+      transform:'rotate(-90 115 115)'});
+    c._frac = frac - 0.012; c._at = 1.2 + i*0.4;      // 2px-ish surface gap
+    acc += frac;
+    svg.appendChild(c);
+    return c;
+  });
+  const dTot = S('text', {x:115, y:112, fill:C.ink, 'font-size':46, 'font-weight':800,
+    'text-anchor':'middle', 'font-family':FONT, 'font-variant-numeric':'tabular-nums'});
+  dTot.textContent = String(TOTAL);
+  const dLab = S('text', {x:115, y:140, fill:C.muted, 'font-size':15, 'font-weight':600,
+    'text-anchor':'middle', 'font-family':FONT});
+  dLab.textContent = 'minutes';
+  svg.append(dTot, dLab);
+  row.appendChild(svg);
+
+  const colEl = H('div', {display:'flex', flexDirection:'column', gap:'12px', flex:'1'});
+  [['01','Scan the watchlist','5 min'],
+   ['02','Run the six checks','5 min'],
+   ['03','Set bracket orders','3 min'],
+   ['04','Close the laptop','2 min']
+  ].forEach(([n, label, time], i) => {
+    const r = card({display:'flex', alignItems:'center', gap:'18px',
+      padding:'14px 20px', borderRadius:'12px', opacity:'0'});
+    r.innerHTML =
+      `<div style="width:40px;height:40px;border-radius:10px;background:${C.surface2};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:${C.ink2};font-variant-numeric:tabular-nums"></div>` +
+      `<div style="font-size:22px;font-weight:680;color:${C.ink};flex:1"></div>` +
+      `<div style="font-size:16px;font-weight:700;color:${segColors[i]};font-variant-numeric:tabular-nums"></div>`;
+    r.children[0].textContent = n; r.children[1].textContent = label;
+    r.children[2].textContent = time;
+    colEl.appendChild(r);
+    ups.push(t => stRise(r, t, 0.7 + i*0.18, 16));
+  });
+  row.appendChild(colEl);
+  vis.appendChild(row);
+
+  ups.push(t => {
+    segs.forEach(c => {
+      const p = draw(t, c._at, .6);
+      c.setAttribute('stroke-dasharray', `${(c._frac*p).toFixed(4)} ${(1 - c._frac*p).toFixed(4)}`);
+    });
+    const cp = draw(t, .9, .6);
+    dTot.setAttribute('opacity', cp); dLab.setAttribute('opacity', cp);
+  });
+  return ups;
+}
+
+/* ---- 6 · System ---- */
+const SIX = [
+  ['1','Trend','Green line, rising'],
+  ['2','Location','Dip into a heavy zone'],
+  ['3','Trap','Ignore the fake-out wick'],
+  ['4','Trigger','4H candle closes back above'],
+  ['5','Stop','Level − 1.5 × ATR'],
+  ['6','Exit','Reward ≥ 2× risk'],
+];
+function vSystem(vis){
+  const ups = [];
+  const grid = H('div', {display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px'});
+  const rows = SIX.map(([n, name, desc], i) => {
+    const r = H('div', {display:'flex', alignItems:'center', gap:'16px',
+      padding:'14px 18px', borderRadius:'12px', background:C.surface,
+      border:`1px solid ${C.grid}`, opacity:'0', position:'relative'});
+    r.innerHTML =
+      `<div style="width:34px;height:34px;border-radius:9px;background:${C.surface2};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:${C.ink2}"></div>` +
+      `<div style="flex:1"><div style="font-size:21px;font-weight:720;color:${C.ink}"></div>` +
+      `<div style="font-size:14px;color:${C.muted};margin-top:1px"></div></div>` +
+      `<div style="width:30px;height:30px;border-radius:50%;background:${C.good};color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;opacity:0">✓</div>`;
+    r.children[0].textContent = n;
+    r.children[1].children[0].textContent = name;
+    r.children[1].children[1].textContent = desc;
+    grid.appendChild(r);
+    return r;
+  });
+  vis.appendChild(grid);
+  ups.push(t => {
+    const spotIdx = t >= 2.6 ? Math.floor(Math.min(5.999, (t-2.6)/2.3)) : -1;
+    rows.forEach((r, i) => {
+      stRise(r, t, 0.4 + i*0.14, 18, .55);
+      const lit = i === spotIdx;
+      r.style.background = lit ? `rgba(${C.accentRGB},.14)` : C.surface;
+      r.style.borderColor = lit ? C.accent : C.grid;
+      r.children[0].style.background = lit ? C.accent : C.surface2;
+      r.children[0].style.color = lit ? '#fff' : C.ink2;
+      stPop(r.children[2], t, 2.6 + i*2.3 + 1.035);
+    });
+  });
+  return ups;
+}
+
+/* ---- 7 · Trend ---- */
+function vTrend(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'16px'});
+  function panel(up, at){
+    const c = card({flex:'1', padding:'18px', position:'relative', borderRadius:'16px'});
+    const svg = S('svg', {viewBox:'0 0 420 220', width:'100%', style:'display:block'});
+    const color = up ? C.good : C.crit;
+    const d = up ? 'M20,190 C120,150 220,100 400,50' : 'M20,50 C120,90 220,130 400,180';
+    const path = drawablePath(d, color, 5);
+    const dot = S('circle', {r:8, fill:C.ink, stroke:color, 'stroke-width':3, opacity:0});
+    [55,110,165].forEach(y => svg.appendChild(
+      S('line', {x1:10, x2:410, y1:y, y2:y, stroke:C.grid, opacity:.4})));
+    svg.append(path, dot);
+    c.appendChild(svg);
+    const stamp = H('div', {position:'absolute', top:'16px', left:'16px',
+      padding:'8px 14px', borderRadius:'8px', background: up ? C.good : C.crit,
+      color:'#fff', fontSize:'17px', fontWeight:'800', letterSpacing:'.05em',
+      opacity:'0'}, up ? 'TRADE ✓' : 'NO LONGS ✕');
+    c.appendChild(stamp);
+    const len = path.getTotalLength();
+    ups.push(t => {
+      const p = draw(t, at, 1.4);
+      setDraw(path, p);
+      const pt = path.getPointAtLength(len * p);
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y);
+      dot.setAttribute('opacity', t > at ? 1 : 0);
+      stPop(stamp, t, at + 1.5);
+    });
+    return c;
+  }
+  row.append(panel(true, .9), panel(false, 2.4));
+  vis.appendChild(row);
+  return ups;
+}
+
+/* ---- 8 · Zones ---- */
+function vZones(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 340',
+    style:'width:100%;max-width:960px;overflow:visible;display:block;margin:0 auto'});
+  const g = S('g');
+  svg.appendChild(g);
+  const zoneY = 150, zoneH = 60, volBase = 332;
+
+  const volBars = [];
+  for (let i = 0; i < 9; i++){
+    const heavy = i >= 3 && i <= 6;
+    const b = S('rect', {x:60+i*24, width:15, y:volBase, height:0,
+      fill: heavy ? C.s2 : C.grid, opacity: heavy ? .9 : .6});
+    b._h = heavy ? 70 : 24; b._at = 0.6 + i*0.05;
+    g.appendChild(b); volBars.push(b);
+  }
+  const zone = S('rect', {x:40, y:zoneY, width:880, height:0, fill:C.s2Wash,
+    stroke:C.s2, 'stroke-width':1.5});
+  g.appendChild(zone);
+  const zoneLab = S('text', {x:54, y:174, fill:C.s2, 'font-size':15, 'font-weight':700,
+    'font-family':FONT, opacity:0, 'letter-spacing':'.08em'});
+  zoneLab.textContent = 'HIGH-VOLUME ZONE';
+  g.appendChild(zoneLab);
+
+  const sma = S('path', {d:'M40,256 C260,250 520,240 920,234', fill:'none', stroke:C.s2,
+    'stroke-width':3, 'stroke-linecap':'round', pathLength:'1',
+    'stroke-dasharray':'.018 .012', 'stroke-dashoffset':'1', opacity:0});
+  g.appendChild(sma);
+  const smaLab = S('text', {x:720, y:276, fill:C.s2, 'font-size':15, 'font-weight':700,
+    'font-family':FONT, opacity:0});
+  smaLab.textContent = '50 SMA';
+  const brkLine = S('line', {x1:430, x2:430, y1:zoneY+zoneH, y2:245, stroke:C.ink2,
+    'stroke-width':1.5, opacity:0});
+  const brkLab = S('text', {x:420, y:236, fill:C.ink2, 'font-size':14, 'font-weight':700,
+    'text-anchor':'end', 'font-family':FONT, opacity:0});
+  brkLab.textContent = '2–5% above →';
+  g.append(smaLab, brkLine, brkLab);
+
+  const price = drawablePath('M120,60 C300,120 420,170 520,204', C.ink, 4);
+  g.appendChild(price);
+
+  const wick = S('line', {x1:545, x2:545, y1:zoneY+zoneH, y2:zoneY+zoneH+44,
+    stroke:C.crit, 'stroke-width':3, opacity:0});
+  const wickLab = S('text', {x:560, y:zoneY+zoneH+40, fill:C.crit, 'font-size':15,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  wickLab.textContent = 'wick = bait';
+  g.append(wick, wickLab);
+
+  const entry = S('g', {opacity:0});
+  entry.append(
+    S('line', {x1:600, x2:600, y1:96, y2:196, stroke:C.good, 'stroke-width':3}),
+    S('rect', {x:588, y:106, width:24, height:78, rx:3, fill:C.good}),
+    S('rect', {x:560, y:64, width:82, height:30, rx:6, fill:C.good}));
+  const entryT = S('text', {x:601, y:85, fill:'#fff', 'font-size':16, 'font-weight':800,
+    'text-anchor':'middle', 'font-family':FONT});
+  entryT.textContent = 'ENTRY';
+  entry.appendChild(entryT);
+  g.appendChild(entry);
+
+  const brk = drawablePath('M612,140 C720,110 820,70 920,30', C.good, 4);
+  g.appendChild(brk);
+  vis.appendChild(svg);
+
+  ups.push(t => {
+    volBars.forEach(b => {
+      const h = b._h * draw(t, b._at, .5);
+      b.setAttribute('height', h); b.setAttribute('y', volBase - h);
+    });
+    const zp = draw(t, .7, .8);
+    zone.setAttribute('height', zoneH*zp);
+    zoneLab.setAttribute('opacity', zp > .8 ? 1 : 0);
+    const sp = draw(t, 1.4, 1.2);
+    sma.setAttribute('opacity', sp*.9);
+    sma.setAttribute('stroke-dashoffset', String(1 - sp));
+    const smaOn = t > 2.2 ? 1 : 0;
+    smaLab.setAttribute('opacity', smaOn);
+    brkLine.setAttribute('opacity', smaOn*.8); brkLab.setAttribute('opacity', smaOn);
+    setDraw(price, draw(t, 1.0, 1.0));
+    const wOn = t > 2.8 ? 1 : 0;
+    wick.setAttribute('opacity', wOn); wickLab.setAttribute('opacity', wOn);
+    const jolt = (t > 2.9 && t < 3.25) ? Math.sin((t-2.9)*60)*6 : 0;
+    g.setAttribute('transform', `translate(${jolt.toFixed(2)},0)`);
+    svPop(entry, t, 4.6, 600, 130);
+    setDraw(brk, draw(t, 5.2, 1.0));
+  });
+  return ups;
+}
+
+/* ---- 9 · Stop ---- */
+function vStop(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'28px', alignItems:'center'});
+  const left = H('div', {width:'46%'});
+  const svg = S('svg', {viewBox:'0 0 620 320', width:'100%', style:'display:block;overflow:visible'});
+  const entryY = 70, levelY = 150, stopY = 250, LX1 = 40, LX2 = 560;
+
+  const band = S('rect', {x:LX1, y:levelY, width:470, height:0, fill:C.warnWash,
+    stroke:C.warn, 'stroke-width':1.5, 'stroke-dasharray':'6 6'});
+  svg.appendChild(band);
+  const bandLab = S('text', {x:60, y:(levelY+stopY)/2+6, fill:C.warn, 'font-size':14,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  bandLab.textContent = '1.5 × ATR';
+  svg.appendChild(bandLab);
+  for (let i = 0; i < 5; i++){
+    const y = levelY + (i+1)*(stopY-levelY)/6;
+    svg.appendChild(S('line', {x1:522, x2:534, y1:y, y2:y, stroke:C.warn, opacity:.6,
+      class:'tick'}));
+  }
+  const lines = [
+    ['ENTRY', C.good, entryY],
+    ['LEVEL (zone bottom)', C.s2, levelY],
+    ['STOP', C.crit, stopY],
+  ].map(([lab, color, y]) => {
+    const ln = S('line', {x1:LX1, x2:LX1, y1:y, y2:y, stroke:color, 'stroke-width':2.5,
+      'stroke-dasharray':'8 7'});
+    const tx = S('text', {x:LX2+52, y:y-9, fill:color, 'font-size':15, 'font-weight':700,
+      'text-anchor':'end', 'font-family':FONT, opacity:0});
+    tx.textContent = lab;
+    svg.append(ln, tx);
+    return {ln, tx, y};
+  });
+  const noise = S('circle', {r:7, fill:C.ink, stroke:C.warn, 'stroke-width':2, opacity:0});
+  svg.appendChild(noise);
+  const rookie = S('line', {x1:LX1, x2:LX2, y1:levelY+30, y2:levelY+30, stroke:C.crit,
+    'stroke-width':2, 'stroke-dasharray':'4 6', opacity:0});
+  const rookieLab = S('text', {x:LX1+6, y:levelY+22, fill:C.crit, 'font-size':13,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  rookieLab.textContent = 'rookie tight stop → shaken out';
+  svg.append(rookie, rookieLab);
+  left.appendChild(svg);
+
+  const right = H('div', {flex:'1', display:'flex', flexDirection:'column', gap:'12px'});
+  const formulas = [
+    ['STOP = LEVEL − 1.5×ATR', 6.4],
+    ['SHARES = RISK ÷ (ENTRY − STOP)', 6.8],
+    ['RISK ≈ 2% of account', 7.2],
+  ].map(([txt, at]) => {
+    const cEl = card({padding:'18px 22px', fontSize:'20px', fontWeight:'700',
+      color:C.ink, fontVariantNumeric:'tabular-nums', opacity:'0'});
+    cEl.textContent = txt; cEl._at = at;
+    right.appendChild(cEl);
+    return cEl;
+  });
+  row.append(left, right);
+  vis.appendChild(row);
+
+  ups.push(t => {
+    band.setAttribute('height', (stopY-levelY) * draw(t, 1.4, .8));
+    bandLab.setAttribute('opacity', t > 2.0 ? 1 : 0);
+    lines.forEach(({ln, tx}) => {
+      const p = draw(t, .6, 1.0);
+      ln.setAttribute('x2', LX1 + (LX2-LX1)*p);
+      tx.setAttribute('opacity', p > .9 ? 1 : 0);
+    });
+    if (t > .9){
+      const wob = Math.sin(t*3.2)*22 + Math.sin(t*1.7)*10;
+      noise.setAttribute('opacity', 1);
+      noise.setAttribute('cx', 200 + Math.sin(t*2.1)*60);
+      noise.setAttribute('cy', levelY + 34 + wob*0.5);
+    } else noise.setAttribute('opacity', 0);
+    const rk = t > 3.8 ? draw(t, 3.8, .5) : 0;
+    rookie.setAttribute('opacity', rk*.9); rookieLab.setAttribute('opacity', rk);
+    formulas.forEach(f => stEnter(f, t, f._at, 14));
+  });
+  return ups;
+}
+
+/* ---- 10 · Exit ---- */
+function vExit(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 560 300',
+    style:'width:100%;max-width:640px;display:block;margin:0 auto;overflow:visible'});
+  const targetY = 70, entryY = 190, stopY = 250, LX1 = 40, LX2 = 390;
+  const lines = [
+    ['TARGET · next resistance', C.good, targetY],
+    ['ENTRY', C.s2, entryY],
+    ['STOP', C.crit, stopY],
+  ].map(([lab, color, y]) => {
+    const ln = S('line', {x1:LX1, x2:LX1, y1:y, y2:y, stroke:color, 'stroke-width':2.5,
+      'stroke-dasharray':'8 7'});
+    const tx = S('text', {x:LX1, y:y-10, fill:color, 'font-size':15, 'font-weight':700,
+      'font-family':FONT, opacity:0});
+    tx.textContent = lab;
+    svg.append(ln, tx);
+    return {ln, tx};
+  });
+  const price = drawablePath('M40,190 C160,180 240,150 350,90', C.ink, 4);
+  svg.appendChild(price);
+  const riskBar = S('rect', {x:404, y:entryY, width:40, height:0, rx:0, fill:C.crit});
+  const riskLab = S('text', {x:424, y:(entryY+stopY)/2+6, fill:'#fff', 'font-size':16,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  riskLab.textContent = '1R';
+  const riskCap = S('text', {x:424, y:278, fill:C.muted, 'font-size':14,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  riskCap.textContent = 'risk';
+  const rewBar = S('rect', {x:462, y:entryY, width:40, height:0, fill:C.good});
+  const rewLab = S('text', {x:482, y:(entryY+targetY)/2+6, fill:'#fff', 'font-size':16,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  rewLab.textContent = '≥2R';
+  const rewCap = S('text', {x:482, y:278, fill:C.muted, 'font-size':14,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  rewCap.textContent = 'reward';
+  svg.append(riskBar, riskLab, riskCap, rewBar, rewLab, rewCap);
+  vis.appendChild(svg);
+
+  ups.push(t => {
+    lines.forEach(({ln, tx}) => {
+      const p = draw(t, .6, 1.0);
+      ln.setAttribute('x2', LX1 + (LX2+130-LX1)*p);
+      tx.setAttribute('opacity', p > .9 ? 1 : 0);
+    });
+    setDraw(price, draw(t, 1.2, 1.4));
+    const rp = draw(t, 2.2, .7);
+    riskBar.setAttribute('height', (stopY-entryY)*rp);
+    riskLab.setAttribute('opacity', rp > .6 ? 1 : 0);
+    riskCap.setAttribute('opacity', rp > .9 ? 1 : 0);
+    const wp = draw(t, 2.6, .9);
+    rewBar.setAttribute('height', (entryY-targetY)*wp);
+    rewBar.setAttribute('y', entryY - (entryY-targetY)*wp);
+    rewLab.setAttribute('opacity', wp > .6 ? 1 : 0);
+    rewCap.setAttribute('opacity', wp > .9 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- 11 · Bracket ---- */
+function vBracket(vis){
+  const ups = [];
+  const wrap = H('div', {display:'flex', flexDirection:'column', gap:'18px',
+    maxWidth:'860px', margin:'0 auto'});
+  const pill = H('div', {alignSelf:'flex-start', padding:'13px 26px', borderRadius:'999px',
+    background:C.accent, color:'#fff', fontSize:'22px', fontWeight:'800',
+    letterSpacing:'.03em', opacity:'0'}, 'ENTRY ORDER');
+  const splits = H('div', {fontSize:'19px', color:C.muted, marginLeft:'40px', opacity:'0'},
+    'splits into ↴');
+  const boxes = H('div', {display:'flex', gap:'16px'});
+  const stopBox = card({flex:'1', padding:'22px 26px', border:`1px solid ${C.crit}`,
+    opacity:'0'});
+  stopBox.innerHTML = `<div style="font-size:22px;font-weight:760;color:${C.crit}">STOP&nbsp;&nbsp;↓</div>` +
+    `<div style="font-size:15px;color:${C.ink2};margin-top:8px">Auto-sells if it drops to your level</div>`;
+  const tgtBox = card({flex:'1', padding:'22px 26px', border:`1px solid ${C.good}`,
+    opacity:'0'});
+  tgtBox.innerHTML = `<div style="font-size:22px;font-weight:760;color:${C.good}">TARGET&nbsp;&nbsp;↑</div>` +
+    `<div style="font-size:15px;color:${C.ink2};margin-top:8px">Auto-sells into your profit target</div>`;
+  boxes.append(stopBox, tgtBox);
+  const oco = H('div', {fontSize:'15px', fontWeight:'700', letterSpacing:'.08em',
+    textTransform:'uppercase', color:C.s2, opacity:'0'}, 'One cancels the other · OCO');
+  wrap.append(pill, splits, boxes, oco);
+  vis.appendChild(wrap);
+  ups.push(t => {
+    stPop(pill, t, .8);
+    splits.style.opacity = draw(t, 1.5, .5);
+    stEnter(stopBox, t, 1.6, 18);
+    stEnter(tgtBox, t, 1.9, 18);
+    oco.style.opacity = draw(t, 2.4, .6);
+  });
+  return ups;
+}
+
+/* ---- 12 · Sizing ---- */
+function vSizing(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'32px', alignItems:'center'});
+  const left = H('div', {width:'42%'});
+  left.appendChild(H('div', {fontSize:'14px', fontWeight:'700', letterSpacing:'.08em',
+    textTransform:'uppercase', color:C.muted, marginBottom:'10px'}, 'ACCOUNT AT RISK'));
+  const track = H('div', {height:'42px', borderRadius:'8px', background:C.surface2,
+    border:`1px solid ${C.grid}`, position:'relative', overflow:'hidden'});
+  const fill = H('div', {position:'absolute', left:'0', top:'0', bottom:'0',
+    width:'6px', background:C.crit});
+  track.appendChild(fill);
+  left.appendChild(track);
+  const under = H('div', {display:'flex', justifyContent:'space-between', marginTop:'8px',
+    fontSize:'14px', color:C.ink2, fontVariantNumeric:'tabular-nums'});
+  under.innerHTML = `<span style="color:${C.crit};font-weight:800">2% risked</span><span>98% untouched</span>`;
+  left.appendChild(under);
+
+  const right = H('div', {flex:'1', display:'flex', flexDirection:'column', gap:'12px'});
+  const cards = [
+    ['Risk = 2% of the account', 1.4],
+    ['Stop distance = entry − stop', 1.8],
+    ['Size = risk ÷ stop distance', 2.2],
+  ].map(([txt, at]) => {
+    const cEl = card({padding:'17px 22px', fontSize:'19px', fontWeight:'700', color:C.ink,
+      fontVariantNumeric:'tabular-nums', opacity:'0'});
+    cEl.textContent = txt; cEl._at = at;
+    right.appendChild(cEl); return cEl;
+  });
+  row.append(left, right);
+  vis.appendChild(row);
+  ups.push(t => {
+    fill.style.width = `max(6px, ${(2*draw(t, .8, 1.0)).toFixed(3)}%)`;
+    cards.forEach(cEl => stEnter(cEl, t, cEl._at, 14));
+  });
+  return ups;
+}
+
+/* ---- 13 · Walkthrough ---- */
+function vWalkthrough(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 900 200',
+    style:'width:100%;max-width:900px;display:block;margin:0 auto;overflow:visible'});
+  [60,140].forEach(y => svg.appendChild(
+    S('line', {x1:10, x2:890, y1:y, y2:y, stroke:C.grid, opacity:.45})));
+  svg.appendChild(S('rect', {x:300, y:96, width:300, height:44, fill:C.s2Wash,
+    stroke:C.s2, 'stroke-width':1.2}));
+  const path = drawablePath(
+    'M20,150 C160,150 240,120 360,120 C440,120 470,150 520,130 C640,80 760,50 880,30',
+    C.good, 4);
+  svg.appendChild(path);
+  vis.appendChild(svg);
+  const pillsRow = H('div', {display:'flex', gap:'12px', marginTop:'26px',
+    justifyContent:'center', flexWrap:'wrap'});
+  const pills = ['Trend','Location','Trap','Trigger','Stop','Exit'].map((lab, i) => {
+    const p = H('div', {display:'flex', alignItems:'center', gap:'8px',
+      padding:'11px 18px', borderRadius:'999px', background:C.goodWash,
+      border:`1px solid ${C.good}`, fontSize:'18px', fontWeight:'700', color:C.ink,
+      opacity:'0'});
+    p.innerHTML = `<span style="color:${C.good};font-weight:800">✓</span><span></span>`;
+    p.lastChild.textContent = lab; p._at = 2.2 + i*0.25;
+    pillsRow.appendChild(p); return p;
+  });
+  vis.appendChild(pillsRow);
+  ups.push(t => {
+    setDraw(path, draw(t, .7, 1.4));
+    pills.forEach(p => stPop(p, t, p._at));
+  });
+  return ups;
+}
+
+/* ---- 14 · Guardrails ---- */
+function vGuardrails(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'16px'});
+  [['2','positions max', C.s2, .9],
+   ['≤4%','total risk', C.warn, 1.15],
+   ['≥2:1','reward : risk', C.good, 1.4]
+  ].forEach(([big, lab, color, at]) => {
+    const c = card({flex:'1', padding:'26px 24px', borderRadius:'16px', opacity:'0'});
+    c.innerHTML = `<div style="font-size:66px;font-weight:770;color:${color};letter-spacing:-.02em;font-variant-numeric:tabular-nums"></div>` +
+      `<div style="font-size:18px;color:${C.ink2};margin-top:6px"></div>`;
+    c.children[0].textContent = big; c.children[1].textContent = lab;
+    row.appendChild(c);
+    ups.push(t => stRise(c, t, at, 20));
+  });
+  vis.appendChild(row);
+
+  // Survival staircase: 100% through five straight 2% losses. Values are
+  // computed (0.98^n) — the end label can never disagree with the math.
+  const vals = Array.from({length:6}, (_, n) => 100*Math.pow(0.98, n));
+  const X = i => 50 + i*105, Y = v => 20 + (101 - v)*(160/12);
+  let d = `M${X(0)},${Y(vals[0]).toFixed(1)}`;
+  for (let i = 1; i < 6; i++) d += ` H${X(i)} V${Y(vals[i]).toFixed(1)}`;
+  const bottomRow = H('div', {display:'flex', gap:'28px', alignItems:'center',
+    marginTop:'22px'});
+  const chartWrap = H('div', {flex:'1', minWidth:'0'});
+  const svg = S('svg', {viewBox:'0 0 640 230',
+    style:'width:100%;max-width:640px;display:block;overflow:visible'});
+  const area = S('path', {d:`${d} V190 H${X(0)} Z`, fill:C.warnWash, opacity:0});
+  const line = drawablePath(d, C.warn, 3);
+  svg.append(area, line);
+  const dots = vals.map((v, i) => {
+    const dot = S('circle', {cx:X(i), cy:Y(v), r:5, fill:C.warn, opacity:0});
+    svg.appendChild(dot); return dot;
+  });
+  const lab0 = S('text', {x:X(0), y:Y(vals[0])-14, fill:C.muted, 'font-size':15,
+    'font-weight':600, 'text-anchor':'middle', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  lab0.textContent = '100%';
+  const lab5 = S('text', {x:X(5)+16, y:Y(vals[5])+6, fill:C.warn, 'font-size':19,
+    'font-weight':800, 'text-anchor':'start', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  lab5.textContent = `~${vals[5].toFixed(0)}%`;
+  const cap = S('text', {x:(X(0)+X(5))/2, y:222, fill:C.muted, 'font-size':14,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  cap.textContent = 'five straight 2% losses';
+  svg.append(lab0, lab5, cap);
+  chartWrap.appendChild(svg);
+
+  const never = H('div', {flex:'none', display:'flex', alignItems:'center', gap:'18px',
+    padding:'18px 24px', borderRadius:'12px', background:C.critWash,
+    border:`1px solid ${C.crit}`, opacity:'0'});
+  never.innerHTML =
+    `<span style="font-size:24px;font-weight:900;color:${C.crit};letter-spacing:.04em">NEVER</span>` +
+    `<span style="font-size:21px;font-weight:600;color:${C.ink}">move a stop down</span>`;
+  bottomRow.append(chartWrap, never);
+  vis.appendChild(bottomRow);
+
+  ups.push(t => {
+    const p = draw(t, 1.6, 1.0);
+    setDraw(line, p);
+    area.setAttribute('opacity', p*.9);
+    dots.forEach((dot, i) => dot.setAttribute('opacity', p >= i/5 && t > 1.6 ? 1 : 0));
+    lab0.setAttribute('opacity', t > 1.7 ? 1 : 0);
+    lab5.setAttribute('opacity', p >= 1 ? 1 : 0);
+    cap.setAttribute('opacity', t > 2.4 ? 1 : 0);
+    stPop(never, t, 2.6);
+    if (t > 2.6 && t < 3.0){
+      const sh = Math.sin((t-2.6)*70)*4;
+      never.style.transform += ` translateX(${sh.toFixed(2)}px)`;
+    }
+  });
+  return ups;
+}
+
+/* ---- 15 · Mistakes ---- */
+function vMistakes(vis){
+  const ups = [];
+  const grid = H('div', {display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px'});
+  [['Chasing green candles','Buying strength, not a dip into a zone'],
+   ['Moving the stop down','Turning a small loss into a big one'],
+   ['Oversizing one trade','One bad call takes out the account'],
+   ['Revenge trading','Forcing a trade to win the last one back']
+  ].forEach(([title, sub], i) => {
+    const cEl = card({display:'flex', alignItems:'flex-start', gap:'16px',
+      padding:'20px 22px', opacity:'0'});
+    cEl.innerHTML =
+      `<div style="flex:none;width:28px;height:28px;border-radius:50%;background:${C.critWash};color:${C.crit};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800">✕</div>` +
+      `<div><div style="font-size:20px;font-weight:720;color:${C.ink}"></div>` +
+      `<div style="font-size:14px;color:${C.muted};margin-top:3px"></div></div>`;
+    cEl.children[1].children[0].textContent = title;
+    cEl.children[1].children[1].textContent = sub;
+    grid.appendChild(cEl);
+    ups.push(t => stRise(cEl, t, 0.7 + i*0.16, 16));
+  });
+  vis.appendChild(grid);
+  return ups;
+}
+
+/* ---- 16 · Patience ---- */
+function vPatience(vis){
+  const ups = [];
+  const strip = H('div', {display:'flex', gap:'14px'});
+  ['MON','TUE','WED','THU','FRI'].forEach((day, i) => {
+    const trade = i === 3;
+    const d = H('div', {flex:'1', padding:'20px 12px', borderRadius:'12px',
+      textAlign:'center', background: trade ? C.goodWash : C.surface,
+      border:`1px solid ${trade ? C.good : C.grid}`, opacity:'0'});
+    d.innerHTML = `<div style="font-size:15px;font-weight:700;color:${C.muted};letter-spacing:.08em"></div>` +
+      `<div style="margin-top:10px;font-size:${trade?'20':'24'}px;font-weight:800;color:${trade?C.good:C.muted}"></div>`;
+    d.children[0].textContent = day;
+    d.children[1].textContent = trade ? 'TRADE' : '—';
+    strip.appendChild(d);
+    ups.push(t => stRise(d, t, 0.7 + i*0.13, 16));
+  });
+  vis.appendChild(strip);
+  const line = H('div', {marginTop:'28px', fontSize:'26px', fontWeight:'740',
+    textAlign:'center', color:C.ink, opacity:'0'});
+  line.innerHTML = `<span style="color:${C.accent}">~4 of 5 nights</span>` +
+    `<span> there is no setup — and that’s fine.</span>`;
+  vis.appendChild(line);
+  ups.push(t => stRise(line, t, 1.6, 16));
+  return ups;
+}
+
+/* ---- 17 · Journal ---- */
+function vJournal(vis){
+  const ups = [];
+  const tbl = H('div', {borderRadius:'14px', border:`1px solid ${C.grid}`,
+    overflow:'hidden', opacity:'0'});
+  const cols = '110px 1.4fr .7fr .8fr 1.3fr';
+  const hd = H('div', {display:'grid', gridTemplateColumns:cols, gap:'0 18px',
+    padding:'13px 22px', background:C.surface2, fontSize:'13px', fontWeight:'800',
+    letterSpacing:'.08em', textTransform:'uppercase', color:C.muted});
+  ['Date','Setup','Plan','Result','Note'].forEach(h => {
+    const s = document.createElement('span'); s.textContent = h; hd.appendChild(s);
+  });
+  tbl.appendChild(hd);
+  const rows = [
+    ['03 / 12','Dip → zone','2R','+2.1R','Clean trigger'],
+    ['03 / 14','Trend long','2.5R','−1R','Stopped, fine'],
+    ['03 / 18','No trade','—','—','Nothing set up'],
+  ].map(([date, setup, plan, res, note], i) => {
+    const r = H('div', {display:'grid', gridTemplateColumns:cols, gap:'0 18px',
+      padding:'15px 22px', fontSize:'18px', color:C.ink, background:C.surface,
+      borderTop:`1px solid ${C.grid}`, opacity:'0',
+      fontVariantNumeric:'tabular-nums'});
+    const resColor = res.startsWith('+') ? C.good : res.startsWith('−') ? C.crit : C.ink2;
+    [date, setup, plan].forEach(v => {
+      const s = document.createElement('span'); s.textContent = v; r.appendChild(s);
+    });
+    const rs = document.createElement('span');
+    rs.textContent = res; rs.style.color = resColor; rs.style.fontWeight = '800';
+    r.appendChild(rs);
+    const ns = document.createElement('span'); ns.textContent = note; r.appendChild(ns);
+    tbl.appendChild(r);
+    return r;
+  });
+  vis.appendChild(tbl);
+  ups.push(t => {
+    stEnter(tbl, t, .7, 16);
+    rows.forEach((r, i) => stRise(r, t, 1.1 + i*0.2, 12));
+  });
+  return ups;
+}
+
+/* ---- 18 · Expectancy ---- */
+function vExpectancy(vis){
+  const ups = [];
+  const row = H('div', {display:'flex', gap:'32px', alignItems:'center'});
+  const cEl = card({width:'46%', padding:'26px 28px', opacity:'0'});
+  cEl.innerHTML =
+    `<div style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:${C.muted};margin-bottom:12px">EXPECTANCY / TRADE</div>` +
+    `<div style="font-size:24px;font-weight:600;color:${C.ink};font-variant-numeric:tabular-nums">40% × <b style="color:${C.good}">2R</b> − 60% × <b style="color:${C.crit}">1R</b></div>` +
+    `<div style="font-size:30px;font-weight:820;color:${C.good};margin-top:12px;font-variant-numeric:tabular-nums">= +0.2R</div>`;
+  row.appendChild(cEl);
+
+  const barsWrap = H('div', {flex:'1', display:'flex', gap:'40px', alignItems:'flex-end',
+    height:'190px', justifyContent:'center'});
+  function bar(color, hMax, label, caption){
+    const wrap = H('div', {display:'flex', flexDirection:'column', alignItems:'center',
+      justifyContent:'flex-end', height:'190px'});
+    const lab = H('div', {fontSize:'19px', fontWeight:'800', color, marginBottom:'8px',
+      opacity:'0', fontVariantNumeric:'tabular-nums'}, label);
+    const b = H('div', {width:'86px', background:color, borderRadius:'8px 8px 0 0',
+      height:'0px'});
+    const cap = H('div', {fontSize:'14px', color:C.muted, marginTop:'8px'}, caption);
+    wrap.append(lab, b, cap);
+    barsWrap.appendChild(wrap);
+    return {b, lab, hMax};
+  }
+  const win = bar(C.good, 118, '+0.8R', 'wins · 40%');
+  const loss = bar(C.crit, 88, '−0.6R', 'losses · 60%');
+  row.appendChild(barsWrap);
+  vis.appendChild(row);
+  ups.push(t => {
+    stEnter(cEl, t, .7, 16);
+    const p = draw(t, 1.6, .9);
+    win.b.style.height = (118*p).toFixed(1)+'px';
+    loss.b.style.height = (88*p).toFixed(1)+'px';
+    win.lab.style.opacity = loss.lab.style.opacity = p > .7 ? 1 : 0;
+  });
+  return ups;
+}
+
+/* ---- 19 · Recap ---- */
+function vRecap(vis){
+  const ups = [];
+  const wrap = H('div', {position:'relative'});
+  const chipsRow = H('div', {display:'flex', flexWrap:'wrap', gap:'12px'});
+  const chips = ['Trend','Location','Trap','Trigger','Stop','Exit'].map((lab, i) => {
+    const ch = H('div', {padding:'13px 20px', borderRadius:'999px', fontSize:'20px',
+      fontWeight:'600', background:C.surface, border:`1px solid ${C.grid}`,
+      color:C.ink, opacity:'0', fontVariantNumeric:'tabular-nums'},
+      `${i+1} · ${lab}`);
+    chipsRow.appendChild(ch); return ch;
+  });
+  wrap.appendChild(chipsRow);
+  const line = H('div', {marginTop:'30px', fontSize:'46px', fontWeight:'780',
+    letterSpacing:'-.02em', color:C.ink, display:'flex', gap:'14px', flexWrap:'wrap'});
+  const words = 'All six, or no trade.'.split(' ').map((w, i) => {
+    const s = H('span', {opacity:'0', display:'inline-block'}, w);
+    line.appendChild(s); return s;
+  });
+  wrap.appendChild(line);
+
+  const sub = H('div', {marginTop:'38px', position:'relative', height:'110px'});
+  const btn = H('div', {position:'absolute', left:'0', top:'0', display:'inline-flex',
+    alignItems:'center', gap:'14px', padding:'18px 34px', borderRadius:'999px',
+    background:C.crit, color:'#fff', fontSize:'24px', fontWeight:'800', opacity:'0'});
+  btn.innerHTML = `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:22px;background:#fff;border-radius:4px;color:${C.crit};font-size:13px">▶</span><span>Subscribe</span>`;
+  const cursor = H('div', {position:'absolute', fontSize:'34px', color:C.ink,
+    transform:'rotate(-12deg)', opacity:'0', zIndex:'2'}, '➤');
+  const ripple = H('div', {position:'absolute', border:`2px solid ${C.warn}`,
+    borderRadius:'50%', opacity:'0', pointerEvents:'none'});
+  sub.append(btn, cursor, ripple);
+  wrap.appendChild(sub);
+  vis.appendChild(wrap);
+
+  ups.push(t => {
+    chips.forEach((ch, i) => {
+      stRise(ch, t, 0.5 + i*0.12, 16, .5);
+      const lit = t >= 3.2 + i*0.18 && t < 3.2 + i*0.18 + 0.5;
+      ch.style.background = lit ? C.accent : C.surface;
+      ch.style.color = lit ? '#fff' : C.ink;
+      ch.style.borderColor = lit ? C.accent : C.grid;
+    });
+    words.forEach((w, i) => stRise(w, t, 1.9 + i*0.16, 20, .5));
+    stEnter(btn, t, 4.6, 16);
+    const clicked = t > 7.0;
+    btn.style.background = clicked ? '#b45c40' : C.crit;
+    if (clicked) btn.style.transform += ' scale(.97)';
+    if (t > 5.5){
+      const p = easeInOutCubic(clamp01((t-5.6)/1.4));
+      cursor.style.opacity = 1;
+      cursor.style.left = (-40 + 200*p).toFixed(1)+'px';
+      cursor.style.top = (-60 + 70*p).toFixed(1)+'px';
+    } else cursor.style.opacity = 0;
+    if (t >= 7.0 && t <= 7.5){
+      const rp = (t-7.0)/0.5, r = 10 + 65*rp;
+      ripple.style.opacity = (1-rp).toFixed(3);
+      ripple.style.width = ripple.style.height = (r*2).toFixed(1)+'px';
+      ripple.style.left = (190 - r).toFixed(1)+'px';
+      ripple.style.top = (33 - r).toFixed(1)+'px';
+    } else ripple.style.opacity = 0;
+  });
+  return ups;
+}
+
+/* ============================================================
+   Slide definitions — copy verbatim from the video deck
+   ============================================================ */
+/* ============================================================
+   VISUAL LIBRARY — 12 new patterns for /learn-stock decks.
+   Every animation is a pure function of slide-local t.
+   Numbers marked "illustrative" are pattern placeholders — a real
+   lesson replaces them with computed or sourced values.
+   ============================================================ */
+
+/* ---- L1 · Callout anatomy (one big labeled object) ---- */
+function vCandleAnatomy(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 900 400',
+    style:'width:100%;max-width:900px;display:block;margin:0 auto;overflow:visible'});
+  const CX = 300, bodyTop = 110, bodyBot = 290, wickTop = 50, wickBot = 350, W = 90;
+  const wick = S('line', {x1:CX, x2:CX, y1:wickBot, y2:wickBot, stroke:C.good,
+    'stroke-width':5, opacity:0});
+  const body = S('rect', {x:CX-W/2, y:(bodyTop+bodyBot)/2, width:W, height:0, rx:6,
+    fill:C.good});
+  svg.append(wick, body);
+  const calls = [
+    [wickTop, 'High — the most anyone paid', C.ink2, 2.0],
+    [bodyTop, 'Close — where it ended', C.good, 2.4],
+    [bodyBot, 'Open — where it started', C.ink2, 2.8],
+    [wickBot, 'Low — the most fear', C.crit, 3.2],
+  ].map(([y, lab, color, at]) => {
+    const onBody = (y === bodyTop || y === bodyBot);
+    const ln = S('line', {x1:CX + (onBody ? W/2 : 0) + 10, x2:CX+150, y1:y, y2:y,
+      stroke:C.grid, 'stroke-width':1.5, opacity:0});
+    const tx = S('text', {x:CX+160, y:y+6, fill:color, 'font-size':18,
+      'font-weight':700, 'font-family':FONT, opacity:0});
+    tx.textContent = lab;
+    svg.append(ln, tx);
+    return {ln, tx, at};
+  });
+  const bodyTag = S('text', {x:CX-64, y:(bodyTop+bodyBot)/2+6, fill:C.ink2,
+    'font-size':16, 'font-weight':700, 'text-anchor':'end', 'font-family':FONT, opacity:0});
+  bodyTag.textContent = 'body = conviction';
+  const wickTag = S('text', {x:CX-64, y:wickBot-6, fill:C.muted, 'font-size':16,
+    'font-weight':700, 'text-anchor':'end', 'font-family':FONT, opacity:0});
+  wickTag.textContent = 'wick = rejection';
+  svg.append(bodyTag, wickTag);
+  const RX = 700, rTop = 140, rBot = 260;
+  const rWick = S('line', {x1:RX, x2:RX, y1:100, y2:300, stroke:C.crit,
+    'stroke-width':4, opacity:0});
+  const rBody = S('rect', {x:RX-32, y:200, width:64, height:0, rx:5, fill:C.crit});
+  const rLab = S('text', {x:RX, y:386, fill:C.crit, 'font-size':16, 'font-weight':700,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  rLab.textContent = 'red = closed below the open';
+  svg.append(rWick, rBody, rLab);
+  vis.appendChild(svg);
+  ups.push(t => {
+    const wp = draw(t, .8, .8);
+    wick.setAttribute('opacity', wp);
+    wick.setAttribute('y1', wickBot - (wickBot-wickTop)*wp);
+    const bp = draw(t, 1.2, .8), h = (bodyBot-bodyTop)*bp;
+    body.setAttribute('y', (bodyTop+bodyBot)/2 - h/2);
+    body.setAttribute('height', h);
+    calls.forEach(cl => {
+      const p = draw(t, cl.at, .5);
+      cl.ln.setAttribute('opacity', p*.9); cl.tx.setAttribute('opacity', p);
+    });
+    bodyTag.setAttribute('opacity', draw(t, 3.7, .5));
+    wickTag.setAttribute('opacity', draw(t, 4.0, .5));
+    const rp = draw(t, 4.4, .7), rh = (rBot-rTop)*rp;
+    rWick.setAttribute('opacity', rp);
+    rBody.setAttribute('y', 200 - rh/2); rBody.setAttribute('height', rh);
+    rLab.setAttribute('opacity', t > 5.1 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L2 · Gauge (one number with safe/caution/danger zones) ---- */
+function vGauge(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 640 410',
+    style:'width:100%;max-width:620px;display:block;margin:0 auto;overflow:visible'});
+  const CX = 320, CY = 310, R = 210;
+  const arc = (a0, a1, r) => {
+    const rad = a => Math.PI*a/180;
+    return `M${CX + r*Math.cos(rad(a0))},${CY - r*Math.sin(rad(a0))} ` +
+           `A${r},${r} 0 0 1 ${CX + r*Math.cos(rad(a1))},${CY - r*Math.sin(rad(a1))}`;
+  };
+  const zones = [[180,108,C.good],[108,54,C.warn],[54,0,C.crit]].map(([a0,a1,col], i) => {
+    const p = drawablePath(arc(a0, a1, R), col, 26, {'stroke-linecap':'butt'});
+    p._at = .7 + i*.4;
+    svg.appendChild(p); return p;
+  });
+  for (let i = 0; i <= 5; i++){
+    const rad = Math.PI*(180 - i*36)/180;
+    const tx = S('text', {x:CX + (R+36)*Math.cos(rad), y:CY - (R+36)*Math.sin(rad) + 6,
+      fill:C.muted, 'font-size':15, 'font-weight':600, 'text-anchor':'middle',
+      'font-family':FONT, 'font-variant-numeric':'tabular-nums'});
+    tx.textContent = i + '%';
+    svg.appendChild(tx);
+  }
+  const needle = S('line', {x1:CX, y1:CY, x2:CX-R+46, y2:CY, stroke:C.ink,
+    'stroke-width':6, 'stroke-linecap':'round'});
+  const hub = S('circle', {cx:CX, cy:CY, r:14, fill:C.ink});
+  const val = S('text', {x:CX, y:CY+68, fill:C.good, 'font-size':52, 'font-weight':800,
+    'text-anchor':'middle', 'font-family':FONT, 'font-variant-numeric':'tabular-nums',
+    opacity:0});
+  const valLab = S('text', {x:CX, y:CY+96, fill:C.muted, 'font-size':16,
+    'font-weight':600, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  valLab.textContent = 'risk on this trade';
+  svg.append(needle, hub, val, valLab);
+  vis.appendChild(svg);
+  const TARGET = 2;                                    // his 2% rule
+  ups.push(t => {
+    zones.forEach(z => setDraw(z, draw(t, z._at, .6)));
+    const e = easeOutBack(clamp01((t-2.0)/1.1));
+    const rad = Math.PI*(180 - (TARGET*e/5)*180)/180;
+    needle.setAttribute('x2', CX + (R-46)*Math.cos(rad));
+    needle.setAttribute('y2', CY - (R-46)*Math.sin(rad));
+    val.textContent = (TARGET*clamp01((t-2)/1.1)).toFixed(1) + '%';
+    val.setAttribute('opacity', t > 2 ? 1 : 0);
+    valLab.setAttribute('opacity', t > 2.4 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L3 · Probability tree (branches, then the math) ---- */
+function vProbTree(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 960 330',
+    style:'width:100%;max-width:960px;display:block;margin:0 auto;overflow:visible'});
+  const node = (x, y, w, lab, col) => {
+    const g = S('g', {opacity:0});
+    g.appendChild(S('rect', {x:x-w/2, y:y-24, width:w, height:48, rx:10,
+      fill:C.surface, stroke:col, 'stroke-width':1.5}));
+    const tx = S('text', {x, y:y+7, fill:col, 'font-size':20, 'font-weight':760,
+      'text-anchor':'middle', 'font-family':FONT, 'font-variant-numeric':'tabular-nums'});
+    tx.textContent = lab;
+    g.appendChild(tx); svg.appendChild(g);
+    return {g, x, y};
+  };
+  const root = node(110, 165, 150, '1 trade', C.ink);
+  const win  = node(480, 75, 130, 'WIN', C.good);
+  const lose = node(480, 255, 130, 'LOSE', C.crit);
+  const win2 = node(820, 75, 150, '+2R', C.good);
+  const lose2= node(820, 255, 150, '−1R', C.crit);
+  const e1 = drawablePath('M185,153 C300,115 360,90 415,79', C.good, 2.5);
+  const e2 = drawablePath('M185,177 C300,215 360,240 415,251', C.crit, 2.5);
+  const e3 = drawablePath('M545,75 L745,75', C.good, 2.5);
+  const e4 = drawablePath('M545,255 L745,255', C.crit, 2.5);
+  svg.append(e1, e2, e3, e4);
+  const p1 = S('text', {x:300, y:96, fill:C.good, 'font-size':18, 'font-weight':800,
+    'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+  p1.textContent = '40%';
+  const p2 = S('text', {x:300, y:246, fill:C.crit, 'font-size':18, 'font-weight':800,
+    'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+  p2.textContent = '60%';
+  svg.append(p1, p2);
+  const EV = 0.4*2 - 0.6*1;                            // computed, not typed
+  const evChip = H('div', {display:'inline-flex', gap:'10px', alignItems:'center',
+    marginTop:'16px', padding:'12px 22px', borderRadius:'999px',
+    background:C.accentWash, border:`1px solid ${C.accent}`, fontSize:'22px',
+    fontWeight:'760', color:C.ink, opacity:'0', fontVariantNumeric:'tabular-nums'});
+  evChip.innerHTML = `40% × 2R − 60% × 1R = ` +
+    `<span style="color:${C.accent};font-weight:800">+${EV.toFixed(1)}R average</span>`;
+  const wrap = H('div', {textAlign:'center'});
+  wrap.append(svg, evChip);
+  vis.appendChild(wrap);
+  ups.push(t => {
+    svPop(root.g, t, .7, root.x, root.y);
+    setDraw(e1, draw(t, 1.2, .7)); setDraw(e2, draw(t, 1.35, .7));
+    p1.setAttribute('opacity', draw(t, 1.7, .4));
+    p2.setAttribute('opacity', draw(t, 1.85, .4));
+    svPop(win.g, t, 1.9, win.x, win.y); svPop(lose.g, t, 2.05, lose.x, lose.y);
+    setDraw(e3, draw(t, 2.5, .6)); setDraw(e4, draw(t, 2.65, .6));
+    svPop(win2.g, t, 3.0, win2.x, win2.y); svPop(lose2.g, t, 3.15, lose2.x, lose2.y);
+    stEnter(evChip, t, 3.8, 14);
+  });
+  return ups;
+}
+
+/* ---- L4 · Compounding curve (two paths, same money) ---- */
+function vCompound(vis){
+  const ups = [];
+  const WKS = 104, START = 10000;
+  const growth = Array.from({length:WKS+1}, (_, i) => START*Math.pow(1.01, i));
+  const saver  = Array.from({length:WKS+1}, (_, i) => START + 100*i);
+  const X0 = 60, X1 = 880, Y0 = 300, Y1 = 40, maxV = growth[WKS];
+  const x = i => X0 + (X1-X0)*i/WKS, y = v => Y0 - (Y0-Y1)*(v-START)/(maxV-START);
+  const pathOf = a => a.map((v, i) =>
+    `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const svg = S('svg', {viewBox:'0 0 940 350',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  [Y1, (Y0+Y1)/2, Y0].forEach(gy => svg.appendChild(
+    S('line', {x1:X0, x2:X1, y1:gy, y2:gy, stroke:C.grid, opacity:.45})));
+  const pSave = drawablePath(pathOf(saver), C.muted, 3);
+  const pGrow = drawablePath(pathOf(growth), C.accent, 4);
+  svg.append(pSave, pGrow);
+  const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
+  const lSave = S('text', {x:X1, y:y(saver[WKS])-10, fill:C.muted, 'font-size':16,
+    'font-weight':700, 'text-anchor':'end', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  lSave.textContent = fmt$(saver[WKS]) + ' saved';
+  const lGrow = S('text', {x:X1, y:y(growth[WKS])-12, fill:C.accent, 'font-size':19,
+    'font-weight':800, 'text-anchor':'end', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  lGrow.textContent = fmt$(growth[WKS]) + ' compounded';
+  svg.append(lSave, lGrow);
+  const miles = [[52, 'year 1']].map(([wk, lab], i) => {
+    const d = S('circle', {cx:x(wk), cy:y(growth[wk]), r:6, fill:C.accent, opacity:0});
+    const tx = S('text', {x:x(wk), y:y(growth[wk])-14, fill:C.ink2, 'font-size':14,
+      'font-weight':700, 'text-anchor':'middle', 'font-family':FONT,
+      'font-variant-numeric':'tabular-nums', opacity:0});
+    tx.textContent = `${lab} · ${fmt$(growth[wk])}`;
+    svg.append(d, tx);
+    return {d, tx, at:2.4 + i*.7};
+  });
+  const cap = S('text', {x:(X0+X1)/2, y:Y0+36, fill:C.muted, 'font-size':14,
+    'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  cap.textContent = 'the same $10,000 · 1% a week vs $100 saved a week · 2 years';
+  svg.appendChild(cap);
+  vis.appendChild(svg);
+  ups.push(t => {
+    setDraw(pSave, draw(t, .8, 1.4));
+    setDraw(pGrow, draw(t, 1.1, 1.8));
+    miles.forEach(m => {
+      const p = draw(t, m.at, .4);
+      m.d.setAttribute('opacity', p); m.tx.setAttribute('opacity', p);
+    });
+    lSave.setAttribute('opacity', t > 2.4 ? 1 : 0);
+    lGrow.setAttribute('opacity', t > 3.1 ? 1 : 0);
+    cap.setAttribute('opacity', t > 3.5 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L5 · Order book (spread anatomy) ---- */
+function vOrderBook(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 900 340',
+    style:'width:100%;max-width:900px;display:block;margin:0 auto;overflow:visible'});
+  const X0 = 210, RH = 32, GAP = 10;
+  const asks = [[100.30, 330],[100.20, 230],[100.10, 150]];
+  const bids = [[99.90, 170],[99.80, 260],[99.70, 350]];
+  const rowY = i => 30 + i*(RH+GAP);
+  const mkRows = (data, y0, col, at0) => data.map(([price, w], i) => {
+    const yy = y0 + i*(RH+GAP);
+    const px = S('text', {x:X0-16, y:yy+RH/2+6, fill:C.ink2, 'font-size':17,
+      'font-weight':700, 'text-anchor':'end', 'font-family':FONT,
+      'font-variant-numeric':'tabular-nums', opacity:0});
+    px.textContent = price.toFixed(2);
+    const bar = S('rect', {x:X0, y:yy, width:0, height:RH, rx:4, fill:col, opacity:.82});
+    svg.append(px, bar);
+    return {px, bar, w, at:at0 + i*.15};
+  });
+  const askRows = mkRows(asks, 30, C.crit, 1.0);
+  const spreadY = 30 + 3*(RH+GAP);
+  const bidRows = mkRows(bids, spreadY + 54, C.good, 1.8);
+  const band = S('rect', {x:X0-170, y:spreadY, width:0, height:44, rx:8,
+    fill:C.accentWash, stroke:C.accent, 'stroke-width':1.5});
+  const bandLab = S('text', {x:X0+20, y:spreadY+28, fill:C.accent, 'font-size':17,
+    'font-weight':800, 'font-family':FONT, opacity:0});
+  bandLab.textContent = 'THE SPREAD — where the price lives';
+  svg.append(band, bandLab);
+  const sellLab = S('text', {x:X0+600, y:rowY(0)+RH/2+6, fill:C.crit, 'font-size':15,
+    'font-weight':800, 'letter-spacing':'.1em', 'font-family':FONT, opacity:0});
+  sellLab.textContent = 'SELLERS ABOVE';
+  const buyLab = S('text', {x:X0+600, y:spreadY+54+2*(RH+GAP)+RH/2+6, fill:C.good,
+    'font-size':15, 'font-weight':800, 'letter-spacing':'.1em', 'font-family':FONT,
+    opacity:0});
+  buyLab.textContent = 'BUYERS BELOW';
+  svg.append(sellLab, buyLab);
+  vis.appendChild(svg);
+  ups.push(t => {
+    [...askRows, ...bidRows].forEach(r => {
+      const p = draw(t, r.at, .5);
+      r.bar.setAttribute('width', r.w*p);
+      r.px.setAttribute('opacity', p);
+    });
+    band.setAttribute('width', (170 + 560) * draw(t, 2.6, .7));
+    bandLab.setAttribute('opacity', t > 3.1 ? 1 : 0);
+    sellLab.setAttribute('opacity', t > 3.5 ? 1 : 0);
+    buyLab.setAttribute('opacity', t > 3.7 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L6 · Underwater chart (equity + mirrored drawdown) ---- */
+function vUnderwater(vis){
+  const ups = [];
+  const eq = [100,104,108,106,112,117,114,109,111,118,124,122,128,133,130,137,142];
+  let peak = 0;
+  const dd = eq.map(v => { peak = Math.max(peak, v); return (peak - v)/peak*100; });
+  const worst = Math.max(...dd);
+  const X0 = 60, X1 = 880, TY0 = 170, TY1 = 30, BY0 = 205, BY1 = 320;
+  const x = i => X0 + (X1-X0)*i/(eq.length-1);
+  const yT = v => TY0 - (TY0-TY1)*(v-95)/(145-95);
+  const yB = d => BY0 + (BY1-BY0)*d/14;
+  const svg = S('svg', {viewBox:'0 0 940 360',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  svg.appendChild(S('line', {x1:X0, x2:X1, y1:BY0-8, y2:BY0-8, stroke:C.grid, opacity:.6}));
+  const eqPath = drawablePath(
+    eq.map((v,i) => `${i?'L':'M'}${x(i).toFixed(1)},${yT(v).toFixed(1)}`).join(' '),
+    C.ink, 3.5);
+  svg.appendChild(eqPath);
+  let pk = 0;
+  const hiDots = eq.map((v, i) => {
+    if (v <= pk) return null;
+    pk = v;
+    const d = S('circle', {cx:x(i), cy:yT(v), r:4.5, fill:C.good, opacity:0});
+    d._frac = i/(eq.length-1);
+    svg.appendChild(d); return d;
+  }).filter(Boolean);
+  const ddD = dd.map((d,i) => `${i?'L':'M'}${x(i).toFixed(1)},${yB(d).toFixed(1)}`).join(' ');
+  const ddArea = S('path', {d:`${ddD} L${X1},${BY0-8} L${X0},${BY0-8} Z`,
+    fill:C.critWash, opacity:0});
+  const ddLine = drawablePath(ddD, C.crit, 2.5);
+  svg.append(ddArea, ddLine);
+  const wi = dd.indexOf(worst);
+  const wLab = S('text', {x:x(wi), y:yB(worst)+24, fill:C.crit, 'font-size':18,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  wLab.textContent = `−${worst.toFixed(0)}% at the worst`;
+  const topLab = S('text', {x:X0, y:TY1-6, fill:C.muted, 'font-size':14,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  topLab.textContent = 'THE EQUITY CURVE EVERYONE SHOWS';
+  const botLab = S('text', {x:X0, y:BY1+30, fill:C.muted, 'font-size':14,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  botLab.textContent = 'THE DRAWDOWN UNDERNEATH IT';
+  svg.append(wLab, topLab, botLab);
+  vis.appendChild(svg);
+  ups.push(t => {
+    topLab.setAttribute('opacity', t > .7 ? 1 : 0);
+    const p = draw(t, .9, 1.6);
+    setDraw(eqPath, p);
+    hiDots.forEach(d => d.setAttribute('opacity', p >= d._frac && t > .9 ? 1 : 0));
+    botLab.setAttribute('opacity', t > 2.4 ? 1 : 0);
+    const q = draw(t, 2.6, 1.4);
+    setDraw(ddLine, q);
+    ddArea.setAttribute('opacity', q*.9);
+    wLab.setAttribute('opacity', q >= 1 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L7 · Slope chart (before → after, one line per metric) ---- */
+function vSlope(vis){
+  const ups = [];
+  const svg = S('svg', {viewBox:'0 0 940 330',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  const LX = 360, RX = 760;
+  ['BEFORE THE SYSTEM','AFTER'].forEach((lab, i) => {
+    const tx = S('text', {x:i ? RX : LX, y:34, fill:C.muted, 'font-size':14,
+      'font-weight':800, 'letter-spacing':'.1em', 'text-anchor':'middle',
+      'font-family':FONT});
+    tx.textContent = lab;
+    svg.appendChild(tx);
+  });
+  const rows = [
+    ['Trades a week', '11', '2', +1],
+    ['Average loss', '−2.4R', '−1R', -1],
+    ['Win rate', '38%', '44%', -1],
+  ].map(([name, a, b, dir], i) => {
+    const y = 100 + i*95, off = 22*dir;
+    const nm = S('text', {x:60, y:y+6, fill:C.ink, 'font-size':20, 'font-weight':720,
+      'font-family':FONT, opacity:0});
+    nm.textContent = name;
+    const ln = drawablePath(`M${LX},${y+off} L${RX},${y-off}`, C.good, 3);
+    const dA = S('circle', {cx:LX, cy:y+off, r:8, fill:C.muted, opacity:0});
+    const dB = S('circle', {cx:RX, cy:y-off, r:9, fill:C.good, opacity:0});
+    const vA = S('text', {x:LX-24, y:y+off+6, fill:C.muted, 'font-size':17,
+      'font-weight':700, 'text-anchor':'end', 'font-family':FONT,
+      'font-variant-numeric':'tabular-nums', opacity:0});
+    vA.textContent = a;
+    const vB = S('text', {x:RX+24, y:y-off+6, fill:C.good, 'font-size':19,
+      'font-weight':800, 'text-anchor':'start', 'font-family':FONT,
+      'font-variant-numeric':'tabular-nums', opacity:0});
+    vB.textContent = b;
+    svg.append(nm, ln, dA, dB, vA, vB);
+    return {nm, ln, dA, dB, vA, vB, at:.9 + i*.35};
+  });
+  vis.appendChild(svg);
+  ups.push(t => {
+    rows.forEach(r => {
+      const p = draw(t, r.at, .7);
+      r.nm.style.opacity = clamp01(p*2);
+      r.dA.setAttribute('opacity', p > 0 ? 1 : 0);
+      r.vA.setAttribute('opacity', p > .2 ? 1 : 0);
+      setDraw(r.ln, p);
+      r.dB.setAttribute('opacity', p >= 1 ? 1 : 0);
+      r.vB.setAttribute('opacity', p >= 1 ? 1 : 0);
+    });
+  });
+  return ups;
+}
+
+/* ---- L8 · Connected trajectory (two measures, one path) ---- */
+function vTrajectory(vis){
+  const ups = [];
+  const pts = [[4.5,-2],[3.8,-1],[3.0,.5],[2.4,1],[2.2,2.2],[2.0,3]];  // illustrative
+  const X0 = 120, X1 = 860, Y0 = 290, Y1 = 40;
+  const x = r => X0 + (X1-X0)*(5 - r)/(5 - 1.5);
+  const y = v => Y0 - (Y0-Y1)*(v + 3)/(4 + 3);
+  const svg = S('svg', {viewBox:'0 0 940 340',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  svg.appendChild(S('line', {x1:X0-30, x2:X1+30, y1:y(0), y2:y(0), stroke:C.grid,
+    'stroke-dasharray':'5 6', opacity:.7}));
+  const zl = S('text', {x:X0-38, y:y(0)+5, fill:C.muted, 'font-size':14,
+    'text-anchor':'end', 'font-family':FONT});
+  zl.textContent = 'break even';
+  svg.appendChild(zl);
+  const path = drawablePath(
+    pts.map((p,i) => `${i?'L':'M'}${x(p[0]).toFixed(1)},${y(p[1]).toFixed(1)}`).join(' '),
+    C.s2, 3);
+  svg.appendChild(path);
+  const dots = pts.map((p, i) => {
+    const g = S('g', {opacity:0});
+    g.appendChild(S('circle', {cx:x(p[0]), cy:y(p[1]), r:8,
+      fill:i === pts.length-1 ? C.good : C.ink, stroke:C.s2, 'stroke-width':2.5}));
+    if (i === 0 || i === pts.length-1){        // selective labels — ends only
+      const tx = S('text', {x:x(p[0]), y:y(p[1]) + (i === 0 ? 30 : -20),
+        fill: i === 0 ? C.muted : C.good, 'font-size':15, 'font-weight':700,
+        'text-anchor':'middle', 'font-family':FONT});
+      tx.textContent = 'month ' + (i+1);
+      g.appendChild(tx);
+    }
+    svg.appendChild(g);
+    return {g, frac:i/(pts.length-1)};
+  });
+  const last = pts[pts.length-1], prev = pts[pts.length-2];
+  const ang = Math.atan2(y(last[1])-y(prev[1]), x(last[0])-x(prev[0]))*180/Math.PI;
+  const arrow = S('path', {d:'M0,-7 L14,0 L0,7 Z', fill:C.good, opacity:0,
+    transform:`translate(${x(last[0])+14},${y(last[1])}) rotate(${ang.toFixed(1)})`});
+  svg.appendChild(arrow);
+  const xl = S('text', {x:X1, y:Y0+34, fill:C.muted, 'font-size':15, 'font-weight':700,
+    'text-anchor':'end', 'font-family':FONT, opacity:0});
+  xl.textContent = 'risk taken per trade →  (smaller to the right)';
+  const yl = S('text', {x:X0-30, y:Y1-10, fill:C.muted, 'font-size':15,
+    'font-weight':700, 'font-family':FONT, opacity:0});
+  yl.textContent = '↑ monthly result';
+  svg.append(xl, yl);
+  vis.appendChild(svg);
+  ups.push(t => {
+    xl.setAttribute('opacity', t > .6 ? 1 : 0);
+    yl.setAttribute('opacity', t > .8 ? 1 : 0);
+    const p = draw(t, 1.0, 2.0);
+    setDraw(path, p);
+    dots.forEach(d => svPop(d.g, t, 1.0 + d.frac*2.0, 0, 0));
+    arrow.setAttribute('opacity', p >= 1 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L9 · Lollipop ranking ---- */
+function vLollipop(vis){
+  const ups = [];
+  const rows = [                                        // illustrative shares
+    ['Position sizing', 38], ['Honoring the stop', 27],
+    ['Entry timing', 9], ['Picking tickers', 4],
+  ];
+  const X0 = 340, SCALE = 12;
+  const svg = S('svg', {viewBox:'0 0 940 300',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  const items = rows.map(([name, v], i) => {
+    const y = 50 + i*68;
+    const nm = S('text', {x:X0-24, y:y+6, fill:C.ink, 'font-size':20, 'font-weight':720,
+      'text-anchor':'end', 'font-family':FONT, opacity:0});
+    nm.textContent = name;
+    const stem = S('line', {x1:X0, x2:X0, y1:y, y2:y, stroke:C.s2, 'stroke-width':3});
+    const dot = S('circle', {cx:X0, cy:y, r:11, fill:C.s2, opacity:0});
+    const val = S('text', {x:X0, y:y+6, fill:C.ink2, 'font-size':18, 'font-weight':800,
+      'font-family':FONT, 'font-variant-numeric':'tabular-nums', opacity:0});
+    val.textContent = v + '%';
+    svg.append(nm, stem, dot, val);
+    return {nm, stem, dot, val, v, y, at:.9 + i*.25};
+  });
+  const cap = S('text', {x:X0, y:50 + 4*68, fill:C.muted, 'font-size':14,
+    'font-family':FONT, opacity:0});
+  cap.textContent = 'share of P&L improvement after a year of journaling (illustrative)';
+  svg.appendChild(cap);
+  vis.appendChild(svg);
+  ups.push(t => {
+    items.forEach(r => {
+      const p = draw(t, r.at, .7);
+      r.nm.style.opacity = clamp01(p*2);
+      const end = X0 + r.v*SCALE*p;
+      r.stem.setAttribute('x2', end);
+      r.dot.setAttribute('cx', end);
+      r.dot.setAttribute('opacity', p > .1 ? 1 : 0);
+      r.val.setAttribute('x', end + 24);
+      r.val.setAttribute('opacity', p >= 1 ? 1 : 0);
+    });
+    cap.setAttribute('opacity', t > 2.4 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L10 · Waterfall bridge (gross → net) ---- */
+function vBridgeWalk(vis){
+  const ups = [];
+  const steps = [['Gross wins', 3.0], ['Fees', -0.2], ['Slippage', -0.3],
+                 ['Late exits', -0.5]];                 // illustrative
+  const NET = steps.reduce((s, [,v]) => s + v, 0);      // computed
+  const Y0 = 300, RSCALE = 72, BW = 120, GAP = 42, X0 = 80;
+  const svg = S('svg', {viewBox:'0 0 940 360',
+    style:'width:100%;max-width:940px;display:block;margin:0 auto;overflow:visible'});
+  svg.appendChild(S('line', {x1:40, x2:900, y1:Y0, y2:Y0, stroke:C.grid, opacity:.7}));
+  let run = 0;
+  const bars = steps.map(([name, v], i) => {
+    const x = X0 + i*(BW+GAP);
+    const from = run; run += v;
+    const top = Y0 - Math.max(from, run)*RSCALE;
+    const h = Math.abs(v)*RSCALE;
+    const col = i === 0 ? C.s2 : C.crit;
+    const bar = S('rect', {x, y:i === 0 ? Y0 : top, width:BW, height:0,
+      rx:5, fill:col, opacity:.9});
+    const nm = S('text', {x:x+BW/2, y:Y0+26, fill:C.ink2, 'font-size':16,
+      'font-weight':700, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+    nm.textContent = name;
+    const val = S('text', {x:x+BW/2, y:top-10, fill:col, 'font-size':17,
+      'font-weight':800, 'text-anchor':'middle', 'font-family':FONT,
+      'font-variant-numeric':'tabular-nums', opacity:0});
+    val.textContent = (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1) + 'R';
+    const conn = i < steps.length ? S('line', {x1:x+BW, x2:x+BW+GAP, y1:Y0-run*RSCALE,
+      y2:Y0-run*RSCALE, stroke:C.muted, 'stroke-dasharray':'4 5', opacity:0}) : null;
+    svg.append(bar, nm, val);
+    if (conn) svg.appendChild(conn);
+    return {bar, nm, val, conn, v, top, h, at:.9 + i*.5, isFirst:i === 0};
+  });
+  const nx = X0 + steps.length*(BW+GAP);
+  const netBar = S('rect', {x:nx, y:Y0, width:BW, height:0, rx:5, fill:C.good});
+  const netNm = S('text', {x:nx+BW/2, y:Y0+26, fill:C.ink, 'font-size':16,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT, opacity:0});
+  netNm.textContent = 'NET';
+  const netVal = S('text', {x:nx+BW/2, y:Y0-NET*RSCALE-10, fill:C.good, 'font-size':19,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  netVal.textContent = '+' + NET.toFixed(1) + 'R kept';
+  svg.append(netBar, netNm, netVal);
+  vis.appendChild(svg);
+  ups.push(t => {
+    bars.forEach(b => {
+      const p = draw(t, b.at, .6);
+      b.nm.setAttribute('opacity', clamp01(p*2));
+      b.bar.setAttribute('height', b.h*p);
+      if (b.isFirst) b.bar.setAttribute('y', Y0 - b.h*p);
+      else b.bar.setAttribute('y', b.top + b.h*(1-p));
+      b.val.setAttribute('opacity', p >= 1 ? 1 : 0);
+      if (b.conn) b.conn.setAttribute('opacity', p >= 1 ? .8 : 0);
+    });
+    const np = draw(t, .9 + steps.length*.5, .7);
+    netBar.setAttribute('height', NET*RSCALE*np);
+    netBar.setAttribute('y', Y0 - NET*RSCALE*np);
+    netNm.setAttribute('opacity', clamp01(np*2));
+    netVal.setAttribute('opacity', np >= 1 ? 1 : 0);
+  });
+  return ups;
+}
+
+/* ---- L11 · Month heat strip (discipline calendar) ---- */
+function vMonthGrid(vis){
+  const ups = [];
+  const days = [null,null,'+2.1R',null,null, null,'−1R',null,null,null,
+                null,null,'+1.4R',null,null, '−1R',null,null,'+2.5R',null];
+  const trades = days.filter(Boolean);
+  const wins = trades.filter(v => v.startsWith('+')).length;
+  const grid = H('div', {display:'grid', gridTemplateColumns:'repeat(5, 1fr)',
+    gap:'12px', maxWidth:'880px', margin:'0 auto'});
+  const cells = days.map((v, i) => {
+    const win = v && v.startsWith('+');
+    const cell = H('div', {padding:'20px 10px', borderRadius:'12px', textAlign:'center',
+      background: v ? (win ? C.goodWash : C.critWash) : C.surface,
+      border:`1px solid ${v ? (win ? C.good : C.crit) : C.grid}`,
+      fontSize:'19px', fontWeight:'800', opacity:'0',
+      color: v ? (win ? C.good : C.crit) : C.muted,
+      fontVariantNumeric:'tabular-nums'});
+    cell.textContent = v || '—';
+    grid.appendChild(cell);
+    return cell;
+  });
+  vis.appendChild(grid);
+  const line = H('div', {marginTop:'26px', fontSize:'26px', fontWeight:'740',
+    textAlign:'center', color:C.ink, opacity:'0'});
+  line.innerHTML = `<span style="color:${C.accent};font-variant-numeric:tabular-nums">` +
+    `${trades.length} trades in ${days.length} days</span>` +
+    `<span style="font-variant-numeric:tabular-nums"> — ${wins} wins, ${trades.length - wins} losses.</span>`;
+  vis.appendChild(line);
+  ups.push(t => {
+    cells.forEach((cEl, i) => stPop(cEl, t, .6 + i*.08, .45));
+    stRise(line, t, 2.6, 16);
+  });
+  return ups;
+}
+
+/* ---- L12 · Radar (score the trader, not the trade) ---- */
+function vRadar(vis){
+  const ups = [];
+  const axes = ['Discipline','Sizing','Entries','Exits','Journal'];
+  const scores = [4, 5, 2, 3, 4];                       // illustrative, of 5
+  const total = scores.reduce((a, b) => a + b, 0);
+  const CX = 300, CY = 185, R = 140;
+  const pt = (i, r) => {
+    const a = -Math.PI/2 + i*2*Math.PI/axes.length;
+    return [CX + r*Math.cos(a), CY + r*Math.sin(a)];
+  };
+  const svg = S('svg', {viewBox:'0 0 600 400',
+    style:'width:100%;max-width:600px;display:block;margin:0 auto;overflow:visible'});
+  for (let ring = 1; ring <= 5; ring++){
+    const d = axes.map((_, i) => {
+      const [x, y] = pt(i, R*ring/5);
+      return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ') + ' Z';
+    svg.appendChild(S('path', {d, fill:'none', stroke:C.grid,
+      opacity: ring === 5 ? .8 : .4}));
+  }
+  axes.forEach((name, i) => {
+    const [x, y] = pt(i, R);
+    svg.appendChild(S('line', {x1:CX, y1:CY, x2:x, y2:y, stroke:C.grid, opacity:.5}));
+    const [lx, ly] = pt(i, R+34);
+    const tx = S('text', {x:lx, y:ly+5, fill:C.ink2, 'font-size':16, 'font-weight':700,
+      'text-anchor':'middle', 'font-family':FONT});
+    tx.textContent = name;
+    svg.appendChild(tx);
+  });
+  const scoreD = scores.map((s, i) => {
+    const [x, y] = pt(i, R*s/5);
+    return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ') + ' Z';
+  const fillPoly = S('path', {d:scoreD, fill:C.accentWash, opacity:0});
+  const line = drawablePath(scoreD, C.accent, 3);
+  svg.append(fillPoly, line);
+  const dots = scores.map((s, i) => {
+    const [x, y] = pt(i, R*s/5);
+    const g = S('g', {opacity:0});
+    g.appendChild(S('circle', {cx:x, cy:y, r:7, fill:C.accent}));
+    svg.appendChild(g);
+    return {g, at:2.2 + i*.15};
+  });
+  const chip = S('text', {x:CX, y:CY+R+80, fill:C.ink, 'font-size':24,
+    'font-weight':800, 'text-anchor':'middle', 'font-family':FONT,
+    'font-variant-numeric':'tabular-nums', opacity:0});
+  chip.textContent = `${total} / ${axes.length*5} — train the weakest axis first`;
+  svg.appendChild(chip);
+  vis.appendChild(svg);
+  ups.push(t => {
+    setDraw(line, draw(t, .9, 1.3));
+    fillPoly.setAttribute('opacity', draw(t, 1.6, .8));
+    dots.forEach(d => svPop(d.g, t, d.at, 0, 0));
+    chip.setAttribute('opacity', draw(t, 3.0, .6));
+  });
+  return ups;
+}
+
+const DEFS = [
+  {id:'Anatomy', kicker:'Pattern 01 · Callout anatomy',
+   head:'Label the thing itself',
+   punch:'Callouts on one big object beat <b>ten bullet points</b>.',
+   notes:'Use when teaching what something IS (a candle, an order ticket, a chart pattern). One oversized object, callouts land one at a time in reading order, meaning tags last. Swap the candle for any object.',
+   mount:vCandleAnatomy},
+  {id:'Gauge', kicker:'Pattern 02 · Gauge',
+   head:'One number with a zone',
+   punch:'A needle in the green reads in <b>half a second</b>.',
+   notes:'Use when the lesson is "keep this number in a range" — risk per trade, portfolio heat, position count. Zones draw first so the scale means something before the needle moves. Needle overshoots slightly (easeOutBack) and settles.',
+   mount:vGauge},
+  {id:'Tree', kicker:'Pattern 03 · Probability tree',
+   head:'Show the branches, then the math',
+   punch:'Outcomes as branches make <b>expected value</b> obvious.',
+   notes:'Use for any expected-value teaching — why a 40% win rate makes money, options outcomes, why lottery tickets lose. The math chip is computed from the same numbers the branches show.',
+   mount:vProbTree},
+  {id:'Compound', kicker:'Pattern 04 · Compounding curve',
+   head:'Let the curve make the argument',
+   punch:'Small edges look flat — until the <b>curve bends</b>.',
+   notes:'Use for compounding, drawdown recovery math, fee drag over decades. Both end values are computed from the assumptions in the code, never typed. Change the assumptions, the labels follow.',
+   mount:vCompound},
+  {id:'Book', kicker:'Pattern 05 · Order book',
+   head:'Two sides meeting at a price',
+   punch:'Every price is just <b>buyers meeting sellers</b>.',
+   notes:'Use for market microstructure — spread, liquidity, why market orders cost more, where limit orders sit. The spread band is the highlight; sizes are illustrative.',
+   mount:vOrderBook},
+  {id:'Underwater', kicker:'Pattern 06 · Underwater chart',
+   head:'Show the pain, not just the gains',
+   punch:'The mirror shows what the equity curve <b>hides</b>.',
+   notes:'Use for drawdown education, "past performance" skepticism, why position sizing matters. Drawdown series and the worst-point label are computed from the equity array.',
+   mount:vUnderwater},
+  {id:'Slope', kicker:'Pattern 07 · Slope chart',
+   head:'Before and after, two dots',
+   punch:'One line per metric — the slope <b>is the story</b>.',
+   notes:'Use for before/after comparisons: with a system vs without, this quarter vs last. Three rows max; values at both ends; improvement colored green regardless of direction.',
+   mount:vSlope},
+  {id:'Trajectory', kicker:'Pattern 08 · Connected trajectory',
+   head:'Two measures, one path',
+   punch:'A connected path shows <b>where the journey went</b>.',
+   notes:'Use when two measures move together over time — risk taken vs results, size vs win rate. One shape tells the story two separate charts cannot. Arrowhead marks the destination.',
+   mount:vTrajectory},
+  {id:'Lollipop', kicker:'Pattern 09 · Lollipop ranking',
+   head:'Rank what actually matters',
+   punch:'Ranked dots read where fat bars <b>read as a wall</b>.',
+   notes:'Use for ranked contributions across a handful of categories — what improved the P&L, where the losses came from. Thin stem, 11px dot, value at the dot.',
+   mount:vLollipop},
+  {id:'Bridge', kicker:'Pattern 10 · Waterfall bridge',
+   head:'Walk from gross to net',
+   punch:'A walk shows <b>where the money leaks</b>.',
+   notes:'Use when components explain a total — gross wins to net after fees/slippage/mistakes, or a P&L walk. The NET bar is computed from the steps.',
+   mount:vBridgeWalk},
+  {id:'Month', kicker:'Pattern 11 · Month heat strip',
+   head:'A month of discipline at a glance',
+   punch:'The empty days are <b>the system working</b>.',
+   notes:'Use for cadence and patience lessons — trades per month, streaks, journaling habits. The count line is computed from the grid data. Extends the SWING-9TO5 week strip to a month.',
+   mount:vMonthGrid},
+  {id:'Radar', kicker:'Pattern 12 · Radar score',
+   head:'Score the trader, not the trade',
+   punch:'Five axes show the <b>weak spot</b> to train next.',
+   notes:'Use for multi-dimensional self-assessment — the Terminal snapshot radar, adapted for skills. Five axes max; the total chip is computed from the scores.',
+   mount:vRadar},
+];
+
+/* ============================================================
+   Show / navigation / clock
+   ============================================================ */
+let cur = 0, curUps = null, slideStart = performance.now(), G0 = performance.now();
+let flipped = false;
+let notesOn = false, hudOn = false, t0 = null, tick = null;
+
+function mountSlide(i){
+  slideHost.innerHTML = '';
+  const def = DEFS[i];
+  const frame = buildFrame({
+    num: i+1, kicker: def.kicker, head: def.head, punch: def.punch,
+    headSize: def.headSize
+  });
+  const visUps = def.mount(frame.vis);
+  slideHost.appendChild(frame.root);
+  curUps = frame.ups.concat(visUps);
+}
+
+function show(i, keepTime){
+  const prev = cur;
+  cur = Math.max(0, Math.min(DEFS.length-1, i));
+  if (!keepTime){ slideStart = performance.now(); if (prev !== cur || flipped) flipped = true; }
+  mountSlide(cur);
+  railMark();
+  const d = DEFS[cur];
+  document.getElementById('notes-body').textContent = d.notes || '—';
+  document.getElementById('notes-head').textContent =
+    `Slide ${cur+1} of ${DEFS.length} — ${d.head}`;
+  document.getElementById('hud-slide').textContent = `${cur+1}/${DEFS.length}`;
+  document.getElementById('hud-target').textContent = `target ${SLIDE_TARGET}s`;
+  location.hash = 's' + (cur+1);
+  buildGrid();
+}
+
+function startClock(){
+  t0 = Date.now();
+  clearInterval(tick);
+  tick = setInterval(() => {
+    const s = Math.floor((Date.now()-t0)/1000);
+    const cEl = document.getElementById('hud-clock');
+    cEl.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+    cEl.classList.toggle('over', s > TOTAL_TARGET());
+  }, 500);
+}
+
+function buildGrid(){
+  const g = document.getElementById('grid-cells');
+  g.innerHTML = DEFS.map((s, i) =>
+    `<div class="gc${i===cur?' cur':''}" data-i="${i}">
+     <div class="gn">${String(i+1).padStart(2,'0')} · ${SLIDE_TARGET}s</div>
+     <div class="gt"></div></div>`).join('');
+  [...g.children].forEach((cEl, i) => {
+    cEl.querySelector('.gt').textContent = DEFS[i].head;
+    cEl.onclick = () => { show(i); document.getElementById('grid').classList.remove('on'); };
+  });
+  const m = TOTAL_TARGET();
+  document.getElementById('grid-total').textContent =
+    `${DEFS.length} slides · ${SLIDE_TARGET}s each · full run ${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;
+}
+
+/* ============================================================
+   Theme
+   ============================================================ */
+function setTheme(name){
+  document.documentElement.setAttribute('data-theme', name);
+  C = TOK[name] || TOK.dark;
+  try { localStorage.setItem('nr_swing_theme', name); } catch(e){}
+  paintFurnitureStatic(); paintFooter(); paintRail(); drawCamGuide();
+  mountSlide(cur);           // repaint with the new tokens, clock untouched
+}
+
+/* ============================================================
+   Fit + rAF loop
+   ============================================================ */
+function fit(){
+  const W = window.innerWidth, Hh = window.innerHeight;
+  stage.style.transform = `scale(${Math.min(W/1920, Hh/1080)})`;
+}
+window.addEventListener('resize', fit);
+
+function loop(now){
+  // Reduced motion: everything is a pure function of t, so t=99 IS the settled
+  // final frame of every animation; G=0 freezes the ambient drift.
+  const G = REDUCED ? 0 : (now - G0)/1000;
+  const t = REDUCED ? 99 : (now - slideStart)/1000;
+  furnitureUpdate(G);
+  railUpdate(t);
+  sweepUpdate(t);
+  if (curUps) curUps.forEach(u => u(t));
+  requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   Keys — identical map to the episode deck template
+   ============================================================ */
+addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'Escape'){ document.getElementById('grid').classList.remove('on'); return; }
+  if (k === 'ArrowRight' || k === ' ' || k === 'PageDown'){ e.preventDefault(); show(cur+1); }
+  else if (k === 'ArrowLeft' || k === 'PageUp'){ e.preventDefault(); show(cur-1); }
+  else if (k === 'Home') show(0);
+  else if (k === 'End') show(DEFS.length-1);
+  else if (k === 't' || k === 'T')
+    setTheme(document.documentElement.getAttribute('data-theme') === 'cream' ? 'dark' : 'cream');
+  else if (k === 'n' || k === 'N'){
+    notesOn = !notesOn; document.getElementById('notes').classList.toggle('on', notesOn);
+  }
+  else if (k === 'h' || k === 'H'){
+    hudOn = !hudOn; document.getElementById('hud').classList.toggle('on', hudOn);
+    if (hudOn && !t0) startClock();
+  }
+  else if (k === 'r' || k === 'R') startClock();
+  else if (k === 'C' && e.shiftKey){
+    if (!CAM) return;
+    camGuideOn = !camGuideOn; drawCamGuide();
+  }
+  else if (k === 'c') setCam(!CAM);
+  else if ((k === '[' || k === ']') && CAM)
+    setCam(CAM, CAMW + (k === ']' ? 0.02 : -0.02));
+  else if (k === 'g' || k === 'G'){
+    document.getElementById('grid').classList.toggle('on'); buildGrid();
+  }
+  else if (k === 'f' || k === 'F'){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  }
+});
+
+/* ============================================================
+   Boot — stored theme, deep link, go
+   ============================================================ */
+setTheme(_q.get('theme') === 'cream' ? 'cream'
+       : _q.get('theme') === 'dark' ? 'dark'
+       : _stored('nr_swing_theme', 'dark'));
+relayout(); paintFooter(); paintRail(); buildRailTicks();
+fit();
+show(location.hash.startsWith('#s') ? (+location.hash.slice(2)-1) || 0 : 0, false);
+flipped = false;
+requestAnimationFrame(loop);
+console.log('[visual-library] ' + DEFS.length + ' patterns · →/Space ← T N H G F R C ⇧C [ ] · same choreography as the video build');
+})();
+</script>
+</body>
+</html>
