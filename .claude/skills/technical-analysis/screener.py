@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-"""Screen both sides of the 50 SMA setup. Stdlib only.
+"""Screen both sides of the 50 SMA setup. Alpaca only. Stdlib only.
 
-Two data sources, same math:
-
-  Alpaca (preferred — authoritative for price):
       export APCA_API_KEY_ID=...  APCA_API_SECRET_KEY=...
-      python3 screener.py --alpaca
-
-  Saved Webull 4h bar JSON (fallback, and what the backtest used):
-      python3 screener.py <bar-files...>
+      python3 screener.py                 # the whole universe
+      python3 screener.py SHOP UBER NVDA  # named symbols
 
 LONG is the measured A-setup: 64% reach +4%, 48% reach +8%, +0.44R.
 SHORT is the mirror and has NO measured edge (expectancy ~0, worse as the
@@ -75,7 +70,12 @@ def from_alpaca(symbols):
     return {s: _to_4h(b) for s, b in out.items()}
 
 
-OPEN, MID, CLOSE = 9 * 60 + 30, 13 * 60 + 30, 16 * 60
+# 4h bars sit on the UTC 4-hour grid (00/04/08/12/16/20), and the US session
+# opens at 13:30 UTC. So the day splits at 16:00 UTC = NOON ET, not at the 13:30
+# ET midpoint of the trading day:
+#   bar 1  09:30-12:00 ET (2.5h, clipped by the open)
+#   bar 2  12:00-16:00 ET (4h)
+OPEN, MID, CLOSE = 9 * 60 + 30, 12 * 60, 16 * 60
 
 def _to_4h(half_hourly):
     """Fold 30-minute bars into RTH 4h buckets: 09:30-13:30 and 13:30-16:00 ET.
@@ -105,22 +105,6 @@ def _to_4h(half_hourly):
         rows.append({"t": v["t"].isoformat(), "c": float(v["c"]),
                      "h": float(v["h"]), "l": float(v["l"])})
     return rows
-
-
-def from_files(paths):
-    bars = {}
-    for p in paths:
-        try:
-            blocks = json.load(open(p))["result"]
-        except Exception as e:
-            print(f"  ! skipped {p}: {e}", file=sys.stderr); continue
-        for blk in blocks:
-            rows = [{"t": b["time"], "c": float(b["close"]), "h": float(b["high"]),
-                     "l": float(b["low"])} for b in blk["result"]]
-            rows.sort(key=lambda r: r["t"])
-            if len(rows) > len(bars.get(blk["symbol"], [])):
-                bars[blk["symbol"]] = rows
-    return bars
 
 
 # ------------------------------------------------------------------ indicators
@@ -196,13 +180,10 @@ def score(m, rm, age, side):
 # ----------------------------------------------------------------------- main
 
 def main(argv):
-    if "--alpaca" in argv:
-        syms = [a for a in argv if a.isupper() and a.isalpha()] or UNIVERSE
-        bars, src = {}, "ALPACA"
-        for i in range(0, len(syms), 50):
-            bars.update(from_alpaca(syms[i:i + 50]))
-    else:
-        bars, src = from_files([a for a in argv if not a.startswith("-")]), "WEBULL bars"
+    syms = [a for a in argv if a.isupper() and a.isalpha()] or UNIVERSE
+    bars, src = {}, "ALPACA " + os.environ.get("ALPACA_FEED", "sip").upper()
+    for i in range(0, len(syms), 50):
+        bars.update(from_alpaca(syms[i:i + 50]))
     rows = {s: m for s, m in ((s, metrics(r)) for s, r in bars.items()) if m}
     if not rows:
         print("no bar data"); return
@@ -260,6 +241,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print(__doc__); sys.exit(1)
     main(sys.argv[1:])
