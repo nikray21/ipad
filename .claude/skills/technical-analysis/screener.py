@@ -5,7 +5,8 @@
       python3 screener.py                 # the whole universe
       python3 screener.py SHOP UBER NVDA  # named symbols
 
-LONG is the measured A-setup: 64% reach +4%, 48% reach +8%, +0.44R.
+LONG is the measured A-setup: 53% reach +4%, 26% reach +8% under the breakeven
+rule, +0.14R (reference/alpaca-remeasure.md — the conservative, reproducible pair).
 SHORT is the mirror and has NO measured edge (expectancy ~0, worse as the
 downtrend steepens). It is printed because it was asked for, capped at C size.
 """
@@ -205,7 +206,7 @@ def score(m, rm, age, side):
     s += 2 if ok else 0
     why.append(("Eligible name", 2 if ok else 0, f"{m['range']:.1f}%/bar"))
     sl = abs(m["slope"])
-    p = 2 if sl >= 1.5 else 1 if sl >= 1.0 else 0
+    p = 2 if sl >= 2.5 else 1 if sl >= 1.5 else 0
     s += p; why.append(("SMA slope", p, f"{m['slope']:+.1f}% / 10 bars"))
     p = 2 if age == 0 else 1 if age == 1 else 0
     s += p; why.append(("The bounce", p, "this bar" if age == 0 else "prev bar"))
@@ -258,10 +259,12 @@ def main(argv):
             grade = "A" if sc >= 9 else "B" if sc >= 7 else "C" if sc >= 5 else "D"
             d = 1 if side == "long" else -1
             stop = m["px"] * (1 - .04 * d)
+            # Every trade is a runner: +4% is where the stop goes to breakeven,
+            # not an exit. A zone under +8% caps the realistic target, not the plan.
             if rm is None or rm >= 8:                    # clear to +8%
-                plan, tgt = "RUNNER 1:2", m["px"] * (1 + .08 * d)
-            elif rm >= 4:                                # a zone caps it at +4%
-                plan, tgt = "SCALP 1:1", m["px"] * (1 + .04 * d)
+                plan, tgt = "RUNNER", m["px"] * (1 + .08 * d)
+            elif rm >= 4:                                # zone likely stalls it
+                plan, tgt = "RUNNER, zone-capped", m["px"] * (1 + .08 * d)
             else:                                        # nothing worth taking
                 plan, tgt = "SKIP — no room", None
             now = live.get(s)
@@ -276,7 +279,8 @@ def main(argv):
                   f"range {m['range']:.1f}%/bar  touch {'this' if age==0 else 'prev'} bar"
                   f"  room {'clear' if rm is None else f'{rm:+.1f}%'}")
             t = "—" if tgt is None else f"${tgt:.2f}"
-            print(f"         stop ${stop:.2f}   target {t}")
+            be = m["px"] * (1 + .04 * d)
+            print(f"         stop ${stop:.2f}   goes free at ${be:.2f}   target {t}")
         print("\nARMED (steep trend, waiting for the pullback to the SMA)")
         if not armed:
             print("  none")
