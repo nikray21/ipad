@@ -16,7 +16,8 @@ try:
 except Exception:
     ET = dt.timezone(dt.timedelta(hours=-4))    # EDT fallback
 
-SLOPE_MIN = 1.0          # % move in the 50 SMA over 10 bars
+SLOPE_MIN = 1.5          # % move in the 50 SMA over 10 bars — below 1.0 the
+                         # measured edge is zero, 1.0-1.5 is a grey band
 VOL_BAND  = (1.5, 3.0)   # median 4h bar range as % of price
 EXT_MAX   = 2.5          # max % the close may sit away from the SMA
 
