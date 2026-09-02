@@ -1,7 +1,13 @@
 """Assemble the playbook HTML. Every figure in it is drawn from figures.LONG /
 SHORT / NBIS, so no number in the prose is typed by hand."""
+import os
+
 import figures as F
 from figures import LONG as L, SHORT as S, NBIS as N
+
+# Account size is personal and this repo is public — it is never committed.
+# Set ACCOUNT_SIZE in the environment to print it on the playbook.
+ACCOUNT = os.environ.get("ACCOUNT_SIZE", "—")
 
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0}
@@ -259,7 +265,7 @@ pages.append(f"""
         <div class="kv"><span>Risk budget per trade</span><span>$75 – $100</span></div>
         <div class="kv"><span>Max open positions</span><span>2</span></div>
         <div class="kv"><span>Max total risk</span><span>~$200 (4%)</span></div>
-        <div class="kv"><span>Account</span><span>$5,000</span></div>
+        <div class="kv"><span>Account</span><span>{ACCOUNT}</span></div>
         <div style="color:#8b909e;font-size:11.5px;margin-top:9px">
           A perfect setup still fails if the book is already full. Count your open
           trades before you approve a new one.</div>

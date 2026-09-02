@@ -6,3 +6,10 @@ __pycache__/
 .cache_form4/
 .cache_bars.json
 .cache_bars.json.part
+
+# Personal trading data — never commit (public repo)
+.private/
+journal-evidence.md
+*.xlsx
+playbook.html
+4h-swing-playbook.pdf

@@ -133,7 +133,7 @@ starter size in the skill.
 
 ## Expected performance, stated honestly
 
-~6.6 setups/month × +$22 = **~$146/month on a $5,000 account ≈ 2.9%/month**, before fees
+~6.6 setups/month × +$22 = **~$146/month ≈ 2.9%/month on the account size in his journal**, before fees
 and slippage, if he takes most signals and holds them ~10 days. That is a good outcome
 and roughly double his logged +$11.60/trade. It is a backtest estimate, not a promise —
 and it collapses to about +$6/trade if he keeps closing on day one.

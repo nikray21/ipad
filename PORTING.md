@@ -33,7 +33,7 @@ A cloud session cannot reach them, and neither can Antigravity on a fresh clone.
 | Browsable visual menu | `learn-stock/SKILL.md:52`, `visuals.md:8` | `~/Desktop/educational/VISUAL-LIBRARY.html` — but `assets/visual-library.html` in this repo is the same content |
 | Reference learn build | `learn-stock/SKILL.md:21` | `~/Desktop/educational/SWING-9TO5 2026-08-12/` — superseded by `assets/deck-engine.html` |
 | Local deck template copy | `design/SKILL.md:15`, `stock-analysis-presentation/SKILL.md:18` | `~/Projects/episode-deck/` — superseded by `deck_template.html` here |
-| Trading journal | `technical-analysis/reference/journal-evidence.md:3` | Google Drive `1SrzWq9UKi6r2aHUfgGe6W7DDtLCUP0zF` |
+| Trading journal | not referenced in-repo any more | personal, kept out of this public repo — see `.gitignore` |
 
 **Do not commit the trading journal.** This repo is public.
 
