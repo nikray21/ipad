@@ -40,11 +40,10 @@ matter most: **stock-analysis-presentation** (Sunday ticker episode) and
 **learn-stock** (Wednesday educational episode). Supporting: `design` (load
 before touching any chart), `fa`, `find-stock`, `technical-analysis`.
 `design-craft` (high-craft HTML/CSS/JS visual work — learn-stock leans on it
-for new visual patterns).
-Reference-only in cloud (they need local tools/MCPs the sandbox lacks):
-`race-dossier` (local ~/Projects/f1-dossier), `youtube-thumbnail-maker`,
-`youtube-popup-graphic`, `youtube-broll-maker`, `youtube-clipper` (Higgsfield
-MCP — usually absent in cloud).
+for new visual patterns), `post-video` (YouTube title/description/chapters).
+That is the whole toolkit — 8 skills, nothing reference-only. `race-dossier`
+and the four `youtube-*` skills were deleted on 2026-09-02 in a clean-house
+that cut everything outside trading and the channel; do not re-add them.
 
 The `dataviz` skill both deck skills cite is bundled inside Claude Code
 itself (not a repo file) and should exist in cloud sessions too. If it is

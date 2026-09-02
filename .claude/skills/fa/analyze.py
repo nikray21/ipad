@@ -365,7 +365,7 @@ def analyze(ticker):
             "fcfYield": pct(fcf, mc), "evEbitda": safe(ev, ebitda), "evSales": safe(ev, rev_t),
             "earningsYield": pct(ni_t, mc),
         }
-        # ---- CROSS-CHECK (terminal hard rule 5) ----
+        # ---- CROSS-CHECK (hard rule: every headline figure is verified) ----
         # Internal consistency proves our maths matches our own extraction, not that
         # our extraction matches reality. Every headline figure is compared against an
         # INDEPENDENT vendor. Disagreements are REPORTED, never silently resolved:

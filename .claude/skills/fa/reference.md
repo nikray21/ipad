@@ -112,6 +112,7 @@ Then tabulate results growth beside the reaction. Patterns worth naming:
 
 ## Handoff
 
-This skill judges the business. For whether to *trade* it — entry, the −12% stop,
-the +18% limit, position size, and whether the setup is a good instance of the
-rule — read the `bull` skill. Fundamental attractiveness is not a trade signal.
+This skill judges the business. For whether to *trade* it — entry, the stop
+(level − 1.5×ATR), position size ($risk ÷ stop distance), and whether the setup is
+a good instance of the 6-step playbook — read the `technical-analysis` skill.
+Fundamental attractiveness is not a trade signal.

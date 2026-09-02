@@ -1,6 +1,6 @@
 ---
 name: fa
-description: Full fundamental analysis on a public company — revenue quality, margins and operating leverage, solvency, cash conversion, capital allocation, valuation, accounting red flags, street expectations and a verdict. Use when the user says "run a FA", "fundamental analysis", "analyse this stock", "is X a good buy", "look at the fundamentals", "should I buy X", or names a ticker and asks whether it is worth owning. Pairs with the `bull` skill for the trade decision and `terminal` for the dashboard.
+description: Full fundamental analysis on a public company — revenue quality, margins and operating leverage, solvency, cash conversion, capital allocation, valuation, accounting red flags, street expectations and a verdict. Use when the user says "run a FA", "fundamental analysis", "analyse this stock", "is X a good buy", "look at the fundamentals", "should I buy X", or names a ticker and asks whether it is worth owning. Pairs with the `technical-analysis` skill for the trade decision.
 argument-hint: [TICKER, e.g. DVA]
 ---
 
@@ -81,7 +81,7 @@ became a source of truth, then drifted.*
    price is a sell; a mediocre one cheap enough is a buy. State which you mean.
 8. **Quote the period.** Every figure carries its fiscal period. "Revenue grew
    6%" is unusable without knowing over what.
-9. **If asked whether to trade it, hand off to `bull`.** This skill sizes up the
+9. **If asked whether to trade it, hand off to `technical-analysis`.** This skill sizes up the
    business. The entry, the stop and the position size belong to the strategy.
 
 ## What separates this from a stock-screener summary
